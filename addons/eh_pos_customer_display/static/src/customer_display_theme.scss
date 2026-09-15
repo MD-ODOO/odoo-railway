@@ -1,0 +1,30 @@
+// ERP Heritage dark/mint skin for the Community checkout customer display.
+// Scoped to .o_customer_display so it only affects this screen. Cosmetic only.
+.o_customer_display {
+    background-color: #080C0A;
+    color: #F5F5F5;
+    font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+
+    .bg-view { background-color: #101814 !important; }
+    .bg-white { background-color: #16211B !important; color: #F5F5F5 !important; }
+    .text-bg-dark { background-color: #16211B !important; color: #F5F5F5 !important; }
+    .o_customer_display_logo { background-color: #16211B !important; }
+
+    .o_customer_display_sidebar {
+        position: relative;
+
+        &::after {
+            content: "ERP Heritage";
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-family: "DM Mono", ui-monospace, monospace;
+            font-size: 12px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #7BCEA0;
+        }
+    }
+}

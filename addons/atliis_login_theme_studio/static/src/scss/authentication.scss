@@ -1,0 +1,345 @@
+.o_login_theme_active {
+    min-height: 100vh;
+    background-color: var(--login-background-colour);
+    color: var(--login-text-colour);
+    font-size: var(--login-body-font-size);
+    font-family: var(--login-font-family);
+    position: relative;
+
+    .o_login_theme_page {
+        min-height: 100vh;
+        display: flex;
+        align-items: var(--login-form-align);
+        justify-content: var(--login-form-justify);
+        position: relative;
+        z-index: 1;
+        background: transparent !important;
+    }
+
+    .o_login_theme_card {
+        width: 100%;
+        max-width: var(--login-form-width);
+        color: var(--login-text-colour);
+        background-color: var(--login-card-colour) !important;
+        border: var(--login-card-border-width) solid var(--login-card-border-colour) !important;
+        border-radius: var(--login-card-radius);
+        box-shadow: var(--login-card-shadow);
+        opacity: var(--login-card-opacity);
+        overflow: hidden;
+    }
+
+    .o_login_theme_card_body {
+        padding: 20px;
+    }
+
+    .o_login_theme_logo {
+        max-height: 72px;
+        max-width: 100%;
+        width: var(--login-logo-width);
+        height: var(--login-logo-height);
+        object-fit: contain;
+    }
+
+    .o_login_theme_header_align_left {
+        text-align: left !important;
+    }
+
+    .o_login_theme_header_align_right {
+        text-align: right !important;
+    }
+
+    .o_login_theme_company {
+        margin-top: 0.75rem;
+        color: var(--login-text-colour);
+        font-weight: 600;
+    }
+
+    .o_login_theme_heading {
+        margin: 1rem 0 0;
+        color: var(--login-heading-colour);
+        font-size: var(--login-heading-font-size);
+        font-weight: var(--login-heading-font-weight);
+        line-height: 1.2;
+    }
+
+    .o_login_theme_subheading,
+    .o_login_theme_welcome {
+        margin: 0.5rem 0 0;
+        color: var(--login-text-colour);
+    }
+
+    .o_login_theme_announcement {
+        margin-top: 1rem;
+        padding: 0.75rem;
+        border-radius: 6px;
+        background: rgba(1, 126, 132, 0.1);
+        color: var(--login-text-colour);
+        text-align: start;
+    }
+
+    .form-control {
+        color: var(--login-input-text-colour);
+        background-color: var(--login-input-background-colour);
+        border-color: var(--login-input-border-colour);
+    }
+
+    .form-control:focus {
+        border-color: var(--login-primary-colour);
+        box-shadow: 0 0 0 0.2rem rgba(113, 75, 103, 0.22);
+    }
+
+    .btn-primary {
+        color: var(--login-button-text-colour);
+        background-color: var(--login-button-colour);
+        border-color: var(--login-button-colour);
+        font-size: var(--login-button-font-size);
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+        color: var(--login-button-text-colour);
+        background-color: var(--login-button-hover-colour);
+        border-color: var(--login-button-hover-colour);
+    }
+
+    a,
+    .btn-link {
+        color: var(--login-link-colour);
+    }
+
+    a:hover,
+    .btn-link:hover {
+        color: var(--login-link-hover-colour);
+    }
+
+    .alert-danger {
+        color: var(--login-error-colour);
+    }
+
+    .alert-success {
+        color: var(--login-success-colour);
+    }
+
+    .o_login_theme_footer {
+        color: var(--login-text-colour);
+    }
+
+    .o_login_theme_support,
+    .o_login_theme_legal {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+        margin-top: 0.5rem;
+    }
+
+    .o_login_theme_caps_lock {
+        margin: 0.25rem 0 0.75rem;
+        color: var(--login-error-colour);
+        font-size: 0.875rem;
+        text-align: start;
+    }
+
+    .o_show_password {
+        color: var(--login-link-colour);
+        background-color: var(--login-input-background-colour);
+        border-color: var(--login-input-border-colour) !important;
+    }
+
+    .o_show_password:focus-visible,
+    .btn:focus-visible,
+    a:focus-visible,
+    .form-control:focus-visible {
+        outline: 2px solid var(--login-primary-colour);
+        outline-offset: 2px;
+    }
+
+    .o_login_theme_oauth {
+        margin-top: 1rem;
+    }
+
+    .o_login_theme_oauth .list-group {
+        gap: 0.5rem;
+    }
+
+    .o_login_theme_oauth .list-group-item {
+        border-color: var(--login-input-border-colour);
+        border-radius: 6px;
+        color: var(--login-text-colour);
+    }
+}
+
+body.o_login_theme_active::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-color: var(--login-background-colour);
+    background-image: var(--login-background-image);
+    background-size: var(--login-background-size);
+    background-position: var(--login-background-position);
+    background-repeat: var(--login-background-repeat);
+    filter: var(--login-background-filter);
+    transform: scale(1.02);
+    z-index: 0;
+    animation: var(--login-background-animation);
+}
+
+body.o_login_theme_active::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-color: var(--login-background-overlay-colour);
+    opacity: var(--login-background-overlay-opacity);
+    z-index: 0;
+}
+
+.oe_login_form.o_login_theme_active {
+    min-height: 0 !important;
+    height: auto !important;
+    align-self: center;
+}
+
+body:has(.oe_login_form.o_login_theme_active) {
+    min-height: 100vh;
+    background-color: var(--login-background-colour);
+    position: relative;
+}
+
+body:has(.oe_login_form.o_login_theme_active)::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-color: var(--login-background-colour);
+    background-image: var(--login-background-image);
+    background-size: var(--login-background-size);
+    background-position: var(--login-background-position);
+    background-repeat: var(--login-background-repeat);
+    filter: var(--login-background-filter);
+    transform: scale(1.02);
+    z-index: 0;
+    animation: var(--login-background-animation);
+}
+
+body:has(.oe_login_form.o_login_theme_active)::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-color: var(--login-background-overlay-colour);
+    opacity: var(--login-background-overlay-opacity);
+    z-index: 0;
+}
+
+body:has(.oe_login_form.o_login_theme_hide_website_chrome) header#top {
+    display: none !important;
+}
+
+body:has(.oe_login_form.o_login_theme_hide_website_chrome) #footer,
+body:has(.oe_login_form.o_login_theme_hide_website_chrome) footer,
+body:has(.oe_login_form.o_login_theme_hide_website_chrome) .o_footer {
+    display: none !important;
+}
+
+body:has(.oe_login_form.o_login_theme_active) header#top,
+body:has(.oe_login_form.o_login_theme_active) #footer,
+body:has(.oe_login_form.o_login_theme_active) footer,
+body:has(.oe_login_form.o_login_theme_active) .o_footer {
+    position: relative;
+    z-index: 2;
+}
+
+body:has(.oe_login_form.o_login_theme_active) #wrapwrap,
+body:has(.oe_login_form.o_login_theme_active) main,
+body:has(.oe_login_form.o_login_theme_active) .oe_website_login_container {
+    min-height: 100vh;
+    background: transparent !important;
+}
+
+body:has(.oe_login_form.o_login_theme_active) main,
+body:has(.oe_login_form.o_login_theme_active) .oe_website_login_container {
+    display: flex;
+    align-items: var(--login-form-align);
+    justify-content: var(--login-form-justify);
+    position: relative;
+    z-index: 1;
+}
+
+body:has(.oe_login_form.o_login_theme_active) .oe_structure#oe_structure_login_top,
+body:has(.oe_login_form.o_login_theme_active) .oe_structure#oe_structure_login_bottom {
+    display: none;
+}
+
+body:has(.oe_login_form.o_login_theme_active) .oe_login_form.o_login_theme_card {
+    width: 100%;
+    margin: 1.5rem auto;
+    min-height: 0 !important;
+    height: auto !important;
+    color: var(--login-text-colour);
+    background-color: var(--login-card-colour) !important;
+    border: var(--login-card-border-width) solid var(--login-card-border-colour) !important;
+    border-radius: var(--login-card-radius);
+    box-shadow: var(--login-card-shadow);
+    opacity: var(--login-card-opacity);
+    overflow: hidden;
+    padding: 20px;
+}
+
+@keyframes o-login-theme-background {
+    0% {
+        background-position: var(--login-background-position);
+    }
+    50% {
+        background-position: right bottom;
+    }
+    100% {
+        background-position: var(--login-background-position);
+    }
+}
+
+.o_login_layout_split_left.o_login_theme_active .o_login_theme_page,
+.o_login_layout_card_left.o_login_theme_active .o_login_theme_page {
+    justify-content: flex-start;
+}
+
+.o_login_layout_split_right.o_login_theme_active .o_login_theme_page,
+.o_login_layout_card_right.o_login_theme_active .o_login_theme_page {
+    justify-content: flex-end;
+}
+
+.o_login_layout_glass.o_login_theme_active .o_login_theme_card {
+    background-color: var(--login-card-colour) !important;
+    backdrop-filter: blur(var(--login-card-blur));
+}
+
+@media (max-width: 767px) {
+    .o_login_theme_active {
+        .o_login_theme_page {
+            align-items: stretch;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+
+        .o_login_theme_card {
+            width: 100%;
+            margin: auto 0;
+        }
+
+        .o_login_theme_card_body {
+            padding: 1.25rem;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .o_login_theme_active *,
+    .o_login_theme_active *::before,
+    .o_login_theme_active *::after {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+    }
+}
+
+

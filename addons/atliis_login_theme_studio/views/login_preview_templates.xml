@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="login_theme_preview_shell" name="Login Theme Studio Preview">
+        <t t-call="web.layout">
+            <t t-set="title" t-value="'Preview - %s' % theme.display_name"/>
+            <t t-set="head">
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <style>
+                    body {
+                        margin: 0;
+                        background: #f5f7fb;
+                        color: #111827;
+                        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                    }
+                    .o_login_theme_preview_shell {
+                        min-height: 100vh;
+                    }
+                    .o_login_theme_preview_toolbar {
+                        position: sticky;
+                        top: 0;
+                        z-index: 10;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        gap: 16px;
+                        padding: 12px 18px;
+                        background: #ffffff;
+                        border-bottom: 1px solid #e5e7eb;
+                    }
+                    .o_login_theme_preview_title {
+                        min-width: 0;
+                    }
+                    .o_login_theme_preview_title h1 {
+                        margin: 0;
+                        font-size: 18px;
+                        font-weight: 650;
+                        line-height: 1.2;
+                    }
+                    .o_login_theme_preview_title span {
+                        display: block;
+                        margin-top: 2px;
+                        color: #6b7280;
+                        font-size: 13px;
+                    }
+                    .o_login_theme_preview_toolbar a {
+                        flex: 0 0 auto;
+                        padding: 8px 12px;
+                        border: 1px solid #d1d5db;
+                        border-radius: 6px;
+                        color: #111827;
+                        text-decoration: none;
+                        background: #ffffff;
+                    }
+                    .o_login_theme_preview_grid {
+                        display: grid;
+                        grid-template-columns: minmax(0, 1fr);
+                        gap: 24px;
+                        padding: 24px;
+                    }
+                    .o_login_theme_preview_device {
+                        min-width: 0;
+                    }
+                    .o_login_theme_preview_device h2 {
+                        margin: 0 0 8px;
+                        font-size: 14px;
+                        font-weight: 650;
+                        color: #374151;
+                    }
+                    .o_login_theme_preview_frame_wrap {
+                        overflow: auto;
+                        padding: 16px;
+                        border: 1px solid #d1d5db;
+                        border-radius: 8px;
+                        background: #e5e7eb;
+                    }
+                    .o_login_theme_preview_frame {
+                        display: block;
+                        max-width: 100%;
+                        border: 0;
+                        border-radius: 6px;
+                        background: #ffffff;
+                        box-shadow: 0 12px 35px rgba(15, 23, 42, 0.16);
+                    }
+                    @media (min-width: 1180px) {
+                        .o_login_theme_preview_grid {
+                            grid-template-columns: minmax(0, 1fr) 420px;
+                            align-items: start;
+                        }
+                        .o_login_theme_preview_device:first-child {
+                            grid-row: span 2;
+                        }
+                    }
+                </style>
+            </t>
+            <main class="o_login_theme_preview_shell">
+                <div class="o_login_theme_preview_toolbar">
+                    <div class="o_login_theme_preview_title">
+                        <h1 t-out="theme.display_name"/>
+                        <span>
+                            <t t-out="theme.publication_state"/>
+                        </span>
+                    </div>
+                    <a t-attf-href="/web#id=#{theme.id}&amp;model=login.theme&amp;view_type=form">Back to Theme</a>
+                </div>
+                <div class="o_login_theme_preview_grid">
+                    <section t-foreach="devices" t-as="device" class="o_login_theme_preview_device">
+                        <h2>
+                            <t t-out="device['name']"/>
+                            <span>
+                                (<t t-out="device['width']"/> x <t t-out="device['height']"/>)
+                            </span>
+                        </h2>
+                        <div class="o_login_theme_preview_frame_wrap">
+                            <iframe
+                                class="o_login_theme_preview_frame"
+                                loading="lazy"
+                                t-att-width="device['width']"
+                                t-att-height="device['height']"
+                                t-att-src="'/login_theme_studio/preview/%s/frame?device=%s' % (theme.id, device['key'])"/>
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </t>
+    </template>
+
+    <template id="login_theme_preview_frame" name="Login Theme Studio Preview Frame">
+        <t t-call="web.layout">
+            <t t-set="title" t-value="'Preview - %s' % theme.display_name"/>
+            <t t-set="body_classname" t-value="'o_login_theme_body o_login_theme_active o_login_theme_preview_frame_body o_login_layout_%s o_preview_device_%s' % (login_theme_data.get('layout'), preview_device)"/>
+            <t t-set="head">
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <t t-call-assets="web.assets_frontend" t-js="false"/>
+                <t t-call-assets="web.assets_frontend_minimal" t-css="false" defer_load="True"/>
+                <t t-call-assets="web.assets_frontend_lazy" t-css="false" lazy_load="True"/>
+                <style id="atliis-login-theme-vars">
+                    .o_login_theme_active { <t t-out="login_theme_data.get('inline_style')"/>; }
+                    body.o_login_theme_active {
+                        min-height: 100vh;
+                        background-color: var(--login-background-colour);
+                        font-family: var(--login-font-family);
+                        position: relative;
+                    }
+                    body.o_login_theme_active::before {
+                        content: "";
+                        position: fixed;
+                        inset: 0;
+                        pointer-events: none;
+                        background-color: var(--login-background-colour);
+                        background-image: var(--login-background-image);
+                        background-size: var(--login-background-size);
+                        background-position: var(--login-background-position);
+                        background-repeat: var(--login-background-repeat);
+                        filter: var(--login-background-filter);
+                        transform: scale(1.02);
+                        z-index: 0;
+                        animation: var(--login-background-animation);
+                    }
+                    body.o_login_theme_active::after {
+                        content: "";
+                        position: fixed;
+                        inset: 0;
+                        pointer-events: none;
+                        background-color: var(--login-background-overlay-colour);
+                        opacity: var(--login-background-overlay-opacity);
+                        z-index: 0;
+                    }
+                    body.o_login_theme_active .o_login_theme_page {
+                        min-height: 100vh;
+                        display: flex;
+                        align-items: var(--login-form-align);
+                        justify-content: var(--login-form-justify);
+                        position: relative;
+                        z-index: 1;
+                        background: transparent !important;
+                    }
+                    @keyframes o-login-theme-background {
+                        0% { background-position: var(--login-background-position); }
+                        50% { background-position: right bottom; }
+                        100% { background-position: var(--login-background-position); }
+                    }
+                </style>
+            </t>
+            <div class="container py-5 o_login_theme_page o_login_theme_configured">
+                <div class="card border-0 mx-auto bg-100 o_database_list o_login_theme_card" t-att-style="'max-width: var(--login-form-width);'">
+                    <div class="card-body o_login_theme_card_body">
+                        <div t-attf-class="o_login_theme_header o_login_theme_header_align_#{login_theme_data.get('logo_alignment')} text-center pb-3 border-bottom mb-4">
+                            <img t-if="login_theme_data.get('logo_url')" t-att-src="login_theme_data.get('logo_url')" alt="Logo" class="o_login_theme_logo"/>
+                            <div t-if="login_theme_data.get('show_company_name') and login_theme_data.get('company_name')" class="o_login_theme_company" t-out="login_theme_data.get('company_name')"/>
+                            <h1 t-if="login_theme_data.get('heading')" class="o_login_theme_heading" t-out="login_theme_data.get('heading')"/>
+                            <p t-if="login_theme_data.get('subheading')" class="o_login_theme_subheading" t-out="login_theme_data.get('subheading')"/>
+                            <div t-if="login_theme_data.get('welcome_message')" class="o_login_theme_welcome" t-out="login_theme_data.get('welcome_message')"/>
+                            <div t-if="login_theme_data.get('announcement_text')" t-attf-class="o_login_theme_announcement o_login_theme_announcement_#{login_theme_data.get('announcement_type')}" t-out="login_theme_data.get('announcement_text')"/>
+                        </div>
+                        <form class="oe_login_form">
+                            <div class="mb-3 field-login">
+                                <label for="preview_login" class="form-label" t-out="login_theme_data.get('username_label') or 'Email'"/>
+                                <input id="preview_login" type="text" class="form-control" t-att-placeholder="login_theme_data.get('username_placeholder')" value="admin@example.com" readonly="readonly"/>
+                            </div>
+                            <div class="mb-3 field-password">
+                                <label for="preview_password" class="form-label" t-out="login_theme_data.get('password_label') or 'Password'"/>
+                                <div class="input-group">
+                                    <input id="preview_password" type="password" class="form-control" t-att-placeholder="login_theme_data.get('password_placeholder')" value="preview" readonly="readonly"/>
+                                    <button t-if="login_theme_data.get('show_password_toggle')" class="btn o_show_password" type="button" aria-label="Show password" title="Show password">Show</button>
+                                </div>
+                            </div>
+                            <div class="oe_login_buttons text-center gap-1 d-grid mb-1 pt-3">
+                                <button type="button" t-attf-class="btn btn-primary #{login_theme_data.get('full_width_button') and 'w-100' or ''}" t-out="login_theme_data.get('login_button_text') or 'Log in'"/>
+                            </div>
+                            <div class="text-center">
+                                <a t-if="login_theme_data.get('show_signup_link')" href="#" class="btn btn-link btn-sm mt-2" t-out="login_theme_data.get('signup_link_text') or &quot;Don't have an account?&quot;"/>
+                                <a t-if="login_theme_data.get('show_reset_password_link')" href="#" class="btn btn-link btn-sm" t-out="login_theme_data.get('reset_password_link_text') or 'Reset Password'"/>
+                            </div>
+                        </form>
+                        <div t-if="login_theme_data.get('show_oauth_providers')" class="o_login_theme_oauth">
+                            <em class="d-block my-3 small text-center text-muted o_login_theme_oauth_divider">- or -</em>
+                            <button type="button" class="btn btn-outline-secondary w-100">Continue with SSO</button>
+                        </div>
+                        <div t-if="login_theme_data.get('show_footer')" class="o_login_theme_footer text-center small mt-4 pt-3 border-top">
+                            <div t-if="login_theme_data.get('footer_text')" class="o_login_theme_footer_text" t-out="login_theme_data.get('footer_text')"/>
+                            <div t-if="login_theme_data.get('show_support_details')" class="o_login_theme_support">
+                                <a t-if="login_theme_data.get('support_email')" t-att-href="'mailto:%s' % login_theme_data.get('support_email')" t-out="login_theme_data.get('support_email')"/>
+                                <span t-if="login_theme_data.get('support_phone')" t-out="login_theme_data.get('support_phone')"/>
+                                <a t-if="login_theme_data.get('support_url')" t-att-href="login_theme_data.get('support_url')" target="_blank">Support</a>
+                            </div>
+                            <div class="o_login_theme_legal">
+                                <a t-if="login_theme_data.get('show_privacy_link') and login_theme_data.get('privacy_url')" t-att-href="login_theme_data.get('privacy_url')" target="_blank">Privacy</a>
+                                <a t-if="login_theme_data.get('show_terms_link') and login_theme_data.get('terms_url')" t-att-href="login_theme_data.get('terms_url')" target="_blank">Terms</a>
+                                <a t-if="login_theme_data.get('show_help_link') and login_theme_data.get('help_url')" t-att-href="login_theme_data.get('help_url')" target="_blank">Help</a>
+                            </div>
+                            <div t-if="login_theme_data.get('show_copyright') and login_theme_data.get('copyright_text')" class="o_login_theme_copyright" t-out="login_theme_data.get('copyright_text')"/>
+                            <a t-if="login_theme_data.get('show_powered_by') and login_theme_data.get('powered_by_url')" t-att-href="login_theme_data.get('powered_by_url')" target="_blank" t-out="login_theme_data.get('powered_by_text') or 'Powered by Atliis'"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

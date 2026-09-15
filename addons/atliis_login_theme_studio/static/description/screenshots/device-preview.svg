@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-label="Device preview">
+  <rect width="1200" height="720" fill="#f5f7fb"/>
+  <text x="60" y="76" fill="#111827" font-family="Arial, sans-serif" font-size="28" font-weight="700">Device Preview</text>
+  <rect x="60" y="112" width="650" height="360" rx="8" fill="#e5e7eb"/>
+  <rect x="86" y="138" width="598" height="308" rx="6" fill="#ffffff"/>
+  <rect x="292" y="174" width="190" height="232" rx="8" fill="#ffffff" stroke="#d1d5db"/>
+  <circle cx="387" cy="216" r="26" fill="#017e84"/>
+  <rect x="326" y="270" width="122" height="24" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+  <rect x="326" y="312" width="122" height="24" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+  <rect x="326" y="356" width="122" height="28" rx="4" fill="#714b67"/>
+  <rect x="760" y="112" width="250" height="360" rx="16" fill="#111827"/>
+  <rect x="776" y="132" width="218" height="320" rx="10" fill="#ffffff"/>
+  <circle cx="885" cy="176" r="22" fill="#017e84"/>
+  <rect x="826" y="232" width="118" height="22" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+  <rect x="826" y="272" width="118" height="22" rx="4" fill="#f3f4f6" stroke="#d1d5db"/>
+  <rect x="826" y="314" width="118" height="28" rx="4" fill="#714b67"/>
+  <rect x="1040" y="162" width="92" height="250" rx="14" fill="#111827"/>
+  <rect x="1048" y="178" width="76" height="218" rx="8" fill="#ffffff"/>
+  <circle cx="1086" cy="212" r="14" fill="#017e84"/>
+  <rect x="1062" y="254" width="48" height="16" rx="3" fill="#f3f4f6" stroke="#d1d5db"/>
+  <rect x="1062" y="284" width="48" height="16" rx="3" fill="#f3f4f6" stroke="#d1d5db"/>
+  <rect x="1062" y="320" width="48" height="20" rx="3" fill="#714b67"/>
+  <rect x="60" y="528" width="1072" height="74" rx="8" fill="#ffffff" stroke="#e5e7eb"/>
+  <text x="92" y="572" fill="#374151" font-family="Arial, sans-serif" font-size="20">Preview draft login themes across desktop, tablet and mobile before publishing.</text>
+</svg>

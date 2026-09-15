@@ -1,0 +1,567 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Theme Studio for Odoo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+</head>
+
+<body>
+  <div id="loempia_tabs" class="container py-3">
+    <div class="row justify-content-between align-items-center border-bottom py-2 mx-0">
+      <div class="col-auto text-center mb-3 mb-lg-0">
+        <img src="Atliis-360.svg" alt="Atliis logo" class="img-fluid" style="height: 40px;" />
+      </div>
+      <div class="col-auto mt-md-0 mt-4 mb-3 mb-lg-0">
+        <span class="btn btn-sm mb-2 mb-lg-0 p-2"
+          style="font-size: 14px; font-weight: 600; background-color: #714b67; color: #fff;">
+          <i class="fa fa-check"></i> Community
+        </span>
+        <span class="btn btn-sm mb-2 mb-lg-0 p-2"
+          style="font-size: 14px; font-weight: 600; background-color: #714b67; color: #fff;">
+          <i class="fa fa-check"></i> Enterprise
+        </span>
+      </div>
+    </div>
+
+    <div class="text-light rounded mt-3" style="background-color: #714b67;">
+      <div style="padding: 2.5rem;">
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          <span class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill"
+            style="background-color: #85647c; border: 1px solid #9a7b91; color: #ffffff; font-size: 13px; font-weight: 600;"><i
+              class="fa fa-paint-brush"></i> Login Branding</span>
+          <span class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill"
+            style="background-color: #85647c; border: 1px solid #9a7b91; color: #ffffff; font-size: 13px; font-weight: 600;"><i
+              class="fa fa-desktop"></i> Device Preview</span>
+          <span class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill"
+            style="background-color: #85647c; border: 1px solid #9a7b91; color: #ffffff; font-size: 13px; font-weight: 600;"><i
+              class="fa fa-image"></i> Background Control</span>
+          <span class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill"
+            style="background-color: #85647c; border: 1px solid #9a7b91; color: #ffffff; font-size: 13px; font-weight: 600;"><i
+              class="fa fa-globe"></i> Website Settings</span>
+        </div>
+        <h1 class="mb-3"
+          style="max-width: 900px; font-size: 36px; line-height: 1.15; font-weight: 800; letter-spacing: 0; color: #ffffff;">
+          Brand Odoo login, signup, and reset pages without replacing authentication.
+        </h1>
+        <p class="mb-4" style="max-width: 790px; color: #ffffff; font-size: 1rem;">
+          Login Theme Studio gives administrators a clean Odoo-native editor for logos, colours, typography, background
+          images, login form text, footer links, announcements, and live previews while preserving Odoo's standard
+          authentication flow.
+        </p>
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          <span class="d-inline-flex align-items-center gap-2 px-3 py-2"
+            style="border-radius: 7px; background-color: #85647c; border: 1px solid #9a7b91; color: #ffffff; font-size: 13px; font-weight: 600;"><i
+              class="fa fa-edit"></i> No-code theme editor</span>
+          <span class="d-inline-flex align-items-center gap-2 px-3 py-2"
+            style="border-radius: 7px; background-color: #85647c; border: 1px solid #9a7b91; color: #ffffff; font-size: 13px; font-weight: 600;"><i
+              class="fa fa-eye"></i> Desktop and tablet preview</span>
+          <span class="d-inline-flex align-items-center gap-2 px-3 py-2"
+            style="border-radius: 7px; background-color: #85647c; border: 1px solid #9a7b91; color: #ffffff; font-size: 13px; font-weight: 600;"><i
+              class="fa fa-tint"></i> Native colour picker</span>
+          <span class="d-inline-flex align-items-center gap-2 px-3 py-2"
+            style="border-radius: 7px; background-color: #85647c; border: 1px solid #9a7b91; color: #ffffff; font-size: 13px; font-weight: 600;"><i
+              class="fa fa-question-circle"></i> Field help on hover</span>
+          <span class="d-inline-flex align-items-center gap-2 px-3 py-2"
+            style="border-radius: 7px; background-color: #85647c; border: 1px solid #9a7b91; color: #ffffff; font-size: 13px; font-weight: 600;"><i
+              class="fa fa-lock"></i> Native fallback when no theme is selected</span>
+        </div>
+        <div class="row g-3 mt-2">
+          <div class="col-md-4">
+            <div class="p-3 h-100"
+              style="border-left: 4px solid #ffffff; background-color: #85647c; border-radius: 8px; border-top: 1px solid #9a7b91; border-right: 1px solid #9a7b91; border-bottom: 1px solid #9a7b91;">
+              <h3 class="mb-1 fw-bold" style="color: #ffffff;">1 editor</h3>
+              <p class="mb-0" style="color: #ffffff;">for branding, colours, layout, form text, background, and footer links.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-3 h-100"
+              style="border-left: 4px solid #ffffff; background-color: #85647c; border-radius: 8px; border-top: 1px solid #9a7b91; border-right: 1px solid #9a7b91; border-bottom: 1px solid #9a7b91;">
+              <h3 class="mb-1 fw-bold" style="color: #ffffff;">Live preview</h3>
+              <p class="mb-0" style="color: #ffffff;">review draft changes in framed desktop and tablet views before publishing.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-3 h-100"
+              style="border-left: 4px solid #ffffff; background-color: #85647c; border-radius: 8px; border-top: 1px solid #9a7b91; border-right: 1px solid #9a7b91; border-bottom: 1px solid #9a7b91;">
+              <h3 class="mb-1 fw-bold" style="color: #ffffff;">Per website</h3>
+              <p class="mb-0" style="color: #ffffff;">assign the active login theme directly from Website settings.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-12">
+        <ul class="nav nav-tabs">
+          <li class="nav-item"><a class="nav-link active" href="#overview"
+              style="color: #111827; font-weight: 700;">Overview</a></li>
+          <li class="nav-item"><a class="nav-link" href="#features"
+              style="color: #714b67; font-weight: 700;">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="#screenshots"
+              style="color: #714b67; font-weight: 700;">Screenshots</a></li>
+          <li class="nav-item"><a class="nav-link" href="#documentation"
+              style="color: #714b67; font-weight: 700;">How to Use</a></li>
+          <li class="nav-item"><a class="nav-link" href="#faq" style="color: #714b67; font-weight: 700;">FAQ</a></li>
+          <li class="nav-item"><a class="nav-link" href="#support"
+              style="color: #714b67; font-weight: 700;">Support</a></li>
+          <li class="nav-item"><a class="nav-link" href="#changelog"
+              style="color: #714b67; font-weight: 700;">Change Log</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <section id="overview" class="py-5">
+      <div class="text-center mb-4">
+        <div style="color: #714b67; font-weight: 700; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px;">
+          Why buyers choose it
+        </div>
+        <h2 class="mt-2"
+          style="color: #111827; font-size: 2rem; line-height: 1.2; font-weight: 800; letter-spacing: 0;">
+          A polished login experience managed from Odoo
+        </h2>
+        <p class="mx-auto mb-0" style="max-width: 780px; color: #52616b;">
+          The login page is often the first screen employees, customers, vendors, and portal users see. This module lets
+          you align that screen with your brand without custom controller work or fragile template overrides.
+        </p>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6 col-lg-3">
+          <div class="p-4 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <span class="d-inline-flex align-items-center justify-content-center"
+              style="width: 42px; height: 42px; border-radius: 8px; background: #714b67; color: #ffffff; font-size: 18px;"><i
+                class="fa fa-magic"></i></span>
+            <h5 class="fw-bold mt-3" style="color: #714b67;">No-code control</h5>
+            <p class="mb-0" style="color: #52616b;">Manage brand text, logo, favicon, colours, typography, form labels,
+              footer links, and announcements from standard Odoo forms.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="p-4 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <span class="d-inline-flex align-items-center justify-content-center"
+              style="width: 42px; height: 42px; border-radius: 8px; background: #0f766e; color: #ffffff; font-size: 18px;"><i
+                class="fa fa-image"></i></span>
+            <h5 class="fw-bold mt-3" style="color: #714b67;">Real background support</h5>
+            <p class="mb-0" style="color: #52616b;">Use solid colours, gradients, animated gradients, uploaded images,
+              or external image URLs with cover, repeat, overlay, blur, brightness, and saturation controls.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="p-4 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <span class="d-inline-flex align-items-center justify-content-center"
+              style="width: 42px; height: 42px; border-radius: 8px; background: #b45309; color: #ffffff; font-size: 18px;"><i
+                class="fa fa-desktop"></i></span>
+            <h5 class="fw-bold mt-3" style="color: #714b67;">Preview before publish</h5>
+            <p class="mb-0" style="color: #52616b;">Open a dedicated preview page to inspect the login card across
+              desktop and tablet dimensions before applying the theme to the public login page.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="p-4 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <span class="d-inline-flex align-items-center justify-content-center"
+              style="width: 42px; height: 42px; border-radius: 8px; background: #714b67; color: #ffffff; font-size: 18px;"><i
+                class="fa fa-lock"></i></span>
+            <h5 class="fw-bold mt-3" style="color: #714b67;">Authentication stays native</h5>
+            <p class="mb-0" style="color: #52616b;">The module styles Odoo's login, signup, and reset templates. It does
+              not replace Odoo's authentication controllers or password handling.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="p-4 p-lg-5 mb-5" style="border: 1px solid #e5e7eb; border-radius: 10px; background: #f6f8fb;">
+      <div class="row g-4 align-items-center">
+        <div class="col-lg-5">
+          <div style="color: #714b67; font-weight: 700; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px;">
+            Built for admins
+          </div>
+          <h2 class="mt-2"
+            style="color: #111827; font-size: 2rem; line-height: 1.2; font-weight: 800; letter-spacing: 0;">
+            A focused theme editor without unnecessary import or export workflows
+          </h2>
+          <p style="color: #52616b;">
+            Login Theme Studio keeps the daily workflow simple: create a theme, adjust the visible tabs, preview it,
+            publish it, and assign it to the selected website. Advanced resolver fields stay internal so normal users
+            see only the controls they need.
+          </p>
+          <ul style="margin: 0; padding-left: 1.15rem; color: #52616b; line-height: 1.8;">
+            <li><strong style="color: #111827;">Branding:</strong> company name, page title, heading, subheading, and welcome text.</li>
+            <li><strong style="color: #111827;">Visual design:</strong> logo, layout, colours, typography, card, and background settings.</li>
+            <li><strong style="color: #111827;">Authentication text:</strong> field labels, placeholders, button text, and link labels.</li>
+            <li><strong style="color: #111827;">Footer:</strong> support details, privacy, terms, help, copyright, and powered-by links.</li>
+          </ul>
+        </div>
+        <div class="col-lg-7">
+          <div
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; padding: 10px; box-shadow: 0 10px 24px rgba(17,24,39,.08);">
+            <img src="screenshots/theme-editor.svg" alt="Login Theme Studio editor"
+              style="width: 100%; height: auto; display: block; border-radius: 6px;" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features" class="mb-5">
+      <div class="text-center mb-4">
+        <div style="color: #714b67; font-weight: 700; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px;">
+          Feature set
+        </div>
+        <h2 class="mt-2"
+          style="color: #111827; font-size: 2rem; line-height: 1.2; font-weight: 800; letter-spacing: 0;">
+          Everything included
+        </h2>
+        <p class="mx-auto mb-0" style="max-width: 760px; color: #52616b;">
+          The module focuses on production-ready login branding: clear settings, safe rendering, preview, and direct
+          control over the public authentication pages.
+        </p>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6 col-lg-4">
+          <div class="p-4 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <h5 class="fw-bold" style="color: #714b67;"><i class="fa fa-paint-brush me-2"></i>Branding tab</h5>
+            <p class="mb-0" style="color: #52616b;">Set company name, browser title, heading, subheading, welcome
+              message, and visibility toggles for company and footer content.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="p-4 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <h5 class="fw-bold" style="color: #714b67;"><i class="fa fa-picture-o me-2"></i>Logo and favicon</h5>
+            <p class="mb-0" style="color: #52616b;">Upload a logo and favicon or use external URLs. Control logo width,
+              height, and alignment directly from the form.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="p-4 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <h5 class="fw-bold" style="color: #714b67;"><i class="fa fa-columns me-2"></i>Layout and card styling</h5>
+            <p class="mb-0" style="color: #52616b;">Choose the page layout, form width, alignment, padding, card radius,
+              border, shadow, opacity, and blur.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="p-4 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <h5 class="fw-bold" style="color: #714b67;"><i class="fa fa-tint me-2"></i>Colour selector</h5>
+            <p class="mb-0" style="color: #52616b;">Use a native colour picker for hex colours while still supporting
+              typed CSS colour values such as rgba for overlays.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="p-4 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <h5 class="fw-bold" style="color: #714b67;"><i class="fa fa-font me-2"></i>Typography controls</h5>
+            <p class="mb-0" style="color: #52616b;">Select common font families and configure heading, body, and button
+              font sizing for a consistent login experience.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="p-4 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <h5 class="fw-bold" style="color: #714b67;"><i class="fa fa-image me-2"></i>Background image rendering</h5>
+            <p class="mb-0" style="color: #52616b;">Uploaded background images are served through a public theme-safe
+              route and rendered on both preview and live login pages.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="p-4 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <h5 class="fw-bold" style="color: #714b67;"><i class="fa fa-keyboard-o me-2"></i>Form labels and options</h5>
+            <p class="mb-0" style="color: #52616b;">Edit username and password labels, placeholders, login button text,
+              sign-up text, reset text, password toggle, OAuth visibility, and autofocus behavior.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="p-4 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <h5 class="fw-bold" style="color: #714b67;"><i class="fa fa-link me-2"></i>Footer and legal links</h5>
+            <p class="mb-0" style="color: #52616b;">Show support email, phone, support URL, privacy, terms, help,
+              copyright, and powered-by links below the login form.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="p-4 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <h5 class="fw-bold" style="color: #714b67;"><i class="fa fa-info-circle me-2"></i>Announcements</h5>
+            <p class="mb-0" style="color: #52616b;">Display a formatted information, success, warning, maintenance, or
+              security message above the login fields.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="p-4 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <h5 class="fw-bold" style="color: #714b67;"><i class="fa fa-question-circle me-2"></i>Field help on hover</h5>
+            <p class="mb-0" style="color: #52616b;">Every visible theme field includes help text so administrators can
+              understand each option without leaving the form.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="p-4 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <h5 class="fw-bold" style="color: #714b67;"><i class="fa fa-toggle-on me-2"></i>Website theme setting</h5>
+            <p class="mb-0" style="color: #52616b;">Choose the login theme from Website settings for each website. Leave
+              the field empty to use Odoo's native login page.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="p-4 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <h5 class="fw-bold" style="color: #714b67;"><i class="fa fa-shield me-2"></i>Safe public payload</h5>
+            <p class="mb-0" style="color: #52616b;">Only safe theme values are exposed to public authentication pages,
+              with URL validation and native login fallback on rendering errors.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screenshots" class="mb-5">
+      <div class="text-center mb-4">
+        <div style="color: #714b67; font-weight: 700; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px;">
+          Screenshots
+        </div>
+        <h2 class="mt-2"
+          style="color: #111827; font-size: 2rem; line-height: 1.2; font-weight: 800; letter-spacing: 0;">
+          Theme editor and preview
+        </h2>
+      </div>
+      <div class="row g-3">
+        <div class="col-lg-6">
+          <div class="p-2 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <img src="screenshots/theme-editor.svg" alt="Login Theme Studio theme editor"
+              style="width: 100%; height: auto; display: block; border-radius: 6px;" />
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="p-2 h-100"
+            style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 8px 20px rgba(17,24,39,.06);">
+            <img src="screenshots/device-preview.svg" alt="Login Theme Studio device preview"
+              style="width: 100%; height: auto; display: block; border-radius: 6px;" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="documentation" class="mb-5">
+      <div class="text-center mb-4">
+        <div style="color: #714b67; font-weight: 700; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px;">
+          How to use
+        </div>
+        <h2 class="mt-2"
+          style="color: #111827; font-size: 2rem; line-height: 1.2; font-weight: 800; letter-spacing: 0;">
+          Publish a branded login page in minutes
+        </h2>
+      </div>
+      <div class="row g-3">
+        <div class="col-md-6 col-lg-3">
+          <div class="p-4 h-100"
+            style="border-left: 4px solid #714b67; border-radius: 8px; background: #f6f8fb;">
+            <h5 class="fw-bold" style="color: #111827;">1. Create theme</h5>
+            <p class="mb-0" style="color: #52616b;">Open Website &gt; Configuration &gt; Settings and use the Login Theme
+              section to create or select a website login theme.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="p-4 h-100"
+            style="border-left: 4px solid #0f766e; border-radius: 8px; background: #f6f8fb;">
+            <h5 class="fw-bold" style="color: #111827;">2. Configure tabs</h5>
+            <p class="mb-0" style="color: #52616b;">Set branding, logo, layout, colours, typography, background, form,
+              footer, and announcement options.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="p-4 h-100"
+            style="border-left: 4px solid #b45309; border-radius: 8px; background: #f6f8fb;">
+            <h5 class="fw-bold" style="color: #111827;">3. Preview</h5>
+            <p class="mb-0" style="color: #52616b;">Use the Preview button to review draft changes before users see them.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="p-4 h-100"
+            style="border-left: 4px solid #714b67; border-radius: 8px; background: #f6f8fb;">
+            <h5 class="fw-bold" style="color: #111827;">4. Publish</h5>
+            <p class="mb-0" style="color: #52616b;">Publish the theme and select it in the Website Login Theme setting for
+              the target website.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="mb-5">
+      <div class="text-center mb-4">
+        <div style="color: #714b67; font-weight: 700; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px;">
+          FAQ
+        </div>
+        <h2 class="mt-2"
+          style="color: #111827; font-size: 2rem; line-height: 1.2; font-weight: 800; letter-spacing: 0;">
+          Common questions
+        </h2>
+      </div>
+      <div class="p-4 mb-3"
+        style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 4px 12px rgba(17,24,39,.05);">
+        <h5 class="fw-bold mb-2"><i class="fa fa-question-circle me-2" style="color: #714b67;"></i>Does this replace Odoo authentication?</h5>
+        <p class="mb-0" style="color: #52616b;">No. It styles Odoo's existing authentication templates and keeps the
+          native login, signup, reset password, OAuth, and security behavior intact.</p>
+      </div>
+      <div class="p-4 mb-3"
+        style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 4px 12px rgba(17,24,39,.05);">
+        <h5 class="fw-bold mb-2"><i class="fa fa-question-circle me-2" style="color: #714b67;"></i>Where does the background image appear?</h5>
+        <p class="mb-0" style="color: #52616b;">The background image appears behind the login card on the preview frame
+          and on the live Odoo login page after the theme is published and selected for the current website.</p>
+      </div>
+      <div class="p-4 mb-3"
+        style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 4px 12px rgba(17,24,39,.05);">
+        <h5 class="fw-bold mb-2"><i class="fa fa-question-circle me-2" style="color: #714b67;"></i>Can I temporarily disable the custom login page?</h5>
+        <p class="mb-0" style="color: #52616b;">Yes. Leave the Website Login Theme field empty for that website to render
+          Odoo's native authentication pages without uninstalling the module.</p>
+      </div>
+      <div class="p-4"
+        style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 4px 12px rgba(17,24,39,.05);">
+        <h5 class="fw-bold mb-2"><i class="fa fa-question-circle me-2" style="color: #714b67;"></i>Do I get support?</h5>
+        <p class="mb-0" style="color: #52616b;">Yes. Atliis provides support for this module. Contact <a
+            href="mailto:helpdesk@atliis.com" style="color: #714b67; font-weight: 700;">helpdesk@atliis.com</a>.</p>
+      </div>
+    </section>
+
+    <section id="changelog" class="mb-5">
+      <div class="text-center mb-4">
+        <div style="color: #714b67; font-weight: 700; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px;">
+          Release history
+        </div>
+        <h2 class="mt-2"
+          style="color: #111827; font-size: 2rem; line-height: 1.2; font-weight: 800; letter-spacing: 0;">Change Log</h2>
+      </div>
+      <div class="mb-4">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <span class="px-3 py-1 fw-bold"
+            style="background: #714b67; color: #ffffff; border-radius: 6px; font-size: 14px; white-space: nowrap;">v19.0.1.0.0</span>
+          <span style="color: #52616b; font-size: 14px;">July 2026</span>
+          <span class="px-2 py-1 fw-bold"
+            style="background: #dcfce7; color: #15803d; border-radius: 4px; font-size: 12px;">Latest</span>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="p-4 h-100"
+              style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 4px 12px rgba(17,24,39,.05); border-left: 4px solid #714b67;">
+              <h6 class="fw-bold mb-2" style="color: #714b67;"><i class="fa fa-plus-circle me-2"></i>New</h6>
+              <ul class="mb-0" style="padding-left: 1.1rem; color: #52616b; line-height: 1.8; font-size: 14px;">
+                <li>Initial Login Theme Studio release for Odoo 19</li>
+                <li>No-code editor for branding, logo, layout, colours, typography, background, form, footer, and announcements</li>
+                <li>Preview shell with desktop and tablet frames</li>
+                <li>Website settings integration for selecting the active login theme per website</li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-4 h-100"
+              style="border: 1px solid #e5e7eb; border-radius: 8px; background: #ffffff; box-shadow: 0 4px 12px rgba(17,24,39,.05); border-left: 4px solid #0f766e;">
+              <h6 class="fw-bold mb-2" style="color: #0f766e;"><i class="fa fa-arrow-up me-2"></i>Current refinements</h6>
+              <ul class="mb-0" style="padding-left: 1.1rem; color: #52616b; line-height: 1.8; font-size: 14px;">
+                <li>Simplified Themes list and form views</li>
+                <li>Removed unnecessary import, export, duplicate, and preset workflows from the user interface</li>
+                <li>Added native colour selector support and hover help for visible fields</li>
+                <li>Improved uploaded background image and logo rendering on preview and live login pages</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-5">
+      <div class="text-center mb-4">
+        <div style="color: #714b67; font-weight: 700; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px;">
+          More from Atliis 360
+        </div>
+        <h2 style="font-weight: 800; color: #111827; letter-spacing: 0">
+          Other modules you might like
+        </h2>
+      </div>
+      <div class="row g-3">
+        <div class="col-12 col-md-6 col-lg-3">
+          <a href="https://apps.odoo.com/apps/modules/19.0/atliis_media_library" target="_blank"
+            style="display: block; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px #e8eaed;">
+            <img src="img/apps/atliis_media_library_banner.jpg" alt="Atliis Media Library"
+              style="width: 100%; display: block;" />
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <a href="https://apps.odoo.com/apps/modules/19.0/atliis_attribute_filter" target="_blank"
+            style="display: block; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px #e8eaed;">
+            <img src="img/apps/atliis_attribute_filter_banner.jpg" alt="Product Attribute Filter"
+              style="width: 100%; display: block;" />
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <a href="https://apps.odoo.com/apps/modules/19.0/atliis_odoo_microsoft_sync" target="_blank"
+            style="display: block; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px #e8eaed;">
+            <img src="img/apps/atliis_odoo_microsoft_sync_banner.jpg" alt="Microsoft 365 Contacts Sync"
+              style="width: 100%; display: block;" />
+          </a>
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+          <a href="https://apps.odoo.com/apps/modules/19.0/atliis_rest_api" target="_blank"
+            style="display: block; border: 1px solid #e5e7eb; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px #e8eaed;">
+            <img src="img/apps/atliis_rest_api_banner.jpg" alt="REST API Toolkit"
+              style="width: 100%; display: block;" />
+          </a>
+        </div>
+        </div>
+    </section>
+
+    <section id="support" class="mb-4">
+      <div class="text-center mb-4">
+        <div style="color: #714b67; font-weight: 700; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 1px;">
+          Support
+        </div>
+        <h2 style="font-weight: 800; color: #111827; letter-spacing: 0">
+          Get in touch with us
+        </h2>
+      </div>
+      <div class="row g-0 rounded text-center pt-5 px-5" style="background-color: #f3f4f6; color: #111827">
+        <div class="col-6 col-lg-3 pb-5">
+          <a href="mailto:helpdesk@atliis.com" style="text-decoration: none; color: #111827">
+            <i class="fa fa-envelope" style="font-size: 64px; color: #714b67"></i>
+            <h5 class="mb-0 mt-3 fw-bold">Email</h5>
+            <p style="font-size: 14px; color: #52616b">helpdesk@atliis.com</p>
+          </a>
+        </div>
+        <div class="col-6 col-lg-3 pb-5">
+          <a href="https://www.atliis.com" target="_blank" style="text-decoration: none; color: #111827">
+            <i class="fa fa-globe" style="font-size: 64px; color: #714b67"></i>
+            <h5 class="mb-0 mt-3 fw-bold">Website</h5>
+            <p style="font-size: 14px; color: #52616b">atliis.com</p>
+          </a>
+        </div>
+        <div class="col-6 col-lg-3 pb-5">
+          <a href="https://demov19.atliis.com/web/login?utm_source=odoo_apps&utm_medium=live_preview&utm_campaign=atliis_login_theme_studio" target="_blank" style="text-decoration: none; color: #111827">
+            <i class="fa fa-desktop" style="font-size: 64px; color: #714b67"></i>
+            <h5 class="mb-0 mt-3 fw-bold">Live Demo</h5>
+            <p style="font-size: 14px; color: #52616b">demov19.atliis.com</p>
+          </a>
+        </div>
+        <div class="col-6 col-lg-3 pb-5">
+          <a href="https://apps.odoo.com/apps/modules/browse?author=Atliis" target="_blank"
+            style="text-decoration: none; color: #111827">
+            <i class="fa fa-th-large" style="font-size: 64px; color: #714b67"></i>
+            <h5 class="mb-0 mt-3 fw-bold">All Apps</h5>
+            <p style="font-size: 14px; color: #52616b">Browse our Odoo apps</p>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+
+</html>

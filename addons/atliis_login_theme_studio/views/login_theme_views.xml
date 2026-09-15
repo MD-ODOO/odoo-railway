@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_login_theme_list" model="ir.ui.view">
+        <field name="name">login.theme.list</field>
+        <field name="model">login.theme</field>
+        <field name="arch" type="xml">
+            <list import="0" export_xlsx="0">
+                <field name="name"/>
+                <field name="published"/>
+                <field name="layout"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_login_theme_search" model="ir.ui.view">
+        <field name="name">login.theme.search</field>
+        <field name="model">login.theme</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter name="published" string="Published" domain="[('published', '=', True)]"/>
+                <filter name="draft" string="Draft" domain="[('published', '=', False)]"/>
+                <group name="group_by">
+                    <filter name="group_layout" string="Layout" domain="[]" context="{'group_by': 'layout'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_login_theme_form" model="ir.ui.view">
+        <field name="name">login.theme.form</field>
+        <field name="model">login.theme</field>
+        <field name="arch" type="xml">
+            <form duplicate="0">
+                <header>
+                    <button name="action_open_preview" type="object" string="Preview" class="btn-secondary"/>
+                    <button name="action_publish" type="object" string="Publish" class="btn-primary" invisible="published"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft" invisible="not published"/>
+                    <field name="published" widget="boolean_toggle"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Corporate Login Theme"/></h1>
+                    </div>
+                    <notebook>
+                        <page string="Branding">
+                            <group>
+                                <group string="Text">
+                                    <field name="company_name"/>
+                                    <field name="page_title"/>
+                                    <field name="heading"/>
+                                    <field name="subheading"/>
+                                    <field name="welcome_message"/>
+                                </group>
+                                <group string="Visibility">
+                                    <field name="show_company_name"/>
+                                    <field name="show_footer"/>
+                                    <field name="show_copyright"/>
+                                    <field name="show_support_details"/>
+                                    <field name="show_powered_by"/>
+                                    <field name="show_privacy_link"/>
+                                    <field name="show_terms_link"/>
+                                    <field name="show_help_link"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Logo">
+                            <group>
+                                <group>
+                                    <field name="logo_source" widget="radio"/>
+                                    <field name="logo" widget="image" invisible="logo_source != 'upload'"/>
+                                    <field name="favicon" widget="image" invisible="logo_source != 'upload'"/>
+                                    <field name="logo_external_url" invisible="logo_source != 'url'"/>
+                                    <field name="favicon_external_url" invisible="logo_source != 'url'"/>
+                                </group>
+                                <group>
+                                    <field name="logo_width"/>
+                                    <field name="logo_height"/>
+                                    <field name="logo_alignment"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Layout">
+                            <group>
+                                <group>
+                                    <field name="layout"/>
+                                    <field name="form_width"/>
+                                    <field name="form_alignment"/>
+                                    <field name="vertical_alignment"/>
+                                </group>
+                                <group string="Card">
+                                    <field name="card_padding"/>
+                                    <field name="card_border_radius"/>
+                                    <field name="card_border_width"/>
+                                    <field name="card_border_colour"/>
+                                    <field name="card_shadow"/>
+                                    <field name="card_opacity"/>
+                                    <field name="card_blur"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Colours">
+                            <group>
+                                <group>
+                                    <field name="primary_colour" widget="login_theme_color"/>
+                                    <field name="secondary_colour" widget="login_theme_color"/>
+                                    <field name="accent_colour" widget="login_theme_color"/>
+                                    <field name="background_colour" widget="login_theme_color"/>
+                                    <field name="card_colour" widget="login_theme_color"/>
+                                    <field name="heading_colour" widget="login_theme_color"/>
+                                    <field name="text_colour" widget="login_theme_color"/>
+                                    <field name="link_colour" widget="login_theme_color"/>
+                                    <field name="link_hover_colour" widget="login_theme_color"/>
+                                </group>
+                                <group>
+                                    <field name="button_colour" widget="login_theme_color"/>
+                                    <field name="button_hover_colour" widget="login_theme_color"/>
+                                    <field name="button_text_colour" widget="login_theme_color"/>
+                                    <field name="input_background_colour" widget="login_theme_color"/>
+                                    <field name="input_text_colour" widget="login_theme_color"/>
+                                    <field name="input_border_colour" widget="login_theme_color"/>
+                                    <field name="error_colour" widget="login_theme_color"/>
+                                    <field name="success_colour" widget="login_theme_color"/>
+                                    <field name="overlay_colour" widget="login_theme_color"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Typography">
+                            <group>
+                                <field name="font_family"/>
+                                <field name="heading_font_size"/>
+                                <field name="heading_font_weight"/>
+                                <field name="body_font_size"/>
+                                <field name="button_font_size"/>
+                            </group>
+                        </page>
+                        <page string="Background">
+                            <group>
+                                <group>
+                                    <field name="background_type"/>
+                                    <field name="background_colour" widget="login_theme_color" invisible="background_type != 'colour'"/>
+                                    <field name="primary_colour" widget="login_theme_color" invisible="background_type not in ('gradient', 'animated_gradient')"/>
+                                    <field name="secondary_colour" widget="login_theme_color" invisible="background_type not in ('gradient', 'animated_gradient')"/>
+                                    <field name="accent_colour" widget="login_theme_color" invisible="background_type != 'animated_gradient'"/>
+                                    <field name="background_image" widget="image" invisible="background_type != 'image'"/>
+                                    <field name="background_external_url" invisible="background_type != 'image'"/>
+                                </group>
+                                <group>
+                                    <field name="background_position" invisible="background_type == 'colour'"/>
+                                    <field name="background_size" invisible="background_type == 'colour'"/>
+                                    <field name="background_repeat" invisible="background_type == 'colour'"/>
+                                    <field name="overlay_opacity"/>
+                                    <field name="image_blur" invisible="background_type == 'colour'"/>
+                                    <field name="image_brightness" invisible="background_type == 'colour'"/>
+                                    <field name="image_saturation" invisible="background_type == 'colour'"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Form">
+                            <group>
+                                <group string="Labels">
+                                    <field name="username_label"/>
+                                    <field name="username_placeholder"/>
+                                    <field name="password_label"/>
+                                    <field name="password_placeholder"/>
+                                    <field name="login_button_text"/>
+                                    <field name="signup_link_text"/>
+                                    <field name="reset_password_link_text"/>
+                                </group>
+                                <group string="Options">
+                                    <field name="show_password_toggle"/>
+                                    <field name="show_signup_link"/>
+                                    <field name="show_reset_password_link"/>
+                                    <field name="show_oauth_providers"/>
+                                    <field name="show_caps_lock_warning"/>
+                                    <field name="autofocus_username"/>
+                                    <field name="autofocus_password"/>
+                                    <field name="full_width_button"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Footer and Links">
+                            <group>
+                                <group>
+                                    <field name="footer_text"/>
+                                    <field name="copyright_text"/>
+                                    <field name="powered_by_text"/>
+                                    <field name="powered_by_url"/>
+                                </group>
+                                <group>
+                                    <field name="support_email"/>
+                                    <field name="support_phone"/>
+                                    <field name="support_url"/>
+                                    <field name="privacy_url"/>
+                                    <field name="terms_url"/>
+                                    <field name="help_url"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Announcements">
+                            <group>
+                                <group>
+                                    <field name="announcement_type"/>
+                                    <field name="announcement_text"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_login_theme" model="ir.actions.act_window">
+        <field name="name">Themes</field>
+        <field name="res_model">login.theme</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="atliis_login_theme_studio.view_login_theme_search"/>
+        <field name="context">{'search_default_published': 1}</field>
+    </record>
+</odoo>

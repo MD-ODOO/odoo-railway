@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_login_theme_viewer,login.theme.viewer,model_login_theme,atliis_login_theme_studio.group_login_theme_viewer,0,0,0,0
+access_login_theme_manager,login.theme.manager,model_login_theme,atliis_login_theme_studio.group_login_theme_manager,1,1,1,1
+access_login_theme_background_image_viewer,login.theme.background.image.viewer,model_login_theme_background_image,atliis_login_theme_studio.group_login_theme_viewer,0,0,0,0
+access_login_theme_background_image_manager,login.theme.background.image.manager,model_login_theme_background_image,atliis_login_theme_studio.group_login_theme_manager,1,1,1,1

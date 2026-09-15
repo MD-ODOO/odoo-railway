@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="atliis_login_theme_studio.LoginThemeColorField">
+        <t t-if="props.readonly">
+            <span class="d-inline-flex align-items-center gap-2">
+                <span
+                    t-if="value"
+                    class="o_login_theme_colour_swatch"
+                    t-att-style="'background-color: %s;' % value"/>
+                <span t-esc="value"/>
+            </span>
+        </t>
+        <t t-else="">
+            <div class="o_login_theme_colour_field d-flex align-items-center gap-2">
+                <input
+                    class="o_input flex-grow-1"
+                    t-att-id="props.id"
+                    type="text"
+                    t-att-placeholder="props.placeholder or '#714B67'"
+                    t-ref="input"/>
+                <input
+                    class="o_login_theme_colour_picker"
+                    type="color"
+                    t-att-value="pickerValue"
+                    t-att-disabled="!canUsePicker"
+                    t-on-input="onPickerInput"/>
+            </div>
+        </t>
+    </t>
+</templates>

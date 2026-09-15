@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="login_theme_login_layout" inherit_id="web.login_layout" name="Login Theme Studio Layout">
+        <xpath expr="//t[@t-call='web.frontend_layout']/t[@t-set='body_classname']" position="replace">
+            <t t-set="login_theme_data" t-value="request.env['login.theme'].sudo().with_context(login_theme_request=request.httprequest)._get_public_theme_values()"/>
+            <t t-set="body_classname" t-value="'bg-100' + (' o_login_theme_body o_login_theme_active o_login_layout_%s %s' % (login_theme_data.get('layout'), login_theme_data.get('website_chrome_class') or '') if login_theme_data else '')"/>
+        </xpath>
+        <xpath expr="//t[@t-call='web.frontend_layout']/t[@t-set='no_footer']" position="after">
+            <t t-if="login_theme_data and login_theme_data.get('page_title')" t-set="title" t-value="login_theme_data.get('page_title')"/>
+            <t t-if="login_theme_data and login_theme_data.get('favicon_url')" t-set="x_icon" t-value="login_theme_data.get('favicon_url')"/>
+            <t t-if="login_theme_data" t-set="head">
+                <t t-out="head or ''"/>
+                <style id="atliis-login-theme-vars">
+                    .o_login_theme_active { <t t-out="login_theme_data.get('inline_style')"/>; }
+                </style>
+            </t>
+        </xpath>
+        <xpath expr="//div[hasclass('container')]" position="attributes">
+            <attribute name="t-attf-class">container py-5 o_login_theme_page #{login_theme_data and 'o_login_theme_configured' or ''}</attribute>
+        </xpath>
+        <xpath expr="//div[contains(@t-attf-class, 'card border-0')]" position="attributes">
+            <attribute name="t-attf-class">card border-0 mx-auto bg-100 {{login_card_classes}} o_database_list #{login_theme_data and 'o_login_theme_card' or ''}</attribute>
+            <attribute name="t-att-style">login_theme_data and 'max-width: var(--login-form-width);' or 'max-width: 300px;'</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('card-body')]" position="attributes">
+            <attribute name="t-attf-class">card-body #{login_theme_data and 'o_login_theme_card_body' or ''}</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('card-body')]/div[hasclass('text-center')][1]" position="replace">
+            <div t-if="login_theme_data" t-attf-class="o_login_theme_header o_login_theme_header_align_#{login_theme_data.get('logo_alignment')} text-center pb-3 border-bottom mb-4">
+                <img t-if="login_theme_data.get('logo_url')" t-att-src="login_theme_data.get('logo_url')" alt="Logo" class="o_login_theme_logo"/>
+                <div t-if="login_theme_data.get('show_company_name') and login_theme_data.get('company_name')" class="o_login_theme_company" t-out="login_theme_data.get('company_name')"/>
+                <h1 t-if="login_theme_data.get('heading')" class="o_login_theme_heading" t-out="login_theme_data.get('heading')"/>
+                <p t-if="login_theme_data.get('subheading')" class="o_login_theme_subheading" t-out="login_theme_data.get('subheading')"/>
+                <div t-if="login_theme_data.get('welcome_message')" class="o_login_theme_welcome" t-out="login_theme_data.get('welcome_message')"/>
+                <div t-if="login_theme_data.get('announcement_text')" t-attf-class="o_login_theme_announcement o_login_theme_announcement_#{login_theme_data.get('announcement_type')}" t-out="login_theme_data.get('announcement_text')"/>
+            </div>
+            <div t-else="" class="text-center pb-3 border-bottom mb-4">
+                <img t-attf-src="/web/binary/company_logo{{ '?dbname='+db if db else '' }}" alt="Logo" style="max-height:120px; max-width: 100%; width:auto"/>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('border-top') and @t-if='not disable_footer']" position="replace">
+            <div t-if="login_theme_data and login_theme_data.get('show_footer')" class="o_login_theme_footer text-center small mt-4 pt-3 border-top">
+                <div t-if="login_theme_data.get('footer_text')" class="o_login_theme_footer_text" t-out="login_theme_data.get('footer_text')"/>
+                <div t-if="login_theme_data.get('show_support_details')" class="o_login_theme_support">
+                    <a t-if="login_theme_data.get('support_email')" t-att-href="'mailto:%s' % login_theme_data.get('support_email')" t-out="login_theme_data.get('support_email')"/>
+                    <span t-if="login_theme_data.get('support_phone')" t-out="login_theme_data.get('support_phone')"/>
+                    <a t-if="login_theme_data.get('support_url')" t-att-href="login_theme_data.get('support_url')" target="_blank">Support</a>
+                </div>
+                <div class="o_login_theme_legal">
+                    <a t-if="login_theme_data.get('show_privacy_link') and login_theme_data.get('privacy_url')" t-att-href="login_theme_data.get('privacy_url')" target="_blank">Privacy</a>
+                    <a t-if="login_theme_data.get('show_terms_link') and login_theme_data.get('terms_url')" t-att-href="login_theme_data.get('terms_url')" target="_blank">Terms</a>
+                    <a t-if="login_theme_data.get('show_help_link') and login_theme_data.get('help_url')" t-att-href="login_theme_data.get('help_url')" target="_blank">Help</a>
+                </div>
+                <div t-if="login_theme_data.get('show_copyright') and login_theme_data.get('copyright_text')" class="o_login_theme_copyright" t-out="login_theme_data.get('copyright_text')"/>
+                <a t-if="login_theme_data.get('show_powered_by') and login_theme_data.get('powered_by_url')" t-att-href="login_theme_data.get('powered_by_url')" target="_blank" t-out="login_theme_data.get('powered_by_text') or 'Powered by Atliis'"/>
+            </div>
+            <div t-elif="not login_theme_data and not disable_footer" class="text-center small mt-4 pt-3 border-top">
+                <t t-if="not disable_database_manager">
+                    <a class="border-end pe-2 me-1" href="/web/database/manager">Manage Databases</a>
+                </t>
+                <a href="https://www.odoo.com?utm_source=db&amp;utm_medium=auth" target="_blank">Powered by <span>Odoo</span></a>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="login_theme_website_login_layout" inherit_id="website.login_layout" name="Login Theme Studio Website Layout" priority="30">
+        <xpath expr="//t[@t-call='website.layout']/div[hasclass('oe_website_login_container')]" position="before">
+            <t t-set="login_theme_website" t-value="request.website"/>
+            <t t-if="login_theme_website" t-set="no_header" t-value="not login_theme_website.login_theme_show_website_chrome"/>
+            <t t-if="login_theme_website" t-set="no_footer" t-value="not login_theme_website.login_theme_show_website_chrome"/>
+        </xpath>
+    </template>
+
+    <template id="login_theme_login_form" inherit_id="web.login" name="Login Theme Studio Login Form">
+        <xpath expr="//form[contains(@t-attf-class, 'oe_login_form')]" position="before">
+            <t t-set="login_theme_data" t-value="request.env['login.theme'].sudo().with_context(login_theme_request=request.httprequest)._get_public_theme_values()"/>
+            <style t-if="login_theme_data" id="atliis-login-theme-form-vars">
+                body:has(.oe_login_form.o_login_theme_active),
+                .oe_login_form.o_login_theme_active { <t t-out="login_theme_data.get('inline_style')"/>; }
+                .oe_login_form.o_login_theme_active {
+                    min-height: 0 !important;
+                    height: auto !important;
+                    align-self: center;
+                }
+                body:has(.oe_login_form.o_login_theme_active) {
+                    min-height: 100vh;
+                    background-color: var(--login-background-colour);
+                    font-family: var(--login-font-family);
+                    position: relative;
+                }
+                body:has(.oe_login_form.o_login_theme_active)::before {
+                    content: "";
+                    position: fixed;
+                    inset: 0;
+                    pointer-events: none;
+                    background-color: var(--login-background-colour);
+                    background-image: var(--login-background-image);
+                    background-size: var(--login-background-size);
+                    background-position: var(--login-background-position);
+                    background-repeat: var(--login-background-repeat);
+                    filter: var(--login-background-filter);
+                    transform: scale(1.02);
+                    z-index: 0;
+                    animation: var(--login-background-animation);
+                }
+                body:has(.oe_login_form.o_login_theme_active)::after {
+                    content: "";
+                    position: fixed;
+                    inset: 0;
+                    pointer-events: none;
+                    background-color: var(--login-background-overlay-colour);
+                    opacity: var(--login-background-overlay-opacity);
+                    z-index: 0;
+                }
+                body:has(.oe_login_form.o_login_theme_hide_website_chrome) header#top {
+                    display: none !important;
+                }
+                body:has(.oe_login_form.o_login_theme_hide_website_chrome) #footer,
+                body:has(.oe_login_form.o_login_theme_hide_website_chrome) footer,
+                body:has(.oe_login_form.o_login_theme_hide_website_chrome) .o_footer {
+                    display: none !important;
+                }
+                body:has(.oe_login_form.o_login_theme_active) header#top,
+                body:has(.oe_login_form.o_login_theme_active) #footer,
+                body:has(.oe_login_form.o_login_theme_active) footer,
+                body:has(.oe_login_form.o_login_theme_active) .o_footer {
+                    position: relative;
+                    z-index: 2;
+                }
+                body:has(.oe_login_form.o_login_theme_active) #wrapwrap,
+                body:has(.oe_login_form.o_login_theme_active) main,
+                body:has(.oe_login_form.o_login_theme_active) .oe_website_login_container {
+                    min-height: 100vh;
+                    background: transparent !important;
+                }
+                body:has(.oe_login_form.o_login_theme_active) main,
+                body:has(.oe_login_form.o_login_theme_active) .oe_website_login_container {
+                    display: flex;
+                    align-items: var(--login-form-align);
+                    justify-content: var(--login-form-justify);
+                    position: relative;
+                    z-index: 1;
+                }
+                body:has(.oe_login_form.o_login_theme_active) .oe_structure#oe_structure_login_top,
+                body:has(.oe_login_form.o_login_theme_active) .oe_structure#oe_structure_login_bottom {
+                    display: none;
+                }
+                body:has(.oe_login_form.o_login_theme_active) .oe_login_form.o_login_theme_card {
+                    width: 100%;
+                    margin: 1.5rem auto;
+                    min-height: 0 !important;
+                    height: auto !important;
+                    color: var(--login-text-colour);
+                    background-color: var(--login-card-colour) !important;
+                    border: var(--login-card-border-width) solid var(--login-card-border-colour) !important;
+                    border-radius: var(--login-card-radius);
+                    box-shadow: var(--login-card-shadow);
+                    opacity: var(--login-card-opacity);
+                    overflow: hidden;
+                    padding: 20px;
+                }
+                body:has(.oe_login_form.o_login_theme_active) .o_login_theme_logo {
+                    width: var(--login-logo-width);
+                    height: var(--login-logo-height);
+                    max-height: 72px;
+                    object-fit: contain;
+                }
+                body:has(.oe_login_form.o_login_theme_active) .o_login_theme_header {
+                    padding-bottom: 0.75rem !important;
+                    margin-bottom: 1rem !important;
+                }
+                body:has(.oe_login_form.o_login_theme_active) .o_login_theme_header_align_left {
+                    text-align: left !important;
+                }
+                body:has(.oe_login_form.o_login_theme_active) .o_login_theme_header_align_right {
+                    text-align: right !important;
+                }
+                body:has(.oe_login_form.o_login_theme_active) .o_login_theme_heading {
+                    font-weight: var(--login-heading-font-weight);
+                }
+                body:has(.oe_login_form.o_login_theme_active) a:hover,
+                body:has(.oe_login_form.o_login_theme_active) .btn-link:hover {
+                    color: var(--login-link-hover-colour);
+                }
+                @keyframes o-login-theme-background {
+                    0% { background-position: var(--login-background-position); }
+                    50% { background-position: right bottom; }
+                    100% { background-position: var(--login-background-position); }
+                }
+            </style>
+        </xpath>
+        <xpath expr="//form[contains(@t-attf-class, 'oe_login_form')]" position="attributes">
+            <attribute name="t-attf-class">oe_login_form #{'' if login else 'd-none'} #{login_theme_data and 'o_login_theme_active o_login_theme_card o_login_theme_card_body %s' % (login_theme_data.get('website_chrome_class') or '') or ''}</attribute>
+            <attribute name="t-att-style">login_theme_data and 'max-width: var(--login-form-width);' or None</attribute>
+        </xpath>
+        <xpath expr="//form[contains(@t-attf-class, 'oe_login_form')]/input[@name='csrf_token']" position="after">
+            <div t-if="login_theme_data" t-attf-class="o_login_theme_header o_login_theme_header_align_#{login_theme_data.get('logo_alignment')} text-center pb-3 border-bottom mb-4">
+                <img t-if="login_theme_data.get('logo_url')" t-att-src="login_theme_data.get('logo_url')" alt="Logo" class="o_login_theme_logo"/>
+                <div t-if="login_theme_data.get('show_company_name') and login_theme_data.get('company_name')" class="o_login_theme_company" t-out="login_theme_data.get('company_name')"/>
+                <h1 t-if="login_theme_data.get('heading')" class="o_login_theme_heading" t-out="login_theme_data.get('heading')"/>
+                <p t-if="login_theme_data.get('subheading')" class="o_login_theme_subheading" t-out="login_theme_data.get('subheading')"/>
+                <div t-if="login_theme_data.get('welcome_message')" class="o_login_theme_welcome" t-out="login_theme_data.get('welcome_message')"/>
+                <div t-if="login_theme_data.get('announcement_text')" t-attf-class="o_login_theme_announcement o_login_theme_announcement_#{login_theme_data.get('announcement_type')}" t-out="login_theme_data.get('announcement_text')"/>
+            </div>
+        </xpath>
+        <xpath expr="//input[@name='redirect']" position="after">
+            <div t-if="login_theme_data and 'website' in request.env.registry and login_theme_data.get('show_footer')" class="o_login_theme_footer text-center small mt-4 pt-3 border-top">
+                <div t-if="login_theme_data.get('footer_text')" class="o_login_theme_footer_text" t-out="login_theme_data.get('footer_text')"/>
+                <div t-if="login_theme_data.get('show_support_details')" class="o_login_theme_support">
+                    <a t-if="login_theme_data.get('support_email')" t-att-href="'mailto:%s' % login_theme_data.get('support_email')" t-out="login_theme_data.get('support_email')"/>
+                    <span t-if="login_theme_data.get('support_phone')" t-out="login_theme_data.get('support_phone')"/>
+                    <a t-if="login_theme_data.get('support_url')" t-att-href="login_theme_data.get('support_url')" target="_blank">Support</a>
+                </div>
+                <div class="o_login_theme_legal">
+                    <a t-if="login_theme_data.get('show_privacy_link') and login_theme_data.get('privacy_url')" t-att-href="login_theme_data.get('privacy_url')" target="_blank">Privacy</a>
+                    <a t-if="login_theme_data.get('show_terms_link') and login_theme_data.get('terms_url')" t-att-href="login_theme_data.get('terms_url')" target="_blank">Terms</a>
+                    <a t-if="login_theme_data.get('show_help_link') and login_theme_data.get('help_url')" t-att-href="login_theme_data.get('help_url')" target="_blank">Help</a>
+                </div>
+                <div t-if="login_theme_data.get('show_copyright') and login_theme_data.get('copyright_text')" class="o_login_theme_copyright" t-out="login_theme_data.get('copyright_text')"/>
+                <a t-if="login_theme_data.get('show_powered_by') and login_theme_data.get('powered_by_url')" t-att-href="login_theme_data.get('powered_by_url')" target="_blank" t-out="login_theme_data.get('powered_by_text') or 'Powered by Atliis'"/>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('field-login')]/label[@for='login']" position="replace">
+            <label for="login" class="form-label d-flex justify-content-between">
+                <t t-out="login_theme_data.get('username_label') if login_theme_data else 'Email'"/>
+            </label>
+        </xpath>
+        <xpath expr="//div[hasclass('field-login')]/input[@name='login']" position="attributes">
+            <attribute name="t-att-placeholder">login_theme_data.get('username_placeholder') if login_theme_data else 'Enter your email'</attribute>
+            <attribute name="t-att-autofocus">'autofocus' if login_theme_data and login_theme_data.get('autofocus_username') and not login else None</attribute>
+        </xpath>
+        <xpath expr="//label[@for='password']" position="replace">
+            <label for="password" class="form-label d-flex justify-content-between">
+                <t t-out="login_theme_data.get('password_label') if login_theme_data else 'Password'"/>
+            </label>
+        </xpath>
+        <xpath expr="//input[@name='password']" position="attributes">
+            <attribute name="t-att-placeholder">login_theme_data.get('password_placeholder') if login_theme_data else 'Enter your password'</attribute>
+            <attribute name="t-att-autofocus">'autofocus' if login_theme_data and login_theme_data.get('autofocus_password') else ('autofocus' if login else None)</attribute>
+            <attribute name="aria-describedby">o_login_caps_lock_warning</attribute>
+        </xpath>
+        <xpath expr="//button[hasclass('o_show_password')]" position="attributes">
+            <attribute name="t-if">not login_theme_data or login_theme_data.get('show_password_toggle')</attribute>
+            <attribute name="aria-label">Show password</attribute>
+            <attribute name="title">Show password</attribute>
+            <attribute name="aria-pressed">false</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('o_caps_lock_warning')]" position="after">
+            <div t-if="not login_theme_data or login_theme_data.get('show_caps_lock_warning')" id="o_login_caps_lock_warning" class="o_login_theme_caps_lock visually-hidden" role="status" aria-live="polite">Caps Lock is on</div>
+        </xpath>
+        <xpath expr="//div[hasclass('oe_login_buttons')]/button[@type='submit'][1]" position="replace">
+            <button type="submit" t-attf-class="btn btn-primary #{login_theme_data and login_theme_data.get('full_width_button') and 'w-100' or ''}">
+                <t t-out="login_theme_data.get('login_button_text') if login_theme_data else 'Log in'"/>
+            </button>
+        </xpath>
+        <xpath expr="//t[@t-call='web.login_oauth']" position="replace">
+            <t t-if="not login_theme_data or login_theme_data.get('show_oauth_providers')" t-call="web.login_oauth"/>
+        </xpath>
+    </template>
+
+    <template id="login_theme_signup_reset_links" inherit_id="auth_signup.login" name="Login Theme Studio Signup Reset Links">
+        <xpath expr="//a[contains(@t-attf-href, '/web/signup')]" position="replace">
+            <a t-if="signup_enabled and (not login_theme_data or (login_theme_data.get('show_signup_link') and login_theme_data.get('signup_link_text')))" class="btn btn-link btn-sm mt-2" t-attf-href="/web/signup?{{ keep_query() }}" t-out="login_theme_data.get('signup_link_text') if login_theme_data else &quot;Don't have an account?&quot;"/>
+        </xpath>
+        <xpath expr="//a[contains(@t-attf-href, '/web/reset_password')]" position="replace">
+            <a t-if="reset_password_enabled and (not login_theme_data or (login_theme_data.get('show_reset_password_link') and login_theme_data.get('reset_password_link_text')))" class="btn btn-link btn-sm" tabindex="1" t-attf-href="/web/reset_password?{{ keep_query() }}" t-out="login_theme_data.get('reset_password_link_text') if login_theme_data else 'Reset Password'"/>
+        </xpath>
+    </template>
+
+    <template id="login_theme_signup_form" inherit_id="auth_signup.signup" name="Login Theme Studio Signup Form">
+        <xpath expr="//form[hasclass('oe_signup_form')]" position="before">
+            <t t-set="login_theme_data" t-value="request.env['login.theme'].sudo().with_context(login_theme_request=request.httprequest)._get_public_theme_values()"/>
+        </xpath>
+        <xpath expr="//div[hasclass('field-login')]/label[@for='login']" position="replace">
+            <label for="login" class="form-label">
+                <t t-out="login_theme_data.get('username_label') if login_theme_data else 'Email'"/>
+            </label>
+        </xpath>
+        <xpath expr="//div[hasclass('field-login')]/input[@name='login']" position="attributes">
+            <attribute name="t-att-placeholder">login_theme_data.get('username_placeholder') if login_theme_data else 'name@example.com'</attribute>
+        </xpath>
+        <xpath expr="//button[@type='submit']" position="replace">
+            <button type="submit" t-attf-class="btn btn-primary mb-1 #{login_theme_data and login_theme_data.get('full_width_button') and 'w-100' or ''}">Sign up</button>
+        </xpath>
+        <xpath expr="//t[@t-call='web.login_oauth']" position="replace">
+            <t t-if="not login_theme_data or login_theme_data.get('show_oauth_providers')" t-call="web.login_oauth"/>
+        </xpath>
+    </template>
+
+    <template id="login_theme_reset_password_form" inherit_id="auth_signup.reset_password" name="Login Theme Studio Reset Password Form">
+        <xpath expr="//form[hasclass('oe_reset_password_form')]" position="before">
+            <t t-set="login_theme_data" t-value="request.env['login.theme'].sudo().with_context(login_theme_request=request.httprequest)._get_public_theme_values()"/>
+        </xpath>
+        <xpath expr="//div[hasclass('field-login')]/label[@for='login']" position="replace">
+            <label for="login" class="col-form-label">
+                <t t-out="login_theme_data.get('username_label') if login_theme_data else 'Email'"/>
+            </label>
+        </xpath>
+        <xpath expr="//div[hasclass('field-login')]/input[@name='login']" position="attributes">
+            <attribute name="t-att-placeholder">login_theme_data.get('username_placeholder') if login_theme_data else None</attribute>
+        </xpath>
+        <xpath expr="//button[@type='submit']" position="replace">
+            <button type="submit" t-attf-class="btn btn-primary #{login_theme_data and login_theme_data.get('full_width_button') and 'w-100' or ''}">Reset Password</button>
+        </xpath>
+        <xpath expr="//t[@t-call='web.login_oauth']" position="replace">
+            <t t-if="not login_theme_data or login_theme_data.get('show_oauth_providers')" t-call="web.login_oauth"/>
+        </xpath>
+    </template>
+
+    <template id="login_theme_signup_password_fields" inherit_id="auth_signup.fields" name="Login Theme Studio Signup Password Fields">
+        <xpath expr="//label[@for='password']" position="replace">
+            <label for="password" class="form-label">
+                <t t-out="login_theme_data.get('password_label') if login_theme_data else 'Password'"/>
+            </label>
+        </xpath>
+        <xpath expr="//input[@name='password']" position="attributes">
+            <attribute name="t-att-placeholder">login_theme_data.get('password_placeholder') if login_theme_data else '********'</attribute>
+            <attribute name="aria-describedby">o_login_caps_lock_warning</attribute>
+        </xpath>
+        <xpath expr="//button[hasclass('o_show_password')]" position="attributes">
+            <attribute name="t-if">not login_theme_data or login_theme_data.get('show_password_toggle')</attribute>
+            <attribute name="aria-label">Show password</attribute>
+            <attribute name="title">Show password</attribute>
+            <attribute name="aria-pressed">false</attribute>
+        </xpath>
+        <xpath expr="//div[hasclass('field-password')]" position="after">
+            <div t-if="not login_theme_data or login_theme_data.get('show_caps_lock_warning')" id="o_login_caps_lock_warning" class="o_login_theme_caps_lock visually-hidden" role="status" aria-live="polite">Caps Lock is on</div>
+        </xpath>
+    </template>
+
+    <template id="login_theme_oauth" inherit_id="web.login_oauth" name="Login Theme Studio OAuth">
+        <xpath expr="//div[hasclass('o_login_auth')]" position="attributes">
+            <attribute name="t-attf-class">o_login_auth #{login_theme_data and 'o_login_theme_oauth' or ''}</attribute>
+        </xpath>
+        <xpath expr="//em" position="replace">
+            <em class="d-block my-3 small text-center text-muted o_login_theme_oauth_divider">- or -</em>
+        </xpath>
+    </template>
+</odoo>
+
+

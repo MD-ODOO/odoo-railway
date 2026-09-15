@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+<t t-name="obs_sidebar_premium.Panel">
+
+    <div id="sp_backdrop" t-att-class="state.open ? 'open' : ''" t-on-click="close"/>
+
+    <!-- FAB desktop -->
+    <button id="sp_fab" t-on-click="toggle" title="Sidebar Premium"/>
+
+    <!-- FAB mobile -->
+    <button id="sp_fab_mobile" t-on-click="toggle" title="Sidebar Premium">★</button>
+
+    <!-- Panel -->
+    <div id="sp_panel" t-att-class="state.open ? 'open' : ''">
+
+        <!-- Header -->
+        <div class="sp_header">
+            <div class="sp_header_left">
+                <div class="sp_header_icon">★</div>
+                <div>
+                    <div class="sp_header_title">SideBar Premium</div>
+                    <div class="sp_header_sub" t-esc="state.sessionUser"/>
+                </div>
+            </div>
+            <button class="sp_close" t-on-click="close">✕</button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="sp_tabs">
+            <t t-foreach="tabs" t-as="tab" t-key="tab.id">
+                <button
+                    class="sp_tab"
+                    t-att-class="state.activeTab === tab.id ? 'sp_tab active' : 'sp_tab'"
+                    t-on-click="() => this.setTab(tab.id)"
+                >
+                    <i t-att-class="'sp_tab_icon ' + tab.icon"/>
+                    <span t-esc="tab.label"/>
+                </button>
+            </t>
+        </div>
+
+        <!-- ══ DISPLAY TAB ══ -->
+        <div class="sp_tab_content" t-att-class="state.activeTab === 'display' ? 'sp_tab_content active' : 'sp_tab_content'">
+
+            <div class="sp_card">
+                <div class="sp_card_title"><i class="sp_card_icon fa fa-desktop"/> Screen</div>
+                <div class="sp_card_body">
+                    <button t-att-class="state.fullscreen ? 'sp_btn active' : 'sp_btn'" t-on-click="toggleFullscreen">
+                        <i class="sp_btn_icon fa fa-expand"/>
+                        <t t-if="state.fullscreen">Exit Fullscreen</t><t t-else="">Enter Fullscreen</t>
+                    </button>
+                    <button t-att-class="state.navbarHidden ? 'sp_btn active' : 'sp_btn'" t-on-click="toggleNavbar">
+                        <i class="sp_btn_icon fa fa-bars"/>
+                        <t t-if="state.navbarHidden">Show Navbar</t><t t-else="">Hide Navbar</t>
+                    </button>
+                    <button t-att-class="state.compactMode ? 'sp_btn active' : 'sp_btn'" t-on-click="toggleCompact">
+                        <i class="sp_btn_icon fa fa-compress"/>
+                        <t t-if="state.compactMode">Normal Mode</t><t t-else="">Compact Mode</t>
+                    </button>
+                </div>
+            </div>
+
+            <div class="sp_card">
+                <div class="sp_card_title"><i class="sp_card_icon fa fa-text-height"/> Font Size</div>
+                <div class="sp_card_body">
+                    <div class="sp_font_row">
+                        <button class="sp_btn sp_font_btn" t-on-click="decreaseFont">A−</button>
+                        <div class="sp_font_val"><t t-esc="state.fontSize"/>%</div>
+                        <button class="sp_btn sp_font_btn" t-on-click="increaseFont">A+</button>
+                    </div>
+                    <button class="sp_btn" t-on-click="resetFont">
+                        <i class="sp_btn_icon fa fa-undo"/> Reset (100%)
+                    </button>
+                </div>
+            </div>
+
+            <div class="sp_card">
+                <div class="sp_card_title"><i class="sp_card_icon fa fa-paint-brush"/> Theme Color</div>
+                <div class="sp_card_body">
+                    <div class="sp_color_grid">
+                        <t t-foreach="colorPresets" t-as="c" t-key="c.color">
+                            <button
+                                class="sp_swatch"
+                                t-att-class="state.activeColor === c.color ? 'sp_swatch active' : 'sp_swatch'"
+                                t-attf-style="background:{{c.color}}"
+                                t-att-title="c.name"
+                                t-on-click="() => this.applyColor(c.color)"
+                            />
+                        </t>
+                    </div>
+                    <div class="sp_custom_color">
+                        <label>Custom</label>
+                        <input type="color" t-att-value="state.activeColor" t-on-input="onCustomColor"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ TOOLS TAB ══ -->
+        <div class="sp_tab_content" t-att-class="state.activeTab === 'tools' ? 'sp_tab_content active' : 'sp_tab_content'">
+
+            <div class="sp_card">
+                <div class="sp_card_title"><i class="sp_card_icon fa fa-clock-o"/> Clock</div>
+                <div class="sp_card_body">
+                    <div class="sp_clock_wrap">
+                        <div class="sp_clock_time" t-esc="state.clockTime"/>
+                        <div class="sp_clock_date" t-esc="state.clockDate"/>
+                        <div class="sp_clock_tz"   t-esc="state.clockTz"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sp_card">
+                <div class="sp_card_title"><i class="sp_card_icon fa fa-calculator"/> Calculator</div>
+                <div class="sp_card_body">
+                    <div class="sp_calc_display">
+                        <div class="sp_calc_expr"   t-esc="state.calcExpr"/>
+                        <div class="sp_calc_result" t-esc="state.calcDisplay"/>
+                    </div>
+                    <div class="sp_calc_grid">
+                        <button class="sp_calc_btn clr" t-on-click="calcClear">C</button>
+                        <button class="sp_calc_btn op"  t-on-click="calcToggleSign">±</button>
+                        <button class="sp_calc_btn op"  t-on-click="calcBackspace">⌫</button>
+                        <button class="sp_calc_btn op"  t-on-click="() => this.calcOp('/')">÷</button>
+
+                        <button class="sp_calc_btn" t-on-click="() => this.calcNum('7')">7</button>
+                        <button class="sp_calc_btn" t-on-click="() => this.calcNum('8')">8</button>
+                        <button class="sp_calc_btn" t-on-click="() => this.calcNum('9')">9</button>
+                        <button class="sp_calc_btn op" t-on-click="() => this.calcOp('*')">×</button>
+
+                        <button class="sp_calc_btn" t-on-click="() => this.calcNum('4')">4</button>
+                        <button class="sp_calc_btn" t-on-click="() => this.calcNum('5')">5</button>
+                        <button class="sp_calc_btn" t-on-click="() => this.calcNum('6')">6</button>
+                        <button class="sp_calc_btn op" t-on-click="() => this.calcOp('-')">−</button>
+
+                        <button class="sp_calc_btn" t-on-click="() => this.calcNum('1')">1</button>
+                        <button class="sp_calc_btn" t-on-click="() => this.calcNum('2')">2</button>
+                        <button class="sp_calc_btn" t-on-click="() => this.calcNum('3')">3</button>
+                        <button class="sp_calc_btn op" t-on-click="() => this.calcOp('+')">+</button>
+
+                        <button class="sp_calc_btn" t-on-click="() => this.calcNum('0')">0</button>
+                        <button class="sp_calc_btn" t-on-click="() => this.calcNum('00')">00</button>
+                        <button class="sp_calc_btn" t-on-click="() => this.calcNum('.')">.</button>
+                        <button class="sp_calc_btn eq" t-on-click="calcEquals">=</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ══ BOOKMARKS TAB ══ -->
+        <div class="sp_tab_content" t-att-class="state.activeTab === 'bookmarks' ? 'sp_tab_content active' : 'sp_tab_content'">
+
+            <div class="sp_card">
+                <div class="sp_card_title"><i class="sp_card_icon fa fa-bookmark"/> Bookmarks (<t t-esc="state.bookmarks.length"/>)</div>
+                <div class="sp_card_body">
+                    <div class="sp_bm_add">
+                        <input class="sp_bm_input" type="text" placeholder="Bookmark name..." t-model="state.newBmName"/>
+                        <button class="sp_bm_save" t-on-click="addBookmark"><i class="fa fa-plus"/></button>
+                    </div>
+                    <div class="sp_list">
+                        <t t-if="state.bookmarks.length === 0">
+                            <div class="sp_empty"><i class="sp_empty_icon fa fa-bookmark-o"/>No bookmarks yet</div>
+                        </t>
+                        <t t-foreach="state.bookmarks" t-as="bm" t-key="bm.id">
+                            <div class="sp_list_item" t-on-click="() => this.goTo(bm.url)">
+                                <i class="sp_list_icon fa fa-bookmark"/>
+                                <div class="sp_list_item_body">
+                                    <div class="sp_list_item_name" t-esc="bm.name"/>
+                                    <div class="sp_list_item_meta" t-esc="bm.model || bm.url"/>
+                                </div>
+                                <button class="sp_list_item_del" t-on-click.stop="() => this.deleteBm(bm.id)">✕</button>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sp_card">
+                <div class="sp_card_title"><i class="sp_card_icon fa fa-history"/> Recent Pages (<t t-esc="state.recent.length"/>)</div>
+                <div class="sp_card_body">
+                    <div class="sp_list">
+                        <t t-if="state.recent.length === 0">
+                            <div class="sp_empty"><i class="sp_empty_icon fa fa-clock-o"/>No history yet</div>
+                        </t>
+                        <t t-foreach="state.recent" t-as="r" t-key="r.id">
+                            <div class="sp_list_item" t-on-click="() => this.goTo(r.url)">
+                                <i class="sp_list_icon fa fa-file-o"/>
+                                <div class="sp_list_item_body">
+                                    <div class="sp_list_item_name" t-esc="r.name"/>
+                                    <div class="sp_list_item_meta" t-esc="r.model || r.url"/>
+                                </div>
+                                <button class="sp_list_item_del" t-on-click.stop="() => this.deleteRecent(r.id)">✕</button>
+                            </div>
+                        </t>
+                    </div>
+                    <button class="sp_btn danger" t-if="state.recent.length > 0" t-on-click="clearRecent">
+                        <i class="sp_btn_icon fa fa-trash"/> Clear History
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══ NOTES TAB ══ -->
+        <div class="sp_tab_content" t-att-class="state.activeTab === 'notes' ? 'sp_tab_content active' : 'sp_tab_content'">
+            <div class="sp_card">
+                <div class="sp_card_title"><i class="sp_card_icon fa fa-pencil"/> Quick Notes</div>
+                <div class="sp_card_body">
+                    <textarea class="sp_notes_area" placeholder="Write anything... Notes are saved automatically." t-model="state.notes" t-on-input="saveNotes"/>
+                    <div class="sp_notes_hint">Auto-saved · <t t-esc="(state.notes || '').length"/> chars</div>
+                    <button class="sp_btn danger" t-if="state.notes" t-on-click="clearNotes">
+                        <i class="sp_btn_icon fa fa-trash"/> Clear Notes
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</t>
+</templates>
