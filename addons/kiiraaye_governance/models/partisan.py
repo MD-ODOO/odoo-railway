@@ -53,7 +53,7 @@ class KiiraayePartisan(models.Model):
 
     @api.depends(
         "poste_ids.state", "poste_ids.date_debut",
-        "poste_ids.date_fin", "poste_ids.type_poste"
+        "poste_ids.date_fin", "poste_ids.position_id"
     )
     def _compute_poste_actuel(self):
         today = fields.Date.context_today(self)

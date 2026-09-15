@@ -37,17 +37,17 @@ class KiiraayeBureau(models.Model):
         for rec in self:
             rec.name = _("Bureau - %s") % (rec.territoire_id.complete_name or "")
 
-    @api.depends("poste_ids.partisan_id", "poste_ids.state", "poste_ids.type_poste")
+    @api.depends("poste_ids.partisan_id", "poste_ids.state", "poste_ids.position_id")
     def _compute_membres(self):
         for rec in self:
             rec.membre_ids = rec.poste_ids.filtered(
                 lambda p: p.state == "actif"
             ).mapped("partisan_id")
 
-    @api.depends("poste_ids.partisan_id", "poste_ids.state", "poste_ids.type_poste")
+    @api.depends("poste_ids.partisan_id", "poste_ids.state", "poste_ids.position_id")
     def _compute_coordonnateur(self):
         for rec in self:
             poste = rec.poste_ids.filtered(
-                lambda p: p.state == "actif" and p.type_poste == "coordonnateur"
+                lambda p: p.state == "actif" and p.position_id.code == "coordonnateur"
             )[:1]
             rec.coordonnateur_id = poste.partisan_id if poste else False
