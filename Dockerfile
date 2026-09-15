@@ -11,3 +11,4 @@ RUN chown -R odoo:odoo /mnt/extra-addons
 COPY config/odoo.conf /etc/odoo/odoo.conf
 
 USER odoo
+
