@@ -1,2 +1,17 @@
-from . import territoire, partisan, position, bureau, poste, section, res_users
-from . import election, document, reunion, formation, activity, plan_action, campagne, indicator, member_card, settings
+from . import activity
+from . import bureau
+from . import campagne
+from . import document
+from . import election
+from . import formation
+from . import indicator
+from . import member_card
+from . import partisan
+from . import plan_action
+from . import position
+from . import poste
+from . import res_users
+from . import reunion
+from . import section
+from . import settings
+from . import territoire
