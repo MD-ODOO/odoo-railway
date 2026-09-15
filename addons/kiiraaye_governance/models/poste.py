@@ -13,10 +13,6 @@ class KiiraayePoste(models.Model):
     territoire_id = fields.Many2one(
         related="bureau_id.territoire_id", store=True, index=True
     )
-    type_poste = fields.Selection(
-        related="position_id.code", string="Poste", store=True,
-        readonly=True
-    )
     position_id = fields.Many2one(
         "kiiraaye.position", string="Fonction", required=True,
         ondelete="restrict"
