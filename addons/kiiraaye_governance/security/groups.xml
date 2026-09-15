@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="group_kiiraaye_user" model="res.groups">
+        <field name="name">Kiiraaye / Utilisateur</field>
+    </record>
+
+    <record id="group_kiiraaye_coordonnateur" model="res.groups">
+        <field name="name">Kiiraaye / Coordonnateur</field>
+        <field name="implied_ids" eval="[(4, ref('group_kiiraaye_user'))]"/>
+    </record>
+
+    <record id="group_kiiraaye_organisation" model="res.groups">
+        <field name="name">Kiiraaye / Organisation</field>
+        <field name="implied_ids" eval="[(4, ref('group_kiiraaye_user'))]"/>
+    </record>
+
+    <record id="group_kiiraaye_communication" model="res.groups">
+        <field name="name">Kiiraaye / Communication</field>
+        <field name="implied_ids" eval="[(4, ref('group_kiiraaye_user'))]"/>
+    </record>
+
+    <record id="group_kiiraaye_massification" model="res.groups">
+        <field name="name">Kiiraaye / Massification</field>
+        <field name="implied_ids" eval="[(4, ref('group_kiiraaye_user'))]"/>
+    </record>
+
+    <record id="group_kiiraaye_elections" model="res.groups">
+        <field name="name">Kiiraaye / Élections</field>
+        <field name="implied_ids" eval="[(4, ref('group_kiiraaye_user'))]"/>
+    </record>
+
+    <record id="group_kiiraaye_national" model="res.groups">
+        <field name="name">Kiiraaye / Bureau national</field>
+        <field name="implied_ids" eval="[
+            (4, ref('group_kiiraaye_coordonnateur')),
+            (4, ref('group_kiiraaye_organisation')),
+            (4, ref('group_kiiraaye_communication')),
+            (4, ref('group_kiiraaye_massification')),
+            (4, ref('group_kiiraaye_elections'))
+        ]"/>
+    </record>
+</odoo>

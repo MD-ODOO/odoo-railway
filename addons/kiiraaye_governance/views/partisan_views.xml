@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partisan_list" model="ir.ui.view">
+        <field name="name">kiiraaye.partisan.list</field>
+        <field name="model">kiiraaye.partisan</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="matricule"/>
+                <field name="nom"/>
+                <field name="prenom"/>
+                <field name="date_naissance"/>
+                <field name="section_id"/>
+                <field name="poste_actuel_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_partisan_form" model="ir.ui.view">
+        <field name="name">kiiraaye.partisan.form</field>
+        <field name="model">kiiraaye.partisan</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <div class="kiiraaye_poste_banner"
+                         invisible="not poste_actuel_id">
+                        <field name="poste_actuel_id" readonly="1"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="photo" widget="image" class="oe_avatar"/>
+                        </group>
+                        <group>
+                            <field name="matricule"/>
+                            <field name="nom"/>
+                            <field name="prenom"/>
+                            <field name="date_adhesion"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Identité">
+                            <group>
+                                <field name="date_naissance"/>
+                                <field name="lieu_naissance"/>
+                                <field name="numero_id_national" password="True"/>
+                            </group>
+                        </page>
+                        <page string="Appartenance">
+                            <group>
+                                <field name="section_id"/>
+                                <field name="territoire_id" readonly="1"/>
+                                <field name="active"/>
+                            </group>
+                        </page>
+                        <page string="Historique des postes">
+                            <field name="poste_ids" readonly="1">
+                                <list>
+                                    <field name="position_id"/>
+                                    <field name="bureau_id"/>
+                                    <field name="date_debut"/>
+                                    <field name="date_fin"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_partisans" model="ir.actions.act_window">
+        <field name="name">Partisans</field>
+        <field name="res_model">kiiraaye.partisan</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

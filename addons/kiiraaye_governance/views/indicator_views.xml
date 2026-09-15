@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_indicator_list" model="ir.ui.view">
+        <field name="name">kiiraaye.indicateur.list</field>
+        <field name="model">kiiraaye.indicateur</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="territoire_id"/>
+                <field name="date_calcul"/>
+                <field name="sections_ouvertes"/>
+                <field name="bureaux_complets"/>
+                <field name="bureaux_incomplets"/>
+                <field name="score_couverture"/>
+                <field name="score_activite"/>
+                <field name="score_global"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_indicator_graph" model="ir.ui.view">
+        <field name="name">kiiraaye.indicateur.graph</field>
+        <field name="model">kiiraaye.indicateur</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="territoire_id"/>
+                <field name="score_global" type="measure"/>
+                <field name="score_couverture" type="measure"/>
+                <field name="score_activite" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_indicators" model="ir.actions.act_window">
+        <field name="name">Indicateurs de pilotage</field>
+        <field name="res_model">kiiraaye.indicateur</field>
+        <field name="view_mode">list,graph</field>
+    </record>
+</odoo>

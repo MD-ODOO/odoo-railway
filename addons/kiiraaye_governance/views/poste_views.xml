@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_poste_list" model="ir.ui.view">
+        <field name="name">kiiraaye.poste.list</field>
+        <field name="model">kiiraaye.poste</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="bureau_id"/>
+                <field name="position_id"/>
+                <field name="partisan_id"/>
+                <field name="date_debut"/>
+                <field name="date_fin"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_poste_form" model="ir.ui.view">
+        <field name="name">kiiraaye.poste.form</field>
+        <field name="model">kiiraaye.poste</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="bureau_id"/>
+                            <field name="territoire_id" readonly="1"/>
+                            <field name="position_id"/>
+                            <field name="partisan_id"/>
+                        </group>
+                        <group>
+                            <field name="date_debut"/>
+                            <field name="date_fin"/>
+                            <field name="state"/>
+                            <field name="photo" widget="image"/>
+                        </group>
+                    </group>
+                    <group string="Documents">
+                        <field name="pv_election" filename="pv_election_filename"/>
+                        <field name="pv_election_filename" invisible="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_postes" model="ir.actions.act_window">
+        <field name="name">Attributions de postes</field>
+        <field name="res_model">kiiraaye.poste</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

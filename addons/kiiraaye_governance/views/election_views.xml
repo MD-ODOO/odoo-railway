@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_election_list" model="ir.ui.view">
+        <field name="name">kiiraaye.election.list</field>
+        <field name="model">kiiraaye.election</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="territoire_id"/>
+                <field name="election_type"/>
+                <field name="date"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_election_form" model="ir.ui.view">
+        <field name="name">kiiraaye.election.form</field>
+        <field name="model">kiiraaye.election</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_validate" type="object" string="Valider"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_close" type="object" string="Clôturer"
+                            invisible="state != 'validated'"/>
+                    <button name="action_cancel" type="object" string="Annuler"
+                            invisible="state == 'closed' or state == 'cancelled'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,validated,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <field name="territoire_id"/>
+                        <field name="date"/>
+                        <field name="election_type"/>
+                        <field name="pv_document_id"/>
+                    </group>
+                    <notebook>
+                        <page string="Résultats">
+                            <field name="result_line_ids">
+                                <list editable="bottom">
+                                    <field name="position_id"/>
+                                    <field name="partisan_id"/>
+                                    <field name="elected"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Observations">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_elections" model="ir.actions.act_window">
+        <field name="name">Élections internes</field>
+        <field name="res_model">kiiraaye.election</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

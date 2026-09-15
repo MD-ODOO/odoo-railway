@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="position_coordonnateur" model="kiiraaye.position">
+            <field name="name">Coordonnateur</field>
+            <field name="code">coordonnateur</field>
+        </record>
+        <record id="position_organisation" model="kiiraaye.position">
+            <field name="name">Président cellule organisation</field>
+            <field name="code">president_organisation</field>
+        </record>
+        <record id="position_communication" model="kiiraaye.position">
+            <field name="name">Président cellule communication</field>
+            <field name="code">president_communication</field>
+        </record>
+        <record id="position_massification" model="kiiraaye.position">
+            <field name="name">Président cellule massification</field>
+            <field name="code">president_massification</field>
+        </record>
+        <record id="position_elections" model="kiiraaye.position">
+            <field name="name">Chargé des élections</field>
+            <field name="code">charge_elections</field>
+        </record>
+    </data>
+</odoo>

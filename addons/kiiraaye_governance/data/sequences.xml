@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?><odoo>
+<record id="seq_kiiraaye_section" model="ir.sequence"><field name="name">Section Kiiraaye</field><field name="code">kiiraaye.section</field><field name="prefix">SEC/%(year)s/</field><field name="padding">5</field></record>
+<record id="seq_kiiraaye_member_card" model="ir.sequence"><field name="name">Carte membre Kiiraaye</field><field name="code">kiiraaye.member.card</field><field name="prefix">KIR-CARD/%(year)s/</field><field name="padding">6</field></record>
+</odoo>
