@@ -46,11 +46,10 @@ class KiiraayeDocument(models.Model):
     confidential = fields.Boolean(string="Confidentiel")
     active = fields.Boolean(default=True)
 
-    _sql_constraints = [
-        ("reference_unique", "unique(reference)",
-         "La référence du document doit être unique."),
-    ]
-
+    _reference_unique = models.Constraint(
+        "UNIQUE(reference)",
+        "La référence du document doit être unique."
+    )
     @api.constrains("attachment_filename")
     def _check_pdf_name(self):
         for rec in self:

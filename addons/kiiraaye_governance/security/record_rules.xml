@@ -4,7 +4,7 @@
         <field name="name">Kiiraaye - géographies du périmètre utilisateur</field>
         <field name="model_id" ref="model_kiiraaye_geographie"/>
         <field name="domain_force">
-            [('id', 'child_of', user.kiiraaye_geographie_id.id)]
+            [('id', 'child_of', user.kiiraaye_geographie_id.id or 0)]
         </field>
         <field name="groups" eval="[(4, ref('group_kiiraaye_coordonnateur'))]"/>
     </record>
@@ -13,7 +13,7 @@
         <field name="name">Kiiraaye - partisans du périmètre utilisateur</field>
         <field name="model_id" ref="model_kiiraaye_partisan"/>
         <field name="domain_force">
-            [('lieu_id', 'child_of', user.kiiraaye_geographie_id.id)]
+            [('geographie_id', 'child_of', user.kiiraaye_geographie_id.id or 0)]
         </field>
         <field name="groups" eval="[(4, ref('group_kiiraaye_coordonnateur'))]"/>
     </record>
@@ -22,7 +22,7 @@
         <field name="name">Kiiraaye - sections du périmètre utilisateur</field>
         <field name="model_id" ref="model_kiiraaye_section"/>
         <field name="domain_force">
-            [('lieu_id', 'child_of', user.kiiraaye_geographie_id.id)]
+            [('geographie_id', 'child_of', user.kiiraaye_geographie_id.id or 0)]
         </field>
         <field name="groups" eval="[(4, ref('group_kiiraaye_coordonnateur'))]"/>
     </record>

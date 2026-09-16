@@ -37,7 +37,7 @@ class KiiraayePoste(models.Model):
         ("actif", "Actif"),
         ("termine", "Terminé"),
         ("revoque", "Révoqué"),
-    ], default="actif", required=True, tracking=True)
+    ], default="actif", required=True)
 
     @api.constrains("date_debut", "date_fin")
     def _check_dates(self):

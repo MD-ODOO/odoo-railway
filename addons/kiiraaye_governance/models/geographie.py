@@ -59,13 +59,12 @@ class KiiraayeGeographie(models.Model):
     source_url = fields.Char(string="URL / référence source")
     active = fields.Boolean(default=True)
 
-    child_count = fields.Integer(compute="_compute_child_count")
+    child_count = fields.Integer(compute="_compute_child_count", readonly=True)
 
-    _sql_constraints = [
-        ("code_country_unique", "unique(code, country_id)",
-         "Le code géographique doit être unique dans un pays."),
-    ]
-
+    _code_country_unique = models.Constraint(
+        "UNIQUE(code, country_id)",
+        "Le code géographique doit être unique dans un pays."
+    )
     @api.depends("name", "parent_id.complete_name")
     def _compute_complete_name(self):
         for rec in self:
@@ -118,7 +117,8 @@ class KiiraayeGeographie(models.Model):
         for rec in records:
             if rec.niveau == "pays" and not rec.parent_id and rec.country_id:
                 # Unifie le point d'entrée pays avec res.country.
-                pass
+                if not rec.code:
+                    rec.code = "COUNTRY-%s" % (rec.country_id.code or rec.country_id.id)
         return records
 
 

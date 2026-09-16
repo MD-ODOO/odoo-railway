@@ -30,11 +30,10 @@ class KiiraayeBureau(models.Model):
     active = fields.Boolean(default=True, tracking=True)
     date_creation = fields.Date(default=fields.Date.context_today, string="Date de création")
 
-    _sql_constraints = [
-        ("section_unique", "unique(section_id)",
-         "Une section/coordination ne peut avoir qu'un seul bureau de référence."),
-    ]
-
+    _section_unique = models.Constraint(
+        "UNIQUE(section_id)",
+        "Une section/coordination ne peut avoir qu'un seul bureau de référence."
+    )
     @api.depends("section_id.name", "section_id.type_section")
     def _compute_name(self):
         for rec in self:

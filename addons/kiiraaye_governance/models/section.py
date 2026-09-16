@@ -76,27 +76,10 @@ class KiiraayeSection(models.Model):
     pv_creation_filename = fields.Char()
     photo = fields.Image(string="Photo")
 
-    _sql_constraints = [
-        ("reference_unique", "unique(reference)",
-         "La référence doit être unique."),
-    ]
-
-    def _get_allowed_levels(self, type_section):
-        return {
-            "communale": ["commune"],
-            "departementale": ["departement"],
-            "regionale": ["region"],
-            "nationale": ["pays"],
-            "diaspora": ["pays"],
-        }.get(type_section, [])
-
-    def _get_default_senegal(self):
-        return self.env["kiiraaye.geographie"].search([
-            ("niveau", "=", "pays"),
-            ("country_id.code", "=", "SN"),
-            ("parent_id", "=", False),
-        ], limit=1)
-
+    _reference_unique = models.Constraint(
+        "UNIQUE(reference)",
+        "La référence doit être unique."
+    )
     @api.onchange("type_section")
     def _onchange_type_section(self):
         for rec in self:

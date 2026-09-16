@@ -13,6 +13,7 @@ class KiiraayePosition(models.Model):
         ("géographique", "Territorial"),
     ], default="géographique", required=True)
 
-    _sql_constraints = [
-        ("code_unique", "unique(code)", "Le code du poste doit être unique."),
-    ]
+    _code_unique = models.Constraint(
+        "UNIQUE(code)",
+        "Le code du poste doit être unique."
+    )

@@ -1,6 +1,6 @@
 {
     "name": "Kiiraaye Gouvernance",
-    "version": "19.0.7.0.0",
+    "version": "19.0.8.0.0",
     "category": "Operations",
     "summary": "Référentiel géographique mondial et sections / coordinations Kiiraaye",
     "description": "Refonte du référentiel géographique et de la création des sections / coordinations.",
@@ -22,6 +22,7 @@
         "views/geo_config_views.xml",
         "views/menus.xml"
     ],
+    "pre_init_hook": "pre_init_hook",
     "post_init_hook": "post_init_hook",
     "assets": {},
     "installable": True,

@@ -39,13 +39,14 @@ class KiiraayePartisan(models.Model):
         compute="_compute_poste_actuel", store=True
     )
 
-    _sql_constraints = [
-        ("matricule_unique", "unique(matricule)",
-         "Le matricule doit être unique."),
-        ("id_national_unique", "unique(numero_id_national)",
-         "Ce numéro d'identification national existe déjà."),
-    ]
-
+    _matricule_unique = models.Constraint(
+        "UNIQUE(matricule)",
+        "Le matricule doit être unique."
+    )
+    _id_national_unique = models.Constraint(
+        "UNIQUE(numero_id_national)",
+        "Ce numéro d'identification national existe déjà."
+    )
     @api.depends("nom", "prenom", "matricule")
     def _compute_name(self):
         for rec in self:

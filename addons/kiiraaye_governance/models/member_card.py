@@ -54,13 +54,14 @@ class KiiraayeMemberCard(models.Model):
         readonly=True
     )
 
-    _sql_constraints = [
-        ("name_unique", "unique(name)",
-         "La référence de carte doit être unique."),
-        ("verification_token_unique", "unique(verification_token)",
-         "Le jeton de vérification doit être unique."),
-    ]
-
+    _name_unique = models.Constraint(
+        "UNIQUE(name)",
+        "La référence de carte doit être unique."
+    )
+    _verification_token_unique = models.Constraint(
+        "UNIQUE(verification_token)",
+        "Le jeton de vérification doit être unique."
+    )
     @api.depends("verification_token")
     def _compute_qr_value(self):
         base_url = self.env["ir.config_parameter"].sudo().get_param(
