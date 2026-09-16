@@ -1,9 +1,9 @@
 {
     "name": "Kiiraaye Gouvernance",
-    "version": "19.0.6.0.0",
+    "version": "19.0.7.0.0",
     "category": "Operations",
-    "summary": "Gouvernance territoriale et référentiel géographique mondial",
-    "description": "Référentiel administratif mondial, cartographie OWL et gouvernance territoriale.",
+    "summary": "Référentiel géographique mondial et sections / coordinations Kiiraaye",
+    "description": "Refonte du référentiel géographique et de la création des sections / coordinations.",
     "author": "Kiiraaye",
     "license": "LGPL-3",
     "depends": ["base", "mail", "web"],
@@ -13,37 +13,17 @@
         "security/record_rules.xml",
         "data/sequences.xml",
         "data/positions.xml",
-        "views/territoire_views.xml",
-        "views/partisan_views.xml",
+        "views/geographie_views.xml",
         "views/section_views.xml",
         "views/bureau_views.xml",
         "views/poste_views.xml",
-        "views/document_views.xml",
-        "views/reunion_views.xml",
-        "views/formation_views.xml",
-        "views/activity_views.xml",
-        "views/plan_action_views.xml",
-        "views/campagne_views.xml",
-        "views/indicator_views.xml",
-        "views/member_card_views.xml",
+        "views/partisan_views.xml",
         "views/res_users_views.xml",
-        "views/dashboard_action.xml",
-        "views/report_wizard.xml",
         "views/geo_config_views.xml",
-        "views/menus.xml",
-        "reports/report_paperformat.xml",
-        "reports/member_card_report.xml",
-        "reports/governance_report.xml"
+        "views/menus.xml"
     ],
-    "assets": {
-        "web.assets_backend": [
-            "kiiraaye_governance/static/src/js/territory_dashboard.js",
-            "kiiraaye_governance/static/src/js/geo_map.js",
-            "kiiraaye_governance/static/src/xml/territory_dashboard.xml",
-            "kiiraaye_governance/static/src/xml/geo_map.xml",
-            "kiiraaye_governance/static/src/scss/kiiraaye.scss"
-        ]
-    },
+    "post_init_hook": "post_init_hook",
+    "assets": {},
     "installable": True,
     "application": True
 }

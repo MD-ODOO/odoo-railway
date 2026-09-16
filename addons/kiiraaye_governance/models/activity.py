@@ -3,13 +3,13 @@ from odoo import fields, models
 
 class KiiraayeActivity(models.Model):
     _name = "kiiraaye.activite"
-    _description = "Activité territoriale"
+    _description = "Activité géographique"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "date desc"
 
     name = fields.Char(string="Activité", required=True)
-    territoire_id = fields.Many2one(
-        "kiiraaye.territoire", string="Territoire",
+    geographie_id = fields.Many2one(
+        "kiiraaye.geographie", string="Zone géographique",
         required=True, ondelete="restrict", index=True
     )
     date = fields.Datetime(string="Date", required=True)

@@ -5,7 +5,7 @@
         <field name="model">kiiraaye.indicateur</field>
         <field name="arch" type="xml">
             <list>
-                <field name="territoire_id"/>
+                <field name="geographie_id"/>
                 <field name="date_calcul"/>
                 <field name="sections_ouvertes"/>
                 <field name="bureaux_complets"/>
@@ -22,7 +22,7 @@
         <field name="model">kiiraaye.indicateur</field>
         <field name="arch" type="xml">
             <graph type="bar">
-                <field name="territoire_id"/>
+                <field name="geographie_id"/>
                 <field name="score_global" type="measure"/>
                 <field name="score_couverture" type="measure"/>
                 <field name="score_activite" type="measure"/>

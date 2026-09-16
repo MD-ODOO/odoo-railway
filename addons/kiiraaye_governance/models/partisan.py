@@ -24,8 +24,8 @@ class KiiraayePartisan(models.Model):
         "kiiraaye.section", string="Section", required=True,
         ondelete="restrict", tracking=True
     )
-    territoire_id = fields.Many2one(
-        related="section_id.territoire_id", store=True, index=True
+    geographie_id = fields.Many2one(
+        related="section_id.lieu_id", store=True, index=True
     )
     date_adhesion = fields.Date(
         string="Date d'adhésion", default=fields.Date.context_today

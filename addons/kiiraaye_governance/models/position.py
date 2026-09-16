@@ -10,8 +10,8 @@ class KiiraayePosition(models.Model):
     active = fields.Boolean(default=True)
     niveau_ids = fields.Selection([
         ("tous", "Tous les niveaux"),
-        ("territorial", "Territorial"),
-    ], default="territorial", required=True)
+        ("géographique", "Territorial"),
+    ], default="géographique", required=True)
 
     _sql_constraints = [
         ("code_unique", "unique(code)", "Le code du poste doit être unique."),

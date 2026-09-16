@@ -1,17 +1,17 @@
 from odoo import api, fields, models
 class KiiraayeIndicateur(models.Model):
     _name='kiiraaye.indicateur'; _description='Indicateur organisationnel'; _order='score_global desc'
-    territoire_id=fields.Many2one('kiiraaye.territoire',required=True,ondelete='cascade',index=True)
+    geographie_id=fields.Many2one('kiiraaye.geographie',required=True,ondelete='cascade',index=True)
     date_calcul=fields.Date(default=fields.Date.context_today,required=True)
     sections_ouvertes=fields.Integer(compute='_calc',store=True); sections_fermees=fields.Integer(compute='_calc',store=True)
     bureaux_complets=fields.Integer(compute='_calc',store=True); bureaux_incomplets=fields.Integer(compute='_calc',store=True)
     membres=fields.Integer(compute='_calc',store=True); activites=fields.Integer(compute='_calc',store=True); formations=fields.Integer(compute='_calc',store=True)
     score_couverture=fields.Float(compute='_scores',store=True); score_activite=fields.Float(compute='_scores',store=True); score_continuite=fields.Float(compute='_scores',store=True); score_global=fields.Float(compute='_scores',store=True)
     niveau=fields.Selection([('critique','Critique'),('renforcer','À renforcer'),('stable','Stable'),('solide','Solide')],compute='_scores',store=True)
-    @api.depends('territoire_id')
+    @api.depends('geographie_id')
     def _calc(self):
         for r in self:
-            d=[('territoire_id','child_of',r.territoire_id.id)]
+            d=[('geographie_id','child_of',r.geographie_id.id)]
             s=self.env['kiiraaye.section'].search(d); b=self.env['kiiraaye.bureau'].search(d)
             r.sections_ouvertes=len(s.filtered(lambda x:x.state=='ouverte')); r.sections_fermees=len(s)-r.sections_ouvertes
             r.bureaux_complets=len(b.filtered(lambda x:len(x.poste_ids.filtered(lambda p:p.state=='actif'))>=5)); r.bureaux_incomplets=len(b)-r.bureaux_complets

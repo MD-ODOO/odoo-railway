@@ -27,8 +27,8 @@ class KiiraayeDocument(models.Model):
         string="Date du document", default=fields.Date.context_today,
         required=True
     )
-    territoire_id = fields.Many2one(
-        "kiiraaye.territoire", string="Territoire",
+    geographie_id = fields.Many2one(
+        "kiiraaye.geographie", string="Zone géographique",
         ondelete="restrict", index=True
     )
     partisan_id = fields.Many2one(

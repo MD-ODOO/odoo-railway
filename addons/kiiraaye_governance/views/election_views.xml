@@ -6,7 +6,7 @@
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
-                <field name="territoire_id"/>
+                <field name="geographie_id"/>
                 <field name="election_type"/>
                 <field name="date"/>
                 <field name="state"/>
@@ -32,7 +32,7 @@
                 <sheet>
                     <div class="oe_title"><h1><field name="name"/></h1></div>
                     <group>
-                        <field name="territoire_id"/>
+                        <field name="geographie_id"/>
                         <field name="date"/>
                         <field name="election_type"/>
                         <field name="pv_document_id"/>

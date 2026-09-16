@@ -9,8 +9,8 @@ class KiiraayeElection(models.Model):
     _order = "date desc, id desc"
 
     name = fields.Char(string="Intitulé", required=True, tracking=True)
-    territoire_id = fields.Many2one(
-        "kiiraaye.territoire", string="Territoire", required=True,
+    geographie_id = fields.Many2one(
+        "kiiraaye.geographie", string="Zone géographique", required=True,
         ondelete="restrict", index=True, tracking=True
     )
     date = fields.Date(
@@ -70,10 +70,10 @@ class KiiraayeElectionResultLine(models.Model):
     def _check_partisan_scope(self):
         for rec in self:
             if rec.partisan_id and rec.election_id:
-                allowed = self.env["kiiraaye.territoire"].search([
-                    ("id", "child_of", rec.election_id.territoire_id.id)
+                allowed = self.env["kiiraaye.geographie"].search([
+                    ("id", "child_of", rec.election_id.geographie_id.id)
                 ])
-                if rec.partisan_id.territoire_id not in allowed:
+                if rec.partisan_id.geographie_id not in allowed:
                     raise ValidationError(
                         _("Le partisan sélectionné est hors du périmètre de l'élection.")
                     )

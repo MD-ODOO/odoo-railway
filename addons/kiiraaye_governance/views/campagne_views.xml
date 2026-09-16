@@ -30,7 +30,7 @@
                         <page string="Résultats territoriaux">
                             <field name="resultat_ids">
                                 <list editable="bottom">
-                                    <field name="territoire_id"/>
+                                    <field name="geographie_id"/>
                                     <field name="inscrits"/>
                                     <field name="votants"/>
                                     <field name="voix_parti"/>
@@ -51,7 +51,7 @@
         <field name="arch" type="xml">
             <list>
                 <field name="campagne_id"/>
-                <field name="territoire_id"/>
+                <field name="geographie_id"/>
                 <field name="inscrits"/>
                 <field name="votants"/>
                 <field name="voix_parti"/>

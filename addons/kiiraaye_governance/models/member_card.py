@@ -17,9 +17,9 @@ class KiiraayeMemberCard(models.Model):
         "kiiraaye.partisan", string="Partisan", required=True,
         ondelete="restrict", index=True
     )
-    territoire_id = fields.Many2one(
-        related="partisan_id.territoire_id", store=True, index=True,
-        string="Territoire"
+    geographie_id = fields.Many2one(
+        related="partisan_id.geographie_id", store=True, index=True,
+        string="Zone géographique"
     )
     matricule = fields.Char(
         related="partisan_id.matricule", store=True, readonly=True,

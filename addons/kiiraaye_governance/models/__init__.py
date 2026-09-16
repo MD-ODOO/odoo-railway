@@ -15,4 +15,4 @@ from . import res_users
 from . import reunion
 from . import section
 from . import settings
-from . import territoire
+from . import  geographie

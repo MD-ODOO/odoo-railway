@@ -9,7 +9,7 @@
                     <field name="report_title"/>
                     <field name="date_debut"/>
                     <field name="date_fin"/>
-                    <field name="territoire_id"/>
+                    <field name="geographie_id"/>
                 </group>
                 <footer>
                     <button name="action_print" type="object"

@@ -1,7 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_territoire_user,territoire user,model_kiiraaye_territoire,kiiraaye_governance.group_kiiraaye_user,1,0,0,0
-access_territoire_coord,territoire coord,model_kiiraaye_territoire,kiiraaye_governance.group_kiiraaye_coordonnateur,1,1,1,0
-access_territoire_national,territoire national,model_kiiraaye_territoire,kiiraaye_governance.group_kiiraaye_national,1,1,1,1
+access_geographie_user,geographie user,model_kiiraaye_geographie,kiiraaye_governance.group_kiiraaye_user,1,0,0,0
+access_geographie_coord,geographie coord,model_kiiraaye_geographie,kiiraaye_governance.group_kiiraaye_coordonnateur,1,1,1,0
+access_geographie_national,geographie national,model_kiiraaye_geographie,kiiraaye_governance.group_kiiraaye_national,1,1,1,1
 access_partisan_user,partisan user,model_kiiraaye_partisan,kiiraaye_governance.group_kiiraaye_user,1,0,0,0
 access_partisan_coord,partisan coord,model_kiiraaye_partisan,kiiraaye_governance.group_kiiraaye_coordonnateur,1,1,1,0
 access_partisan_national,partisan national,model_kiiraaye_partisan,kiiraaye_governance.group_kiiraaye_national,1,1,1,1

@@ -6,7 +6,7 @@ class KiiraayeNationalReportWizard(models.TransientModel):
 
     date_debut = fields.Date(required=True)
     date_fin = fields.Date(required=True)
-    territoire_id = fields.Many2one('kiiraaye.territoire')
+    geographie_id = fields.Many2one('kiiraaye.geographie')
     report_title = fields.Char(default='Rapport de gouvernance Kiiraaye')
 
     def action_print(self):

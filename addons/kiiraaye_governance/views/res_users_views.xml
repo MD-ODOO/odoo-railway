@@ -8,7 +8,7 @@
             <xpath expr="//notebook" position="inside">
                 <page string="Kiiraaye">
                     <group>
-                        <field name="kiiraaye_territoire_id"/>
+                        <field name="kiiraaye_geographie_id"/>
                         <field name="kiiraaye_poste_id"/>
                     </group>
                 </page>

@@ -10,8 +10,12 @@ class KiiraayePoste(models.Model):
         "kiiraaye.bureau", string="Bureau", required=True,
         ondelete="restrict", index=True
     )
-    territoire_id = fields.Many2one(
-        related="bureau_id.territoire_id", store=True, index=True
+    section_id = fields.Many2one(
+        "kiiraaye.section", string="Section / Coordination",
+        related="bureau_id.section_id", store=True, index=True
+    )
+    geographie_id = fields.Many2one(
+        related="bureau_id.geographie_id", store=True, index=True
     )
     position_id = fields.Many2one(
         "kiiraaye.position", string="Fonction", required=True,
@@ -48,16 +52,16 @@ class KiiraayePoste(models.Model):
         for rec in self:
             if not rec.partisan_id or not rec.bureau_id or not rec.position_id:
                 continue
-            bureau_territory = rec.bureau_id.territoire_id
-            member_territory = rec.partisan_id.territoire_id
+            bureau_territory = rec.bureau_id.geographie_id
+            member_territory = rec.partisan_id.geographie_id
 
-            # Le titulaire doit appartenir au territoire du bureau
-            # ou à l'un de ses sous-territoires.
+            # Le titulaire doit appartenir au  geographie du bureau
+            # ou à l'un de ses sous- geographies.
             if member_territory not in bureau_territory.search(
                 [("id", "child_of", bureau_territory.id)]
             ):
                 raise ValidationError(
-                    _("Le partisan n'appartient pas au périmètre territorial du bureau.")
+                    _("Le partisan n'appartient pas au périmètre géographique du bureau.")
                 )
 
     @api.constrains("bureau_id", "position_id", "state")

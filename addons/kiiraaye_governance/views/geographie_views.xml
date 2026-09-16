@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kiiraaye_geographie_list" model="ir.ui.view">
+        <field name="name">kiiraaye.geographie.list</field>
+        <field name="model">kiiraaye.geographie</field>
+        <field name="arch" type="xml">
+            <list string="Référentiel géographique">
+                <field name="name"/>
+                <field name="niveau"/>
+                <field name="country_id"/>
+                <field name="state_id"/>
+                <field name="parent_id"/>
+                <field name="code"/>
+                <field name="admin_level"/>
+                <field name="source_name"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_kiiraaye_geographie_form" model="ir.ui.view">
+        <field name="name">kiiraaye.geographie.form</field>
+        <field name="model">kiiraaye.geographie</field>
+        <field name="arch" type="xml">
+            <form string="Zone géographique">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="niveau"/>
+                            <field name="admin_level"/>
+                            <field name="country_id"/>
+                            <field name="state_id" domain="[('country_id', '=', country_id)]"/>
+                        </group>
+                        <group>
+                            <field name="parent_id" domain="[('country_id', '=', country_id)]"/>
+                            <field name="complete_name" readonly="1"/>
+                            <field name="latitude"/>
+                            <field name="longitude"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Source">
+                            <group>
+                                <field name="source_name"/>
+                                <field name="source_uid"/>
+                                <field name="source_year"/>
+                                <field name="source_license"/>
+                                <field name="source_url"/>
+                            </group>
+                        </page>
+                        <page string="Cartographie">
+                            <field name="geojson" nolabel="1" widget="text"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_kiiraaye_geographies" model="ir.actions.act_window">
+        <field name="name">Référentiel géographique</field>
+        <field name="res_model">kiiraaye.geographie</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_kiiraaye_countries" model="ir.actions.act_window">
+        <field name="name">Pays</field>
+        <field name="res_model">res.country</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

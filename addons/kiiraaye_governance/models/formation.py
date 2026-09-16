@@ -8,8 +8,8 @@ class KiiraayeFormation(models.Model):
     _order = "date_debut desc"
 
     name = fields.Char(string="Formation", required=True)
-    territoire_id = fields.Many2one(
-        "kiiraaye.territoire", string="Territoire",
+    geographie_id = fields.Many2one(
+        "kiiraaye.geographie", string="Zone géographique",
         required=True, ondelete="restrict", index=True
     )
     formateur = fields.Char(string="Formateur")

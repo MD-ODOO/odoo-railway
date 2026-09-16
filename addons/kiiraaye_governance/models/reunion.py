@@ -8,8 +8,8 @@ class KiiraayeReunion(models.Model):
     _order = "date_debut desc, id desc"
 
     name = fields.Char(string="Objet", required=True, tracking=True)
-    territoire_id = fields.Many2one(
-        "kiiraaye.territoire", string="Territoire",
+    geographie_id = fields.Many2one(
+        "kiiraaye.geographie", string="Zone géographique",
         required=True, ondelete="restrict", index=True
     )
     date_debut = fields.Datetime(string="Début", required=True)

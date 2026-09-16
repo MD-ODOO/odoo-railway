@@ -34,8 +34,10 @@
     <menuitem id="menu_configuration" name="Configuration" parent="menu_kiiraaye_root"
               groups="kiiraaye_governance.group_kiiraaye_national" sequence="90"/>
     <menuitem id="menu_geo" name="Géographie" parent="menu_configuration"/>
+    <menuitem id="menu_geo_countries" name="Pays" parent="menu_geo"
+              action="kiiraaye_governance.action_kiiraaye_countries" sequence="5"/>
     <menuitem id="menu_geo_reference" name="Référentiel géographique" parent="menu_geo"
-              action="kiiraaye_governance.action_geo_reference"/>
+              action="kiiraaye_governance.action_kiiraaye_geographies" sequence="10"/>
     <menuitem id="menu_geo_import" name="Importer une couche administrative" parent="menu_geo"
               action="kiiraaye_governance.action_geo_import"/>
     <menuitem id="menu_geo_map" name="Carte administrative mondiale" parent="menu_geo"

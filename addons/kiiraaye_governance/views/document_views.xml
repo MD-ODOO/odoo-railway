@@ -9,7 +9,7 @@
                 <field name="name"/>
                 <field name="document_type"/>
                 <field name="date_document"/>
-                <field name="territoire_id"/>
+                <field name="geographie_id"/>
                 <field name="confidential"/>
             </list>
         </field>
@@ -27,7 +27,7 @@
                             <field name="reference"/>
                             <field name="document_type"/>
                             <field name="date_document"/>
-                            <field name="territoire_id"/>
+                            <field name="geographie_id"/>
                         </group>
                         <group>
                             <field name="partisan_id"/>

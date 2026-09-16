@@ -24,7 +24,7 @@
                     <group>
                         <group>
                             <field name="bureau_id"/>
-                            <field name="territoire_id" readonly="1"/>
+                            <field name="geographie_id" readonly="1"/>
                             <field name="position_id"/>
                             <field name="partisan_id"/>
                         </group>

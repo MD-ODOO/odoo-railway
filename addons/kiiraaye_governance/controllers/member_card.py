@@ -37,7 +37,7 @@ class KiiraayeMemberCardController(http.Controller):
             f"<p><strong>Matricule :</strong> {card.partisan_id.matricule}</p>"
             f"<p><strong>Nom :</strong> {card.partisan_id.prenom} {card.partisan_id.nom}</p>"
             f"<p><strong>Section :</strong> {card.section_id.name}</p>"
-            f"<p><strong>Territoire :</strong> {card.territoire_id.complete_name}</p>"
+            f"<p><strong>Territoire :</strong> {card.geographie_id.complete_name}</p>"
             "</body></html>",
             headers=[("Content-Type", "text/html; charset=utf-8")],
             status=200,

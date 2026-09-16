@@ -3,13 +3,13 @@ from odoo import api, fields, models, _
 
 class KiiraayePlanAction(models.Model):
     _name = "kiiraaye.plan.action"
-    _description = "Plan d'action territorial"
+    _description = "Plan d'action géographique"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "priority desc, date_fin, id"
 
     name = fields.Char(string="Action", required=True, tracking=True)
-    territoire_id = fields.Many2one(
-        "kiiraaye.territoire", string="Territoire",
+    geographie_id = fields.Many2one(
+        "kiiraaye.geographie", string="Zone géographique",
         required=True, ondelete="restrict", index=True
     )
     responsible_id = fields.Many2one(

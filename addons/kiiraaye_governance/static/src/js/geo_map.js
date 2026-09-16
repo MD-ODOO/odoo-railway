@@ -34,10 +34,10 @@ export class KiiraayeGeoMap extends Component {
         onWillStart(()=>this.load());
     }
     async load(){
-        const domain=this.state.level==="all"?[]:[["type_niveau","=",this.state.level]];
+        const domain=this.state.level==="all"?[]:[["niveau","=",this.state.level]];
         this.state.items=await this.orm.searchRead(
             "kiiraaye.territoire",domain,
-            ["name","complete_name","geojson","country_id","type_niveau"],
+            ["name","complete_name","geojson","country_id","niveau"],
             {limit:1200,order:"name"}
         );
         this.state.loading=false;

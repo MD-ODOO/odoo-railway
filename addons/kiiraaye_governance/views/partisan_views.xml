@@ -52,7 +52,7 @@
                         <page string="Appartenance">
                             <group>
                                 <field name="section_id"/>
-                                <field name="territoire_id" readonly="1"/>
+                                <field name="geographie_id" readonly="1"/>
                                 <field name="active"/>
                             </group>
                         </page>
