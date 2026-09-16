@@ -1,6 +1,6 @@
 {
     "name": "Kiiraaye Gouvernance",
-    "version": "19.0.5.2.0",
+    "version": "19.0.5.3.0",
     "category": "Operations",
     "summary": "Gouvernance territoriale, dashboard OWL et cartes de membre",
     "description": "Plateforme de gouvernance territoriale et administrative pour Odoo 19 Community.",
@@ -32,7 +32,7 @@
         "views/menus.xml",
         "reports/report_paperformat.xml",
         "reports/member_card_report.xml",
-        "reports/national_report.xml"
+        "reports/governance_report.xml"
     ],
     "assets": {
         "web.assets_backend": [
