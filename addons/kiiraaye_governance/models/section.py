@@ -54,13 +54,8 @@ class KiiraayeSection(models.Model):
 
     bureau_id = fields.Many2one(
         "kiiraaye.bureau", string="Bureau",
-        compute="_compute_bureau", readonly=True
+        readonly=True, copy=False, ondelete="set null"
     )
-    @api.depends("id")
-    def _compute_bureau(self):
-        Bureau = self.env["kiiraaye.bureau"]
-        for rec in self:
-            rec.bureau_id = Bureau.search([("section_id", "=", rec.id)], limit=1) if rec.id else False
 
     membre_ids = fields.Many2many(
         "kiiraaye.partisan", "kiiraaye_section_partisan_rel",
@@ -137,7 +132,8 @@ class KiiraayeSection(models.Model):
         records._validate_lieux()
         Bureau = self.env["kiiraaye.bureau"]
         for rec in records:
-            Bureau.create({"section_id": rec.id})
+            bureau = Bureau.create({"section_id": rec.id})
+            rec.bureau_id = bureau.id
         return records
 
     def write(self, vals):
