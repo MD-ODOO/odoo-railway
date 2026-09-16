@@ -43,3 +43,5 @@ access_indicator_national,indicator national,model_kiiraaye_indicateur,kiiraaye_
 access_member_card_user,member card user,model_kiiraaye_member_card,kiiraaye_governance.group_kiiraaye_user,1,0,0,0
 access_member_card_coord,member card coord,model_kiiraaye_member_card,kiiraaye_governance.group_kiiraaye_coordonnateur,1,1,1,0
 access_member_card_national,member card national,model_kiiraaye_member_card,kiiraaye_governance.group_kiiraaye_national,1,1,1,1
+access_geo_import_user,geo import user,model_kiiraaye_geo_import_wizard,kiiraaye_governance.group_kiiraaye_national,1,1,1,0
+access_geo_bootstrap_national,geo bootstrap national,model_kiiraaye_geo_bootstrap,kiiraaye_governance.group_kiiraaye_national,1,1,1,1

@@ -1,9 +1,9 @@
 {
     "name": "Kiiraaye Gouvernance",
-    "version": "19.0.5.3.0",
+    "version": "19.0.6.0.0",
     "category": "Operations",
-    "summary": "Gouvernance territoriale, dashboard OWL et cartes de membre",
-    "description": "Plateforme de gouvernance territoriale et administrative pour Odoo 19 Community.",
+    "summary": "Gouvernance territoriale et référentiel géographique mondial",
+    "description": "Référentiel administratif mondial, cartographie OWL et gouvernance territoriale.",
     "author": "Kiiraaye",
     "license": "LGPL-3",
     "depends": ["base", "mail", "web"],
@@ -29,6 +29,7 @@
         "views/res_users_views.xml",
         "views/dashboard_action.xml",
         "views/report_wizard.xml",
+        "views/geo_config_views.xml",
         "views/menus.xml",
         "reports/report_paperformat.xml",
         "reports/member_card_report.xml",
@@ -37,7 +38,9 @@
     "assets": {
         "web.assets_backend": [
             "kiiraaye_governance/static/src/js/territory_dashboard.js",
+            "kiiraaye_governance/static/src/js/geo_map.js",
             "kiiraaye_governance/static/src/xml/territory_dashboard.xml",
+            "kiiraaye_governance/static/src/xml/geo_map.xml",
             "kiiraaye_governance/static/src/scss/kiiraaye.scss"
         ]
     },

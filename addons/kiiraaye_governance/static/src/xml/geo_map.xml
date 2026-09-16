@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="kiiraaye_governance.GeoMap">
+        <div class="o_kir_geo_map">
+            <div class="o_kir_geo_toolbar">
+                <div>
+                    <h2>Carte administrative mondiale</h2>
+                    <small>Référentiel géographique Kiiraaye</small>
+                </div>
+                <select class="form-select" t-on-change="change">
+                    <option value="pays">Pays</option>
+                    <option value="region">Régions / États / Provinces</option>
+                    <option value="departement">Départements / Comtés</option>
+                    <option value="commune">Communes / Municipalités</option>
+                    <option value="communaute_rurale">Niveaux locaux</option>
+                    <option value="quartier">Quartiers / Districts</option>
+                </select>
+            </div>
+            <t t-if="state.loading">
+                <div class="o_kir_geo_loading">Chargement...</div>
+            </t>
+            <t t-elif="!state.items.length">
+                <div class="alert alert-info">
+                    Aucune géométrie pour ce niveau.
+                    Utilisez Configuration → Géographie → Importer une couche.
+                </div>
+            </t>
+            <t t-else="">
+                <div class="o_kir_geo_canvas">
+                    <svg viewBox="0 0 1100 520" preserveAspectRatio="xMidYMid meet">
+                        <rect width="1100" height="520" class="o_kir_geo_background"/>
+                        <t t-foreach="state.items" t-as="item" t-key="item.id">
+                            <t t-foreach="paths(item)" t-as="d" t-key="d">
+                                <path t-att-d="d"
+                                      class="o_kir_geo_polygon"
+                                      t-on-click="() => open(item.id)">
+                                    <title><t t-esc="item.complete_name"/></title>
+                                </path>
+                            </t>
+                        </t>
+                    </svg>
+                </div>
+                <div class="o_kir_geo_legend">
+                    <b t-esc="state.items.length"/> entité(s) ·
+                    Source : geoBoundaries gbOpen (attribution requise)
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

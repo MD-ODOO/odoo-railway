@@ -4,6 +4,7 @@ from . import campagne
 from . import document
 from . import election
 from . import formation
+from . import geo_import
 from . import indicator
 from . import member_card
 from . import partisan

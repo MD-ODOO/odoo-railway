@@ -1,68 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <menuitem id="menu_kiiraaye_root"
-              name="Kiiraaye Gouvernance"
+    <menuitem id="menu_kiiraaye_root" name="Kiiraaye Gouvernance"
               groups="kiiraaye_governance.group_kiiraaye_user"/>
 
-    <menuitem id="menu_kiiraaye_dashboard"
-              name="Tableau de bord"
+    <menuitem id="menu_kiiraaye_dashboard" name="Tableau de bord"
               parent="menu_kiiraaye_root"
               action="kiiraaye_governance.action_kiiraaye_dashboard_owl"
               sequence="5"/>
 
-    <menuitem id="menu_org" name="Organisation"
-              parent="menu_kiiraaye_root" sequence="10"/>
-    <menuitem id="menu_territoires" name="Territoires"
-              parent="menu_org"
-              action="kiiraaye_governance.action_territoires"/>
-    <menuitem id="menu_sections" name="Sections"
-              parent="menu_org"
-              action="kiiraaye_governance.action_sections"/>
-    <menuitem id="menu_bureaux" name="Bureaux"
-              parent="menu_org"
-              action="kiiraaye_governance.action_bureaux"/>
-    <menuitem id="menu_postes" name="Postes"
-              parent="menu_org"
-              action="kiiraaye_governance.action_postes"/>
+    <menuitem id="menu_org" name="Organisation" parent="menu_kiiraaye_root" sequence="10"/>
+    <menuitem id="menu_sections" name="Sections" parent="menu_org" action="kiiraaye_governance.action_sections"/>
+    <menuitem id="menu_bureaux" name="Bureaux" parent="menu_org" action="kiiraaye_governance.action_bureaux"/>
+    <menuitem id="menu_postes" name="Postes" parent="menu_org" action="kiiraaye_governance.action_postes"/>
 
-    <menuitem id="menu_partisans" name="Partisans"
-              parent="menu_kiiraaye_root"
-              action="kiiraaye_governance.action_partisans"
-              sequence="20"/>
-    <menuitem id="menu_cards" name="Cartes de membre"
-              parent="menu_kiiraaye_root"
-              action="kiiraaye_governance.action_member_cards"
-              sequence="25"/>
+    <menuitem id="menu_partisans" name="Partisans" parent="menu_kiiraaye_root"
+              action="kiiraaye_governance.action_partisans" sequence="20"/>
+    <menuitem id="menu_cards" name="Cartes de membre" parent="menu_kiiraaye_root"
+              action="kiiraaye_governance.action_member_cards" sequence="25"/>
 
-    <menuitem id="menu_gouv" name="Gouvernance"
-              parent="menu_kiiraaye_root" sequence="30"/>
-    <menuitem id="menu_docs" name="Documents"
-              parent="menu_gouv"
-              action="kiiraaye_governance.action_documents"/>
-    <menuitem id="menu_reunions" name="Réunions"
-              parent="menu_gouv"
-              action="kiiraaye_governance.action_reunions"/>
-    <menuitem id="menu_formations" name="Formations"
-              parent="menu_gouv"
-              action="kiiraaye_governance.action_formations"/>
-    <menuitem id="menu_activites" name="Activités"
-              parent="menu_gouv"
-              action="kiiraaye_governance.action_activities"/>
-    <menuitem id="menu_plans" name="Plans d'action"
-              parent="menu_gouv"
-              action="kiiraaye_governance.action_plan_actions"/>
+    <menuitem id="menu_gouv" name="Gouvernance" parent="menu_kiiraaye_root" sequence="30"/>
+    <menuitem id="menu_docs" name="Documents" parent="menu_gouv" action="kiiraaye_governance.action_documents"/>
+    <menuitem id="menu_reunions" name="Réunions" parent="menu_gouv" action="kiiraaye_governance.action_reunions"/>
+    <menuitem id="menu_formations" name="Formations" parent="menu_gouv" action="kiiraaye_governance.action_formations"/>
+    <menuitem id="menu_activites" name="Activités" parent="menu_gouv" action="kiiraaye_governance.action_activities"/>
+    <menuitem id="menu_plans" name="Plans d'action" parent="menu_gouv" action="kiiraaye_governance.action_plan_actions"/>
 
-    <menuitem id="menu_nat" name="Pilotage national"
-              parent="menu_kiiraaye_root"
-              groups="kiiraaye_governance.group_kiiraaye_national"
-              sequence="40"/>
-    <menuitem id="menu_campaigns" name="Campagnes"
-              parent="menu_nat"
-              action="kiiraaye_governance.action_campaigns"/>
-    <menuitem id="menu_indicators" name="Indicateurs"
-              parent="menu_nat"
-              action="kiiraaye_governance.action_indicators"/>
-    <menuitem id="menu_report" name="Rapport de gouvernance"
-              parent="menu_nat"
-              action="kiiraaye_governance.action_report_wizard"/>
+    <menuitem id="menu_nat" name="Pilotage national" parent="menu_kiiraaye_root"
+              groups="kiiraaye_governance.group_kiiraaye_national" sequence="40"/>
+    <menuitem id="menu_campaigns" name="Campagnes" parent="menu_nat" action="kiiraaye_governance.action_campaigns"/>
+    <menuitem id="menu_indicators" name="Indicateurs" parent="menu_nat" action="kiiraaye_governance.action_indicators"/>
+    <menuitem id="menu_report" name="Rapport de gouvernance" parent="menu_nat" action="kiiraaye_governance.action_report_wizard"/>
+
+    <menuitem id="menu_configuration" name="Configuration" parent="menu_kiiraaye_root"
+              groups="kiiraaye_governance.group_kiiraaye_national" sequence="90"/>
+    <menuitem id="menu_geo" name="Géographie" parent="menu_configuration"/>
+    <menuitem id="menu_geo_reference" name="Référentiel géographique" parent="menu_geo"
+              action="kiiraaye_governance.action_geo_reference"/>
+    <menuitem id="menu_geo_import" name="Importer une couche administrative" parent="menu_geo"
+              action="kiiraaye_governance.action_geo_import"/>
+    <menuitem id="menu_geo_map" name="Carte administrative mondiale" parent="menu_geo"
+              action="kiiraaye_governance.action_geo_map"/>
+    <menuitem id="menu_geo_bootstrap" name="Initialiser les pays" parent="menu_geo"
+              action="kiiraaye_governance.action_geo_bootstrap"/>
 </odoo>
