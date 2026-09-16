@@ -21,6 +21,9 @@
         <field name="model">kiiraaye.partisan</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button name="action_print_member_card" type="object" string="Imprimer carte de membre" class="btn-primary"/>
+                </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box"/>
                     <div class="kiiraaye_poste_banner"

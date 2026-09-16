@@ -83,3 +83,16 @@ class KiiraayePartisan(models.Model):
                 raise ValidationError(
                     _("Impossible d'inscrire un partisan dans une section fermée.")
                 )
+
+    def action_print_member_card(self):
+        self.ensure_one()
+        Card = self.env["kiiraaye.member.card"]
+        card = Card.search(
+            [("partisan_id", "=", self.id), ("state", "!=", "cancelled")],
+            order="date_emission desc, id desc",
+            limit=1,
+        )
+        if not card:
+            card = Card.create({"partisan_id": self.id})
+            card.action_activate()
+        return card.action_print()

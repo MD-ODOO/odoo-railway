@@ -7,7 +7,7 @@
             <list>
                 <field name="name"/>
                 <field name="partisan_id"/>
-                <!-- <field name="matricule" invisible="1"/> -->
+                <field name="matricule" invisible="1"/>
                 <field name="territoire_id"/>
                 <field name="section_id"/>
                 <field name="poste_id"/>
