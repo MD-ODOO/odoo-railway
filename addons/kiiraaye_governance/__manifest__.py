@@ -1,5 +1,5 @@
 {'name': 'Kiiraaye Gouvernance',
- 'version': '19.0.5.0.0',
+ 'version': '19.0.5.1.0',
  'category': 'Operations',
  'summary': 'Gouvernance territoriale, dashboard OWL, cartographie et cartes '
             'de membre',

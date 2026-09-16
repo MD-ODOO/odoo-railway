@@ -21,6 +21,10 @@ class KiiraayeMemberCard(models.Model):
         related="partisan_id.territoire_id", store=True, index=True,
         string="Territoire"
     )
+    matricule = fields.Char(
+        related="partisan_id.matricule", store=True, readonly=True,
+        string="Matricule"
+    )
     section_id = fields.Many2one(
         related="partisan_id.section_id", store=True, string="Section"
     )
