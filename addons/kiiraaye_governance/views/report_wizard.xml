@@ -1,1 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?><odoo><record id="view_report_wizard" model="ir.ui.view"><field name="name">report.wizard.form</field><field name="model">kiiraaye.national.report.wizard</field><field name="arch" type="xml"><form><group><field name="report_title"/><field name="date_debut"/><field name="date_fin"/><field name="territoire_id"/></group><footer><button name="action_print" type="object" string="Générer" class="btn-primary"/><button special="cancel" string="Annuler"/></footer></form></field></record><record id="action_report_wizard" model="ir.actions.act_window"><field name="name">Rapport de gouvernance</field><field name="res_model">kiiraaye.national.report.wizard</field><field name="view_mode">form</field><field name="target">new</field></record></odoo>
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_report_wizard" model="ir.ui.view">
+        <field name="name">kiiraaye.national.report.wizard.form</field>
+        <field name="model">kiiraaye.national.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Rapport de gouvernance">
+                <group>
+                    <field name="report_title"/>
+                    <field name="date_debut"/>
+                    <field name="date_fin"/>
+                    <field name="territoire_id"/>
+                </group>
+                <footer>
+                    <button name="action_print" type="object"
+                            string="Générer le rapport"
+                            class="btn-primary"/>
+                    <button special="cancel" string="Annuler"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_report_wizard" model="ir.actions.act_window">
+        <field name="name">Rapport de gouvernance</field>
+        <field name="res_model">kiiraaye.national.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
