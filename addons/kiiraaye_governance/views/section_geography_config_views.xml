@@ -5,7 +5,7 @@
         <field name="model">kiiraaye.section</field>
         <field name="inherit_id" ref="kiiraaye_governance.view_kiiraaye_section_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//group[@string='Identification']/field[@name='country_id']" position="after">
+            <xpath expr="//field[@name='country_id']" position="after">
                 <field name="geo_region_level" invisible="True"/>
                 <field name="geo_department_level" invisible="True"/>
                 <field name="geo_commune_level" invisible="True"/>
@@ -16,7 +16,7 @@
                 <field name="geo_quartier_label" invisible="True"/>
             </xpath>
 
-            <xpath expr="//group[@string='Localisation géographique']" position="replace">
+            <xpath expr="//field[@name='region_id']/ancestor::group[1]" position="replace">
                 <group string="Localisation géographique">
                     <!-- Les champs correspondent aux niveaux configurés pour le pays sélectionné. -->
                     <field name="region_id"
