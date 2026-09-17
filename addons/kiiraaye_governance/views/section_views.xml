@@ -78,8 +78,11 @@
                                    invisible="type_section != 'communale'"
                                    domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau3'), ('parent_id', '=', departement_id), ('active', '=', True)]"/>
                             <field name="quartier_id"
+                                   string="Quartier"
                                    invisible="type_section != 'communale'"
-                                   domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('parent_id', 'child_of', commune_id), ('active', '=', True)]"/>
+                                   required="type_section == 'communale'"
+                                   domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('parent_id', '=', commune_id), ('active', '=', True)]"
+                                   context="{'default_country_id': country_id, 'default_parent_id': commune_id, 'default_niveau': 'niveau5'}"/>
                         </group>
                     </group>
                     <group>
