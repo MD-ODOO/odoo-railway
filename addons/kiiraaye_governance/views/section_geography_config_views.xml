@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kiiraaye_section_form_geography_config" model="ir.ui.view">
+        <field name="name">kiiraaye.section.form.geography.config</field>
+        <field name="model">kiiraaye.section</field>
+        <field name="inherit_id" ref="kiiraaye_governance.view_kiiraaye_section_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@string='Identification']/field[@name='country_id']" position="after">
+                <field name="geo_region_level" invisible="True"/>
+                <field name="geo_department_level" invisible="True"/>
+                <field name="geo_commune_level" invisible="True"/>
+                <field name="geo_quartier_level" invisible="True"/>
+                <field name="geo_region_label" invisible="True"/>
+                <field name="geo_department_label" invisible="True"/>
+                <field name="geo_commune_label" invisible="True"/>
+                <field name="geo_quartier_label" invisible="True"/>
+            </xpath>
+
+            <xpath expr="//group[@string='Localisation géographique']" position="replace">
+                <group string="Localisation géographique">
+                    <!-- Les champs correspondent aux niveaux configurés pour le pays sélectionné. -->
+                    <field name="region_id"
+                           string="Région / État / Province"
+                           invisible="type_section not in ['regionale', 'departementale', 'communale'] or not geo_region_level"
+                           domain="[('country_id', '=', country_id), ('niveau', '=', geo_region_level), ('active', '=', True)]"/>
+                    <field name="departement_id"
+                           string="Département / District / Comté"
+                           invisible="type_section not in ['departementale', 'communale'] or not geo_department_level"
+                           domain="[('country_id', '=', country_id), ('niveau', '=', geo_department_level), ('id', 'child_of', region_id), ('active', '=', True)]"/>
+                    <field name="commune_id"
+                           string="Commune / Municipalité / Ville"
+                           invisible="type_section != 'communale' or not geo_commune_level"
+                           domain="[('country_id', '=', country_id), ('niveau', '=', geo_commune_level), ('id', 'child_of', departement_id if departement_id else region_id), ('active', '=', True)]"/>
+                    <field name="quartier_id"
+                           string="Quartier / équivalent local"
+                           invisible="type_section != 'communale' or not geo_quartier_level"
+                           domain="[('country_id', '=', country_id), ('niveau', '=', geo_quartier_level), ('id', 'child_of', commune_id if commune_id else departement_id if departement_id else region_id), ('active', '=', True)]"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
