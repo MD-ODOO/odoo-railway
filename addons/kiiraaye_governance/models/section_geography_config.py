@@ -49,7 +49,20 @@ class KiiraayeSectionGeographyConfig(models.Model):
 
     def _country_level(self, role):
         self.ensure_one()
-        return getattr(self.country_id, f"kiiraaye_geo_{role}_level", False) or False
+        level = getattr(self.country_id, f"kiiraaye_geo_{role}_level", False) or False
+        if level:
+            return level
+
+        # Le Sénégal utilise la convention Kiiraaye standard lorsque la
+        # configuration historique du pays n'a pas encore été migrée.
+        if self.country_id.code == "SN":
+            return {
+                "region": "niveau1",
+                "department": "niveau2",
+                "commune": "niveau3",
+                "quartier": "niveau5",
+            }.get(role, False)
+        return False
 
     def _geo_parent(self, role):
         self.ensure_one()
