@@ -19,6 +19,7 @@
         "views/section_geography_config_views.xml",
         "views/country_views.xml",
         "views/country_geography_config_views.xml",
+        "views/country_geography_bulk_views.xml",
         "views/menus.xml",
     ],
     "installable": True,
