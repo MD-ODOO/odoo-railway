@@ -39,20 +39,32 @@
         <field name="arch" type="xml">
             <form string="Membre">
                 <header>
+                    <button name="action_view_membership_card"
+                            type="object"
+                            string="Carte numérique"
+                            icon="fa-id-card"
+                            class="oe_highlight"/>
                     <button name="action_print_membership_card"
                             type="object"
                             string="Imprimer la carte"
-                            class="oe_highlight"
-                            icon="fa-id-card-o"/>
+                            icon="fa-print"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
+                        <button name="action_view_membership_card"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-id-card">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Carte numérique</span>
+                            </div>
+                        </button>
                         <button name="action_print_membership_card"
                                 type="object"
                                 class="oe_stat_button"
-                                icon="fa-id-card-o">
+                                icon="fa-print">
                             <div class="o_stat_info">
-                                <span class="o_stat_text">Carte membre</span>
+                                <span class="o_stat_text">Imprimer</span>
                             </div>
                         </button>
                     </div>
@@ -74,6 +86,7 @@
                             <field name="phone" widget="phone"/>
                             <field name="email" widget="email"/>
                             <field name="active"/>
+                            <field name="qr_code_value" readonly="1" invisible="1"/>
                         </group>
                     </group>
                     <notebook>
