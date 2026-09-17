@@ -43,14 +43,12 @@ class KiiraayeSectionCoordinator(models.Model):
             ("state", "=", "ouverte"),
         ])
         active_coordinators = sections.mapped("cordonnateur_id.user_id")
-        current_group_users = self.env["res.users"].sudo().search(
-            [("groups_id", "in", group.id)]
-        )
+        current_group_users = group.user_ids
 
         for user in active_coordinators - current_group_users:
-            user.write({"groups_id": [Command.link(group.id)]})
+            user.write({"group_ids": [Command.link(group.id)]})
         for user in current_group_users - active_coordinators:
-            user.write({"groups_id": [Command.unlink(group.id)]})
+            user.write({"group_ids": [Command.unlink(group.id)]})
 
         coord_position = self.env["kiiraaye.position"].sudo().search(
             [("code", "=", "COORD")], limit=1
