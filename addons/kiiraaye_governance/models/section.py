@@ -10,10 +10,11 @@ class KiiraayeSection(models.Model):
 
     name = fields.Char(
         string="Nom",
-        required=True,
         readonly=True,
         compute="_compute_name",
         store=True,
+        index=True,
+        help="Nom généré automatiquement à partir du type et de la hiérarchie géographique.",
     )
     reference = fields.Char(
         string="Référence",
@@ -114,7 +115,7 @@ class KiiraayeSection(models.Model):
             parts = [
                 type_labels.get(
                     record.type_section,
-                    record.type_section or _("Structure"),
+                    record.type_section or _("Section / Coordination Kiiraaye"),
                 )
             ]
             for field_name in (
@@ -126,7 +127,7 @@ class KiiraayeSection(models.Model):
                 value = getattr(record, field_name)
                 if value:
                     parts.append(value.display_name)
-            record.name = " / ".join(parts)
+            record.name = " / ".join(parts) or _("Section / Coordination Kiiraaye")
 
     _unique_reference = models.Constraint(
         "UNIQUE(reference)",
