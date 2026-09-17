@@ -7,4 +7,20 @@
         <field name="padding">5</field>
         <field name="company_id" eval="False"/>
     </record>
+
+    <record id="seq_kiiraaye_partisan" model="ir.sequence">
+        <field name="name">Numéro de membre Kiiraaye</field>
+        <field name="code">kiiraaye.partisan</field>
+        <field name="prefix">MEM/%(year)s/</field>
+        <field name="padding">6</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_kiiraaye_attribution_poste" model="ir.sequence">
+        <field name="name">Référence attribution de poste Kiiraaye</field>
+        <field name="code">kiiraaye.attribution.poste</field>
+        <field name="prefix">ATP/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
 </odoo>
