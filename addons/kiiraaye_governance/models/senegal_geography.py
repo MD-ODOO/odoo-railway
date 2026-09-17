@@ -94,6 +94,21 @@ class ResCountrySenegalGeography(models.Model):
         value = re.sub(r"[^a-z0-9]+", " ", value)
         return re.sub(r"\s+", " ", value).strip()
 
+    @staticmethod
+    def _normalize_match_label(value):
+        """Clé de rapprochement tolérante aux accents, espaces et ponctuation."""
+        value = unicodedata.normalize("NFKD", str(value or ""))
+        value = value.encode("ascii", "ignore").decode("ascii")
+        return re.sub(r"[^a-z0-9]+", "", value.lower())
+
+    @classmethod
+    def _normalize_csv_header(cls, value):
+        value = unicodedata.normalize("NFKD", str(value or ""))
+        value = value.encode("ascii", "ignore").decode("ascii")
+        value = value.lower().strip()
+        value = re.sub(r"[^a-z0-9]+", "_", value)
+        return re.sub(r"_+", "_", value).strip("_")
+
     @classmethod
     def _locality_uid(cls, department_id, commune_name, locality_name, com_arrt_ville):
         raw = "|".join(
@@ -238,23 +253,37 @@ class ResCountrySenegalGeography(models.Model):
         return records
 
     def _load_senegal_quartiers(self, communes):
-        """Charge les unités locales du répertoire ANSD sous leur commune.
+        """Charge les unités locales ANSD sous leur commune.
 
-        L'ANSD expose la colonne « QUARTIER/VILLAGE/HAMEAU ». La source ne fournit
-        pas dans ce flux un type permettant de distinguer automatiquement quartier,
-        village et hameau. Les lignes sont donc conservées fidèlement comme unités
-        locales de niveau 5, sans les présenter comme des quartiers administratifs
-        officiellement homogènes.
+        L'ANSD expose la colonne « QUARTIER/VILLAGE/HAMEAU ». Le flux ne permet
+        pas de distinguer automatiquement ces trois catégories. Elles sont donc
+        conservées fidèlement comme unités locales de niveau 5.
         """
         csv_text = self._ansd_get_csv()
-        reader = csv.DictReader(io.StringIO(csv_text))
 
-        departments_by_name = {}
-        for department in set(commune.parent_id for commune in communes.values() if commune.parent_id):
-            departments_by_name.setdefault(
-                self._normalize_local_label(department.name), department
-            )
+        # Le fichier ANSD peut changer de séparateur ou de forme d'en-tête.
+        # On détecte le séparateur et on normalise les noms de colonnes.
+        try:
+            dialect = csv.Sniffer().sniff(csv_text[:12000], delimiters=",;\t|")
+        except csv.Error:
+            dialect = csv.excel
 
+        reader = csv.DictReader(io.StringIO(csv_text), dialect=dialect)
+        if not reader.fieldnames:
+            raise UserError(_("Le fichier ANSD des localités est vide ou sans en-tête exploitable."))
+
+        normalized_headers = {
+            self._normalize_csv_header(header): header
+            for header in reader.fieldnames
+            if header
+        }
+
+        def row_value(row, name):
+            original = normalized_headers.get(name)
+            return (row.get(original) or "").strip() if original else ""
+
+        # Correspondance tolérante aux différences d'apostrophes, tirets,
+        # espaces et accents entre GalsenAPI et ANSD (ex. M'BOUR / MBOUR).
         communes_by_key = {}
         for commune in communes.values():
             department = commune.parent_id
@@ -262,37 +291,47 @@ class ResCountrySenegalGeography(models.Model):
                 continue
             communes_by_key[
                 (
-                    department.id,
-                    self._normalize_local_label(commune.name),
+                    self._normalize_match_label(department.name),
+                    self._normalize_match_label(commune.name),
                 )
             ] = commune
+
+        # Rattachement secondaire par identifiant de la commune quand le
+        # code apparaît dans le fichier source, en complément du nom.
+        communes_by_code = {
+            self._normalize_match_label(commune.code): commune
+            for commune in communes.values()
+            if commune.code
+        }
 
         seen = set()
         loaded = 0
         skipped = 0
+        unmatched_departments = set()
+        unmatched_communes = set()
+
         for row in reader:
-            region = (row.get("Region") or "").strip()
-            department_name = (row.get("Departement") or "").strip()
-            commune_name = (row.get("COMMUNE") or "").strip()
-            com_arrt_ville = (row.get("COM_ARRT_VILLE") or "").strip()
-            locality_name = (
-                row.get("QUARTIER/VILLAGE/HAMEAU")
-                or row.get("LOCALITE")
-                or ""
-            ).strip()
+            department_name = row_value(row, "departement")
+            commune_name = row_value(row, "commune")
+            com_arrt_ville = row_value(row, "com_arrt_ville")
+            locality_name = row_value(row, "quartier_village_hameau") or row_value(row, "localite")
+
             if not department_name or not commune_name or not locality_name:
                 skipped += 1
                 continue
 
-            department = departments_by_name.get(self._normalize_local_label(department_name))
-            if not department:
-                skipped += 1
-                continue
+            department_key = self._normalize_match_label(department_name)
+            commune_key = self._normalize_match_label(commune_name)
+            commune = communes_by_key.get((department_key, commune_key))
 
-            commune = communes_by_key.get(
-                (department.id, self._normalize_local_label(commune_name))
-            )
+            # Certaines éditions de l'ANSD peuvent inclure le code communal.
             if not commune:
+                commune_code = row_value(row, "code_commune") or row_value(row, "id_commune")
+                commune = communes_by_code.get(self._normalize_match_label(commune_code)) if commune_code else False
+
+            if not commune:
+                unmatched_departments.add(department_name)
+                unmatched_communes.add(f"{department_name} / {commune_name}")
                 skipped += 1
                 continue
 
@@ -306,7 +345,7 @@ class ResCountrySenegalGeography(models.Model):
             seen.add(locality_key)
 
             source_uid = self._locality_uid(
-                department.id,
+                commune.parent_id.id,
                 commune.name,
                 locality_name,
                 com_arrt_ville,
@@ -330,6 +369,14 @@ class ResCountrySenegalGeography(models.Model):
             )
             loaded += 1
 
+        if unmatched_communes:
+            examples = ", ".join(sorted(unmatched_communes)[:10])
+            _logger.warning(
+                "Géographie Sénégal : %s communes ANSD non rattachées. Exemples : %s",
+                len(unmatched_communes),
+                examples,
+            )
+
         _logger.info(
             "Géographie Sénégal : %s unités locales ANSD chargées en niveau 5, %s lignes ignorées.",
             loaded,
@@ -337,18 +384,7 @@ class ResCountrySenegalGeography(models.Model):
         )
         return loaded, skipped
 
-    def action_load_senegal_default_geography(self):
-        self.ensure_one()
-        if self.code != "SN":
-            raise UserError(_("Cette opération est réservée au Sénégal."))
-
-        root = self._ensure_senegal_root()
-        regions = self._load_senegal_regions(root)
-        departments = self._load_senegal_departments(regions)
-        self._load_senegal_arrondissements(departments)
-        communes = self._load_senegal_communes(departments)
-        quartiers, skipped_localities = self._load_senegal_quartiers(communes)
-
+    def _set_senegal_geography_status(self, message):
         self.sudo().write({
             "kiiraaye_geo_source": "galsenapi",
             "kiiraaye_iso3": "SEN",
@@ -362,14 +398,72 @@ class ResCountrySenegalGeography(models.Model):
             "kiiraaye_geo_quartier_label": "Quartier / unité locale",
             "kiiraaye_geo_status": "ok",
             "kiiraaye_geo_last_sync": fields.Datetime.now(),
-            "kiiraaye_geo_message": (
-                "Référentiel Sénégal chargé automatiquement : "
-                f"{len(regions)} régions, {len(departments)} départements, "
-                f"{len(communes)} communes, {quartiers} unités locales de niveau 5. "
-                "Le niveau 5 reprend fidèlement la colonne ANSD « Quartier/Village/Hameau » "
-                f"({skipped_localities} lignes ignorées faute de rattachement exploitable)."
-            ),
+            "kiiraaye_geo_message": message,
         })
+
+    def action_load_senegal_quartiers(self):
+        """Charge uniquement les quartiers/unités locales sous les communes existantes."""
+        self.ensure_one()
+        if self.code != "SN":
+            raise UserError(_("Cette opération est réservée au Sénégal."))
+
+        Geo = self.env["kiiraaye.geographie"].sudo()
+        commune_records = Geo.search([
+            ("country_id", "=", self.id),
+            ("niveau", "=", "niveau3"),
+            ("active", "=", True),
+        ])
+
+        # Si les communes n'existent pas encore, on construit d'abord le
+        # référentiel administratif. Le chargement des unités locales reste
+        # ensuite ciblé sur les communes.
+        if not commune_records:
+            self.action_load_senegal_default_geography()
+            commune_records = Geo.search([
+                ("country_id", "=", self.id),
+                ("niveau", "=", "niveau3"),
+                ("active", "=", True),
+            ])
+
+        communes = {record.id: record for record in commune_records}
+        loaded, skipped = self._load_senegal_quartiers(communes)
+        self._set_senegal_geography_status(
+            _(
+                "Chargement ANSD terminé : %s unités locales/quartiers rattachées aux %s communes. "
+                "%s lignes ignorées faute de rattachement exploitable."
+            ) % (loaded, len(communes), skipped)
+        )
+
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("Quartiers / unités locales chargés"),
+                "message": self.kiiraaye_geo_message,
+                "type": "success",
+                "sticky": False,
+            },
+        }
+
+    def action_load_senegal_default_geography(self):
+        self.ensure_one()
+        if self.code != "SN":
+            raise UserError(_("Cette opération est réservée au Sénégal."))
+
+        root = self._ensure_senegal_root()
+        regions = self._load_senegal_regions(root)
+        departments = self._load_senegal_departments(regions)
+        self._load_senegal_arrondissements(departments)
+        communes = self._load_senegal_communes(departments)
+        quartiers, skipped_localities = self._load_senegal_quartiers(communes)
+
+        self._set_senegal_geography_status(
+            "Référentiel Sénégal chargé automatiquement : "
+            f"{len(regions)} régions, {len(departments)} départements, "
+            f"{len(communes)} communes, {quartiers} unités locales de niveau 5. "
+            "Le niveau 5 reprend fidèlement la colonne ANSD « Quartier/Village/Hameau » "
+            f"({skipped_localities} lignes ignorées faute de rattachement exploitable)."
+        )
 
         return {
             "type": "ir.actions.client",
