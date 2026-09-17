@@ -53,6 +53,10 @@ class ResCountryGeography(models.Model):
         string="Source géographique",
         default="geoboundaries",
         required=True,
+        ondelete={
+            "geoboundaries": "set default",
+            "manuel": "set default",
+        },
     )
     kiiraaye_geo_auto_adapt = fields.Boolean(
         string="Adaptation automatique des niveaux",
@@ -293,7 +297,6 @@ class ResCountryGeography(models.Model):
             if cls._point_in_geometry(point, item["geometry"]):
                 return item["record"]
 
-        # Deuxième essai avec le centre de la bounding box, utile pour certaines géométries concaves.
         bbox = cls._geometry_bbox(geometry)
         if bbox:
             center = ((bbox[0] + bbox[2]) / 2.0, (bbox[1] + bbox[3]) / 2.0)
@@ -394,8 +397,6 @@ class ResCountryGeography(models.Model):
         records_by_source_level = {}
         source_meta_by_level = {}
 
-        # Import dans l'ordre ADM1 -> ADM5. Le parent est obtenu par inclusion géométrique
-        # sur le niveau administratif disponible immédiatement supérieur.
         for source_level, metadata, features in layers:
             normalized_level = _SOURCE_TO_LEVEL[source_level]
             source_meta_by_level[source_level] = metadata
@@ -464,7 +465,6 @@ class ResCountryGeography(models.Model):
 
             records_by_source_level[source_level] = current_items
 
-        # Les unités disparues de la source sont archivées, pas supprimées.
         stale = Geo.search([
             ("country_id", "=", self.id),
             ("source", "=", "GeoBoundaries / gbOpen"),
