@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kiiraaye_country_list" model="ir.ui.view">
+        <field name="name">res.country.kiiraaye.list</field>
+        <field name="model">res.country</field>
+        <field name="arch" type="xml">
+            <list string="Pays">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="phone_code"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_kiiraaye_country_form" model="ir.ui.view">
+        <field name="name">res.country.kiiraaye.form</field>
+        <field name="model">res.country</field>
+        <field name="arch" type="xml">
+            <form string="Pays">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="code"/>
+                        <field name="phone_code"/>
+                    </group>
+                    <notebook>
+                        <page string="Géographie Kiiraaye">
+                            <field name="kiiraaye_geographie_ids" domain="[('niveau', '!=', 'pays')]">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="niveau"/>
+                                    <field name="designation_locale"/>
+                                    <field name="parent_id"/>
+                                    <field name="code"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_kiiraaye_country" model="ir.actions.act_window">
+        <field name="name">Pays</field>
+        <field name="res_model">res.country</field>
+        <field name="view_mode">list,form</field>
+        <field name="views" eval="[(ref('view_kiiraaye_country_list'), 'list'), (ref('view_kiiraaye_country_form'), 'form')]"/>
+    </record>
+</odoo>

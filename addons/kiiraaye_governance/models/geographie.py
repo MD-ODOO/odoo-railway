@@ -4,139 +4,108 @@ from odoo.exceptions import ValidationError
 
 class KiiraayeGeographie(models.Model):
     _name = "kiiraaye.geographie"
-    _description = "Référentiel géographique mondial"
-    _parent_store = True
+    _description = "Référentiel géographique Kiiraaye"
+    _rec_name = "name"
     _parent_name = "parent_id"
-    _rec_name = "complete_name"
+    _parent_store = True
     _order = "niveau, name"
 
     name = fields.Char(string="Nom", required=True, index=True)
-    code = fields.Char(string="Code", required=True, copy=False, index=True)
-    niveau = fields.Selection([
-        ("pays", "Pays"),
-        ("region", "Région / État / Province"),
-        ("departement", "Département / Comté / District"),
-        ("commune", "Commune / Municipalité / Ville"),
-        ("communaute_rurale", "Communauté rurale / niveau local"),
-        ("quartier", "Quartier / District de proximité"),
-        ("localite", "Localité / Village"),
-        ("autre", "Autre niveau"),
-    ], string="Type de niveau", required=True, index=True)
-    admin_level = fields.Integer(
-        string="Niveau administratif source",
-        help="Niveau administratif fourni par la source : ADM0, ADM1, ADM2, etc.",
+    code = fields.Char(string="Code", index=True)
+    country_id = fields.Many2one(
+        "res.country",
+        string="Pays",
+        required=True,
         index=True,
+        ondelete="restrict",
     )
     parent_id = fields.Many2one(
-        "kiiraaye.geographie", string="Parent",
-        ondelete="restrict", index=True
+        "kiiraaye.geographie",
+        string="Zone parente",
+        index=True,
+        ondelete="restrict",
     )
     parent_path = fields.Char(index=True)
-    child_ids = fields.One2many("kiiraaye.geographie", "parent_id", string="Enfants")
-    complete_name = fields.Char(
-        compute="_compute_complete_name", store=True, string="Chemin complet"
+    niveau = fields.Selection(
+        [
+            ("pays", "Pays"),
+            ("niveau1", "Région / État / Province"),
+            ("niveau2", "Département / District / Comté"),
+            ("niveau3", "Commune / Municipalité / Ville"),
+            ("niveau4", "Communauté rurale / niveau local"),
+            ("niveau5", "Quartier"),
+            ("niveau6", "Sous-quartier / Zone locale"),
+            ("localite", "Localité / Autre"),
+        ],
+        string="Niveau géographique",
+        required=True,
+        index=True,
+    )
+    designation_locale = fields.Char(
+        string="Désignation administrative locale",
+        help="Terme utilisé officiellement dans le pays ou la source : province, estado, district, ward, etc.",
+    )
+    source = fields.Char(string="Source des données")
+    source_uid = fields.Char(string="Identifiant source", index=True)
+    source_url = fields.Char(string="URL source")
+    source_year = fields.Integer(string="Année des données")
+    source_license = fields.Char(string="Licence source")
+    active = fields.Boolean(string="Actif", default=True)
+    child_ids = fields.One2many(
+        "kiiraaye.geographie",
+        "parent_id",
+        string="Sous-zones",
     )
 
-    # Compatible avec le référentiel d'adresse Odoo.
-    country_id = fields.Many2one(
-        "res.country", string="Pays", required=True,
-        ondelete="restrict", index=True
+    _unique_source_uid = models.Constraint(
+        "UNIQUE(country_id, source_uid)",
+        "L'identifiant source doit être unique à l'intérieur d'un pays.",
     )
-    state_id = fields.Many2one(
-        "res.country.state", string="Région / État / Province",
-        ondelete="restrict", index=True,
-        help="Correspondance avec la région/état Odoo utilisée par les adresses."
+    _root_shape = models.Constraint(
+        "CHECK((niveau = 'pays') = (parent_id IS NULL))",
+        "Une zone de niveau Pays doit être une racine et une racine doit être un Pays.",
     )
 
-    latitude = fields.Float(string="Latitude", digits=(10, 6))
-    longitude = fields.Float(string="Longitude", digits=(10, 6))
-    geojson = fields.Text(string="Géométrie GeoJSON")
+    @api.constrains("parent_id", "country_id")
+    def _check_parent_country(self):
+        for record in self:
+            if record.parent_id and record.parent_id.country_id != record.country_id:
+                raise ValidationError(
+                    _("Une zone géographique doit appartenir au même pays que sa zone parente.")
+                )
+            if record.parent_id == record:
+                raise ValidationError(_("Une zone géographique ne peut pas être son propre parent."))
 
-    source_name = fields.Char(string="Source")
-    source_uid = fields.Char(string="Identifiant source", copy=False, index=True)
-    source_year = fields.Char(string="Année des données")
-    source_license = fields.Char(string="Licence")
-    source_url = fields.Char(string="URL / référence source")
-    active = fields.Boolean(default=True)
-
-    child_count = fields.Integer(compute="_compute_child_count", readonly=True)
-
-    _code_country_unique = models.Constraint(
-        "UNIQUE(code, country_id)",
-        "Le code géographique doit être unique dans un pays."
-    )
-    @api.depends("name", "parent_id.complete_name")
-    def _compute_complete_name(self):
-        for rec in self:
-            rec.complete_name = (
-                f"{rec.parent_id.complete_name} / {rec.name}"
-                if rec.parent_id else rec.name
-            )
-
-    def _compute_child_count(self):
-        for rec in self:
-            rec.child_count = len(rec.child_ids)
-
-    @api.constrains("parent_id", "country_id", "niveau")
+    @api.constrains("niveau", "parent_id")
     def _check_hierarchy(self):
         rank = {
             "pays": 0,
-            "region": 1,
-            "departement": 2,
-            "commune": 3,
-            "communaute_rurale": 4,
-            "quartier": 5,
-            "localite": 6,
-            "autre": 99,
+            "niveau1": 1,
+            "niveau2": 2,
+            "niveau3": 3,
+            "niveau4": 4,
+            "niveau5": 5,
+            "niveau6": 6,
+            "localite": 99,
         }
-        for rec in self:
-            if rec.parent_id and rec.parent_id.id == rec.id:
-                raise ValidationError(_("Une zone géographique ne peut pas être son propre parent."))
-            if rec.parent_id:
-                if rec.parent_id.country_id != rec.country_id:
-                    raise ValidationError(_("Le parent et l'enfant doivent appartenir au même pays."))
-                if rec.niveau != "autre" and rec.parent_id.niveau != "autre":
-                    if rank.get(rec.niveau, 99) <= rank.get(rec.parent_id.niveau, -1):
-                        raise ValidationError(_(
-                            "Le niveau géographique de l'enfant doit être inférieur à celui du parent."
-                        ))
-            if rec.niveau == "pays" and rec.parent_id:
-                raise ValidationError(_("Un pays ne peut pas avoir de parent géographique."))
-
-    @api.model
-    def get_country_root(self, country):
-        return self.search([
-            ("niveau", "=", "pays"),
-            ("country_id", "=", country.id),
-            ("parent_id", "=", False),
-        ], limit=1)
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        records = super().create(vals_list)
-        for rec in records:
-            if rec.niveau == "pays" and not rec.parent_id and rec.country_id:
-                # Unifie le point d'entrée pays avec res.country.
-                if not rec.code:
-                    rec.code = "COUNTRY-%s" % (rec.country_id.code or rec.country_id.id)
-        return records
+        for record in self:
+            if not record.parent_id:
+                continue
+            parent_rank = rank.get(record.parent_id.niveau, 99)
+            current_rank = rank.get(record.niveau, 99)
+            if record.niveau == "pays":
+                raise ValidationError(_("Un élément de type Pays ne peut pas avoir de parent."))
+            if current_rank != 99 and parent_rank != 99 and current_rank <= parent_rank:
+                raise ValidationError(
+                    _("Le niveau géographique d'une zone enfant doit être inférieur à celui de son parent.")
+                )
 
 
 class ResCountry(models.Model):
     _inherit = "res.country"
 
     kiiraaye_geographie_ids = fields.One2many(
-        "kiiraaye.geographie", "country_id",
-        string="Référentiel géographique",
-        readonly=True,
+        "kiiraaye.geographie",
+        "country_id",
+        string="Géographie Kiiraaye",
     )
-    kiiraaye_geographie_count = fields.Integer(
-        compute="_compute_kiiraaye_geographie_count"
-    )
-
-    def _compute_kiiraaye_geographie_count(self):
-        Geo = self.env["kiiraaye.geographie"]
-        for rec in self:
-            rec.kiiraaye_geographie_count = Geo.search_count([
-                ("country_id", "=", rec.id)
-            ])

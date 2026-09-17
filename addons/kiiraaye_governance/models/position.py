@@ -1,19 +1,18 @@
 from odoo import fields, models
 
+
 class KiiraayePosition(models.Model):
     _name = "kiiraaye.position"
-    _description = "Poste / fonction Kiiraaye"
-    _order = "name"
+    _description = "Poste de bureau Kiiraaye"
+    _rec_name = "name"
+    _order = "sequence, name"
 
-    name = fields.Char(string="Intitulé", required=True)
-    code = fields.Char(string="Code technique", required=True, copy=False)
-    active = fields.Boolean(default=True)
-    niveau_ids = fields.Selection([
-        ("tous", "Tous les niveaux"),
-        ("géographique", "Territorial"),
-    ], default="géographique", required=True)
+    name = fields.Char(string="Intitulé du poste", required=True)
+    code = fields.Char(string="Code", required=True)
+    sequence = fields.Integer(string="Séquence", default=10)
+    active = fields.Boolean(string="Actif", default=True)
 
-    _code_unique = models.Constraint(
+    _unique_code = models.Constraint(
         "UNIQUE(code)",
-        "Le code du poste doit être unique."
+        "Le code du poste doit être unique.",
     )

@@ -4,17 +4,34 @@
         <field name="name">kiiraaye.geographie.list</field>
         <field name="model">kiiraaye.geographie</field>
         <field name="arch" type="xml">
-            <list string="Référentiel géographique">
+            <list string="Géographie" default_order="country_id, niveau, name">
                 <field name="name"/>
                 <field name="niveau"/>
+                <field name="designation_locale"/>
                 <field name="country_id"/>
-                <field name="state_id"/>
                 <field name="parent_id"/>
                 <field name="code"/>
-                <field name="admin_level"/>
-                <field name="source_name"/>
                 <field name="active"/>
             </list>
+        </field>
+    </record>
+
+    <record id="view_kiiraaye_geographie_search" model="ir.ui.view">
+        <field name="name">kiiraaye.geographie.search</field>
+        <field name="model">kiiraaye.geographie</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher une zone">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="country_id"/>
+                <field name="designation_locale"/>
+                <field name="niveau"/>
+                <filter name="filter_active" string="Actifs" domain="[('active', '=', True)]"/>
+                <group string="Regrouper par">
+                    <filter string="Pays" context="{'group_by': 'country_id'}"/>
+                    <filter string="Niveau" context="{'group_by': 'niveau'}"/>
+                </group>
+            </search>
         </field>
     </record>
 
@@ -29,30 +46,34 @@
                             <field name="name"/>
                             <field name="code"/>
                             <field name="niveau"/>
-                            <field name="admin_level"/>
-                            <field name="country_id"/>
-                            <field name="state_id" domain="[('country_id', '=', country_id)]"/>
+                            <field name="designation_locale"/>
                         </group>
                         <group>
-                            <field name="parent_id" domain="[('country_id', '=', country_id)]"/>
-                            <field name="complete_name" readonly="1"/>
-                            <field name="latitude"/>
-                            <field name="longitude"/>
+                            <field name="country_id"/>
+                            <field name="parent_id" domain="[('country_id', '=', country_id), ('active', '=', True)]"/>
                             <field name="active"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Source">
                             <group>
-                                <field name="source_name"/>
+                                <field name="source"/>
                                 <field name="source_uid"/>
+                                <field name="source_url"/>
                                 <field name="source_year"/>
                                 <field name="source_license"/>
-                                <field name="source_url"/>
                             </group>
                         </page>
-                        <page string="Cartographie">
-                            <field name="geojson" nolabel="1" widget="text"/>
+                        <page string="Sous-zones">
+                            <field name="child_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="niveau"/>
+                                    <field name="designation_locale"/>
+                                    <field name="code"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
                         </page>
                     </notebook>
                 </sheet>
@@ -60,15 +81,10 @@
         </field>
     </record>
 
-    <record id="action_kiiraaye_geographies" model="ir.actions.act_window">
-        <field name="name">Référentiel géographique</field>
+    <record id="action_kiiraaye_geographie" model="ir.actions.act_window">
+        <field name="name">Géographie</field>
         <field name="res_model">kiiraaye.geographie</field>
         <field name="view_mode">list,form</field>
-    </record>
-
-    <record id="action_kiiraaye_countries" model="ir.actions.act_window">
-        <field name="name">Pays</field>
-        <field name="res_model">res.country</field>
-        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_kiiraaye_geographie_search"/>
     </record>
 </odoo>

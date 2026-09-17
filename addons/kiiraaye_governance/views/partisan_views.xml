@@ -1,82 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_partisan_list" model="ir.ui.view">
+    <record id="view_kiiraaye_partisan_list" model="ir.ui.view">
         <field name="name">kiiraaye.partisan.list</field>
         <field name="model">kiiraaye.partisan</field>
         <field name="arch" type="xml">
-            <list>
-                <field name="matricule"/>
-                <field name="nom"/>
-                <field name="prenom"/>
+            <list string="Membres">
+                <field name="nom_complet"/>
                 <field name="date_naissance"/>
-                <field name="section_id"/>
-                <field name="poste_actuel_id"/>
+                <field name="national_id"/>
+                <field name="country_id"/>
+                <field name="phone"/>
+                <field name="email"/>
                 <field name="active"/>
             </list>
         </field>
     </record>
 
-    <record id="view_partisan_form" model="ir.ui.view">
+    <record id="view_kiiraaye_partisan_search" model="ir.ui.view">
+        <field name="name">kiiraaye.partisan.search</field>
+        <field name="model">kiiraaye.partisan</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un membre">
+                <field name="nom_complet"/>
+                <field name="national_id"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <field name="country_id"/>
+                <filter name="active" string="Actifs" domain="[('active', '=', True)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_kiiraaye_partisan_form" model="ir.ui.view">
         <field name="name">kiiraaye.partisan.form</field>
         <field name="model">kiiraaye.partisan</field>
         <field name="arch" type="xml">
-            <form>
-                <header>
-                    <button name="action_print_member_card" type="object" string="Imprimer carte de membre" class="btn-primary"/>
-                </header>
+            <form string="Membre">
                 <sheet>
-                    <div class="oe_button_box" name="button_box"/>
-                    <div class="kiiraaye_poste_banner"
-                         invisible="not poste_actuel_id">
-                        <field name="poste_actuel_id" readonly="1"/>
-                    </div>
                     <group>
                         <group>
-                            <field name="photo" widget="image" class="oe_avatar"/>
+                            <field name="prenom"/>
+                            <field name="nom"/>
+                            <field name="nom_complet" readonly="True"/>
+                            <field name="date_naissance"/>
+                            <field name="lieu_naissance"/>
                         </group>
                         <group>
-                            <field name="matricule"/>
-                            <field name="nom"/>
-                            <field name="prenom"/>
-                            <field name="date_adhesion"/>
+                            <field name="photo" widget="image" class="oe_avatar"/>
+                            <field name="national_id"/>
+                            <field name="country_id"/>
+                            <field name="phone" widget="phone"/>
+                            <field name="email" widget="email"/>
+                            <field name="active"/>
                         </group>
                     </group>
                     <notebook>
-                        <page string="Identité">
-                            <group>
-                                <field name="date_naissance"/>
-                                <field name="lieu_naissance"/>
-                                <field name="numero_id_national" password="True"/>
-                            </group>
-                        </page>
-                        <page string="Appartenance">
-                            <group>
-                                <field name="section_id"/>
-                                <field name="geographie_id" readonly="1"/>
-                                <field name="active"/>
-                            </group>
-                        </page>
-                        <page string="Historique des postes">
-                            <field name="poste_ids" readonly="1">
+                        <page string="Sections / Coordinations">
+                            <field name="section_ids">
                                 <list>
-                                    <field name="position_id"/>
-                                    <field name="bureau_id"/>
-                                    <field name="date_debut"/>
-                                    <field name="date_fin"/>
+                                    <field name="reference"/>
+                                    <field name="name"/>
+                                    <field name="type_section"/>
+                                    <field name="country_id"/>
+                                    <field name="lieu_id"/>
                                     <field name="state"/>
                                 </list>
                             </field>
                         </page>
                     </notebook>
                 </sheet>
-                <chatter/>
             </form>
         </field>
     </record>
 
-    <record id="action_partisans" model="ir.actions.act_window">
-        <field name="name">Partisans</field>
+    <record id="action_kiiraaye_partisan" model="ir.actions.act_window">
+        <field name="name">Membres</field>
         <field name="res_model">kiiraaye.partisan</field>
         <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_kiiraaye_partisan_search"/>
     </record>
 </odoo>

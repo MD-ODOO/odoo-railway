@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_kiiraaye_section" model="ir.sequence">
+        <field name="name">Référence section / coordination Kiiraaye</field>
+        <field name="code">kiiraaye.section</field>
+        <field name="prefix">KIR/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

@@ -8,11 +8,32 @@
                 <field name="reference"/>
                 <field name="name"/>
                 <field name="type_section"/>
-                <field name="lieu_id"/>
                 <field name="country_id"/>
+                <field name="lieu_id"/>
                 <field name="date_creation"/>
                 <field name="state"/>
+                <field name="active"/>
             </list>
+        </field>
+    </record>
+
+    <record id="view_kiiraaye_section_search" model="ir.ui.view">
+        <field name="name">kiiraaye.section.search</field>
+        <field name="model">kiiraaye.section</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher une section">
+                <field name="name"/>
+                <field name="reference"/>
+                <field name="country_id"/>
+                <field name="lieu_id"/>
+                <field name="type_section"/>
+                <filter name="open" string="Ouvertes" domain="[('state', '=', 'ouverte')]"/>
+                <group string="Regrouper par">
+                    <filter string="Type" context="{'group_by': 'type_section'}"/>
+                    <filter string="Pays" context="{'group_by': 'country_id'}"/>
+                    <filter string="État" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
         </field>
     </record>
 
@@ -22,74 +43,67 @@
         <field name="arch" type="xml">
             <form string="Section / Coordination">
                 <header>
-                    <button name="action_ouvrir" type="object" string="Ouvrir" class="btn-primary" invisible="state == 'ouverte'"/>
-                    <button name="action_fermer" type="object" string="Fermer" class="btn-secondary" invisible="state == 'fermee'"/>
-                    <field name="state" widget="statusbar" statusbar_visible="ouverte,fermee"/>
+                    <button name="action_open_siege" type="object" string="Ouvrir l'adresse du siège" class="oe_highlight"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
                         <label for="name"/>
-                        <h1><field name="name" placeholder="Nom de la section ou coordination"/></h1>
+                        <h1><field name="name"/></h1>
                     </div>
                     <group>
-                        <group>
-                            <field name="reference" readonly="1"/>
-                            <field name="date_creation"/>
+                        <group string="Identification">
+                            <field name="reference" readonly="True"/>
                             <field name="type_section"/>
+                            <field name="country_id"/>
+                            <field name="lieu_niveau_attendu" invisible="True"/>
                             <field name="lieu_id"
-                                   domain="[('niveau', 'in', ('commune', 'departement', 'region', 'pays'))]"
-                                   options="{'no_create': True}"/>
-                            <field name="country_id" readonly="1"/>
+                                   domain="[('country_id', '=', country_id), ('niveau', '=', lieu_niveau_attendu), ('active', '=', True)]"/>
+                            <field name="date_creation"/>
+                            <field name="state"/>
+                            <field name="active"/>
                         </group>
-                        <group string="Siège / Adresse">
-                            <field name="siege_country_id"/>
-                            <field name="siege_state_id"/>
-                            <field name="siege_geo_id" domain="[('country_id', '=', siege_country_id)]"/>
-                            <div class="o_address_format">
-                                <field name="siege_street" class="o_address_street" placeholder="Rue / Adresse"/>
-                                <field name="siege_street2" class="o_address_street" placeholder="Complément"/>
-                                <field name="siege_zip" class="o_address_zip" placeholder="Code postal"/>
-                                <field name="siege_city" class="o_address_city" placeholder="Ville"/>
-                            </div>
+                        <group string="Siège">
+                            <field name="siege_partner_id"
+                                   context="{'default_type': 'other', 'default_country_id': country_id}"
+                                   domain="[('type', '=', 'other')]"/>
+                            <button name="action_open_siege" type="object" string="Modifier l'adresse du siège"/>
                         </group>
-                    </group>
-                    <group string="Fermeture" invisible="state != 'fermee'">
-                        <field name="date_fermeture" readonly="1"/>
-                        <field name="motif_fermeture"/>
                     </group>
                     <notebook>
                         <page string="Membres">
-                            <field name="membre_ids" context="{'default_section_id': id}" widget="many2many_tags"/>
-                        </page>
-                        <page string="Membres du bureau">
-                            <field name="poste_ids">
+                            <field name="membre_ids" context="{'default_country_id': country_id}">
                                 <list>
-                                    <field name="bureau_id"/>
-                                    <field name="position_id"/>
-                                    <field name="partisan_id"/>
-                                    <field name="date_debut"/>
-                                    <field name="date_fin"/>
-                                    <field name="state"/>
-                                    <field name="pv_election_filename" invisible="1"/>
+                                    <field name="nom_complet"/>
+                                    <field name="date_naissance"/>
+                                    <field name="national_id"/>
+                                    <field name="phone"/>
+                                    <field name="email"/>
+                                    <field name="active"/>
                                 </list>
                             </field>
                         </page>
-                        <page string="Création">
-                            <group>
-                                <field name="pv_creation" filename="pv_creation_filename"/>
-                                <field name="photo" widget="image"/>
-                            </group>
+                        <page string="Membres du bureau">
+                            <field name="bureau_ligne_ids" context="{'default_section_id': id}">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="position_id"/>
+                                    <field name="partisan_id" domain="[('id', 'in', parent.membre_ids)]"/>
+                                    <field name="date_debut"/>
+                                    <field name="date_fin"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
                         </page>
                     </notebook>
                 </sheet>
-                <chatter/>
             </form>
         </field>
     </record>
 
-    <record id="action_sections" model="ir.actions.act_window">
+    <record id="action_kiiraaye_section" model="ir.actions.act_window">
         <field name="name">Sections / Coordinations</field>
         <field name="res_model">kiiraaye.section</field>
         <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_kiiraaye_section_search"/>
     </record>
 </odoo>
