@@ -41,6 +41,20 @@ class KiiraayeGeographie(models.Model):
         required=True,
         index=True,
     )
+    source_admin_level = fields.Selection(
+        [
+            ("ADM0", "ADM0"),
+            ("ADM1", "ADM1"),
+            ("ADM2", "ADM2"),
+            ("ADM3", "ADM3"),
+            ("ADM4", "ADM4"),
+            ("ADM5", "ADM5"),
+            ("MANUAL", "Manuel"),
+        ],
+        string="Niveau administratif source",
+        index=True,
+        help="Niveau administratif original fourni par la source, conservé indépendamment de la normalisation Kiiraaye.",
+    )
     designation_locale = fields.Char(
         string="Désignation administrative locale",
         help="Terme utilisé officiellement dans le pays ou la source : province, estado, district, ward, etc.",
