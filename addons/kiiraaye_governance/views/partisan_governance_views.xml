@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kiiraaye_partisan_form_governance" model="ir.ui.view">
+        <field name="name">kiiraaye.partisan.form.governance</field>
+        <field name="model">kiiraaye.partisan</field>
+        <field name="inherit_id" ref="kiiraaye_governance.view_kiiraaye_partisan_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_print_membership_card']" position="after">
+                <button name="action_view_membership_card"
+                        type="object"
+                        string="Carte numérique"
+                        icon="fa-id-card"/>
+            </xpath>
+
+            <xpath expr="//field[@name='email']" position="after">
+                <field name="user_id" groups="kiiraaye_governance.group_kiiraaye_manager"/>
+            </xpath>
+
+            <xpath expr="//field[@name='email']" position="after">
+                <group string="Adresse administrative" colspan="2">
+                    <group>
+                        <field name="region_id"
+                               domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau1'), ('active', '=', True)]"/>
+                        <field name="departement_id"
+                               domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau2'), ('parent_id', '=', region_id), ('active', '=', True)]"/>
+                    </group>
+                    <group>
+                        <field name="commune_id"
+                               domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau3'), ('parent_id', '=', departement_id), ('active', '=', True)]"/>
+                        <field name="quartier_id"
+                               domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('parent_id', '=', commune_id), ('active', '=', True)]"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_kiiraaye_partisan_list_governance" model="ir.ui.view">
+        <field name="name">kiiraaye.partisan.list.governance</field>
+        <field name="model">kiiraaye.partisan</field>
+        <field name="inherit_id" ref="kiiraaye_governance.view_kiiraaye_partisan_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list/field[@name='country_id']" position="after">
+                <field name="region_id"/>
+                <field name="departement_id"/>
+                <field name="commune_id"/>
+                <field name="quartier_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
