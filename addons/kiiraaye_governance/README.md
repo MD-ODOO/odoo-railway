@@ -21,3 +21,6 @@ Le module est aligné sur la documentation Odoo 19 actuelle :
 - Actions : https://www.odoo.com/documentation/19.0/developer/reference/backend/actions.html
 - Sécurité : https://www.odoo.com/documentation/19.0/developer/reference/backend/security.html
 - Manifestes : https://www.odoo.com/documentation/19.0/developer/reference/backend/module.html
+
+
+Compatibilité Odoo 19 : res.groups.privilege/privilege_id, models.Constraint, vues list, expressions de vues modernes.

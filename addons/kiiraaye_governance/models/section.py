@@ -56,7 +56,6 @@ class KiiraayeSection(models.Model):
         string="Siège / Adresse",
         ondelete="restrict",
         copy=False,
-        context={"default_type": "other"},
         help="Adresse du siège gérée avec le formulaire d'adresse natif d'Odoo.",
     )
     date_creation = fields.Date(
