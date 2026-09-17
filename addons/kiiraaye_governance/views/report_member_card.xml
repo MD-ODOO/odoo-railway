@@ -31,13 +31,12 @@
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
                 <div class="page" style="width:85.6mm;height:54mm;margin:0;padding:0;position:relative;overflow:hidden;background:#ffffff;font-family:Arial,sans-serif;">
-                    <div style="position:absolute;inset:0;overflow:hidden;">
-                        <div t-if="o.env.company.logo"
-                             t-attf-style="position:absolute;left:-6mm;top:4mm;width:72mm;height:72mm;background-image:url('data:image/png;base64,#{o.env.company.logo.decode() if isinstance(o.env.company.logo, bytes) else o.env.company.logo}');background-position:center;background-repeat:no-repeat;background-size:contain;opacity:.08;transform:rotate(-12deg);">
-                        </div>
-                    </div>
+                    <t t-if="o.env.company.logo">
+                        <img t-att-src="image_data_uri(o.env.company.logo)"
+                             style="position:absolute;left:12mm;top:3mm;width:62mm;height:48mm;object-fit:contain;opacity:.07;transform:rotate(-12deg);z-index:0;"/>
+                    </t>
 
-                    <div style="position:absolute;left:5mm;top:4mm;right:5mm;display:flex;align-items:center;border-bottom:0.35mm solid #222;padding-bottom:2mm;">
+                    <div style="position:absolute;left:5mm;top:4mm;right:5mm;display:flex;align-items:center;border-bottom:0.35mm solid #222;padding-bottom:2mm;z-index:2;">
                         <div style="width:18mm;height:12mm;display:flex;align-items:center;justify-content:flex-start;">
                             <img t-if="o.env.company.logo"
                                  t-att-src="image_data_uri(o.env.company.logo)"
@@ -49,7 +48,7 @@
                         </div>
                     </div>
 
-                    <div style="position:absolute;left:5mm;top:19mm;right:31mm;bottom:5mm;display:flex;">
+                    <div style="position:absolute;left:5mm;top:19mm;right:31mm;bottom:5mm;display:flex;z-index:2;">
                         <div style="width:22mm;display:flex;align-items:flex-start;justify-content:center;padding-top:1mm;">
                             <img t-if="o.photo"
                                  t-att-src="image_data_uri(o.photo)"
@@ -68,13 +67,13 @@
                         </div>
                     </div>
 
-                    <div style="position:absolute;right:5mm;top:19mm;width:23mm;text-align:center;">
+                    <div style="position:absolute;right:5mm;top:19mm;width:23mm;text-align:center;z-index:2;">
                         <img t-att-src="'/report/barcode/?type=QR&amp;value=%s&amp;width=180&amp;height=180' % o.qr_code_value"
                              style="width:20mm;height:20mm;display:block;margin:0 auto;"/>
                         <div style="font-size:1.9mm;margin-top:1mm;line-height:1.1;word-break:break-all;"><t t-esc="o.reference"/></div>
                     </div>
 
-                    <div style="position:absolute;left:5mm;right:5mm;bottom:2.5mm;font-size:1.8mm;display:flex;justify-content:space-between;align-items:center;">
+                    <div style="position:absolute;left:5mm;right:5mm;bottom:2.5mm;font-size:1.8mm;display:flex;justify-content:space-between;align-items:center;z-index:2;">
                         <span>Document officiel de membre</span>
                         <span t-if="o.env.company.phone"><t t-esc="o.env.company.phone"/></span>
                     </div>

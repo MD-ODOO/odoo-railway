@@ -5,6 +5,7 @@
     <menuitem id="menu_kiiraaye_organisation" name="Organisation" parent="menu_kiiraaye_root" sequence="10"/>
     <menuitem id="menu_kiiraaye_sections" name="Sections / Coordinations" parent="menu_kiiraaye_organisation" action="action_kiiraaye_section" sequence="10"/>
     <menuitem id="menu_kiiraaye_members" name="Membres" parent="menu_kiiraaye_organisation" action="action_kiiraaye_partisan" sequence="20"/>
+    <menuitem id="menu_kiiraaye_attributions" name="Attributions de postes" parent="menu_kiiraaye_organisation" action="action_kiiraaye_attribution_poste" sequence="30"/>
 
     <menuitem id="menu_kiiraaye_configuration" name="Configuration" parent="menu_kiiraaye_root" sequence="90" groups="kiiraaye_governance.group_kiiraaye_manager"/>
     <menuitem id="menu_kiiraaye_countries" name="Pays" parent="menu_kiiraaye_configuration" action="action_kiiraaye_country" sequence="10"/>
