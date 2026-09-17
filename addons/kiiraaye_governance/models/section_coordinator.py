@@ -35,21 +35,49 @@ class KiiraayeSectionCoordinator(models.Model):
         )
         if not group:
             return
-        active_coordinators = self.env["kiiraaye.section"].sudo().search(
-            [
-                ("cordonnateur_id", "!=", False),
-                ("cordonnateur_id.user_id", "!=", False),
-                ("active", "=", True),
-                ("state", "=", "ouverte"),
-            ]
-        ).mapped("cordonnateur_id.user_id")
+
+        sections = self.env["kiiraaye.section"].sudo().search([
+            ("cordonnateur_id", "!=", False),
+            ("cordonnateur_id.user_id", "!=", False),
+            ("active", "=", True),
+            ("state", "=", "ouverte"),
+        ])
+        active_coordinators = sections.mapped("cordonnateur_id.user_id")
         current_group_users = self.env["res.users"].sudo().search(
             [("groups_id", "in", group.id)]
         )
+
         for user in active_coordinators - current_group_users:
             user.write({"groups_id": [Command.link(group.id)]})
         for user in current_group_users - active_coordinators:
             user.write({"groups_id": [Command.unlink(group.id)]})
+
+        coord_position = self.env["kiiraaye.position"].sudo().search(
+            [("code", "=", "COORD")], limit=1
+        )
+        if not coord_position:
+            return
+        BureauLine = self.env["kiiraaye.bureau.ligne"].sudo()
+        for section in sections:
+            line = BureauLine.search(
+                [("section_id", "=", section.id), ("position_id", "=", coord_position.id)],
+                limit=1,
+            )
+            values = {
+                "section_id": section.id,
+                "position_id": coord_position.id,
+                "partisan_id": section.cordonnateur_id.id,
+                "date_debut": section.date_creation,
+                "active": True,
+            }
+            if line:
+                line.write({
+                    "partisan_id": section.cordonnateur_id.id,
+                    "active": True,
+                    "date_debut": section.date_creation,
+                })
+            else:
+                BureauLine.create(values)
 
     @api.model_create_multi
     def create(self, vals_list):
