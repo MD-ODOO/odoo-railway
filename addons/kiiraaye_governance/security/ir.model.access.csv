@@ -1,7 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_kiiraaye_geographie_user,kiiraaye.geographie user,model_kiiraaye_geographie,kiiraaye_governance.group_kiiraaye_user,1,0,0,0
 access_kiiraaye_geographie_manager,kiiraaye.geographie manager,model_kiiraaye_geographie,kiiraaye_governance.group_kiiraaye_manager,1,1,1,1
-access_kiiraaye_partisan_user,kiiraaye.partisan user,model_kiiraaye_partisan,kiiraaye_governance.group_kiiraaye_user,1,1,1,0
+access_kiiraaye_partisan_user,kiiraaye.partisan user,model_kiiraaye_partisan,kiiraaye_governance.group_kiiraaye_user,1,1,0,0
+access_kiiraaye_partisan_coordinator,kiiraaye.partisan coordinator,model_kiiraaye_partisan,kiiraaye_governance.group_kiiraaye_coordinator,1,1,1,0
 access_kiiraaye_partisan_manager,kiiraaye.partisan manager,model_kiiraaye_partisan,kiiraaye_governance.group_kiiraaye_manager,1,1,1,1
 access_kiiraaye_position_user,kiiraaye.position user,model_kiiraaye_position,kiiraaye_governance.group_kiiraaye_user,1,0,0,0
 access_kiiraaye_position_manager,kiiraaye.position manager,model_kiiraaye_position,kiiraaye_governance.group_kiiraaye_manager,1,1,1,1
