@@ -237,14 +237,11 @@ class ResCountrySenegalGeography(models.Model):
         departments = self._load_senegal_departments(regions)
         arrondissements = self._load_senegal_arrondissements(departments)
         communes = self._load_senegal_communes(departments, arrondissements)
-
-        # Les villages sont chargés comme niveau local inférieur (quartier/localité),
-        # sans les confondre avec une commune.
         villages_count = self._load_senegal_villages(regions, communes)
 
         self.sudo().write({
             "kiiraaye_geo_source": "galsenapi",
-            "kiiraaye_geo_iso3": "SEN",
+            "kiiraaye_iso3": "SEN",
             "kiiraaye_geo_region_level": "niveau1",
             "kiiraaye_geo_department_level": "niveau2",
             "kiiraaye_geo_commune_level": "niveau3",
