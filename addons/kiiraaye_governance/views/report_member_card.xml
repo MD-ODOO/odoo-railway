@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!--
+        Odoo 19: page_width/page_height sont des valeurs entières en mm.
+        Le format 86 x 54 mm est volontairement proche du standard carte ID-1,
+        tout en restant compatible avec les champs Integer de report.paperformat.
+    -->
     <record id="paperformat_kiiraaye_member_card" model="report.paperformat">
         <field name="name">Carte membre Kiiraaye</field>
+        <field name="description">Format carte membre numérique et imprimable</field>
         <field name="default" eval="False"/>
         <field name="format">custom</field>
-        <field name="page_width">85.6</field>
+        <field name="page_width">86</field>
         <field name="page_height">54</field>
         <field name="orientation">Landscape</field>
         <field name="margin_top">0</field>
@@ -16,66 +22,117 @@
         <field name="dpi">96</field>
     </record>
 
+    <!-- Carte imprimable PDF -->
     <record id="action_report_kiiraaye_member_card" model="ir.actions.report">
         <field name="name">Carte de membre</field>
         <field name="model">kiiraaye.partisan</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">kiiraaye_governance.report_kiiraaye_member_card</field>
         <field name="report_file">kiiraaye_governance.report_kiiraaye_member_card</field>
+        <field name="print_report_name">'Carte_Membre_%s' % (object.reference or object.id)</field>
         <field name="paperformat_id" ref="paperformat_kiiraaye_member_card"/>
         <field name="binding_model_id" ref="model_kiiraaye_partisan"/>
-        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Carte numérique consultable dans le navigateur -->
+    <record id="action_report_kiiraaye_member_card_html" model="ir.actions.report">
+        <field name="name">Carte numérique</field>
+        <field name="model">kiiraaye.partisan</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">kiiraaye_governance.report_kiiraaye_member_card</field>
+        <field name="report_file">kiiraaye_governance.report_kiiraaye_member_card</field>
+        <field name="binding_model_id" ref="model_kiiraaye_partisan"/>
     </record>
 
     <template id="report_kiiraaye_member_card">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
-                <div class="page" style="width:85.6mm;height:54mm;margin:0;padding:0;position:relative;overflow:hidden;background:#ffffff;font-family:Arial,sans-serif;">
-                    <t t-if="o.env.company.logo">
-                        <img t-att-src="image_data_uri(o.env.company.logo)"
-                             style="position:absolute;left:12mm;top:3mm;width:62mm;height:48mm;object-fit:contain;opacity:.07;transform:rotate(-12deg);z-index:0;"/>
+                <div class="page" style="width:86mm;height:54mm;margin:0;padding:0;background:#f4f7fb;font-family:Arial,Helvetica,sans-serif;color:#172033;overflow:hidden;position:relative;">
+                    <!-- Filigrane du logo société -->
+                    <t t-if="res_company.logo">
+                        <img t-att-src="image_data_uri(res_company.logo)"
+                             alt="Logo société"
+                             style="position:absolute;left:18mm;top:6mm;width:50mm;height:42mm;object-fit:contain;opacity:.055;z-index:0;"/>
                     </t>
 
-                    <div style="position:absolute;left:5mm;top:4mm;right:5mm;display:flex;align-items:center;border-bottom:0.35mm solid #222;padding-bottom:2mm;z-index:2;">
-                        <div style="width:18mm;height:12mm;display:flex;align-items:center;justify-content:flex-start;">
-                            <img t-if="o.env.company.logo"
-                                 t-att-src="image_data_uri(o.env.company.logo)"
-                                 style="max-width:17mm;max-height:11mm;object-fit:contain;"/>
+                    <!-- Bandeau moderne -->
+                    <div style="position:absolute;left:0;top:0;right:0;height:11mm;background:#111827;z-index:1;">
+                        <div style="position:absolute;left:5mm;top:2mm;width:16mm;height:7mm;display:flex;align-items:center;">
+                            <img t-if="res_company.logo"
+                                 t-att-src="image_data_uri(res_company.logo)"
+                                 alt="Logo"
+                                 style="max-width:15mm;max-height:6.5mm;object-fit:contain;"/>
                         </div>
-                        <div style="flex:1;text-align:center;line-height:1.05;">
-                            <div style="font-size:4mm;font-weight:700;letter-spacing:.3mm;">CARTE DE MEMBRE</div>
-                            <div style="font-size:2.4mm;margin-top:1mm;">KIIRAAYE</div>
+                        <div style="position:absolute;left:23mm;top:2mm;color:#ffffff;line-height:1.05;">
+                            <div style="font-size:3.3mm;font-weight:700;letter-spacing:.35mm;">CARTE DE MEMBRE</div>
+                            <div style="font-size:1.9mm;opacity:.82;margin-top:.8mm;letter-spacing:.18mm;">KIIRAAYE</div>
+                        </div>
+                        <div style="position:absolute;right:5mm;top:3mm;padding:1mm 2mm;border:0.25mm solid rgba(255,255,255,.35);border-radius:5mm;color:#ffffff;font-size:1.8mm;font-weight:700;letter-spacing:.15mm;">
+                            <t t-if="o.active">MEMBRE ACTIF</t>
+                            <t t-else="">INACTIF</t>
                         </div>
                     </div>
 
-                    <div style="position:absolute;left:5mm;top:19mm;right:31mm;bottom:5mm;display:flex;z-index:2;">
-                        <div style="width:22mm;display:flex;align-items:flex-start;justify-content:center;padding-top:1mm;">
-                            <img t-if="o.photo"
-                                 t-att-src="image_data_uri(o.photo)"
-                                 style="width:20mm;height:25mm;object-fit:cover;border:0.4mm solid #222;border-radius:1mm;"/>
-                            <div t-else=""
-                                 style="width:20mm;height:25mm;border:0.4mm solid #222;border-radius:1mm;display:flex;align-items:center;justify-content:center;font-size:3mm;font-weight:700;">
-                                PHOTO
+                    <!-- Accent -->
+                    <div style="position:absolute;left:0;top:11mm;width:2mm;height:43mm;background:#c7a15a;z-index:1;"></div>
+
+                    <!-- Photo -->
+                    <div style="position:absolute;left:5mm;top:15mm;width:22mm;height:28mm;background:#ffffff;border:0.35mm solid #d9e0ea;border-radius:2mm;box-shadow:0 0.8mm 2mm rgba(15,23,42,.08);z-index:2;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                        <img t-if="o.photo"
+                             t-att-src="image_data_uri(o.photo)"
+                             alt="Photo du membre"
+                             style="width:100%;height:100%;object-fit:cover;"/>
+                        <div t-else="" style="font-size:2.2mm;font-weight:700;color:#98a2b3;letter-spacing:.15mm;">PHOTO</div>
+                    </div>
+
+                    <!-- Informations membre -->
+                    <div style="position:absolute;left:30mm;top:15mm;width:34mm;z-index:2;">
+                        <div style="font-size:4mm;font-weight:700;line-height:1.05;text-transform:uppercase;">
+                            <t t-esc="o.nom_complet"/>
+                        </div>
+                        <div style="margin-top:2mm;font-size:1.9mm;color:#667085;letter-spacing:.1mm;">NUMÉRO DE MEMBRE</div>
+                        <div style="margin-top:.6mm;font-size:3.5mm;font-weight:700;letter-spacing:.3mm;color:#111827;">
+                            <t t-esc="o.reference"/>
+                        </div>
+
+                        <div style="margin-top:2.5mm;font-size:2.05mm;line-height:1.55;">
+                            <div t-if="o.date_naissance">
+                                <span style="color:#667085;">Né(e) le</span>
+                                <strong style="margin-left:1mm;"><span t-field="o.date_naissance"/></strong>
+                            </div>
+                            <div t-if="o.lieu_naissance">
+                                <span style="color:#667085;">Lieu</span>
+                                <strong style="margin-left:1mm;"><t t-esc="o.lieu_naissance"/></strong>
+                            </div>
+                            <div t-if="o.phone">
+                                <span style="color:#667085;">Téléphone</span>
+                                <strong style="margin-left:1mm;"><t t-esc="o.phone"/></strong>
                             </div>
                         </div>
-                        <div style="padding:1mm 0 0 3mm;font-size:2.7mm;line-height:1.65;">
-                            <div style="font-size:4mm;font-weight:700;line-height:1.1;margin-bottom:2mm;"><t t-esc="o.nom_complet"/></div>
-                            <div><strong>N° membre :</strong> <t t-esc="o.reference"/></div>
-                            <div t-if="o.date_naissance"><strong>Né(e) le :</strong> <span t-field="o.date_naissance"/></div>
-                            <div t-if="o.lieu_naissance"><strong>Lieu :</strong> <t t-esc="o.lieu_naissance"/></div>
-                            <div t-if="o.phone"><strong>Tél. :</strong> <t t-esc="o.phone"/></div>
+                    </div>
+
+                    <!-- Section / coordination principale -->
+                    <div t-if="o.section_ids" style="position:absolute;left:30mm;bottom:6mm;max-width:34mm;z-index:2;">
+                        <div style="font-size:1.75mm;color:#667085;text-transform:uppercase;letter-spacing:.12mm;">Section / Coordination</div>
+                        <div style="font-size:2mm;font-weight:700;margin-top:.5mm;line-height:1.25;">
+                            <t t-esc="o.section_ids[0].name"/>
                         </div>
                     </div>
 
-                    <div style="position:absolute;right:5mm;top:19mm;width:23mm;text-align:center;z-index:2;">
-                        <img t-att-src="'/report/barcode/?type=QR&amp;value=%s&amp;width=180&amp;height=180' % o.qr_code_value"
-                             style="width:20mm;height:20mm;display:block;margin:0 auto;"/>
-                        <div style="font-size:1.9mm;margin-top:1mm;line-height:1.1;word-break:break-all;"><t t-esc="o.reference"/></div>
+                    <!-- QR Code -->
+                    <div style="position:absolute;right:4.5mm;top:15mm;width:22mm;z-index:2;text-align:center;">
+                        <div style="padding:1.2mm;background:#ffffff;border:0.35mm solid #d9e0ea;border-radius:2mm;box-shadow:0 0.8mm 2mm rgba(15,23,42,.08);">
+                            <img t-att-src="'/report/barcode/?barcode_type=QR&amp;value=%s&amp;width=180&amp;height=180&amp;quiet=1' % (o.qr_code_value or o.reference)"
+                                 alt="QR Code membre"
+                                 style="width:19mm;height:19mm;display:block;margin:0 auto;"/>
+                        </div>
+                        <div style="font-size:1.7mm;font-weight:700;letter-spacing:.12mm;margin-top:1mm;">SCANNEZ POUR IDENTIFIER</div>
                     </div>
 
-                    <div style="position:absolute;left:5mm;right:5mm;bottom:2.5mm;font-size:1.8mm;display:flex;justify-content:space-between;align-items:center;z-index:2;">
-                        <span>Document officiel de membre</span>
-                        <span t-if="o.env.company.phone"><t t-esc="o.env.company.phone"/></span>
+                    <!-- Pied de carte -->
+                    <div style="position:absolute;left:5mm;right:5mm;bottom:2mm;height:2.5mm;z-index:2;display:flex;align-items:center;justify-content:space-between;font-size:1.55mm;color:#667085;">
+                        <span>Carte numérique officielle</span>
+                        <span t-if="res_company.phone"><t t-esc="res_company.phone"/></span>
                     </div>
                 </div>
             </t>
