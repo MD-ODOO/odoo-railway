@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kiiraaye_country_form_geography_config" model="ir.ui.view">
+        <field name="name">res.country.kiiraaye.geography.config.form</field>
+        <field name="model">res.country</field>
+        <field name="inherit_id" ref="kiiraaye_governance.view_kiiraaye_country_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Configuration géographique">
+                    <group string="Source et adaptation">
+                        <group>
+                            <field name="kiiraaye_iso3" placeholder="SEN"/>
+                            <field name="kiiraaye_geo_source"/>
+                            <field name="kiiraaye_geo_auto_adapt"/>
+                        </group>
+                        <group>
+                            <field name="kiiraaye_geo_status"/>
+                            <field name="kiiraaye_geo_last_sync"/>
+                            <button name="action_sync_kiiraaye_geography"
+                                    type="object"
+                                    string="Synchroniser les données administratives"
+                                    class="oe_highlight"
+                                    icon="fa-refresh"/>
+                        </group>
+                    </group>
+
+                    <group string="Correspondances administratives du pays">
+                        <group string="Région / État / Province">
+                            <field name="kiiraaye_geo_region_level"/>
+                            <field name="kiiraaye_geo_region_label"/>
+                        </group>
+                        <group string="Département / District / Comté">
+                            <field name="kiiraaye_geo_department_level"/>
+                            <field name="kiiraaye_geo_department_label"/>
+                        </group>
+                        <group string="Commune / Municipalité / Ville">
+                            <field name="kiiraaye_geo_commune_level"/>
+                            <field name="kiiraaye_geo_commune_label"/>
+                        </group>
+                        <group string="Quartier / équivalent local">
+                            <field name="kiiraaye_geo_quartier_level"/>
+                            <field name="kiiraaye_geo_quartier_label"/>
+                        </group>
+                    </group>
+
+                    <group string="Résultat / diagnostic">
+                        <field name="kiiraaye_geo_message" nolabel="1" readonly="1"/>
+                    </group>
+
+                    <div class="alert alert-info" role="alert">
+                        <strong>Principe :</strong>
+                        les données administratives sont conservées dans le référentiel géographique Kiiraaye.
+                        Le pays porte la correspondance entre les niveaux génériques et les niveaux administratifs réels.
+                        Les niveaux non présents dans un pays restent à « Aucun » et ne sont pas imposés lors de la création d'une section.
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
