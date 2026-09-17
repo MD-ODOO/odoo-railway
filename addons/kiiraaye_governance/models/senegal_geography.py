@@ -103,7 +103,7 @@ class ResCountrySenegalGeography(models.Model):
                     "country_id": self.id,
                     "parent_id": root.id,
                     "niveau": "niveau1",
-                    "source_admin_level": "MANUAL",
+                    "source_admin_level": "ADM1",
                     "designation_locale": "Région",
                     "source": "GalsenAPI (HDX/OCHA, ANSD)",
                     "source_url": f"{_GALSEN_API_BASE}/regions/{pcode}/",
@@ -127,7 +127,7 @@ class ResCountrySenegalGeography(models.Model):
                     "country_id": self.id,
                     "parent_id": parent.id,
                     "niveau": "niveau2",
-                    "source_admin_level": "MANUAL",
+                    "source_admin_level": "ADM2",
                     "designation_locale": "Département",
                     "source": "GalsenAPI (HDX/OCHA, ANSD)",
                     "source_url": f"{_GALSEN_API_BASE}/departements/{pcode}/",
@@ -143,9 +143,6 @@ class ResCountrySenegalGeography(models.Model):
             parent = departments.get(item.get("departement"))
             if not pcode or not parent:
                 continue
-            # L'arrondissement est conservé comme unité locale administrative
-            # attachée au département. On évite de lui attribuer niveau3 afin
-            # de réserver niveau3 à la commune utilisée par les sections.
             records[pcode] = self._upsert_senegal_geo(
                 f"GALSEN-ARR-{pcode}",
                 {
@@ -187,33 +184,6 @@ class ResCountrySenegalGeography(models.Model):
             )
         return records
 
-    def _load_senegal_villages(self, regions, communes):
-        count = 0
-        for item in self._galsen_get_all("villages"):
-            item_id = item.get("id")
-            if item_id is None:
-                continue
-            parent = communes.get(item.get("commune")) or regions.get(item.get("region"))
-            if not parent:
-                continue
-            self._upsert_senegal_geo(
-                f"GALSEN-VILLAGE-{item_id}",
-                {
-                    "name": item.get("nom") or str(item_id),
-                    "code": str(item_id),
-                    "country_id": self.id,
-                    "parent_id": parent.id,
-                    "niveau": "niveau5",
-                    "source_admin_level": "MANUAL",
-                    "designation_locale": "Village / localité",
-                    "source": "GalsenAPI (HDX/OCHA, ANSD)",
-                    "source_url": f"{_GALSEN_API_BASE}/villages/{item_id}/",
-                    "active": True,
-                },
-            )
-            count += 1
-        return count
-
     def action_load_senegal_default_geography(self):
         self.ensure_one()
         if self.code != "SN":
@@ -224,7 +194,6 @@ class ResCountrySenegalGeography(models.Model):
         departments = self._load_senegal_departments(regions)
         arrondissements = self._load_senegal_arrondissements(departments)
         communes = self._load_senegal_communes(departments)
-        villages_count = self._load_senegal_villages(regions, communes)
 
         self.sudo().write({
             "kiiraaye_geo_source": "galsenapi",
@@ -232,18 +201,20 @@ class ResCountrySenegalGeography(models.Model):
             "kiiraaye_geo_region_level": "niveau1",
             "kiiraaye_geo_department_level": "niveau2",
             "kiiraaye_geo_commune_level": "niveau3",
-            "kiiraaye_geo_quartier_level": "niveau5",
+            # Les quartiers ne sont pas assimilés aux villages : ils restent
+            # à configurer à partir d'un référentiel local approprié.
+            "kiiraaye_geo_quartier_level": "",
             "kiiraaye_geo_region_label": "Région",
             "kiiraaye_geo_department_label": "Département",
             "kiiraaye_geo_commune_label": "Commune",
-            "kiiraaye_geo_quartier_label": "Quartier / Village / Localité",
+            "kiiraaye_geo_quartier_label": "Quartier / équivalent local",
             "kiiraaye_geo_status": "ok",
             "kiiraaye_geo_last_sync": fields.Datetime.now(),
             "kiiraaye_geo_message": (
                 "Référentiel Sénégal chargé automatiquement depuis GalsenAPI : "
                 f"{len(regions)} régions, {len(departments)} départements, "
-                f"{len(arrondissements)} arrondissements, {len(communes)} communes, "
-                f"{villages_count} villages/localités."
+                f"{len(arrondissements)} arrondissements, {len(communes)} communes. "
+                "Les quartiers ne sont pas assimilés aux villages."
             ),
         })
 
