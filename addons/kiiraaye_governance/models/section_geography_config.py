@@ -144,7 +144,7 @@ class KiiraayeSectionGeographyConfig(models.Model):
         return []
 
     @api.onchange("country_id", "type_section")
-    def _onchange_country_and_type_configured(self):
+    def _onchange_country_and_type(self):
         self._clear_incompatible_geography()
         if self.type_section in ("nationale", "diaspora"):
             self.region_id = False
@@ -154,35 +154,43 @@ class KiiraayeSectionGeographyConfig(models.Model):
         return {"domain": self._geo_domains()}
 
     @api.onchange("region_id")
-    def _onchange_region_id_configured(self):
+    def _onchange_region_id(self):
         if self.departement_id and self._country_level("department"):
             if not self._geo_is_descendant_of(self.departement_id, self.region_id):
                 self.departement_id = False
-        if self._country_level("commune"):
-            if self.commune_id and not self._geo_is_descendant_of(self.commune_id, self.region_id if self.region_id else self.departement_id):
+
+        if self.commune_id and self._country_level("commune"):
+            parent = self.departement_id if self._country_level("department") else self.region_id
+            if parent and not self._geo_is_descendant_of(self.commune_id, parent):
                 self.commune_id = False
-        if self.quartier_id and not self._geo_is_descendant_of(self.quartier_id, self.region_id if self.region_id else False):
-            self.quartier_id = False
+
+        if self.quartier_id and self._country_level("quartier"):
+            parent = self.commune_id or self.departement_id or self.region_id
+            if not parent or not self._geo_is_descendant_of(self.quartier_id, parent):
+                self.quartier_id = False
+
         return {"domain": self._geo_domains()}
 
     @api.onchange("departement_id")
-    def _onchange_departement_id_configured(self):
+    def _onchange_departement_id(self):
         if self.commune_id and self._country_level("commune"):
-            parent = self.departement_id if self.departement_id else self.region_id
+            parent = self.departement_id if self._country_level("department") else self.region_id
             if parent and not self._geo_is_descendant_of(self.commune_id, parent):
                 self.commune_id = False
             elif not parent:
                 self.commune_id = False
+
         if self.quartier_id and self._country_level("quartier"):
             parent = self.commune_id or self.departement_id or self.region_id
             if parent and not self._geo_is_descendant_of(self.quartier_id, parent):
                 self.quartier_id = False
             elif not parent:
                 self.quartier_id = False
+
         return {"domain": self._geo_domains()}
 
     @api.onchange("commune_id")
-    def _onchange_commune_id_configured(self):
+    def _onchange_commune_id(self):
         if self.quartier_id and self._country_level("quartier"):
             parent = self.commune_id or self.departement_id or self.region_id
             if parent and not self._geo_is_descendant_of(self.quartier_id, parent):
@@ -219,23 +227,21 @@ class KiiraayeSectionGeographyConfig(models.Model):
                     % record.country_id.name
                 )
 
+            labels = {
+                "region": record.country_id.kiiraaye_geo_region_label,
+                "department": record.country_id.kiiraaye_geo_department_label,
+                "commune": record.country_id.kiiraaye_geo_commune_label,
+                "quartier": record.country_id.kiiraaye_geo_quartier_label,
+            }
+
             for role in roles:
-                value = field_by_role[role]
-                if not value:
-                    label = dict(record._fields[f"geo_{role}_label"].related and [] or []).get(role)  # pragma: no cover
-                    labels = {
-                        "region": record.country_id.kiiraaye_geo_region_label,
-                        "department": record.country_id.kiiraaye_geo_department_label,
-                        "commune": record.country_id.kiiraaye_geo_commune_label,
-                        "quartier": record.country_id.kiiraaye_geo_quartier_label,
-                    }
+                if not field_by_role[role]:
                     raise ValidationError(
                         _("Le champ %s est obligatoire pour ce type de structure et ce pays.")
                         % (labels.get(role) or role.title())
                     )
 
-            for role in ("region", "department", "commune", "quartier"):
-                value = field_by_role[role]
+            for role, value in field_by_role.items():
                 expected_level = record._country_level(role)
                 if not value:
                     continue
@@ -246,11 +252,23 @@ class KiiraayeSectionGeographyConfig(models.Model):
                     )
 
             parent_checks = [
-                ("department", record.departement_id, record.region_id, "Le département doit appartenir à la région sélectionnée."),
-                ("commune", record.commune_id, record.departement_id or record.region_id, "La commune doit appartenir au niveau administratif parent sélectionné."),
-                ("quartier", record.quartier_id, record.commune_id or record.departement_id or record.region_id, "Le quartier doit appartenir au niveau administratif parent sélectionné."),
+                (
+                    record.departement_id,
+                    record.region_id,
+                    "Le département doit appartenir à la région sélectionnée.",
+                ),
+                (
+                    record.commune_id,
+                    record.departement_id or record.region_id,
+                    "La commune doit appartenir au niveau administratif parent sélectionné.",
+                ),
+                (
+                    record.quartier_id,
+                    record.commune_id or record.departement_id or record.region_id,
+                    "Le quartier doit appartenir au niveau administratif parent sélectionné.",
+                ),
             ]
-            for role, value, parent, message in parent_checks:
+            for value, parent, message in parent_checks:
                 if value and parent and not record._geo_is_descendant_of(value, parent):
                     raise ValidationError(_(message))
 
