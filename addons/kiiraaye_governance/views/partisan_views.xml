@@ -20,7 +20,7 @@
         <field name="name">kiiraaye.partisan.search</field>
         <field name="model">kiiraaye.partisan</field>
         <field name="arch" type="xml">
-            <search string="Rechercher un membre">
+            <search>
                 <field name="nom_complet"/>
                 <field name="national_id"/>
                 <field name="phone"/>
