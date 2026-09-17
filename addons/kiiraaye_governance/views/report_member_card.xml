@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="paperformat_kiiraaye_member_card" model="report.paperformat">
+        <field name="name">Carte membre Kiiraaye</field>
+        <field name="default" eval="False"/>
+        <field name="format">custom</field>
+        <field name="page_width">85.6</field>
+        <field name="page_height">54</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">0</field>
+        <field name="margin_bottom">0</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">96</field>
+    </record>
+
+    <record id="action_report_kiiraaye_member_card" model="ir.actions.report">
+        <field name="name">Carte de membre</field>
+        <field name="model">kiiraaye.partisan</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">kiiraaye_governance.report_kiiraaye_member_card</field>
+        <field name="report_file">kiiraaye_governance.report_kiiraaye_member_card</field>
+        <field name="paperformat_id" ref="paperformat_kiiraaye_member_card"/>
+        <field name="binding_model_id" ref="model_kiiraaye_partisan"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_kiiraaye_member_card">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div class="page" style="width:85.6mm;height:54mm;margin:0;padding:0;position:relative;overflow:hidden;background:#ffffff;font-family:Arial,sans-serif;">
+                    <div style="position:absolute;inset:0;overflow:hidden;">
+                        <div t-if="o.env.company.logo"
+                             t-attf-style="position:absolute;left:-6mm;top:4mm;width:72mm;height:72mm;background-image:url('data:image/png;base64,#{o.env.company.logo.decode() if isinstance(o.env.company.logo, bytes) else o.env.company.logo}');background-position:center;background-repeat:no-repeat;background-size:contain;opacity:.08;transform:rotate(-12deg);">
+                        </div>
+                    </div>
+
+                    <div style="position:absolute;left:5mm;top:4mm;right:5mm;display:flex;align-items:center;border-bottom:0.35mm solid #222;padding-bottom:2mm;">
+                        <div style="width:18mm;height:12mm;display:flex;align-items:center;justify-content:flex-start;">
+                            <img t-if="o.env.company.logo"
+                                 t-att-src="image_data_uri(o.env.company.logo)"
+                                 style="max-width:17mm;max-height:11mm;object-fit:contain;"/>
+                        </div>
+                        <div style="flex:1;text-align:center;line-height:1.05;">
+                            <div style="font-size:4mm;font-weight:700;letter-spacing:.3mm;">CARTE DE MEMBRE</div>
+                            <div style="font-size:2.4mm;margin-top:1mm;">KIIRAAYE</div>
+                        </div>
+                    </div>
+
+                    <div style="position:absolute;left:5mm;top:19mm;right:31mm;bottom:5mm;display:flex;">
+                        <div style="width:22mm;display:flex;align-items:flex-start;justify-content:center;padding-top:1mm;">
+                            <img t-if="o.photo"
+                                 t-att-src="image_data_uri(o.photo)"
+                                 style="width:20mm;height:25mm;object-fit:cover;border:0.4mm solid #222;border-radius:1mm;"/>
+                            <div t-else=""
+                                 style="width:20mm;height:25mm;border:0.4mm solid #222;border-radius:1mm;display:flex;align-items:center;justify-content:center;font-size:3mm;font-weight:700;">
+                                PHOTO
+                            </div>
+                        </div>
+                        <div style="padding:1mm 0 0 3mm;font-size:2.7mm;line-height:1.65;">
+                            <div style="font-size:4mm;font-weight:700;line-height:1.1;margin-bottom:2mm;"><t t-esc="o.nom_complet"/></div>
+                            <div><strong>N° membre :</strong> <t t-esc="o.reference"/></div>
+                            <div t-if="o.date_naissance"><strong>Né(e) le :</strong> <span t-field="o.date_naissance"/></div>
+                            <div t-if="o.lieu_naissance"><strong>Lieu :</strong> <t t-esc="o.lieu_naissance"/></div>
+                            <div t-if="o.phone"><strong>Tél. :</strong> <t t-esc="o.phone"/></div>
+                        </div>
+                    </div>
+
+                    <div style="position:absolute;right:5mm;top:19mm;width:23mm;text-align:center;">
+                        <img t-att-src="'/report/barcode/?type=QR&amp;value=%s&amp;width=180&amp;height=180' % o.qr_code_value"
+                             style="width:20mm;height:20mm;display:block;margin:0 auto;"/>
+                        <div style="font-size:1.9mm;margin-top:1mm;line-height:1.1;word-break:break-all;"><t t-esc="o.reference"/></div>
+                    </div>
+
+                    <div style="position:absolute;left:5mm;right:5mm;bottom:2.5mm;font-size:1.8mm;display:flex;justify-content:space-between;align-items:center;">
+                        <span>Document officiel de membre</span>
+                        <span t-if="o.env.company.phone"><t t-esc="o.env.company.phone"/></span>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>
