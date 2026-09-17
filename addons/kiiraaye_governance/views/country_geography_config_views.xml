@@ -16,11 +16,18 @@
                         <group>
                             <field name="kiiraaye_geo_status"/>
                             <field name="kiiraaye_geo_last_sync"/>
-                            <button name="action_sync_kiiraaye_geography"
-                                    type="object"
-                                    string="Synchroniser les données administratives"
-                                    class="oe_highlight"
-                                    icon="fa-refresh"/>
+                            <div class="d-flex gap-2">
+                                <button name="action_sync_kiiraaye_geography"
+                                        type="object"
+                                        string="Synchroniser le référentiel"
+                                        class="oe_highlight"
+                                        icon="fa-refresh"/>
+                                <button name="action_load_senegal_quartiers"
+                                        type="object"
+                                        string="Charger les quartiers des communes"
+                                        icon="fa-map-marker"
+                                        invisible="code != 'SN'"/>
+                            </div>
                         </group>
                     </group>
 
