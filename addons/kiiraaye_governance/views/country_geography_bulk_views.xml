@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="view_kiiraaye_country_list_geography_status" model="ir.ui.view">
         <field name="name">res.country.kiiraaye.list.geography.status</field>
@@ -19,8 +18,34 @@
         <field name="binding_view_types">list</field>
         <field name="state">code</field>
         <field name="code">
+errors = []
+success = []
 for country in records:
-    country.action_sync_kiiraaye_geography()
+    try:
+        country.action_sync_kiiraaye_geography()
+        success.append(country.display_name)
+    except Exception as exc:
+        errors.append(f"{country.display_name}: {exc}")
+
+message = f"Pays synchronisés : {len(success)}"
+if errors:
+    message += f"\nPays en erreur : {len(errors)}\n\n" + "\n".join(errors[:20])
+
+if errors:
+    notification_type = "warning"
+else:
+    notification_type = "success"
+
+action = {
+    "type": "ir.actions.client",
+    "tag": "display_notification",
+    "params": {
+        "title": "Synchronisation géographique",
+        "message": message,
+        "type": notification_type,
+        "sticky": bool(errors),
+    },
+}
         </field>
     </record>
 </odoo>
