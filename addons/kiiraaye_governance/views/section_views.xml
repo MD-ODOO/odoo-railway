@@ -21,17 +21,17 @@
         <field name="name">kiiraaye.section.search</field>
         <field name="model">kiiraaye.section</field>
         <field name="arch" type="xml">
-            <search string="Rechercher une section">
+            <search>
                 <field name="name"/>
                 <field name="reference"/>
                 <field name="country_id"/>
                 <field name="lieu_id"/>
                 <field name="type_section"/>
                 <filter name="open" string="Ouvertes" domain="[('state', '=', 'ouverte')]"/>
-                <group string="Regrouper par">
-                    <filter string="Type" context="{'group_by': 'type_section'}"/>
-                    <filter string="Pays" context="{'group_by': 'country_id'}"/>
-                    <filter string="État" context="{'group_by': 'state'}"/>
+                <group>
+                    <filter name="groupby_type" string="Type" context="{'group_by': 'type_section'}"/>
+                    <filter name="groupby_country" string="Pays" context="{'group_by': 'country_id'}"/>
+                    <filter name="groupby_state" string="État" context="{'group_by': 'state'}"/>
                 </group>
             </search>
         </field>
@@ -56,16 +56,13 @@
                             <field name="type_section"/>
                             <field name="country_id"/>
                             <field name="lieu_niveau_attendu" invisible="True"/>
-                            <field name="lieu_id"
-                                   domain="[('country_id', '=', country_id), ('niveau', '=', lieu_niveau_attendu), ('active', '=', True)]"/>
+                            <field name="lieu_id" domain="[('country_id', '=', country_id), ('niveau', '=', lieu_niveau_attendu), ('active', '=', True)]"/>
                             <field name="date_creation"/>
                             <field name="state"/>
                             <field name="active"/>
                         </group>
                         <group string="Siège">
-                            <field name="siege_partner_id"
-                                   context="{'default_type': 'other', 'default_country_id': country_id}"
-                                   domain="[('type', '=', 'other')]"/>
+                            <field name="siege_partner_id" context="{'default_type': 'other', 'default_country_id': country_id}" domain="[('type', '=', 'other')]"/>
                             <button name="action_open_siege" type="object" string="Modifier l'adresse du siège"/>
                         </group>
                     </group>
