@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kiiraaye_section_form_coordinator" model="ir.ui.view">
+        <field name="name">kiiraaye.section.form.coordinator</field>
+        <field name="model">kiiraaye.section</field>
+        <field name="inherit_id" ref="kiiraaye_governance.view_kiiraaye_section_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[./field[@name='country_id']]" position="after">
+                <group string="Responsabilité">
+                    <field name="cordonnateur_id"
+                           domain="[('id', 'in', membre_ids), ('active', '=', True)]"
+                           groups="kiiraaye_governance.group_kiiraaye_manager"/>
+                    <div class="alert alert-info" role="alert" groups="kiiraaye_governance.group_kiiraaye_manager">
+                        Le coordonnateur doit être membre de cette section et être lié à un utilisateur Odoo.
+                        Il est le seul habilité à créer des membres dans sa zone.
+                    </div>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_kiiraaye_section_list_coordinator" model="ir.ui.view">
+        <field name="name">kiiraaye.section.list.coordinator</field>
+        <field name="model">kiiraaye.section</field>
+        <field name="inherit_id" ref="kiiraaye_governance.view_kiiraaye_section_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list/field[@name='type_section']" position="after">
+                <field name="cordonnateur_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
