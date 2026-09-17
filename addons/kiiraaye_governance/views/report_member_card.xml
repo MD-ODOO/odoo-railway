@@ -2,12 +2,12 @@
 <odoo>
     <!--
         Odoo 19: page_width/page_height sont des valeurs entières en mm.
-        Le format 86 x 54 mm est volontairement proche du standard carte ID-1,
-        tout en restant compatible avec les champs Integer de report.paperformat.
+        Le format 86 x 54 mm est compatible avec report.paperformat.
+        Le champ description n'est volontairement pas utilisé : il n'est pas
+        disponible sur report.paperformat dans l'environnement Odoo 19 déployé.
     -->
     <record id="paperformat_kiiraaye_member_card" model="report.paperformat">
         <field name="name">Carte membre Kiiraaye</field>
-        <field name="description">Format carte membre numérique et imprimable</field>
         <field name="default" eval="False"/>
         <field name="format">custom</field>
         <field name="page_width">86</field>
@@ -22,7 +22,6 @@
         <field name="dpi">96</field>
     </record>
 
-    <!-- Carte imprimable PDF -->
     <record id="action_report_kiiraaye_member_card" model="ir.actions.report">
         <field name="name">Carte de membre</field>
         <field name="model">kiiraaye.partisan</field>
@@ -32,9 +31,9 @@
         <field name="print_report_name">'Carte_Membre_%s' % (object.reference or object.id)</field>
         <field name="paperformat_id" ref="paperformat_kiiraaye_member_card"/>
         <field name="binding_model_id" ref="model_kiiraaye_partisan"/>
+        <field name="binding_type">report</field>
     </record>
 
-    <!-- Carte numérique consultable dans le navigateur -->
     <record id="action_report_kiiraaye_member_card_html" model="ir.actions.report">
         <field name="name">Carte numérique</field>
         <field name="model">kiiraaye.partisan</field>
@@ -42,20 +41,19 @@
         <field name="report_name">kiiraaye_governance.report_kiiraaye_member_card</field>
         <field name="report_file">kiiraaye_governance.report_kiiraaye_member_card</field>
         <field name="binding_model_id" ref="model_kiiraaye_partisan"/>
+        <field name="binding_type">report</field>
     </record>
 
     <template id="report_kiiraaye_member_card">
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
                 <div class="page" style="width:86mm;height:54mm;margin:0;padding:0;background:#f4f7fb;font-family:Arial,Helvetica,sans-serif;color:#172033;overflow:hidden;position:relative;">
-                    <!-- Filigrane du logo société -->
                     <t t-if="res_company.logo">
                         <img t-att-src="image_data_uri(res_company.logo)"
                              alt="Logo société"
                              style="position:absolute;left:18mm;top:6mm;width:50mm;height:42mm;object-fit:contain;opacity:.055;z-index:0;"/>
                     </t>
 
-                    <!-- Bandeau moderne -->
                     <div style="position:absolute;left:0;top:0;right:0;height:11mm;background:#111827;z-index:1;">
                         <div style="position:absolute;left:5mm;top:2mm;width:16mm;height:7mm;display:flex;align-items:center;">
                             <img t-if="res_company.logo"
@@ -73,10 +71,8 @@
                         </div>
                     </div>
 
-                    <!-- Accent -->
                     <div style="position:absolute;left:0;top:11mm;width:2mm;height:43mm;background:#c7a15a;z-index:1;"></div>
 
-                    <!-- Photo -->
                     <div style="position:absolute;left:5mm;top:15mm;width:22mm;height:28mm;background:#ffffff;border:0.35mm solid #d9e0ea;border-radius:2mm;box-shadow:0 0.8mm 2mm rgba(15,23,42,.08);z-index:2;display:flex;align-items:center;justify-content:center;overflow:hidden;">
                         <img t-if="o.photo"
                              t-att-src="image_data_uri(o.photo)"
@@ -85,7 +81,6 @@
                         <div t-else="" style="font-size:2.2mm;font-weight:700;color:#98a2b3;letter-spacing:.15mm;">PHOTO</div>
                     </div>
 
-                    <!-- Informations membre -->
                     <div style="position:absolute;left:30mm;top:15mm;width:34mm;z-index:2;">
                         <div style="font-size:4mm;font-weight:700;line-height:1.05;text-transform:uppercase;">
                             <t t-esc="o.nom_complet"/>
@@ -94,7 +89,6 @@
                         <div style="margin-top:.6mm;font-size:3.5mm;font-weight:700;letter-spacing:.3mm;color:#111827;">
                             <t t-esc="o.reference"/>
                         </div>
-
                         <div style="margin-top:2.5mm;font-size:2.05mm;line-height:1.55;">
                             <div t-if="o.date_naissance">
                                 <span style="color:#667085;">Né(e) le</span>
@@ -111,7 +105,6 @@
                         </div>
                     </div>
 
-                    <!-- Section / coordination principale -->
                     <div t-if="o.section_ids" style="position:absolute;left:30mm;bottom:6mm;max-width:34mm;z-index:2;">
                         <div style="font-size:1.75mm;color:#667085;text-transform:uppercase;letter-spacing:.12mm;">Section / Coordination</div>
                         <div style="font-size:2mm;font-weight:700;margin-top:.5mm;line-height:1.25;">
@@ -119,7 +112,6 @@
                         </div>
                     </div>
 
-                    <!-- QR Code -->
                     <div style="position:absolute;right:4.5mm;top:15mm;width:22mm;z-index:2;text-align:center;">
                         <div style="padding:1.2mm;background:#ffffff;border:0.35mm solid #d9e0ea;border-radius:2mm;box-shadow:0 0.8mm 2mm rgba(15,23,42,.08);">
                             <img t-att-src="'/report/barcode/?barcode_type=QR&amp;value=%s&amp;width=180&amp;height=180&amp;quiet=1' % (o.qr_code_value or o.reference)"
@@ -129,7 +121,6 @@
                         <div style="font-size:1.7mm;font-weight:700;letter-spacing:.12mm;margin-top:1mm;">SCANNEZ POUR IDENTIFIER</div>
                     </div>
 
-                    <!-- Pied de carte -->
                     <div style="position:absolute;left:5mm;right:5mm;bottom:2mm;height:2.5mm;z-index:2;display:flex;align-items:center;justify-content:space-between;font-size:1.55mm;color:#667085;">
                         <span>Carte numérique officielle</span>
                         <span t-if="res_company.phone"><t t-esc="res_company.phone"/></span>
