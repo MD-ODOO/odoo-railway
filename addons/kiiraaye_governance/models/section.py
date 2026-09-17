@@ -8,7 +8,13 @@ class KiiraayeSection(models.Model):
     _rec_name = "name"
     _order = "name, id"
 
-    name = fields.Char(string="Nom", required=True)
+    name = fields.Char(
+        string="Nom",
+        required=True,
+        readonly=True,
+        compute="_compute_name",
+        store=True,
+    )
     reference = fields.Char(
         string="Référence",
         required=True,
@@ -93,6 +99,34 @@ class KiiraayeSection(models.Model):
         string="Membres du bureau",
         copy=True,
     )
+
+    @api.depends(
+        "type_section",
+        "region_id",
+        "departement_id",
+        "commune_id",
+        "quartier_id",
+    )
+    def _compute_name(self):
+        """Construit automatiquement le nom selon la hiérarchie sélectionnée."""
+        type_labels = dict(self._fields["type_section"].selection)
+        for record in self:
+            parts = [
+                type_labels.get(
+                    record.type_section,
+                    record.type_section or _("Structure"),
+                )
+            ]
+            for field_name in (
+                "region_id",
+                "departement_id",
+                "commune_id",
+                "quartier_id",
+            ):
+                value = getattr(record, field_name)
+                if value:
+                    parts.append(value.display_name)
+            record.name = " / ".join(parts)
 
     _unique_reference = models.Constraint(
         "UNIQUE(reference)",
