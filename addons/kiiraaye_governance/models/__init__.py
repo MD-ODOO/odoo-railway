@@ -9,3 +9,4 @@ from . import senegal_geography
 from . import partisan
 from . import position
 from . import attribution_poste
+from . import user_scope
