@@ -5,6 +5,7 @@
         <field name="model">kiiraaye.partisan</field>
         <field name="arch" type="xml">
             <list string="Membres">
+                <field name="reference"/>
                 <field name="nom_complet"/>
                 <field name="date_naissance"/>
                 <field name="national_id"/>
@@ -21,6 +22,7 @@
         <field name="model">kiiraaye.partisan</field>
         <field name="arch" type="xml">
             <search>
+                <field name="reference"/>
                 <field name="nom_complet"/>
                 <field name="national_id"/>
                 <field name="phone"/>
@@ -36,17 +38,37 @@
         <field name="model">kiiraaye.partisan</field>
         <field name="arch" type="xml">
             <form string="Membre">
+                <header>
+                    <button name="action_print_membership_card"
+                            type="object"
+                            string="Imprimer la carte"
+                            class="oe_highlight"
+                            icon="fa-id-card-o"/>
+                </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_print_membership_card"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-id-card-o">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Carte membre</span>
+                            </div>
+                        </button>
+                    </div>
+                    <field name="photo" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1><field name="nom_complet" readonly="1"/></h1>
+                        <h3><field name="reference" readonly="1"/></h3>
+                    </div>
                     <group>
                         <group>
                             <field name="prenom"/>
                             <field name="nom"/>
-                            <field name="nom_complet" readonly="True"/>
                             <field name="date_naissance"/>
                             <field name="lieu_naissance"/>
                         </group>
                         <group>
-                            <field name="photo" widget="image" class="oe_avatar"/>
                             <field name="national_id"/>
                             <field name="country_id"/>
                             <field name="phone" widget="phone"/>
@@ -67,6 +89,19 @@
                                     <field name="commune_id"/>
                                     <field name="quartier_id"/>
                                     <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Postes occupés">
+                            <field name="attribution_poste_ids" domain="[('state', '=', 'validee')]" readonly="1">
+                                <list string="Postes occupés">
+                                    <field name="reference"/>
+                                    <field name="position_id"/>
+                                    <field name="section_id"/>
+                                    <field name="date_attribution"/>
+                                    <field name="pv_file" filename="pv_filename"/>
+                                    <field name="validation_uid"/>
+                                    <field name="validation_date"/>
                                 </list>
                             </field>
                         </page>
