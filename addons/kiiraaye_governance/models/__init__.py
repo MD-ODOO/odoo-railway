@@ -8,3 +8,4 @@ from . import section_geography_config
 from . import senegal_geography
 from . import partisan
 from . import position
+from . import attribution_poste
