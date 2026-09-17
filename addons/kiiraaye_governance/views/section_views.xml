@@ -9,7 +9,10 @@
                 <field name="name"/>
                 <field name="type_section"/>
                 <field name="country_id"/>
-                <field name="lieu_id"/>
+                <field name="region_id"/>
+                <field name="departement_id"/>
+                <field name="commune_id"/>
+                <field name="quartier_id"/>
                 <field name="date_creation"/>
                 <field name="state"/>
                 <field name="active"/>
@@ -25,12 +28,19 @@
                 <field name="name"/>
                 <field name="reference"/>
                 <field name="country_id"/>
-                <field name="lieu_id"/>
+                <field name="region_id"/>
+                <field name="departement_id"/>
+                <field name="commune_id"/>
+                <field name="quartier_id"/>
                 <field name="type_section"/>
                 <filter name="open" string="Ouvertes" domain="[('state', '=', 'ouverte')]"/>
                 <group>
                     <filter name="groupby_type" string="Type" context="{'group_by': 'type_section'}"/>
                     <filter name="groupby_country" string="Pays" context="{'group_by': 'country_id'}"/>
+                    <filter name="groupby_region" string="Région" context="{'group_by': 'region_id'}"/>
+                    <filter name="groupby_departement" string="Département" context="{'group_by': 'departement_id'}"/>
+                    <filter name="groupby_commune" string="Commune" context="{'group_by': 'commune_id'}"/>
+                    <filter name="groupby_quartier" string="Quartier" context="{'group_by': 'quartier_id'}"/>
                     <filter name="groupby_state" string="État" context="{'group_by': 'state'}"/>
                 </group>
             </search>
@@ -55,8 +65,25 @@
                             <field name="reference" readonly="True"/>
                             <field name="type_section"/>
                             <field name="country_id"/>
-                            <field name="lieu_niveau_attendu" invisible="True"/>
-                            <field name="lieu_id" domain="[('country_id', '=', country_id), ('niveau', '=', lieu_niveau_attendu), ('active', '=', True)]"/>
+                        </group>
+                        <group string="Localisation géographique">
+                            <!-- Hiérarchie ascendante : Région → Département → Commune → Quartier -->
+                            <field name="region_id"
+                                   invisible="type_section not in ['regionale', 'departementale', 'communale']"
+                                   domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau1'), ('active', '=', True)]"/>
+                            <field name="departement_id"
+                                   invisible="type_section not in ['departementale', 'communale']"
+                                   domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau2'), ('parent_id', '=', region_id), ('active', '=', True)]"/>
+                            <field name="commune_id"
+                                   invisible="type_section != 'communale'"
+                                   domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau3'), ('parent_id', '=', departement_id), ('active', '=', True)]"/>
+                            <field name="quartier_id"
+                                   invisible="type_section != 'communale'"
+                                   domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('parent_id', 'child_of', commune_id), ('active', '=', True)]"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="État de la structure">
                             <field name="date_creation"/>
                             <field name="state"/>
                             <field name="active"/>
