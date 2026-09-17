@@ -80,6 +80,12 @@ class KiiraayePartisan(models.Model):
             "kiiraaye_governance.action_report_kiiraaye_member_card"
         ).report_action(self)
 
+    def action_view_membership_card(self):
+        self.ensure_one()
+        return self.env.ref(
+            "kiiraaye_governance.action_report_kiiraaye_member_card_html"
+        ).report_action(self)
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
