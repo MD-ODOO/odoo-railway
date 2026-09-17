@@ -95,7 +95,7 @@ class ResCountrySenegalGeography(models.Model):
             pcode = item.get("pcode")
             if not pcode:
                 continue
-            record = self._upsert_senegal_geo(
+            records[pcode] = self._upsert_senegal_geo(
                 f"GALSEN-REGION-{pcode}",
                 {
                     "name": item.get("nom") or pcode,
@@ -103,26 +103,23 @@ class ResCountrySenegalGeography(models.Model):
                     "country_id": self.id,
                     "parent_id": root.id,
                     "niveau": "niveau1",
-                    "source_admin_level": "ADM1",
+                    "source_admin_level": "MANUAL",
                     "designation_locale": "Région",
                     "source": "GalsenAPI (HDX/OCHA, ANSD)",
                     "source_url": f"{_GALSEN_API_BASE}/regions/{pcode}/",
-                    "source_year": False,
                     "active": True,
                 },
             )
-            records[pcode] = record
         return records
 
     def _load_senegal_departments(self, regions):
         records = {}
         for item in self._galsen_get_all("departements"):
             pcode = item.get("pcode")
-            region_pcode = item.get("region")
-            parent = regions.get(region_pcode)
+            parent = regions.get(item.get("region"))
             if not pcode or not parent:
                 continue
-            record = self._upsert_senegal_geo(
+            records[pcode] = self._upsert_senegal_geo(
                 f"GALSEN-DEPT-{pcode}",
                 {
                     "name": item.get("nom") or pcode,
@@ -130,71 +127,64 @@ class ResCountrySenegalGeography(models.Model):
                     "country_id": self.id,
                     "parent_id": parent.id,
                     "niveau": "niveau2",
-                    "source_admin_level": "ADM2",
+                    "source_admin_level": "MANUAL",
                     "designation_locale": "Département",
                     "source": "GalsenAPI (HDX/OCHA, ANSD)",
                     "source_url": f"{_GALSEN_API_BASE}/departements/{pcode}/",
-                    "source_year": False,
                     "active": True,
                 },
             )
-            records[pcode] = record
         return records
 
     def _load_senegal_arrondissements(self, departments):
         records = {}
         for item in self._galsen_get_all("arrondissements"):
             pcode = item.get("pcode")
-            dept_pcode = item.get("departement")
-            parent = departments.get(dept_pcode)
+            parent = departments.get(item.get("departement"))
             if not pcode or not parent:
                 continue
-            record = self._upsert_senegal_geo(
+            # L'arrondissement est conservé comme unité locale administrative
+            # attachée au département. On évite de lui attribuer niveau3 afin
+            # de réserver niveau3 à la commune utilisée par les sections.
+            records[pcode] = self._upsert_senegal_geo(
                 f"GALSEN-ARR-{pcode}",
                 {
                     "name": item.get("nom") or pcode,
                     "code": pcode,
                     "country_id": self.id,
                     "parent_id": parent.id,
-                    "niveau": "niveau4",
-                    "source_admin_level": "ADM4",
+                    "niveau": "localite",
+                    "source_admin_level": "MANUAL",
                     "designation_locale": "Arrondissement",
                     "source": "GalsenAPI (HDX/OCHA, ANSD)",
                     "source_url": f"{_GALSEN_API_BASE}/arrondissements/{pcode}/",
-                    "source_year": False,
                     "active": True,
                 },
             )
-            records[pcode] = record
         return records
 
-    def _load_senegal_communes(self, departments, arrondissements):
+    def _load_senegal_communes(self, departments):
         records = {}
         for item in self._galsen_get_all("communes"):
             item_id = item.get("id")
-            dept_pcode = item.get("departement")
-            arrondissement_pcode = item.get("arrondissement")
-            parent = arrondissements.get(arrondissement_pcode) or departments.get(dept_pcode)
+            parent = departments.get(item.get("departement"))
             if item_id is None or not parent:
                 continue
-            source_uid = f"GALSEN-COMMUNE-{item_id}"
-            record = self._upsert_senegal_geo(
-                source_uid,
+            records[item_id] = self._upsert_senegal_geo(
+                f"GALSEN-COMMUNE-{item_id}",
                 {
                     "name": item.get("nom") or str(item_id),
                     "code": str(item_id),
                     "country_id": self.id,
                     "parent_id": parent.id,
                     "niveau": "niveau3",
-                    "source_admin_level": "ADM3",
+                    "source_admin_level": "MANUAL",
                     "designation_locale": item.get("type") or "Commune",
                     "source": "GalsenAPI (HDX/OCHA, ANSD)",
                     "source_url": f"{_GALSEN_API_BASE}/communes/{item_id}/",
-                    "source_year": False,
                     "active": True,
                 },
             )
-            records[item_id] = record
         return records
 
     def _load_senegal_villages(self, regions, communes):
@@ -203,9 +193,7 @@ class ResCountrySenegalGeography(models.Model):
             item_id = item.get("id")
             if item_id is None:
                 continue
-            commune_id = item.get("commune")
-            region_pcode = item.get("region")
-            parent = communes.get(commune_id) or regions.get(region_pcode)
+            parent = communes.get(item.get("commune")) or regions.get(item.get("region"))
             if not parent:
                 continue
             self._upsert_senegal_geo(
@@ -216,11 +204,10 @@ class ResCountrySenegalGeography(models.Model):
                     "country_id": self.id,
                     "parent_id": parent.id,
                     "niveau": "niveau5",
-                    "source_admin_level": "ADM5",
+                    "source_admin_level": "MANUAL",
                     "designation_locale": "Village / localité",
                     "source": "GalsenAPI (HDX/OCHA, ANSD)",
                     "source_url": f"{_GALSEN_API_BASE}/villages/{item_id}/",
-                    "source_year": False,
                     "active": True,
                 },
             )
@@ -236,7 +223,7 @@ class ResCountrySenegalGeography(models.Model):
         regions = self._load_senegal_regions(root)
         departments = self._load_senegal_departments(regions)
         arrondissements = self._load_senegal_arrondissements(departments)
-        communes = self._load_senegal_communes(departments, arrondissements)
+        communes = self._load_senegal_communes(departments)
         villages_count = self._load_senegal_villages(regions, communes)
 
         self.sudo().write({
