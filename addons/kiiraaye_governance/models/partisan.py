@@ -66,13 +66,12 @@ class KiiraayePartisan(models.Model):
                 value for value in (record.prenom, record.nom) if value
             )
 
-    @api.depends("reference", "nom_complet")
+    @api.depends("reference")
     def _compute_qr_code_value(self):
+        """Valeur QR courte et sûre pour la route native /report/barcode."""
         for record in self:
-            record.qr_code_value = "KIR-MEMBRE|%s|%s" % (
-                record.reference or "",
-                record.nom_complet or "",
-            )
+            reference = record.reference or str(record.id or "")
+            record.qr_code_value = reference.replace("/", "-").replace(" ", "-")
 
     def action_print_membership_card(self):
         self.ensure_one()
