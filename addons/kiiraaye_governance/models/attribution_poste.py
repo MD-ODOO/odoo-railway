@@ -119,6 +119,8 @@ class KiiraayeAttributionPoste(models.Model):
             raise UserError(
                 _("Le membre doit appartenir à la section / coordination avant validation.")
             )
+        if not self.pv_file:
+            raise UserError(_("Le PV doit être joint avant la validation de l'attribution."))
 
         duplicate = self.env["kiiraaye.attribution.poste"].search(
             [
