@@ -1,6 +1,7 @@
 from . import geographie
 from . import country_geography
 from . import country_geography_validation
+from . import geography_mapping
 from . import section
 from . import section_geography_config
 from . import partisan
