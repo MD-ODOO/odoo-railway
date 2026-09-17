@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Membres : un coordonnateur voit les membres de sa zone. -->
+    <record id="rule_kiiraaye_partisan_coordinator_scope" model="ir.rule">
+        <field name="name">Membres - zone du coordonnateur</field>
+        <field name="model_id" ref="model_kiiraaye_partisan"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_coordinator'))]"/>
+        <field name="domain_force">[
+            '|', '|', '|',
+            ('region_id', 'in', user.kiiraaye_coordinator_region_ids.ids),
+            ('departement_id', 'in', user.kiiraaye_coordinator_departement_ids.ids),
+            ('commune_id', 'in', user.kiiraaye_coordinator_commune_ids.ids),
+            ('quartier_id', 'in', user.kiiraaye_coordinator_quartier_ids.ids)
+        ]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Un administrateur garde une visibilité complète même s'il est aussi coordonnateur. -->
+    <record id="rule_kiiraaye_partisan_manager_all" model="ir.rule">
+        <field name="name">Membres - administrateur Kiiraaye</field>
+        <field name="model_id" ref="model_kiiraaye_partisan"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_manager'))]"/>
+        <field name="domain_force">[('id', '!=', 0)]</field>
+    </record>
+
+    <!-- Sections / coordinations : filtrage hiérarchique identique à la zone de rattachement. -->
+    <record id="rule_kiiraaye_section_coordinator_scope" model="ir.rule">
+        <field name="name">Sections - zone du coordonnateur</field>
+        <field name="model_id" ref="model_kiiraaye_section"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_coordinator'))]"/>
+        <field name="domain_force">[
+            '|', '|', '|',
+            ('region_id', 'in', user.kiiraaye_coordinator_region_ids.ids),
+            ('departement_id', 'in', user.kiiraaye_coordinator_departement_ids.ids),
+            ('commune_id', 'in', user.kiiraaye_coordinator_commune_ids.ids),
+            ('quartier_id', 'in', user.kiiraaye_coordinator_quartier_ids.ids)
+        ]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_kiiraaye_section_manager_all" model="ir.rule">
+        <field name="name">Sections - administrateur Kiiraaye</field>
+        <field name="model_id" ref="model_kiiraaye_section"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_manager'))]"/>
+        <field name="domain_force">[('id', '!=', 0)]</field>
+    </record>
+
+    <record id="rule_kiiraaye_bureau_coordinator_scope" model="ir.rule">
+        <field name="name">Bureau - zone du coordonnateur</field>
+        <field name="model_id" ref="model_kiiraaye_bureau_ligne"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_coordinator'))]"/>
+        <field name="domain_force">[
+            '|', '|', '|',
+            ('section_id.region_id', 'in', user.kiiraaye_coordinator_region_ids.ids),
+            ('section_id.departement_id', 'in', user.kiiraaye_coordinator_departement_ids.ids),
+            ('section_id.commune_id', 'in', user.kiiraaye_coordinator_commune_ids.ids),
+            ('section_id.quartier_id', 'in', user.kiiraaye_coordinator_quartier_ids.ids)
+        ]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_kiiraaye_bureau_manager_all" model="ir.rule">
+        <field name="name">Bureau - administrateur Kiiraaye</field>
+        <field name="model_id" ref="model_kiiraaye_bureau_ligne"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_manager'))]"/>
+        <field name="domain_force">[('id', '!=', 0)]</field>
+    </record>
+
+    <record id="rule_kiiraaye_attribution_coordinator_scope" model="ir.rule">
+        <field name="name">Attributions - zone du coordonnateur</field>
+        <field name="model_id" ref="model_kiiraaye_attribution_poste"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_coordinator'))]"/>
+        <field name="domain_force">[
+            '|', '|', '|',
+            ('section_id.region_id', 'in', user.kiiraaye_coordinator_region_ids.ids),
+            ('section_id.departement_id', 'in', user.kiiraaye_coordinator_departement_ids.ids),
+            ('section_id.commune_id', 'in', user.kiiraaye_coordinator_commune_ids.ids),
+            ('section_id.quartier_id', 'in', user.kiiraaye_coordinator_quartier_ids.ids)
+        ]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_kiiraaye_attribution_manager_all" model="ir.rule">
+        <field name="name">Attributions - administrateur Kiiraaye</field>
+        <field name="model_id" ref="model_kiiraaye_attribution_poste"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_manager'))]"/>
+        <field name="domain_force">[('id', '!=', 0)]</field>
+    </record>
+</odoo>
