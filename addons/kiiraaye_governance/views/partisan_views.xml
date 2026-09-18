@@ -139,7 +139,7 @@
                         </div>
                     </div>
 
-                                        <group string="Informations personnelles">
+                    <group string="Informations personnelles">
                                 <h1><field name="nom_complet" readonly="1"/></h1>
                                 <h3><field name="reference" readonly="1"/></h3>
                             </div>
