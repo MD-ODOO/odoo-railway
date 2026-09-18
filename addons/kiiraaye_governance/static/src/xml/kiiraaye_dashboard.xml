@@ -140,7 +140,7 @@
                             <p>Utilisez cette vue pour contrôler la couverture du référentiel et le rattachement des sections à la hiérarchie géographique.</p>
                             <div class="mini-stat"><span>Zones actives</span><b><t t-esc="formatNumber(state.data.kpis.geographies)"/></b></div>
                             <div class="mini-stat"><span>Sections rattachées</span><b><t t-esc="formatNumber(state.data.kpis.sections)"/></b></div>
-                            <div class="mini-stat"><span>Zones sans section</span><b><t t-esc="formatNumber(state.data.kpis.zones_without_sections)"/></b></div>
+                            <div class="mini-stat"><span>Zones analysées sans section</span><b><t t-esc="formatNumber(state.data.kpis.zones_without_sections)"/></b></div>
                         </div>
                     </div>
                         <div class="panel">
