@@ -7,7 +7,7 @@ class KiiraayePartisan(models.Model):
     _rec_name = "nom_complet"
     _order = "nom_complet"
 
-    name = fields.Char(related="nom_complet", store=True, index=True)
+    name = fields.Char(string="Nom membre (recherche)", related="nom_complet", store=True, index=True)
     reference = fields.Char(
         string="N° membre",
         required=True,
