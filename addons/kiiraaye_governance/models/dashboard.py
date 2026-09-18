@@ -157,6 +157,8 @@ class KiiraayeDashboard(models.Model):
             if not section:
                 continue
             record = section[:1]
+            count = int(count or 0)
+            status = self.env["kiiraaye.effectif.status"].get_for_count(count)
             rows.append(
                 {
                     "id": record.id,
@@ -165,12 +167,8 @@ class KiiraayeDashboard(models.Model):
                         Section._fields["type_section"],
                         record.type_section,
                     ),
-                    "members": int(count or 0),
-                    "status": (
-                        record.member_status_id.name
-                        if record.member_status_id
-                        else ""
-                    ),
+                    "members": count,
+                    "status": status.name if status else "",
                     "state": self._selection_label(
                         Section._fields["state"],
                         record.state,
