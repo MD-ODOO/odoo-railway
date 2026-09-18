@@ -192,6 +192,8 @@ class KiiraayeDashboard(models.Model):
             if not organisation:
                 continue
             record = organisation[:1]
+            count = int(count or 0)
+            status = self.env["kiiraaye.effectif.status"].get_for_count(count)
             rows.append(
                 {
                     "id": record.id,
@@ -202,12 +204,8 @@ class KiiraayeDashboard(models.Model):
                         else ""
                     ),
                     "level": record.niveau or 0,
-                    "members": int(count or 0),
-                    "status": (
-                        record.member_status_id.name
-                        if record.member_status_id
-                        else ""
-                    ),
+                    "members": count,
+                    "status": status.name if status else "",
                 }
             )
         return rows
