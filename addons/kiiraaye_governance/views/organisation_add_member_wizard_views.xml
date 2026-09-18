@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kiiraaye_organisation_add_member_wizard" model="ir.ui.view">
+        <field name="name">kiiraaye.organisation.add.member.wizard.form</field>
+        <field name="model">kiiraaye.organisation.add.member.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Ajouter un membre à une organisation">
+                <sheet>
+                    <div class="oe_title">
+                        <h2>Ajouter un membre</h2>
+                    </div>
+                    <group>
+                        <field name="organisation_id" options="{'no_create': True}"/>
+                        <field name="member_id" options="{'no_create': True}"/>
+                        <field name="current_organisation_ids" widget="many2many_tags"/>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        Un membre peut appartenir simultanément à plusieurs organisations.
+                    </div>
+                </sheet>
+                <footer>
+                    <button name="action_add"
+                            type="object"
+                            string="Ajouter"
+                            class="oe_highlight"
+                            icon="fa-check"/>
+                    <button string="Annuler"
+                            special="cancel"
+                            icon="fa-times"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_kiiraaye_organisation_add_member_wizard" model="ir.actions.act_window">
+        <field name="name">Ajouter un membre</field>
+        <field name="res_model">kiiraaye.organisation.add.member.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_kiiraaye_organisation_add_member_wizard"/>
+        <field name="target">new</field>
+        <field name="context">{'default_organisation_id': active_id}</field>
+    </record>
+</odoo>
