@@ -40,7 +40,7 @@ class KiiraayePartisan(models.Model):
     )
     cadre_id = fields.Many2one(
         "kiiraaye.cadre",
-        string="Cadre historique",
+        string="Ancienne organisation",
         ondelete="restrict",
         index=True,
         copy=False,
@@ -150,6 +150,7 @@ class KiiraayePartisan(models.Model):
         action["context"] = dict(
             self.env.context,
             default_partisan_id=self.id,
+            default_member_ids=[(6, 0, [self.id])],
             active_id=self.id,
         )
         return action
