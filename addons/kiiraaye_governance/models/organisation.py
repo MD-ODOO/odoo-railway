@@ -77,6 +77,11 @@ class KiiraayeOrganisation(models.Model):
         string="Nombre de membres",
         compute="_compute_member_count",
     )
+    member_status_id = fields.Many2one(
+        "kiiraaye.effectif.status",
+        string="Statut d'effectif",
+        compute="_compute_member_status",
+    )
 
     _unique_code = models.Constraint(
         "UNIQUE(code)",
@@ -87,6 +92,12 @@ class KiiraayeOrganisation(models.Model):
     def _compute_member_count(self):
         for record in self:
             record.member_count = len(record.member_ids)
+
+    @api.depends("member_count")
+    def _compute_member_status(self):
+        Status = self.env["kiiraaye.effectif.status"]
+        for record in self:
+            record.member_status_id = Status.get_for_count(record.member_count)
 
     @api.constrains("parent_id")
     def _check_parent(self):
