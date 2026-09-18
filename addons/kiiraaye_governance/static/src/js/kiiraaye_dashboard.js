@@ -34,7 +34,10 @@ export class KiiraayeDashboard extends Component {
             this.state.data = await this.orm.call(
                 "kiiraaye.dashboard",
                 "get_dashboard_data",
-                [this.state.filters]
+                [{
+                    ...this.state.filters,
+                    view: this.state.view,
+                }]
             );
         } catch (error) {
             this.state.error = error?.message || "Erreur de chargement";
@@ -43,8 +46,12 @@ export class KiiraayeDashboard extends Component {
         }
     }
 
-    setView(view) {
+    async setView(view) {
+        if (this.state.view === view) {
+            return;
+        }
         this.state.view = view;
+        await this.loadDashboard();
     }
 
     async refresh() {
