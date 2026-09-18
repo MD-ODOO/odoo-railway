@@ -59,15 +59,15 @@ class KiiraayeDashboard(models.Model):
         geography_id = filters.get("geographie_id")
         if geography_id:
             geography_id = int(geography_id)
-            section_domain.append(
+            section_domain += [
                 "|",
-                ("region_id", "=", geography_id),
                 "|",
-                ("departement_id", "=", geography_id),
                 "|",
-                ("commune_id", "=", geography_id),
-                ("quartier_id", "=", geography_id),
-            )
+                ("region_id", "child_of", geography_id),
+                ("departement_id", "child_of", geography_id),
+                ("commune_id", "child_of", geography_id),
+                ("quartier_id", "child_of", geography_id),
+            ]
 
         sections = Section.search(section_domain)
         open_sections = sections.filtered(lambda s: s.state == "ouverte")
@@ -223,7 +223,76 @@ class KiiraayeDashboard(models.Model):
                 }
             )
 
+        geography_rows = []
+        zones_without_sections = 0
+        zones = Geography.search(
+            [("active", "=", True)],
+            order="niveau, name",
+            limit=60,
+        )
+        for zone in zones:
+            zone_sections = Section.search(
+                [
+                    ("active", "=", True),
+                    "|",
+                    "|",
+                    "|",
+                    ("region_id", "child_of", zone.id),
+                    ("departement_id", "child_of", zone.id),
+                    ("commune_id", "child_of", zone.id),
+                    ("quartier_id", "child_of", zone.id),
+                ]
+            )
+            zone_members = zone_sections.mapped("membre_ids").filtered(
+                lambda m: m.active
+            )
+            if not zone_sections:
+                zones_without_sections += 1
+            geography_rows.append(
+                {
+                    "id": zone.id,
+                    "name": zone.name,
+                    "level": level_labels.get(zone.niveau, zone.niveau),
+                    "sections": len(zone_sections),
+                    "members": len(zone_members),
+                }
+            )
+
+        geography_rows.sort(
+            key=lambda row: (-row["members"], -row["sections"], row["name"])
+        )
+
         return {
+            "filters": {
+                "sections": [
+                    {"id": section.id, "name": section.name}
+                    for section in Section.search(
+                        [("active", "=", True)],
+                        order="name",
+                        limit=500,
+                    )
+                ],
+                "organisations": [
+                    {"id": organisation.id, "name": organisation.name}
+                    for organisation in Organisation.search(
+                        [("active", "=", True)],
+                        order="name",
+                        limit=500,
+                    )
+                ],
+                "geographies": [
+                    {
+                        "id": zone.id,
+                        "name": zone.name,
+                        "level": level_labels.get(zone.niveau, zone.niveau),
+                    }
+                    for zone in Geography.search(
+                        [("active", "=", True)],
+                        order="niveau, name",
+                        limit=1000,
+                    )
+                ],
+            },
             "kpis": {
                 "members": len(members),
                 "all_members": len(all_members),
@@ -231,6 +300,7 @@ class KiiraayeDashboard(models.Model):
                 "open_sections": len(open_sections),
                 "organisations": len(organizations),
                 "geographies": Geography.search_count([("active", "=", True)]),
+                "zones_without_sections": zones_without_sections,
                 "avg_members_per_section": (
                     round(sum(s.member_count for s in sections) / len(sections), 1)
                     if sections
@@ -248,6 +318,7 @@ class KiiraayeDashboard(models.Model):
             ],
             "sections": section_rows,
             "organisations": organisation_rows,
+            "geography_rows": geography_rows[:25],
             "geography_levels": [
                 {"label": label, "value": value}
                 for label, value in sorted(level_counter.items())
