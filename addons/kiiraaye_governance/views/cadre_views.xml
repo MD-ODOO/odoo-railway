@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kiiraaye_cadre_list" model="ir.ui.view">
+        <field name="name">kiiraaye.cadre.list</field>
+        <field name="model">kiiraaye.cadre</field>
+        <field name="arch" type="xml">
+            <list string="Cadres">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="member_count"/>
+                <field name="color"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_kiiraaye_cadre_form" model="ir.ui.view">
+        <field name="name">kiiraaye.cadre.form</field>
+        <field name="model">kiiraaye.cadre</field>
+        <field name="arch" type="xml">
+            <form string="Cadre Kiiraaye">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Identification">
+                            <field name="code"/>
+                            <field name="sequence"/>
+                            <field name="color"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Description">
+                            <field name="description" nolabel="1" placeholder="Description du cadre..."/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Membres">
+                            <field name="member_ids" readonly="1">
+                                <list string="Membres du cadre">
+                                    <field name="reference"/>
+                                    <field name="nom_complet"/>
+                                    <field name="profession_id"/>
+                                    <field name="section_ids" widget="many2many_tags"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_kiiraaye_cadre" model="ir.actions.act_window">
+        <field name="name">Cadres</field>
+        <field name="res_model">kiiraaye.cadre</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>
