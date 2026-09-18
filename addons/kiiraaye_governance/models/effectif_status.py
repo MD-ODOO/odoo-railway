@@ -54,7 +54,7 @@ class KiiraayeEffectifStatus(models.Model):
         for record in self:
             if record.min_members < 0:
                 raise ValidationError(_("Le minimum de membres ne peut pas être négatif."))
-            if record.max_members and record.max_members < record.min_members:
+            if record.max_members is not False and record.max_members < record.min_members:
                 raise ValidationError(
                     _("Le maximum de membres doit être supérieur ou égal au minimum.")
                 )
