@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kiiraaye_organisation_type_list" model="ir.ui.view">
+        <field name="name">kiiraaye.organisation.type.list</field>
+        <field name="model">kiiraaye.organisation.type</field>
+        <field name="arch" type="xml">
+            <list string="Types / niveaux d'organisation">
+                <field name="sequence" widget="handle"/>
+                <field name="niveau"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_kiiraaye_organisation_type_form" model="ir.ui.view">
+        <field name="name">kiiraaye.organisation.type.form</field>
+        <field name="model">kiiraaye.organisation.type</field>
+        <field name="arch" type="xml">
+            <form string="Type / niveau d'organisation">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <field name="code"/>
+                        <field name="niveau"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_kiiraaye_organisation_type" model="ir.actions.act_window">
+        <field name="name">Types / niveaux d'organisation</field>
+        <field name="res_model">kiiraaye.organisation.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>
