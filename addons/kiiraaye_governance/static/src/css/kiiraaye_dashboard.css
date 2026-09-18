@@ -310,3 +310,47 @@
         padding: 16px;
     }
 }
+
+.kiiraaye-dashboard__filters {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 18px;
+    padding: 14px;
+    background: #fff;
+    border: 1px solid #e3e8ee;
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(30, 45, 60, .06);
+}
+
+.filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.filter-field label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #68737e;
+}
+
+.filter-field select {
+    width: 100%;
+    min-height: 38px;
+    border: 1px solid #dce2e8;
+    border-radius: 9px;
+    padding: 6px 10px;
+    background: #fff;
+}
+
+.data-row--geo-head,
+.data-row--geo {
+    grid-template-columns: 2.5fr 1.3fr .8fr .8fr;
+}
+
+@media (max-width: 900px) {
+    .kiiraaye-dashboard__filters {
+        grid-template-columns: 1fr;
+    }
+}
