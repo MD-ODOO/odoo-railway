@@ -1,6 +1,6 @@
 {
     "name": "Kiiraaye Gouvernance",
-    "version": "19.0.2.19.2",
+    "version": "19.0.2.20.0",
     "category": "Organization",
     "summary": "Référentiel géographique et gestion des sections/coordinations Kiiraaye",
     "description": "Référentiel pays et subdivisions administratives, sections/coordinations, membres, bureaux, cartes membres, attributions de postes et contrôle d'accès hiérarchique.",
@@ -11,6 +11,7 @@
         "security/groups.xml",
         "security/ir.model.access.csv",
         "security/kiiraaye_coordinator_rules.xml",
+        "data/dashboard_data.xml",
         "data/sequence.xml",
         "data/position_data.xml",
         "data/organisation_type_data.xml",
@@ -35,8 +36,16 @@
         "views/attribution_poste_views.xml",
         "views/report_member_card.xml",
         "views/report_member_card_modern.xml",
+        "views/dashboard_views.xml",
         "views/menus.xml"
     ],
+    "assets": {
+        "web.assets_backend": [
+            "kiiraaye_governance/static/src/js/kiiraaye_dashboard.js",
+            "kiiraaye_governance/static/src/css/kiiraaye_dashboard.css",
+            "kiiraaye_governance/static/src/xml/kiiraaye_dashboard.xml",
+        ],
+    },
     "installable": True,
     "application": True,
     "post_init_hook": "post_init_hook"
