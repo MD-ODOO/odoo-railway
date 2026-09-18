@@ -145,19 +145,26 @@ class KiiraayeDashboard(models.Model):
         return domain
 
     def _get_top_section_rows(self, member_domain, Section):
+        """Retourne quelques sections sans grouper directement sur un Many2many.
+
+        Odoo 19 utilise un agrégateur SQL pour _read_group et le regroupement
+        direct sur section_ids (Many2many) n'est pas une base suffisamment
+        portable pour ce tableau de bord. On garde donc le payload limité et
+        faisons les comptages par section, ce qui reste borné à 20 requêtes.
+        """
         rows = []
-        grouped = self.env["kiiraaye.partisan"]._read_group(
-            member_domain,
-            ["section_ids"],
-            ["__count"],
+        section_domain = self._section_domain({})
+        # Le filtre section/geographie est déjà porté par member_domain pour
+        # le comptage des membres ; on limite l'échantillon à 20 sections.
+        sections = Section.search(
+            section_domain,
+            order="name, id",
             limit=self.MAX_BROWSER_SECTION_ROWS,
-            order="__count DESC",
         )
-        for section, count in grouped:
-            if not section:
-                continue
-            record = section[:1]
-            count = int(count or 0)
+        for record in sections:
+            count = self.env["kiiraaye.partisan"].search_count(
+                list(member_domain) + [("section_ids", "=", record.id)]
+            )
             status = self.env["kiiraaye.effectif.status"].get_for_count(count)
             rows.append(
                 {
@@ -167,7 +174,7 @@ class KiiraayeDashboard(models.Model):
                         Section._fields["type_section"],
                         record.type_section,
                     ),
-                    "members": count,
+                    "members": int(count or 0),
                     "status": status.name if status else "",
                     "state": self._selection_label(
                         Section._fields["state"],
@@ -175,37 +182,45 @@ class KiiraayeDashboard(models.Model):
                     ),
                 }
             )
+        rows.sort(key=lambda row: (-row["members"], row["name"]))
         return rows
 
     def _get_top_organisation_rows(self, member_domain, Organisation):
+        """Retourne quelques organisations avec un comptage borné.
+
+        Le regroupement direct sur organisation_ids (Many2many) est évité afin
+        de rester compatible avec l'ORM Odoo 19 et avec les gros volumes.
+        """
         rows = []
-        grouped = self.env["kiiraaye.partisan"]._read_group(
-            member_domain,
-            ["organisation_ids"],
-            ["__count"],
+        organisations = Organisation.search(
+            [("active", "=", True)],
+            order="name, id",
             limit=self.MAX_BROWSER_ORGANISATION_ROWS,
-            order="__count DESC",
         )
-        for organisation, count in grouped:
-            if not organisation:
+        for record in organisations:
+            # Si une organisation est sélectionnée, ne montrer que celle-ci.
+            if member_domain and any(
+                clause[:2] == ("organisation_ids", "=")
+                and clause[2] != record.id
+                for clause in member_domain
+                if isinstance(clause, (list, tuple)) and len(clause) >= 3
+            ):
                 continue
-            record = organisation[:1]
-            count = int(count or 0)
+            count = self.env["kiiraaye.partisan"].search_count(
+                list(member_domain) + [("organisation_ids", "=", record.id)]
+            )
             status = self.env["kiiraaye.effectif.status"].get_for_count(count)
             rows.append(
                 {
                     "id": record.id,
                     "name": record.name,
-                    "type": (
-                        record.type_id.name
-                        if record.type_id
-                        else ""
-                    ),
+                    "type": record.type_id.name if record.type_id else "",
                     "level": record.niveau or 0,
-                    "members": count,
+                    "members": int(count or 0),
                     "status": status.name if status else "",
                 }
             )
+        rows.sort(key=lambda row: (-row["members"], row["name"]))
         return rows
 
     def _get_creation_history(self, member_domain):
