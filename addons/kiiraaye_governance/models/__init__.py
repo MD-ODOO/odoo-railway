@@ -6,6 +6,9 @@ from . import senegal_geography_source
 from . import section
 from . import section_geography_config
 from . import senegal_geography
+from . import organisation_type
+from . import organisation
+from . import organisation_add_member_wizard
 from . import partisan
 from . import profession
 from . import cadre
