@@ -44,6 +44,18 @@ class KiiraayePartisan(models.Model):
         ondelete="restrict",
         index=True,
     )
+    profession_id = fields.Many2one(
+        "kiiraaye.profession",
+        string="Profession",
+        ondelete="restrict",
+        index=True,
+    )
+    cadre_id = fields.Many2one(
+        "kiiraaye.cadre",
+        string="Cadre",
+        ondelete="restrict",
+        index=True,
+    )
     section_ids = fields.Many2many(
         "kiiraaye.section",
         "kiiraaye_section_partisan_rel",
@@ -55,6 +67,10 @@ class KiiraayePartisan(models.Model):
         "kiiraaye.attribution.poste",
         "partisan_id",
         string="Postes occupés",
+    )
+    poste_banner = fields.Char(
+        string="Poste(s) actuel(s)",
+        compute="_compute_member_banners",
     )
     poste_banner = fields.Char(
         string="Poste(s) actuel(s)",
@@ -74,6 +90,20 @@ class KiiraayePartisan(models.Model):
         "UNIQUE(national_id)",
         "Le numéro de pièce d'identité doit être unique lorsqu'il est renseigné.",
     )
+
+    @api.depends(
+        "attribution_poste_ids.state",
+        "attribution_poste_ids.active",
+        "attribution_poste_ids.position_id",
+        "attribution_poste_ids.position_id.name",
+    )
+    def _compute_member_banners(self):
+        for record in self:
+            names = record.attribution_poste_ids.filtered(
+                lambda line: line.state == "validee" and line.active and line.position_id
+            ).mapped("position_id.name")
+            unique_names = list(dict.fromkeys(name for name in names if name))
+            record.poste_banner = " • ".join(unique_names)
 
     @api.depends(
         "attribution_poste_ids.state",
