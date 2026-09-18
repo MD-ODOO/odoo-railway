@@ -44,7 +44,7 @@
                 <header>
                     <button name="action_add_member"
                             type="object"
-                            string="Ajouter un membre"
+                            string="Ajouter plusieurs membres"
                             icon="fa-user-plus"
                             class="oe_highlight"/>
                 </header>
