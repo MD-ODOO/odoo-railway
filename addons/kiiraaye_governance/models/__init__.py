@@ -20,3 +20,4 @@ from . import position
 from . import attribution_poste
 from . import section_coordinator
 from . import user_scope
+from . import dashboard
