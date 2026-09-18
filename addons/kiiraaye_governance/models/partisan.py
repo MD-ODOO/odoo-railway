@@ -113,6 +113,8 @@ class KiiraayePartisan(models.Model):
         "attribution_poste_ids.active",
         "attribution_poste_ids.position_id",
         "attribution_poste_ids.position_id.name",
+        "attribution_poste_ids.section_id",
+        "attribution_poste_ids.section_id.name",
     )
     def _compute_member_banners(self):
         for record in self:
