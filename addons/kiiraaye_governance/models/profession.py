@@ -1,4 +1,4 @@
-from odoo import models
+from odoo import fields, models
 
 
 class KiiraayeProfession(models.Model):
@@ -7,26 +7,26 @@ class KiiraayeProfession(models.Model):
     _rec_name = "name"
     _order = "sequence, name"
 
-    name = models.Char(
+    name = fields.Char(
         string="Profession",
         required=True,
         index=True,
     )
-    code = models.Char(
+    code = fields.Char(
         string="Code",
         required=True,
         copy=False,
         index=True,
     )
-    sequence = models.Integer(
+    sequence = fields.Integer(
         string="Séquence",
         default=10,
     )
-    active = models.Boolean(
+    active = fields.Boolean(
         string="Actif",
         default=True,
     )
-    description = models.Text(
+    description = fields.Text(
         string="Description",
     )
 
