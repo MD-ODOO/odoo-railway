@@ -140,23 +140,6 @@
                     </div>
 
                     <group string="Informations personnelles">
-                                <h1><field name="nom_complet" readonly="1"/></h1>
-                                <h3><field name="reference" readonly="1"/></h3>
-                            </div>
-
-                            <group string="Synthèse">
-                                <field name="profession_id"
-                                       string="Profession"
-                                       options="{'no_create': True}"/>
-                                <field name="organisation_ids"
-                                       string="Organisations"
-                                       widget="many2many_tags"
-                                       options="{'no_create': True}"/>
-                            </group>
-                        </div>
-                    </div>
-
-                    <group string="Informations personnelles">
                         <group>
                             <field name="prenom" string="Prénom"/>
                             <field name="nom" string="Nom"/>
