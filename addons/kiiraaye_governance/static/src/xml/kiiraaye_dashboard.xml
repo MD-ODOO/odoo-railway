@@ -21,7 +21,7 @@
             <div t-if="state.error" class="alert alert-danger">
                 <t t-esc="state.error"/>
             </div>
-            <div class="kiiraaye-dashboard__filters">
+            <div t-if="state.data" class="kiiraaye-dashboard__filters">
                 <div class="filter-field">
                     <label>Lieu</label>
                     <select t-on-change="(ev) => this.onFilterChange('geographie_id', ev)">
@@ -61,7 +61,7 @@
                 <i class="fa fa-spinner fa-spin"/> Chargement des indicateurs...
             </div>
 
-            <t t-else="">
+            <t t-elif="state.data">
                 <div class="kiiraaye-dashboard__tabs">
                     <button t-att-class="state.view === 'global' ? 'active' : ''" t-on-click="() => this.setView('global')">Global</button>
                     <button t-att-class="state.view === 'section' ? 'active' : ''" t-on-click="() => this.setView('section')">Section</button>
@@ -219,6 +219,10 @@
                     </div>
                 </section>
             </t>
+
+            <div t-else="" class="alert alert-warning mt-3">
+                Les indicateurs du tableau de bord ne sont pas disponibles pour le moment. Cliquez sur « Actualiser » pour réessayer.
+            </div>
         </div>
     </t>
 </templates>
