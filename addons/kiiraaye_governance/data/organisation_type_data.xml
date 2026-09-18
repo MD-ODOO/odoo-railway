@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="organisation_type_cadre" model="kiiraaye.organisation.type">
+        <field name="name">Cadre</field>
+        <field name="code">CADRE</field>
+        <field name="niveau">1</field>
+        <field name="sequence">10</field>
+        <field name="active">True</field>
+    </record>
+    <record id="organisation_type_coordination" model="kiiraaye.organisation.type">
+        <field name="name">Coordination</field>
+        <field name="code">COORDINATION</field>
+        <field name="niveau">2</field>
+        <field name="sequence">20</field>
+        <field name="active">True</field>
+    </record>
+</odoo>
