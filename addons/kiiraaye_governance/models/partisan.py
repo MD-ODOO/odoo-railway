@@ -102,10 +102,7 @@ class KiiraayePartisan(models.Model):
         for record in self:
             values = []
             for organisation in record.organisation_ids:
-                label = organisation.name
-                if organisation.type_id:
-                    label = f"{organisation.type_id.name} : {organisation.name}"
-                values.append(label)
+                values.append(organisation.name)
             record.organisation_banner = " • ".join(dict.fromkeys(values))
 
     @api.depends(
