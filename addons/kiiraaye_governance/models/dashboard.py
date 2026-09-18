@@ -365,6 +365,7 @@ class KiiraayeDashboard(models.Model):
     def get_dashboard_data(self, filters=None):
         self._check_dashboard_access()
         filters = filters or {}
+        current_view = filters.get("view", "global")
 
         Section = self.env["kiiraaye.section"]
         Organisation = self.env["kiiraaye.organisation"]
@@ -389,18 +390,27 @@ class KiiraayeDashboard(models.Model):
         total_member_count = Partisan.search_count([])
         inactive_member_count = Partisan.search_count([("active", "=", False)])
 
-        section_rows = self._get_top_section_rows(member_domain, Section)
-        organisation_rows = self._get_top_organisation_rows(
-            member_domain,
-            Organisation,
-        )
-        member_creation = self._get_creation_history(member_domain)
+        section_rows = []
+        organisation_rows = []
+        member_creation = []
+        geography_levels = []
+        geography_rows = []
 
-        geography_levels, geography_rows = self._geography_coverage(
-            Geography,
-            Section,
-            Partisan,
-        )
+        if current_view in ("global", "section"):
+            section_rows = self._get_top_section_rows(member_domain, Section)
+        if current_view == "global":
+            organisation_rows = self._get_top_organisation_rows(
+                member_domain,
+                Organisation,
+            )
+        if current_view == "membre":
+            member_creation = self._get_creation_history(member_domain)
+        if current_view == "lieu":
+            geography_levels, geography_rows = self._geography_coverage(
+                Geography,
+                Section,
+                Partisan,
+            )
 
         status_counter = defaultdict(int)
         for row in section_rows:
@@ -430,6 +440,9 @@ class KiiraayeDashboard(models.Model):
 
         projection = []
         projected_total = current_member_count
+        projection_base = (
+            fields.Datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        )
         for step in range(1, 7):
             projected_additions = max(
                 0,
@@ -439,12 +452,7 @@ class KiiraayeDashboard(models.Model):
             projection.append(
                 {
                     "label": (
-                        fields.Datetime.from_string(
-                            fields.Datetime.to_string(
-                                fields.Datetime.now()
-                            )
-                        )
-                        + relativedelta(months=step)
+                        projection_base + relativedelta(months=step)
                     ).strftime("%m/%Y"),
                     "value": projected_total,
                 }
