@@ -51,6 +51,33 @@ export class KiiraayeDashboard extends Component {
         await this.loadDashboard();
     }
 
+    async onFilterChange(field, ev) {
+        const value = ev.target.value ? Number(ev.target.value) : false;
+        this.state.filters[field] = value;
+        await this.loadDashboard();
+    }
+
+    get maxSectionStatus() {
+        return Math.max(
+            ...(this.state.data?.section_statuses || []).map((row) => row.value),
+            1
+        );
+    }
+
+    get maxOrganisationStatus() {
+        return Math.max(
+            ...(this.state.data?.organisation_statuses || []).map((row) => row.value),
+            1
+        );
+    }
+
+    get maxGeographyValue() {
+        return Math.max(
+            ...(this.state.data?.geography_levels || []).map((row) => row.value),
+            1
+        );
+    }
+
     get maxSectionMembers() {
         const rows = this.state.data?.sections || [];
         return Math.max(...rows.map((row) => row.members), 1);
