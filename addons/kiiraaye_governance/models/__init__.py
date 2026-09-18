@@ -1,3 +1,4 @@
+from . import effectif_status
 from . import geographie
 from . import country_geography
 from . import country_geography_validation
