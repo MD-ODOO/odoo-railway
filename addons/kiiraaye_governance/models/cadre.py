@@ -3,12 +3,12 @@ from odoo import api, fields, models, _
 
 class KiiraayeCadre(models.Model):
     _name = "kiiraaye.cadre"
-    _description = "Cadre Kiiraaye"
+    _description = "Ancienne organisation Kiiraaye"
     _rec_name = "name"
     _order = "sequence, name"
 
     name = fields.Char(
-        string="Cadre",
+        string="Ancienne organisation",
         required=True,
         index=True,
     )
@@ -25,7 +25,7 @@ class KiiraayeCadre(models.Model):
     color = fields.Integer(
         string="Couleur",
         default=1,
-        help="Couleur utilisée pour l'identification visuelle du cadre.",
+        help="Couleur utilisée pour l'identification visuelle de l'ancienne organisation.",
     )
     description = fields.Text(
         string="Description",
@@ -46,7 +46,7 @@ class KiiraayeCadre(models.Model):
 
     _unique_code = models.Constraint(
         "UNIQUE(code)",
-        "Le code du cadre doit être unique.",
+        "Le code de l'ancienne organisation doit être unique.",
     )
 
     @api.depends("member_ids")
