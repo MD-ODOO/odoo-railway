@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kiiraaye_cadre_assign_wizard" model="ir.ui.view">
+        <field name="name">kiiraaye.cadre.assign.wizard.form</field>
+        <field name="model">kiiraaye.cadre.assign.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Affecter le membre à un cadre">
+                <sheet>
+                    <div class="oe_title">
+                        <h2>Affectation au cadre</h2>
+                    </div>
+                    <group>
+                        <field name="partisan_id"/>
+                        <field name="current_cadre_id"/>
+                        <field name="cadre_id" options="{'no_create': True}"/>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        Le cadre sélectionné sera enregistré directement sur la fiche du membre.
+                    </div>
+                </sheet>
+                <footer>
+                    <button name="action_assign"
+                            type="object"
+                            string="Affecter"
+                            class="oe_highlight"
+                            icon="fa-check"/>
+                    <button string="Annuler"
+                            special="cancel"
+                            icon="fa-times"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_kiiraaye_cadre_assign_wizard" model="ir.actions.act_window">
+        <field name="name">Affecter à un cadre</field>
+        <field name="res_model">kiiraaye.cadre.assign.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_kiiraaye_cadre_assign_wizard"/>
+        <field name="target">new</field>
+        <field name="context">{'default_partisan_id': active_id}</field>
+    </record>
+</odoo>
