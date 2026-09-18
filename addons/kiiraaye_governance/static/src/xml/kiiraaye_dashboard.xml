@@ -19,7 +19,7 @@
             <div class="kiiraaye-dashboard__filters">
                 <div class="filter-field">
                     <label>Lieu</label>
-                    <select t-on-change="(ev) => onFilterChange('geographie_id', ev)">
+                    <select t-on-change="(ev) => this.onFilterChange('geographie_id', ev)">
                         <option value="">Tous les lieux</option>
                         <t t-foreach="state.data.filters.geographies" t-as="item" t-key="item.id">
                             <option t-att-value="item.id" t-att-selected="state.filters.geographie_id === item.id">
@@ -30,7 +30,7 @@
                 </div>
                 <div class="filter-field">
                     <label>Section</label>
-                    <select t-on-change="(ev) => onFilterChange('section_id', ev)">
+                    <select t-on-change="(ev) => this.onFilterChange('section_id', ev)">
                         <option value="">Toutes les sections</option>
                         <t t-foreach="state.data.filters.sections" t-as="item" t-key="item.id">
                             <option t-att-value="item.id" t-att-selected="state.filters.section_id === item.id">
@@ -41,7 +41,7 @@
                 </div>
                 <div class="filter-field">
                     <label>Organisation</label>
-                    <select t-on-change="(ev) => onFilterChange('organisation_id', ev)">
+                    <select t-on-change="(ev) => this.onFilterChange('organisation_id', ev)">
                         <option value="">Toutes les organisations</option>
                         <t t-foreach="state.data.filters.organisations" t-as="item" t-key="item.id">
                             <option t-att-value="item.id" t-att-selected="state.filters.organisation_id === item.id">
@@ -58,11 +58,11 @@
 
             <t t-else="">
                 <div class="kiiraaye-dashboard__tabs">
-                    <button t-att-class="state.view === 'global' ? 'active' : ''" t-on-click="() => setView('global')">Global</button>
-                    <button t-att-class="state.view === 'section' ? 'active' : ''" t-on-click="() => setView('section')">Section</button>
-                    <button t-att-class="state.view === 'lieu' ? 'active' : ''" t-on-click="() => setView('lieu')">Lieu</button>
-                    <button t-att-class="state.view === 'membre' ? 'active' : ''" t-on-click="() => setView('membre')">Membre</button>
-                    <button t-att-class="state.view === 'historique' ? 'active' : ''" t-on-click="() => setView('historique')">Historique électoral</button>
+                    <button t-att-class="state.view === 'global' ? 'active' : ''" t-on-click="() => this.setView('global')">Global</button>
+                    <button t-att-class="state.view === 'section' ? 'active' : ''" t-on-click="() => this.setView('section')">Section</button>
+                    <button t-att-class="state.view === 'lieu' ? 'active' : ''" t-on-click="() => this.setView('lieu')">Lieu</button>
+                    <button t-att-class="state.view === 'membre' ? 'active' : ''" t-on-click="() => this.setView('membre')">Membre</button>
+                    <button t-att-class="state.view === 'historique' ? 'active' : ''" t-on-click="() => this.setView('historique')">Historique électoral</button>
                 </div>
 
                 <section t-if="state.view === 'global'">
