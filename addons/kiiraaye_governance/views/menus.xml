@@ -13,5 +13,6 @@
     <menuitem id="menu_kiiraaye_geographie" name="Référentiel géographique" parent="menu_kiiraaye_configuration" action="action_kiiraaye_geographie" sequence="20"/>
     <menuitem id="menu_kiiraaye_positions" name="Postes du bureau" parent="menu_kiiraaye_configuration" action="action_kiiraaye_position" sequence="30"/>
     <menuitem id="menu_kiiraaye_professions" name="Professions" parent="menu_kiiraaye_configuration" action="action_kiiraaye_profession" sequence="40"/>
+    <menuitem id="menu_kiiraaye_effectif_status" name="Statuts d'effectif" parent="menu_kiiraaye_configuration" action="action_kiiraaye_effectif_status" sequence="60"/>
     <menuitem id="menu_kiiraaye_organisation_types" name="Types / niveaux d'organisation" parent="menu_kiiraaye_configuration" action="action_kiiraaye_organisation_type" sequence="50"/>
 </odoo>
