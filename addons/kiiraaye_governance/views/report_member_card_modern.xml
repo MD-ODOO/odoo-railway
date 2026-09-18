@@ -5,7 +5,9 @@
             <t t-foreach="docs" t-as="o">
                 <div class="page" style="width:86mm!important;height:54mm!important;margin:0!important;padding:0!important;overflow:hidden;background:#f3f6fa;font-family:'DejaVu Sans',Arial,sans-serif;color:#172033;position:relative;box-sizing:border-box;">
                     <t t-if="res_company.logo">
-                        <img t-att-src="image_data_uri(res_company.logo)" alt="Logo filigrane" style="position:absolute;left:27mm;top:12mm;width:32mm;height:32mm;object-fit:contain;opacity:.045;z-index:0;"/>
+                        <img t-att-src="image_data_uri(res_company.logo)"
+                             alt="Background de la carte"
+                             style="position:absolute;left:0;top:0;width:86mm;height:54mm;object-fit:cover;opacity:.065;z-index:0;"/>
                     </t>
 
                     <table style="width:86mm;height:54mm;border-collapse:collapse;table-layout:fixed;position:relative;z-index:1;">
@@ -76,7 +78,8 @@
                             </td>
                             <td style="width:24mm;padding:3mm 3.5mm 0 0;vertical-align:top;text-align:center;">
                                 <div style="width:20mm;height:20mm;background:#fff;border:1px solid #ccd5e1;border-radius:5px;padding:1mm;margin:0 auto;box-sizing:border-box;">
-                                    <img t-att-src="'/report/barcode/?barcode_type=QR&amp;value=%s&amp;width=180&amp;height=180&amp;quiet=0' % (o.qr_code_value or o.reference or '')" alt="QR Code membre" style="width:18mm;height:18mm;display:block;margin:0 auto;"/>
+                                    <span t-field="o.qr_code_value"
+                                          t-options="{'widget': 'barcode', 'symbology': 'QR', 'width': 240, 'height': 240, 'quiet': 0, 'img_style': 'width:18mm;height:18mm;display:block;margin:0 auto;'}"/>
                                 </div>
                                 <div style="font-size:5.5px;font-weight:700;line-height:7px;color:#475467;margin-top:2mm;">SCANNEZ POUR<br/>VERIFIER LE MEMBRE</div>
                             </td>

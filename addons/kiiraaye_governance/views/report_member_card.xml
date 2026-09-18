@@ -15,6 +15,7 @@
         <field name="header_line" eval="False"/>
         <field name="header_spacing">0</field>
         <field name="dpi">150</field>
+        <field name="disable_shrinking" eval="True"/>
     </record>
 
     <record id="action_report_kiiraaye_member_card" model="ir.actions.report">
@@ -47,8 +48,8 @@
                     <!-- Filigrane logo société -->
                     <t t-if="res_company.logo">
                         <img t-att-src="image_data_uri(res_company.logo)"
-                             alt="Logo"
-                             style="position:absolute;left:25mm;top:9mm;width:36mm;height:36mm;object-fit:contain;opacity:.045;z-index:0;"/>
+                             alt="Background de la carte"
+                             style="position:absolute;left:0;top:0;width:86mm;height:54mm;object-fit:cover;opacity:.065;z-index:0;"/>
                     </t>
 
                     <!-- Bandeau supérieur -->
@@ -126,9 +127,8 @@
                             <td style="width:18mm;padding:0;vertical-align:top;text-align:center;">
                                 <div style="width:16mm;height:16mm;background:#ffffff;border:0.3mm solid #d8dee8;border-radius:1.4mm;padding:1mm;margin:0 auto;text-align:center;">
                                     <t t-if="o.qr_code_value">
-                                        <img t-att-src="'/report/barcode/QR/%s?width=240&amp;height=240&amp;quiet=0' % o.qr_code_value"
-                                             alt="QR Code membre"
-                                             style="width:16mm;height:16mm;display:block;"/>
+                                        <span t-field="o.qr_code_value"
+                                              t-options="{'widget': 'barcode', 'symbology': 'QR', 'width': 240, 'height': 240, 'quiet': 0, 'img_style': 'width:16mm;height:16mm;display:block;margin:0 auto;'}"/>
                                     </t>
                                 </div>
                                 <div style="font-size:1.45mm;font-weight:700;line-height:1.15;color:#4b5563;margin-top:1mm;">SCANNEZ<br/>POUR VÉRIFIER</div>

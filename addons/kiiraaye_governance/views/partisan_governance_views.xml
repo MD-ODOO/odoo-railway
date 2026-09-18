@@ -19,16 +19,28 @@
             <xpath expr="//field[@name='email']" position="after">
                 <group string="Adresse administrative" colspan="2">
                     <group>
+                        <label for="region_id" string="Région"/>
                         <field name="region_id"
-                               domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau1'), ('active', '=', True)]"/>
+                               string="Région"
+                               domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau1'), ('active', '=', True)]"
+                               options="{'no_create': True}"/>
+                        <label for="departement_id" string="Département"/>
                         <field name="departement_id"
-                               domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau2'), ('parent_id', '=', region_id), ('active', '=', True)]"/>
+                               string="Département"
+                               domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau2'), ('parent_id', '=', region_id), ('active', '=', True)]"
+                               options="{'no_create': True}"/>
                     </group>
                     <group>
+                        <label for="commune_id" string="Commune"/>
                         <field name="commune_id"
-                               domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau3'), ('parent_id', '=', departement_id), ('active', '=', True)]"/>
+                               string="Commune"
+                               domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau3'), ('parent_id', '=', departement_id), ('active', '=', True)]"
+                               options="{'no_create': True}"/>
+                        <label for="quartier_id" string="Quartier"/>
                         <field name="quartier_id"
-                               domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('parent_id', '=', commune_id), ('active', '=', True)]"/>
+                               string="Quartier"
+                               domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('parent_id', '=', commune_id), ('active', '=', True)]"
+                               options="{'no_create': True}"/>
                     </group>
                 </group>
             </xpath>
