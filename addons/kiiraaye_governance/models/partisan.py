@@ -109,6 +109,18 @@ class KiiraayePartisan(models.Model):
             "kiiraaye_governance.action_report_kiiraaye_member_card"
         ).report_action(self)
 
+    def action_open_cadre_assignment(self):
+        self.ensure_one()
+        action = self.env.ref(
+            "kiiraaye_governance.action_kiiraaye_cadre_assign_wizard"
+        ).read()[0]
+        action["context"] = dict(
+            self.env.context,
+            default_partisan_id=self.id,
+            active_id=self.id,
+        )
+        return action
+
     def action_view_membership_card(self):
         self.ensure_one()
         return self.env.ref(
