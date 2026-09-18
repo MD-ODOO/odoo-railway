@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kiiraaye_organisation_list" model="ir.ui.view">
+        <field name="name">kiiraaye.organisation.list</field>
+        <field name="model">kiiraaye.organisation</field>
+        <field name="arch" type="xml">
+            <list string="Organisations">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="type_id"/>
+                <field name="niveau" string="Niveau"/>
+                <field name="parent_id"/>
+                <field name="member_count"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_kiiraaye_organisation_search" model="ir.ui.view">
+        <field name="name">kiiraaye.organisation.search</field>
+        <field name="model">kiiraaye.organisation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="type_id"/>
+                <field name="parent_id"/>
+                <filter name="active" string="Actives" domain="[('active', '=', True)]"/>
+                <group>
+                    <filter name="groupby_type" string="Type / niveau" context="{'group_by': 'type_id'}"/>
+                    <filter name="groupby_parent" string="Organisation parente" context="{'group_by': 'parent_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_kiiraaye_organisation_form" model="ir.ui.view">
+        <field name="name">kiiraaye.organisation.form</field>
+        <field name="model">kiiraaye.organisation</field>
+        <field name="arch" type="xml">
+            <form string="Organisation KIIRAAYE">
+                <header>
+                    <button name="action_add_member"
+                            type="object"
+                            string="Ajouter un membre"
+                            icon="fa-user-plus"
+                            class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_add_member"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-user-plus">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value"><field name="member_count"/></span>
+                                <span class="o_stat_text">Membres</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+
+                    <group>
+                        <group string="Identification">
+                            <field name="code"/>
+                            <field name="type_id" options="{'no_create': True}"/>
+                            <field name="niveau" string="Niveau" readonly="1"/>
+                            <field name="sequence"/>
+                            <field name="color"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Hiérarchie">
+                            <field name="parent_id" options="{'no_create': True}"/>
+                            <field name="date_creation"/>
+                            <field name="description" placeholder="Description de l'organisation..."/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Membres">
+                            <field name="member_ids" readonly="1">
+                                <list string="Membres de l'organisation">
+                                    <field name="reference"/>
+                                    <field name="nom_complet"/>
+                                    <field name="profession_id"/>
+                                    <field name="cadre_id" invisible="1"/>
+                                    <field name="section_ids" widget="many2many_tags"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_kiiraaye_organisation" model="ir.actions.act_window">
+        <field name="name">KIIRAAYE Organisation</field>
+        <field name="res_model">kiiraaye.organisation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_kiiraaye_organisation_search"/>
+    </record>
+</odoo>
