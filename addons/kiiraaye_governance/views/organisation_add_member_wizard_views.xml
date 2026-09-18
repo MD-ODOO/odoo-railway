@@ -36,7 +36,7 @@
     </record>
 
     <record id="action_kiiraaye_organisation_add_member_wizard" model="ir.actions.act_window">
-        <field name="name">Ajouter un membre</field>
+        <field name="name">Ajouter plusieurs membres</field>
         <field name="res_model">kiiraaye.organisation.add.member.wizard</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="view_kiiraaye_organisation_add_member_wizard"/>
