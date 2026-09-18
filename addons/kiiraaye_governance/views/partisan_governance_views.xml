@@ -5,45 +5,44 @@
         <field name="model">kiiraaye.partisan</field>
         <field name="inherit_id" ref="kiiraaye_governance.view_kiiraaye_partisan_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//header/button[@name='action_print_membership_card']" position="after">
-                <button name="action_view_membership_card"
-                        type="object"
-                        string="Carte numérique"
-                        icon="fa-id-card"/>
-            </xpath>
 
-            <xpath expr="//field[@name='email']" position="after">
-                <field name="user_id" groups="kiiraaye_governance.group_kiiraaye_manager"/>
-            </xpath>
-
-            <xpath expr="//field[@name='email']" position="after">
-                <group string="Adresse administrative" colspan="2">
+            <!-- L'affectation territoriale est regroupée dans un bloc dédié.
+                 Les labels sont laissés à Odoo pour éviter les doublons "Région ?". -->
+            <xpath expr="//group[@string='Informations personnelles']" position="after">
+                <group string="Affectation territoriale" colspan="2">
                     <group>
-                        <label for="region_id" string="Région"/>
+                        <field name="section_ids"
+                               string="Section / Coordination"
+                               widget="many2many_tags"
+                               options="{'no_create': True}"/>
                         <field name="region_id"
-                               string="Région"
+                               string="Région / État / Province"
                                domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau1'), ('active', '=', True)]"
                                options="{'no_create': True}"/>
-                        <label for="departement_id" string="Département"/>
                         <field name="departement_id"
-                               string="Département"
+                               string="Département / District / Comté"
                                domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau2'), ('parent_id', '=', region_id), ('active', '=', True)]"
                                options="{'no_create': True}"/>
                     </group>
                     <group>
-                        <label for="commune_id" string="Commune"/>
                         <field name="commune_id"
-                               string="Commune"
+                               string="Commune / Municipalité / Ville"
                                domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau3'), ('parent_id', '=', departement_id), ('active', '=', True)]"
                                options="{'no_create': True}"/>
-                        <label for="quartier_id" string="Quartier"/>
                         <field name="quartier_id"
                                string="Quartier"
                                domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('parent_id', '=', commune_id), ('active', '=', True)]"
                                options="{'no_create': True}"/>
+                        <field name="user_id"
+                               string="Utilisateur Odoo"
+                               groups="kiiraaye_governance.group_kiiraaye_manager"/>
                     </group>
                 </group>
             </xpath>
+
+            <!-- Les informations de gouvernance ne doivent pas être répétées dans
+                 la page "Sections / Coordinations" ; la page reste disponible pour
+                 le détail des sections et des postes. -->
         </field>
     </record>
 
