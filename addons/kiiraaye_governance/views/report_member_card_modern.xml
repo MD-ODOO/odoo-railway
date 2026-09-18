@@ -3,98 +3,124 @@
     <template id="report_kiiraaye_member_card_modern" inherit_id="kiiraaye_governance.report_kiiraaye_member_card">
         <xpath expr="//t[@t-foreach='docs']" position="replace">
             <t t-foreach="docs" t-as="o">
-                <div class="page" style="width:86mm!important;height:54mm!important;margin:0!important;padding:0!important;overflow:hidden;background:#f3f6fa;font-family:'DejaVu Sans',Arial,sans-serif;color:#172033;position:relative;box-sizing:border-box;">
+                <t t-set="section" t-value="o.section_ids and o.section_ids[0] or False"/>
+
+                <div class="page"
+                     style="width:86mm!important;height:54mm!important;margin:0!important;padding:0!important;overflow:hidden;background:#f3f6fa;font-family:'DejaVu Sans',Arial,sans-serif;color:#172033;position:relative;box-sizing:border-box;">
+
+                    <!-- Filigrane plein format : toute la carte, mais suffisamment discret
+                         pour ne pas gêner la lecture des informations. -->
                     <t t-if="res_company.logo">
                         <img t-att-src="image_data_uri(res_company.logo)"
                              alt="Background de la carte"
-                             style="position:absolute;left:0;top:0;width:86mm;height:54mm;object-fit:cover;opacity:.065;z-index:0;"/>
+                             style="position:absolute;left:0;top:0;width:86mm;height:54mm;object-fit:fill;opacity:.035;z-index:0;"/>
                     </t>
 
-                    <table style="width:86mm;height:54mm;border-collapse:collapse;table-layout:fixed;position:relative;z-index:1;">
-                        <tr style="height:11mm;background:#111827;">
-                            <td style="width:19mm;padding:1.5mm 0 1.5mm 4.5mm;vertical-align:middle;">
-                                <t t-if="res_company.logo">
-                                    <img t-att-src="image_data_uri(res_company.logo)" alt="Logo" style="width:14mm;height:7mm;object-fit:contain;display:block;"/>
-                                </t>
-                            </td>
-                            <td style="width:42mm;padding-left:1mm;vertical-align:middle;color:#fff;">
-                                <div style="font-size:10px;font-weight:700;line-height:11px;">CARTE DE MEMBRE</div>
-                                <div style="font-size:7px;color:#cbd5e1;line-height:9px;">KIIRAAYE</div>
-                            </td>
-                            <td style="width:25mm;padding-right:4mm;text-align:right;vertical-align:middle;">
-                                <span style="font-size:6.5px;color:#fff;font-weight:700;border:1px solid #8691a5;border-radius:10px;padding:3px 6px;white-space:nowrap;">
-                                    <t t-if="o.active">MEMBRE ACTIF</t>
-                                    <t t-else="">MEMBRE INACTIF</t>
-                                </span>
-                            </td>
-                        </tr>
-                        <tr style="height:40mm;">
-                            <td colspan="2" style="padding:3mm 1mm 0 4.5mm;vertical-align:top;">
-                                <table style="width:58mm;height:31mm;border-collapse:collapse;table-layout:fixed;">
-                                    <tr>
-                                        <td style="width:22mm;vertical-align:top;padding:0;">
-                                            <div style="width:20mm;height:27mm;background:#fff;border:1px solid #d6dde8;border-radius:5px;overflow:hidden;text-align:center;">
-                                                <t t-if="o.photo">
-                                                    <img t-att-src="image_data_uri(o.photo)" alt="Photo membre" style="width:20mm;height:27mm;object-fit:cover;display:block;"/>
-                                                </t>
-                                                <t t-else="">
-                                                    <div style="font-size:7px;color:#8b95a7;padding-top:10mm;font-weight:700;">PHOTO</div>
-                                                </t>
-                                            </div>
-                                        </td>
-                                        <td style="width:36mm;vertical-align:top;padding:0 0 0 2.5mm;">
-                                            <div style="font-size:12px;font-weight:700;line-height:13px;text-transform:uppercase;max-height:26px;overflow:hidden;word-wrap:break-word;">
-                                                <t t-esc="o.nom_complet or ''"/>
-                                            </div>
-                                            <div style="font-size:6px;color:#667085;margin-top:4px;">N° MEMBRE</div>
-                                            <div style="font-size:10px;font-weight:700;line-height:11px;margin-top:1px;">
-                                                <t t-esc="o.reference or ''"/>
-                                            </div>
-                                            <table style="width:100%;border-collapse:collapse;margin-top:4px;font-size:6.5px;line-height:8px;table-layout:fixed;">
-                                                <tr t-if="o.date_naissance">
-                                                    <td style="width:15mm;color:#667085;padding:0 0 1mm 0;">Date naissance</td>
-                                                    <td style="font-weight:700;padding:0 0 1mm 1mm;"><span t-field="o.date_naissance"/></td>
-                                                </tr>
-                                                <tr t-if="o.lieu_naissance">
-                                                    <td style="color:#667085;padding:0 0 1mm 0;">Lieu</td>
-                                                    <td style="font-weight:700;padding:0 0 1mm 1mm;word-break:break-word;"><t t-esc="o.lieu_naissance"/></td>
-                                                </tr>
-                                                <tr t-if="o.phone">
-                                                    <td style="color:#667085;padding:0;">Téléphone</td>
-                                                    <td style="font-weight:700;padding-left:1mm;word-break:break-word;"><t t-esc="o.phone"/></td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2" style="vertical-align:bottom;padding-top:1mm;">
-                                            <div t-if="o.section_ids" style="font-size:5.8px;line-height:7px;color:#667085;max-width:55mm;max-height:14px;overflow:hidden;word-wrap:break-word;">
-                                                <span>SECTION / COORDINATION : </span>
-                                                <strong style="color:#172033;"><t t-esc="o.section_ids[0].name"/></strong>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-                            <td style="width:24mm;padding:3mm 3.5mm 0 0;vertical-align:top;text-align:center;">
-                                <div style="width:20mm;height:20mm;background:#fff;border:1px solid #ccd5e1;border-radius:5px;padding:1mm;margin:0 auto;box-sizing:border-box;">
-                                    <span t-field="o.qr_code_value"
-                                          t-options="{'widget': 'barcode', 'symbology': 'QR', 'width': 240, 'height': 240, 'quiet': 0, 'img_style': 'width:18mm;height:18mm;display:block;margin:0 auto;'}"/>
-                                </div>
-                                <div style="font-size:5.5px;font-weight:700;line-height:7px;color:#475467;margin-top:2mm;">SCANNEZ POUR<br/>VERIFIER LE MEMBRE</div>
-                            </td>
-                        </tr>
-                        <tr style="height:3mm;">
-                            <td colspan="3" style="padding:0 4.5mm;vertical-align:bottom;">
-                                <table style="width:100%;border-collapse:collapse;font-size:5px;color:#7b8494;">
-                                    <tr>
-                                        <td style="text-align:left;padding:0;">Carte numérique officielle</td>
-                                        <td style="text-align:right;padding:0;"><t t-if="res_company.phone"><t t-esc="res_company.phone"/></t></td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
+                    <!-- Bandeau supérieur -->
+                    <div style="position:absolute;left:0;top:0;width:86mm;height:11mm;background:#111827;z-index:2;">
+                        <table style="width:86mm;height:11mm;border-collapse:collapse;table-layout:fixed;">
+                            <tr>
+                                <td style="width:19mm;padding:1.5mm 0 1.5mm 4.5mm;vertical-align:middle;">
+                                    <t t-if="res_company.logo">
+                                        <img t-att-src="image_data_uri(res_company.logo)"
+                                             alt="Logo"
+                                             style="width:14mm;height:7mm;object-fit:contain;display:block;"/>
+                                    </t>
+                                </td>
+                                <td style="width:42mm;padding-left:1mm;vertical-align:middle;color:#fff;">
+                                    <div style="font-size:10px;font-weight:700;line-height:11px;">CARTE DE MEMBRE</div>
+                                    <div style="font-size:7px;color:#cbd5e1;line-height:9px;">KIIRAAYE</div>
+                                </td>
+                                <td style="width:25mm;padding-right:4mm;text-align:right;vertical-align:middle;">
+                                    <span style="font-size:6.5px;color:#fff;font-weight:700;border:1px solid #8691a5;border-radius:10px;padding:3px 6px;white-space:nowrap;">
+                                        <t t-if="o.active">MEMBRE ACTIF</t>
+                                        <t t-else="">MEMBRE INACTIF</t>
+                                    </span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Accent vertical -->
+                    <div style="position:absolute;left:0;top:11mm;width:1.8mm;height:43mm;background:#c7a15a;z-index:2;"></div>
+
+                    <!-- Photo -->
+                    <div style="position:absolute;left:4.5mm;top:14.5mm;width:20mm;height:27mm;background:#fff;border:1px solid #d6dde8;border-radius:5px;overflow:hidden;text-align:center;z-index:2;">
+                        <t t-if="o.photo">
+                            <img t-att-src="image_data_uri(o.photo)"
+                                 alt="Photo membre"
+                                 style="width:20mm;height:27mm;object-fit:cover;display:block;"/>
+                        </t>
+                        <t t-else="">
+                            <div style="font-size:7px;color:#8b95a7;padding-top:10mm;font-weight:700;">PHOTO</div>
+                        </t>
+                    </div>
+
+                    <!-- Informations principales -->
+                    <div style="position:absolute;left:28mm;top:14.5mm;width:34mm;height:27mm;z-index:2;overflow:hidden;">
+                        <div style="font-size:12px;font-weight:700;line-height:13px;text-transform:uppercase;max-height:26px;overflow:hidden;word-wrap:break-word;">
+                            <t t-esc="o.nom_complet or ''"/>
+                        </div>
+
+                        <div style="font-size:6px;color:#667085;margin-top:3mm;">N MEMBRE</div>
+                        <div style="font-size:10px;font-weight:700;line-height:11px;margin-top:1px;white-space:nowrap;">
+                            <t t-esc="o.reference or ''"/>
+                        </div>
+
+                        <table style="width:34mm;border-collapse:collapse;margin-top:3mm;font-size:6.5px;line-height:8px;table-layout:fixed;">
+                            <tr t-if="o.date_naissance">
+                                <td style="width:14mm;color:#667085;padding:0 0 1.1mm 0;">DATE NAISS.</td>
+                                <td style="font-weight:700;padding:0 0 1.1mm 1mm;white-space:nowrap;">
+                                    <span t-field="o.date_naissance"/>
+                                </td>
+                            </tr>
+                            <tr t-if="o.lieu_naissance">
+                                <td style="color:#667085;padding:0 0 1.1mm 0;">LIEU</td>
+                                <td style="font-weight:700;padding:0 0 1.1mm 1mm;word-wrap:break-word;">
+                                    <t t-esc="o.lieu_naissance"/>
+                                </td>
+                            </tr>
+                            <tr t-if="o.phone">
+                                <td style="color:#667085;padding:0;">TEL.</td>
+                                <td style="font-weight:700;padding-left:1mm;word-break:break-word;">
+                                    <t t-esc="o.phone"/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- QR -->
+                    <div style="position:absolute;left:64mm;top:14.5mm;width:18mm;height:20mm;text-align:center;z-index:2;">
+                        <div style="width:18mm;height:18mm;background:#fff;border:1px solid #ccd5e1;border-radius:5px;padding:1mm;margin:0 auto;box-sizing:border-box;">
+                            <t t-if="o.qr_code_value">
+                                <span t-field="o.qr_code_value"
+                                      t-options="{'widget': 'barcode', 'symbology': 'QR', 'width': 240, 'height': 240, 'quiet': 0, 'img_style': 'width:16mm;height:16mm;display:block;margin:0 auto;'}"/>
+                            </t>
+                        </div>
+                        <div style="font-size:5.2px;font-weight:700;line-height:6.5px;color:#475467;margin-top:1.2mm;">SCANNEZ POUR<br/>VERIFIER LE MEMBRE</div>
+                    </div>
+
+                    <!-- Section : bloc dédié pour qu'elle soit toujours visible sur le PDF. -->
+                    <t t-if="section">
+                        <div style="position:absolute;left:28mm;top:43mm;width:52mm;height:6mm;z-index:2;overflow:hidden;">
+                            <div style="font-size:5.3px;color:#667085;line-height:6px;white-space:nowrap;">SECTION / COORDINATION</div>
+                            <div style="font-size:6px;font-weight:700;color:#172033;line-height:7px;max-height:8mm;overflow:hidden;word-wrap:break-word;">
+                                <t t-esc="section.name or ''"/>
+                            </div>
+                        </div>
+                    </t>
+
+                    <!-- Pied de carte -->
+                    <div style="position:absolute;left:4.5mm;right:4.5mm;bottom:1.2mm;font-size:4.8px;color:#7b8494;z-index:2;">
+                        <table style="width:77mm;border-collapse:collapse;table-layout:fixed;">
+                            <tr>
+                                <td style="text-align:left;padding:0;">Carte numerique officielle</td>
+                                <td style="text-align:right;padding:0;">
+                                    <t t-if="res_company.phone"><t t-esc="res_company.phone"/></t>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </t>
         </xpath>
