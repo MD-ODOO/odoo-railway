@@ -28,7 +28,7 @@
         "views/report_member_card_modern.xml",
         "views/menus.xml"
     ],
-    "installable": true,
-    "application": true,
+    "installable": True,
+    "application": True,
     "post_init_hook": "post_init_hook"
 }
