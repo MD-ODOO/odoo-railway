@@ -4,18 +4,18 @@
         <field name="name">kiiraaye.cadre.assign.wizard.form</field>
         <field name="model">kiiraaye.cadre.assign.wizard</field>
         <field name="arch" type="xml">
-            <form string="Affecter le membre à un cadre">
+            <form string="Affecter à l'ancienne organisation">
                 <sheet>
                     <div class="oe_title">
-                        <h2>Affectation au cadre</h2>
+                        <h2>Affectation à l'ancienne organisation</h2>
                     </div>
                     <group>
                         <field name="partisan_id"/>
-                        <field name="current_cadre_id"/>
-                        <field name="cadre_id" options="{'no_create': True}"/>
+                        <field name="current_cadre_id" string="Ancienne organisation actuelle"/>
+                        <field name="cadre_id" string="Ancienne organisation" options="{'no_create': True}"/>
                     </group>
                     <div class="alert alert-info" role="alert">
-                        Le cadre sélectionné sera enregistré directement sur la fiche du membre.
+                        L'ancienne organisation sélectionnée sera enregistrée directement sur la fiche du membre.
                     </div>
                 </sheet>
                 <footer>
