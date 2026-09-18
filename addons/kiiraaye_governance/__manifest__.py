@@ -13,6 +13,7 @@
         "security/kiiraaye_coordinator_rules.xml",
         "data/sequence.xml",
         "data/position_data.xml",
+        "data/organisation_type_data.xml",
         "views/geographie_views.xml",
         "views/partisan_views.xml",
         "views/partisan_governance_views.xml",
