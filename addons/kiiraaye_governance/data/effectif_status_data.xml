@@ -32,6 +32,7 @@
         <field name="name">Effectif important</field>
         <field name="code">IMPORTANT</field>
         <field name="min_members">51</field>
+        <field name="max_members">999999999</field>
         <field name="sequence">40</field>
         <field name="color">10</field>
         <field name="active">True</field>
