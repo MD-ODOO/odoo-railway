@@ -32,6 +32,12 @@ class KiiraayePartisan(models.Model):
     email = fields.Char(string="E-mail")
     photo = fields.Image(string="Photo")
     active = fields.Boolean(string="Actif", default=True)
+    is_demo_data = fields.Boolean(
+        string="Donnée de démonstration",
+        default=False,
+        copy=False,
+        index=True,
+    )
     profession_id = fields.Many2one(
         "kiiraaye.profession",
         string="Profession",
