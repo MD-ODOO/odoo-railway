@@ -323,6 +323,8 @@ class KiiraayePartisanGovernance(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
+            if self.env.context.get("kiiraaye_demo_generation"):
+                vals["is_demo_data"] = True
             if not vals.get("reference") or vals.get("reference") == "Nouveau":
                 vals["reference"] = self.env["ir.sequence"].next_by_code(
                     "kiiraaye.partisan"
