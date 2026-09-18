@@ -23,12 +23,6 @@ class KiiraayeOrganisationAddMemberWizard(models.TransientModel):
         readonly=True,
         copy=False,
     )
-    current_organisation_ids = fields.Many2many(
-        related="member_ids.organisation_ids",
-        string="Organisations actuelles",
-        readonly=True,
-    )
-
     @api.model
     def default_get(self, fields_list):
         vals = super().default_get(fields_list)
