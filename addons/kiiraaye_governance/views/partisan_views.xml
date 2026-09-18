@@ -68,11 +68,14 @@
                             </div>
                         </button>
                     </div>
+
                     <field name="photo" widget="image" class="oe_avatar"/>
+
                     <div class="oe_title">
                         <h1><field name="nom_complet" readonly="1"/></h1>
                         <h3><field name="reference" readonly="1"/></h3>
                     </div>
+
                     <group string="Informations personnelles">
                         <group>
                             <field name="prenom" string="Prénom"/>
@@ -82,13 +85,13 @@
                         </group>
                         <group>
                             <field name="national_id" string="N° pièce d'identité"/>
-                            <field name="country_id" string="Pays"/>
                             <field name="phone" string="Téléphone" widget="phone"/>
                             <field name="email" string="E-mail" widget="email"/>
                             <field name="active" string="Actif"/>
                             <field name="qr_code_value" string="Valeur QR" readonly="1" invisible="1"/>
                         </group>
                     </group>
+
                     <notebook>
                         <page string="Sections / Coordinations">
                             <field name="section_ids">
@@ -105,8 +108,11 @@
                                 </list>
                             </field>
                         </page>
+
                         <page string="Postes occupés">
-                            <field name="attribution_poste_ids" domain="[('state', '=', 'validee')]" readonly="1">
+                            <field name="attribution_poste_ids"
+                                   domain="[('state', '=', 'validee')]"
+                                   readonly="1">
                                 <list string="Postes occupés">
                                     <field name="reference"/>
                                     <field name="position_id"/>
