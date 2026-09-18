@@ -7,6 +7,9 @@ from . import section
 from . import section_geography_config
 from . import senegal_geography
 from . import partisan
+from . import profession
+from . import cadre
+from . import cadre_assign_wizard
 from . import partisan_governance
 from . import partisan_governance_superuser
 from . import position
