@@ -58,17 +58,26 @@
     flex-shrink: 0;
 }
 
+.kiiraaye-dashboard__company-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 150px;
+    min-height: 78px;
+}
+
 .kiiraaye-dashboard__logo {
     display: block;
-    width: 105px;
-    height: 122px;
+    width: 150px;
+    height: 78px;
     object-fit: contain;
     background: #fff;
     border: 1px solid #e3e8ee;
     border-radius: 14px;
-    padding: 7px;
+    padding: 8px 12px;
     box-sizing: border-box;
     box-shadow: 0 7px 24px rgba(30, 45, 60, .06);
+    filter: none !important;
 }
 
 .kiiraaye-dashboard__loading {
