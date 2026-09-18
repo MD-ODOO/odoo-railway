@@ -111,30 +111,30 @@
                             </group>
                         </div>
 
-                        <!-- Rail vertical des bannières à l'extrême droite. -->
-                        <div style="position:absolute;right:0;top:4px;width:190px;height:225px;display:flex;flex-direction:row;justify-content:flex-end;align-items:center;gap:8px;">
+                        <!-- Rail horizontal des bannières à l'extrême droite. -->
+                        <div style="position:absolute;right:0;top:8px;width:390px;display:flex;flex-direction:column;align-items:flex-end;gap:12px;">
                             <div invisible="not organisation_banner"
-                                 style="width:50px;height:205px;padding:12px 8px;background:#2f5597;color:#fff;font-size:10px;font-weight:700;line-height:12px;border-radius:5px;box-shadow:0 3px 7px rgba(0,0,0,.18);transform:rotate(-6deg);transform-origin:center bottom;writing-mode:vertical-rl;text-orientation:mixed;overflow:hidden;text-align:left;">
+                                 style="width:370px;padding:9px 16px;background:#2f5597;color:#fff;font-size:11px;font-weight:700;line-height:14px;border-radius:5px;box-shadow:0 3px 7px rgba(0,0,0,.18);transform:rotate(-6deg);transform-origin:right center;text-align:left;">
                                 ORGANISATION(S)
-                                <span style="font-weight:600;margin-top:8px;">
+                                <div style="font-weight:600;max-height:42px;overflow:hidden;">
                                     <field name="organisation_banner" nolabel="1"/>
-                                </span>
+                                </div>
                             </div>
 
                             <div invisible="not poste_banner"
-                                 style="width:50px;height:205px;padding:12px 8px;background:#2e7d32;color:#fff;font-size:9px;font-weight:700;line-height:11px;border-radius:5px;box-shadow:0 3px 7px rgba(0,0,0,.18);transform:rotate(-6deg);transform-origin:center bottom;writing-mode:vertical-rl;text-orientation:mixed;overflow:hidden;text-align:left;">
-                                POSTE(S)
-                                <span style="font-weight:600;margin-top:8px;">
+                                 style="width:355px;padding:9px 16px;background:#2e7d32;color:#fff;font-size:10px;font-weight:700;line-height:13px;border-radius:5px;box-shadow:0 3px 7px rgba(0,0,0,.18);transform:rotate(-6deg);transform-origin:right center;text-align:left;">
+                                POSTE(S) / SECTION(S)
+                                <div style="font-weight:600;max-height:56px;overflow:hidden;">
                                     <field name="poste_banner" nolabel="1"/>
-                                </span>
+                                </div>
                             </div>
 
                             <div invisible="not coordonnateur_banner"
-                                 style="width:50px;height:205px;padding:12px 8px;background:#9c27b0;color:#fff;font-size:9px;font-weight:700;line-height:11px;border-radius:5px;box-shadow:0 3px 7px rgba(0,0,0,.18);transform:rotate(-6deg);transform-origin:center bottom;writing-mode:vertical-rl;text-orientation:mixed;overflow:hidden;text-align:left;">
-                                COORDONNATEUR
-                                <span style="font-weight:600;margin-top:8px;">
+                                 style="width:345px;padding:9px 16px;background:#9c27b0;color:#fff;font-size:10px;font-weight:700;line-height:13px;border-radius:5px;box-shadow:0 3px 7px rgba(0,0,0,.18);transform:rotate(-6deg);transform-origin:right center;text-align:left;">
+                                COORDONNATEUR / SECTION(S)
+                                <div style="font-weight:600;max-height:56px;overflow:hidden;">
                                     <field name="coordonnateur_banner" nolabel="1"/>
-                                </span>
+                                </div>
                             </div>
                         </div>
                     </div>
