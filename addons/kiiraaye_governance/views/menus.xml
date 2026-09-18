@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <menuitem id="menu_kiiraaye_root" name="KIIRAAY" sequence="10" groups="kiiraaye_governance.group_kiiraaye_user"/>
+    <menuitem id="menu_kiiraaye_dashboard" name="Tableau de bord" parent="menu_kiiraaye_root" action="action_kiiraaye_dashboard" sequence="5"/>
 
     <menuitem id="menu_kiiraaye_organisation" name="Organisation" parent="menu_kiiraaye_root" sequence="10"/>
     <menuitem id="menu_kiiraaye_sections" name="Sections / Coordinations" parent="menu_kiiraaye_organisation" action="action_kiiraaye_section" sequence="10"/>
@@ -9,6 +10,7 @@
     <menuitem id="menu_kiiraaye_attributions" name="Attributions de postes" parent="menu_kiiraaye_organisation" action="action_kiiraaye_attribution_poste" sequence="40"/>
 
     <menuitem id="menu_kiiraaye_configuration" name="Configuration" parent="menu_kiiraaye_root" sequence="90" groups="kiiraaye_governance.group_kiiraaye_manager"/>
+    <menuitem id="menu_kiiraaye_dashboard_config" name="Configuration des tableaux de bord" parent="menu_kiiraaye_configuration" action="action_kiiraaye_dashboard_config" sequence="5"/>
     <menuitem id="menu_kiiraaye_countries" name="Pays" parent="menu_kiiraaye_configuration" action="action_kiiraaye_country" sequence="10"/>
     <menuitem id="menu_kiiraaye_geographie" name="Référentiel géographique" parent="menu_kiiraaye_configuration" action="action_kiiraaye_geographie" sequence="20"/>
     <menuitem id="menu_kiiraaye_positions" name="Postes du bureau" parent="menu_kiiraaye_configuration" action="action_kiiraaye_position" sequence="30"/>
