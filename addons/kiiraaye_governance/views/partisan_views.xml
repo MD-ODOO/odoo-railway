@@ -86,42 +86,43 @@
                         </button>
                     </div>
 
-                    <!-- Photo agrandie + bannières directement à côté de la photo. -->
-                    <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:14px;">
-                        <div style="position:relative;width:190px;min-width:190px;height:235px;">
+                    <!-- Photo à gauche + bannières à droite, sans recouvrement de la photo. -->
+                    <div style="display:flex;align-items:flex-start;gap:22px;margin-bottom:14px;">
+                        <div style="width:190px;min-width:190px;height:235px;">
                             <field name="photo"
                                    widget="image"
                                    style="width:180px!important;height:225px!important;object-fit:cover;border-radius:8px;border:1px solid #d8dee8;"/>
-
-                            <!-- Bannière organisation oblique -->
-                            <div invisible="not organisation_banner"
-                                 style="position:absolute;top:16px;right:-10px;max-width:170px;padding:7px 12px;background:#2f5597;color:#fff;font-size:11px;font-weight:700;line-height:14px;border-radius:4px;box-shadow:0 2px 5px rgba(0,0,0,.18);transform:rotate(-10deg);z-index:5;">
-                                ORGANISATION
-                                <div style="font-weight:600;max-height:35px;overflow:hidden;">
-                                    <field name="organisation_banner" nolabel="1"/>
-                                </div>
-                            </div>
-
-                            <!-- Bannière poste droite -->
-                            <div invisible="not poste_banner"
-                                 style="position:absolute;top:82px;right:-16px;width:150px;padding:7px 10px;background:#2e7d32;color:#fff;font-size:10px;font-weight:700;line-height:13px;border-radius:4px;box-shadow:0 2px 5px rgba(0,0,0,.18);z-index:4;">
-                                POSTE(S)
-                                <div style="font-weight:600;max-height:42px;overflow:hidden;">
-                                    <field name="poste_banner" nolabel="1"/>
-                                </div>
-                            </div>
-
-                            <!-- Bannière coordonnateur droite avec section -->
-                            <div invisible="not coordonnateur_banner"
-                                 style="position:absolute;top:154px;right:-16px;width:150px;padding:7px 10px;background:#9c27b0;color:#fff;font-size:10px;font-weight:700;line-height:13px;border-radius:4px;box-shadow:0 2px 5px rgba(0,0,0,.18);z-index:4;">
-                                COORDONNATEUR
-                                <div style="font-weight:600;max-height:42px;overflow:hidden;">
-                                    <field name="coordonnateur_banner" nolabel="1"/>
-                                </div>
-                            </div>
                         </div>
 
-                        <div style="padding-top:4px;flex:1;min-width:0;">
+                        <div style="flex:1;min-width:0;padding-top:2px;">
+                            <div style="display:flex;flex-direction:column;gap:10px;max-width:360px;margin-bottom:14px;">
+                                <!-- Bannière organisation oblique à droite de la photo -->
+                                <div invisible="not organisation_banner"
+                                     style="align-self:flex-end;min-width:250px;max-width:360px;padding:8px 14px;background:#2f5597;color:#fff;font-size:11px;font-weight:700;line-height:14px;border-radius:4px;box-shadow:0 2px 5px rgba(0,0,0,.18);transform:rotate(-4deg);transform-origin:right center;">
+                                    ORGANISATION(S)
+                                    <div style="font-weight:600;max-height:42px;overflow:hidden;">
+                                        <field name="organisation_banner" nolabel="1"/>
+                                    </div>
+                                </div>
+
+                                <!-- Bannière poste avec section -->
+                                <div invisible="not poste_banner"
+                                     style="align-self:flex-end;min-width:250px;max-width:360px;padding:8px 14px;background:#2e7d32;color:#fff;font-size:10px;font-weight:700;line-height:13px;border-radius:4px;box-shadow:0 2px 5px rgba(0,0,0,.18);">
+                                    POSTE(S) / SECTION(S)
+                                    <div style="font-weight:600;max-height:56px;overflow:hidden;">
+                                        <field name="poste_banner" nolabel="1"/>
+                                    </div>
+                                </div>
+
+                                <!-- Bannière coordonnateur avec section -->
+                                <div invisible="not coordonnateur_banner"
+                                     style="align-self:flex-end;min-width:250px;max-width:360px;padding:8px 14px;background:#9c27b0;color:#fff;font-size:10px;font-weight:700;line-height:13px;border-radius:4px;box-shadow:0 2px 5px rgba(0,0,0,.18);">
+                                    COORDONNATEUR / SECTION(S)
+                                    <div style="font-weight:600;max-height:56px;overflow:hidden;">
+                                        <field name="coordonnateur_banner" nolabel="1"/>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="oe_title">
                                 <h1><field name="nom_complet" readonly="1"/></h1>
                                 <h3><field name="reference" readonly="1"/></h3>
