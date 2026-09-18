@@ -8,7 +8,7 @@
                 <field name="reference"/>
                 <field name="nom_complet"/>
                 <field name="profession_id"/>
-                <field name="cadre_id"/>
+                <field name="organisation_ids" widget="many2many_tags"/>
                 <field name="date_naissance"/>
                 <field name="national_id"/>
                 <field name="country_id"/>
@@ -27,7 +27,7 @@
                 <field name="reference"/>
                 <field name="nom_complet"/>
                 <field name="profession_id"/>
-                <field name="cadre_id"/>
+                <field name="organisation_ids"/>
                 <field name="national_id"/>
                 <field name="phone"/>
                 <field name="email"/>
@@ -52,16 +52,10 @@
                             type="object"
                             string="Imprimer la carte"
                             icon="fa-print"/>
-                    <button name="action_open_cadre_assignment"
+                    <button name="action_open_organisation_assignment"
                             type="object"
-                            string="Affecter à un cadre"
-                            icon="fa-users"
-                            invisible="cadre_id"/>
-                    <button name="action_open_cadre_assignment"
-                            type="object"
-                            string="Modifier le cadre"
-                            icon="fa-users"
-                            invisible="not cadre_id"/>
+                            string="Affecter à une organisation"
+                            icon="fa-sitemap"/>
                 </header>
 
                 <sheet>
@@ -82,40 +76,66 @@
                                 <span class="o_stat_text">Imprimer</span>
                             </div>
                         </button>
-                        <button name="action_open_cadre_assignment"
+                        <button name="action_open_organisation_assignment"
                                 type="object"
                                 class="oe_stat_button"
-                                icon="fa-users">
+                                icon="fa-sitemap">
                             <div class="o_stat_info">
-                                <span class="o_stat_text">Cadre</span>
+                                <span class="o_stat_text">Organisation(s)</span>
                             </div>
                         </button>
                     </div>
 
-                    <field name="photo" widget="image" class="oe_avatar"/>
+                    <!-- Photo agrandie + bannières directement à côté de la photo. -->
+                    <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:14px;">
+                        <div style="position:relative;width:190px;min-width:190px;height:235px;">
+                            <field name="photo"
+                                   widget="image"
+                                   style="width:180px!important;height:225px!important;object-fit:cover;border-radius:8px;border:1px solid #d8dee8;"/>
 
-                    <div class="oe_title">
-                        <h1><field name="nom_complet" readonly="1"/></h1>
-                        <h3><field name="reference" readonly="1"/></h3>
-                    </div>
+                            <!-- Bannière organisation oblique -->
+                            <div invisible="not organisation_banner"
+                                 style="position:absolute;top:16px;right:-10px;max-width:170px;padding:7px 12px;background:#2f5597;color:#fff;font-size:11px;font-weight:700;line-height:14px;border-radius:4px;box-shadow:0 2px 5px rgba(0,0,0,.18);transform:rotate(-10deg);z-index:5;">
+                                ORGANISATION
+                                <div style="font-weight:600;max-height:35px;overflow:hidden;">
+                                    <field name="organisation_banner" nolabel="1"/>
+                                </div>
+                            </div>
 
-                    <!-- Bannière cadre : visible sur toutes les fiches membres lorsqu'un cadre est affecté. -->
-                    <div class="alert alert-primary"
-                         role="alert"
-                         invisible="not cadre_id">
-                        <strong>CADRE DU MEMBRE</strong>
-                        <div class="mt-1">
-                            <field name="cadre_id" readonly="1" nolabel="1"/>
+                            <!-- Bannière poste droite -->
+                            <div invisible="not poste_banner"
+                                 style="position:absolute;top:82px;right:-16px;width:150px;padding:7px 10px;background:#2e7d32;color:#fff;font-size:10px;font-weight:700;line-height:13px;border-radius:4px;box-shadow:0 2px 5px rgba(0,0,0,.18);z-index:4;">
+                                POSTE(S)
+                                <div style="font-weight:600;max-height:42px;overflow:hidden;">
+                                    <field name="poste_banner" nolabel="1"/>
+                                </div>
+                            </div>
+
+                            <!-- Bannière coordonnateur droite avec section -->
+                            <div invisible="not coordonnateur_banner"
+                                 style="position:absolute;top:154px;right:-16px;width:150px;padding:7px 10px;background:#9c27b0;color:#fff;font-size:10px;font-weight:700;line-height:13px;border-radius:4px;box-shadow:0 2px 5px rgba(0,0,0,.18);z-index:4;">
+                                COORDONNATEUR
+                                <div style="font-weight:600;max-height:42px;overflow:hidden;">
+                                    <field name="coordonnateur_banner" nolabel="1"/>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Bannière poste : liste des postes validés et actifs du membre. -->
-                    <div class="alert alert-success"
-                         role="alert"
-                         invisible="not poste_banner">
-                        <strong>POSTE(S) OCCUPÉ(S)</strong>
-                        <div class="mt-1">
-                            <field name="poste_banner" readonly="1" nolabel="1"/>
+                        <div style="padding-top:4px;flex:1;min-width:0;">
+                            <div class="oe_title">
+                                <h1><field name="nom_complet" readonly="1"/></h1>
+                                <h3><field name="reference" readonly="1"/></h3>
+                            </div>
+
+                            <group string="Synthèse">
+                                <field name="profession_id"
+                                       string="Profession"
+                                       options="{'no_create': True}"/>
+                                <field name="organisation_ids"
+                                       string="Organisations"
+                                       widget="many2many_tags"
+                                       options="{'no_create': True}"/>
+                            </group>
                         </div>
                     </div>
 
@@ -125,17 +145,16 @@
                             <field name="nom" string="Nom"/>
                             <field name="date_naissance" string="Date de naissance"/>
                             <field name="lieu_naissance" string="Lieu de naissance"/>
-                            <field name="profession_id"
-                                   string="Profession"
-                                   options="{'no_create': True}"/>
                         </group>
                         <group>
                             <field name="national_id" string="N° pièce d'identité"/>
+                            <field name="country_id" string="Pays"/>
                             <field name="phone" string="Téléphone" widget="phone"/>
                             <field name="email" string="E-mail" widget="email"/>
                             <field name="active" string="Actif"/>
+                            <field name="organisation_banner" invisible="1"/>
                             <field name="poste_banner" invisible="1"/>
-                            <field name="cadre_id" invisible="1"/>
+                            <field name="coordonnateur_banner" invisible="1"/>
                             <field name="qr_code_value" string="Valeur QR" readonly="1" invisible="1"/>
                         </group>
                     </group>
@@ -157,6 +176,18 @@
                             </field>
                         </page>
 
+                        <page string="Organisations">
+                            <field name="organisation_ids" widget="many2many_tags">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="type_id"/>
+                                    <field name="niveau"/>
+                                    <field name="parent_id"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+
                         <page string="Postes occupés">
                             <field name="attribution_poste_ids"
                                    domain="[('state', '=', 'validee')]"
@@ -171,6 +202,12 @@
                                     <field name="validation_date"/>
                                 </list>
                             </field>
+                        </page>
+
+                        <page string="Pièces jointes">
+                            <field name="attachment_ids"
+                                   widget="many2many_binary"
+                                   string="Pièces jointes"/>
                         </page>
                     </notebook>
                 </sheet>
