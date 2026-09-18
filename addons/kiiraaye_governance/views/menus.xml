@@ -10,6 +10,7 @@
     <menuitem id="menu_kiiraaye_attributions" name="Attributions de postes" parent="menu_kiiraaye_organisation" action="action_kiiraaye_attribution_poste" sequence="40"/>
 
     <menuitem id="menu_kiiraaye_configuration" name="Configuration" parent="menu_kiiraaye_root" sequence="90" groups="kiiraaye_governance.group_kiiraaye_manager"/>
+    <menuitem id="menu_kiiraaye_demo_data" name="Données de démonstration" parent="menu_kiiraaye_configuration" action="action_kiiraaye_demo_data_wizard" sequence="99"/>
     <menuitem id="menu_kiiraaye_dashboard_config" name="Configuration des tableaux de bord" parent="menu_kiiraaye_configuration" action="action_kiiraaye_dashboard_config" sequence="5"/>
     <menuitem id="menu_kiiraaye_countries" name="Pays" parent="menu_kiiraaye_configuration" action="action_kiiraaye_country" sequence="10"/>
     <menuitem id="menu_kiiraaye_geographie" name="Référentiel géographique" parent="menu_kiiraaye_configuration" action="action_kiiraaye_geographie" sequence="20"/>
