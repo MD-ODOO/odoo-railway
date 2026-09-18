@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="dashboard_main" model="kiiraaye.dashboard">
+        <field name="name">Tableau de bord principal</field>
+        <field name="code">MAIN</field>
+        <field name="active">True</field>
+    </record>
+</odoo>
