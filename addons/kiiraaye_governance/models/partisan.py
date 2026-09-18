@@ -89,20 +89,6 @@ class KiiraayePartisan(models.Model):
             unique_names = list(dict.fromkeys(name for name in names if name))
             record.poste_banner = " • ".join(unique_names)
 
-    @api.depends(
-        "attribution_poste_ids.state",
-        "attribution_poste_ids.active",
-        "attribution_poste_ids.position_id",
-        "attribution_poste_ids.position_id.name",
-    )
-    def _compute_member_banners(self):
-        for record in self:
-            names = record.attribution_poste_ids.filtered(
-                lambda line: line.state == "validee" and line.active and line.position_id
-            ).mapped("position_id.name")
-            unique_names = list(dict.fromkeys(name for name in names if name))
-            record.poste_banner = " • ".join(unique_names)
-
     @api.depends("prenom", "nom")
     def _compute_nom_complet(self):
         for record in self:
