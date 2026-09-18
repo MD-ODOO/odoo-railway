@@ -11,7 +11,7 @@
                         <field name="code"/>
                         <field name="active"/>
                     </group>
-                    <div class="alert alert-info">
+                    <div class="alert alert-info" role="alert">
                         Le contenu des indicateurs est piloté par OWL. La personnalisation avancée des widgets sera ajoutée sur cette base.
                     </div>
                 </sheet>
