@@ -7,6 +7,11 @@
                     <div class="kiiraaye-dashboard__eyebrow">KIIRAAYE</div>
                     <h1>Tableau de bord</h1>
                     <p>Vue descriptive des membres, sections, organisations et du référentiel géographique.</p>
+                    <div class="kiiraaye-dashboard__capacity">
+                        <span>Haute volumétrie</span>
+                        <b>1 000 000 sections</b>
+                        <b>5 000 000 membres</b>
+                    </div>
                 </div>
                 <button class="btn btn-outline-secondary" t-on-click="refresh">
                     <i class="fa fa-refresh me-1"/> Actualiser
