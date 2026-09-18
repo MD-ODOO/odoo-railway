@@ -16,6 +16,41 @@
             <div t-if="state.error" class="alert alert-danger">
                 <t t-esc="state.error"/>
             </div>
+            <div class="kiiraaye-dashboard__filters">
+                <div class="filter-field">
+                    <label>Lieu</label>
+                    <select t-on-change="(ev) => onFilterChange('geographie_id', ev)">
+                        <option value="">Tous les lieux</option>
+                        <t t-foreach="state.data.filters.geographies" t-as="item" t-key="item.id">
+                            <option t-att-value="item.id" t-att-selected="state.filters.geographie_id === item.id">
+                                <t t-esc="item.level"/> — <t t-esc="item.name"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label>Section</label>
+                    <select t-on-change="(ev) => onFilterChange('section_id', ev)">
+                        <option value="">Toutes les sections</option>
+                        <t t-foreach="state.data.filters.sections" t-as="item" t-key="item.id">
+                            <option t-att-value="item.id" t-att-selected="state.filters.section_id === item.id">
+                                <t t-esc="item.name"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+                <div class="filter-field">
+                    <label>Organisation</label>
+                    <select t-on-change="(ev) => onFilterChange('organisation_id', ev)">
+                        <option value="">Toutes les organisations</option>
+                        <t t-foreach="state.data.filters.organisations" t-as="item" t-key="item.id">
+                            <option t-att-value="item.id" t-att-selected="state.filters.organisation_id === item.id">
+                                <t t-esc="item.name"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+            </div>
 
             <div t-if="state.loading" class="kiiraaye-dashboard__loading">
                 <i class="fa fa-spinner fa-spin"/> Chargement des indicateurs...
@@ -46,7 +81,7 @@
                                 <t t-foreach="state.data.section_statuses" t-as="item" t-key="item.label">
                                     <div class="bar-row">
                                         <span><t t-esc="item.label"/></span>
-                                        <div class="bar"><i t-att-style="'width:' + barWidth(item.value, Math.max(...state.data.section_statuses.map(x => x.value), 1)) + '%;'"/></div>
+                                        <div class="bar"><i t-att-style="'width:' + barWidth(item.value, maxSectionStatus) + '%;'"/></div>
                                         <b><t t-esc="item.value"/></b>
                                     </div>
                                 </t>
@@ -59,7 +94,7 @@
                                 <t t-foreach="state.data.organisation_statuses" t-as="item" t-key="item.label">
                                     <div class="bar-row">
                                         <span><t t-esc="item.label"/></span>
-                                        <div class="bar"><i t-att-style="'width:' + barWidth(item.value, Math.max(...state.data.organisation_statuses.map(x => x.value), 1)) + '%;'"/></div>
+                                        <div class="bar"><i t-att-style="'width:' + barWidth(item.value, maxOrganisationStatus) + '%;'"/></div>
                                         <b><t t-esc="item.value"/></b>
                                     </div>
                                 </t>
@@ -94,7 +129,7 @@
                                 <t t-foreach="state.data.geography_levels" t-as="item" t-key="item.label">
                                     <div class="bar-row">
                                         <span><t t-esc="item.label"/></span>
-                                        <div class="bar"><i t-att-style="'width:' + barWidth(item.value, Math.max(...state.data.geography_levels.map(x => x.value), 1)) + '%;'"/></div>
+                                        <div class="bar"><i t-att-style="'width:' + barWidth(item.value, maxGeographyValue) + '%;'"/></div>
                                         <b><t t-esc="item.value"/></b>
                                     </div>
                                 </t>
@@ -105,11 +140,26 @@
                             <p>Utilisez cette vue pour contrôler la couverture du référentiel et le rattachement des sections à la hiérarchie géographique.</p>
                             <div class="mini-stat"><span>Zones actives</span><b><t t-esc="formatNumber(state.data.kpis.geographies)"/></b></div>
                             <div class="mini-stat"><span>Sections rattachées</span><b><t t-esc="formatNumber(state.data.kpis.sections)"/></b></div>
+                            <div class="mini-stat"><span>Zones sans section</span><b><t t-esc="formatNumber(state.data.kpis.zones_without_sections)"/></b></div>
                         </div>
                     </div>
+                        <div class="panel">
+                            <div class="panel__title"><span>Zones et couverture organisationnelle</span><small>lecture descriptive</small></div>
+                            <div class="data-table">
+                                <div class="data-row data-row--geo-head"><span>Zone</span><span>Niveau</span><span>Sections</span><span>Membres</span></div>
+                                <t t-foreach="state.data.geography_rows" t-as="row" t-key="row.id">
+                                    <div class="data-row data-row--geo">
+                                        <span><t t-esc="row.name"/></span>
+                                        <span><t t-esc="row.level"/></span>
+                                        <span><t t-esc="formatNumber(row.sections)"/></span>
+                                        <span><strong><t t-esc="formatNumber(row.members)"/></strong></span>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
                 </section>
 
-                <section t-if="state.view === 'membre'">
+                <section t-if="state.view === 'membre'" >
                     <div class="kiiraaye-dashboard__grid kiiraaye-dashboard__grid--kpi">
                         <div class="kpi-card"><span>Total membres</span><strong><t t-esc="formatNumber(state.data.member_state.total)"/></strong></div>
                         <div class="kpi-card"><span>Actifs</span><strong><t t-esc="formatNumber(state.data.member_state.actifs)"/></strong></div>
