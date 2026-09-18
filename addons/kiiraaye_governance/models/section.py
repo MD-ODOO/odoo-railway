@@ -87,6 +87,12 @@ class KiiraayeSection(models.Model):
         default="ouverte",
     )
     active = fields.Boolean(string="Actif", default=True)
+    is_demo_data = fields.Boolean(
+        string="Donnée de démonstration",
+        default=False,
+        copy=False,
+        index=True,
+    )
     member_count = fields.Integer(
         string="Nombre de membres",
         compute="_compute_member_count",
