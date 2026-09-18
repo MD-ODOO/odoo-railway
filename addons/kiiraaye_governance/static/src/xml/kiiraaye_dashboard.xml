@@ -110,18 +110,165 @@
 
                 <section t-if="state.view === 'section'">
                     <div class="panel">
-                        <div class="panel__title"><span>Sections et effectifs</span><small>20 premières lignes du périmètre</small></div>
-                        <div class="data-table">
-                            <div class="data-row data-row--head"><span>Section</span><span>Type</span><span>État</span><span>Effectif</span><span>Statut</span></div>
-                            <t t-foreach="state.data.sections" t-as="row" t-key="row.id">
-                                <div class="data-row">
-                                    <span><t t-esc="row.name"/></span>
-                                    <span><t t-esc="row.type"/></span>
-                                    <span><t t-esc="row.state"/></span>
+                        <div class="panel__title">
+                            <span>Vue territoriale des sections</span>
+                            <small>Région → département → commune</small>
+                        </div>
+                        <p class="dashboard-note">
+                            Les effectifs de membres sont calculés à partir des membres actifs enregistrés.
+                            Les données démographiques proviennent de l'ANSD (RGPH-5 2023).
+                            Les électeurs inscrits proviennent de la carte électorale DGE 2024.
+                            Le ratio « inscrits / population » est un indicateur de référence calculé,
+                            et non un taux officiel de participation électorale.
+                        </p>
+                    </div>
+
+                    <div class="kiiraaye-dashboard__grid kiiraaye-dashboard__grid--kpi">
+                        <div class="kpi-card">
+                            <span>Régions</span>
+                            <strong><t t-esc="formatNumber(state.data.section_geography_overview.length)"/></strong>
+                            <small>dans le référentiel</small>
+                        </div>
+                        <div class="kpi-card">
+                            <span>Départements</span>
+                            <strong><t t-esc="formatNumber(state.data.top_member_geographies.departments.length ? state.data.section_geography_overview.reduce((sum, row) => sum + row.departments, 0) : 0)"/></strong>
+                            <small>rattachés aux régions</small>
+                        </div>
+                        <div class="kpi-card">
+                            <span>Communes</span>
+                            <strong><t t-esc="formatNumber(state.data.section_geography_overview.reduce((sum, row) => sum + row.communes, 0))"/></strong>
+                            <small>rattachées aux départements</small>
+                        </div>
+                        <div class="kpi-card">
+                            <span>Sections ouvertes</span>
+                            <strong><t t-esc="formatNumber(state.data.kpis.open_sections)"/></strong>
+                            <small>dans le périmètre actif</small>
+                        </div>
+                        <div class="kpi-card">
+                            <span>Membres actifs</span>
+                            <strong><t t-esc="formatNumber(state.data.kpis.members)"/></strong>
+                            <small>enregistrés</small>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel__title">
+                            <span>Sections regroupées par région</span>
+                            <small>lecture synthétique</small>
+                        </div>
+                        <div class="data-table data-table--wide">
+                            <div class="data-row data-row--region-head">
+                                <span>Région</span>
+                                <span>Départements</span>
+                                <span>Communes</span>
+                                <span>Sections</span>
+                                <span>Ouvertes</span>
+                                <span>Membres</span>
+                                <span>Population 2023</span>
+                                <span>Électeurs 2024</span>
+                                <span>Inscrits / pop.</span>
+                                <span>Membres / électeurs</span>
+                            </div>
+                            <t t-foreach="state.data.section_geography_overview" t-as="row" t-key="row.id">
+                                <div class="data-row data-row--region">
+                                    <span><strong><t t-esc="row.name"/></strong></span>
+                                    <span><t t-esc="formatNumber(row.departments)"/></span>
+                                    <span><t t-esc="formatNumber(row.communes)"/></span>
+                                    <span><t t-esc="formatNumber(row.sections)"/></span>
+                                    <span><t t-esc="formatNumber(row.sections_open)"/></span>
                                     <span><strong><t t-esc="formatNumber(row.members)"/></strong></span>
-                                    <span class="pill"><t t-esc="row.status"/></span>
+                                    <span><t t-esc="formatNumber(row.population)"/></span>
+                                    <span><t t-esc="formatNumber(row.electors)"/></span>
+                                    <span><t t-esc="formatPercent(row.electoral_ratio_pct)"/></span>
+                                    <span><t t-esc="formatPercent(row.member_elector_ratio_pct)"/></span>
                                 </div>
                             </t>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel__title">
+                            <span>Détail régional des sections</span>
+                            <small>ouvrez une région pour afficher ses départements et communes</small>
+                        </div>
+                        <div class="region-details">
+                            <t t-foreach="state.data.section_geography_overview" t-as="region" t-key="'details-' + region.id">
+                                <details class="region-details__item">
+                                    <summary>
+                                        <span class="region-details__name"><t t-esc="region.name"/></span>
+                                        <span class="region-details__meta">
+                                            <b><t t-esc="formatNumber(region.sections_open)"/></b> ouvertes /
+                                            <b><t t-esc="formatNumber(region.sections)"/></b> sections ·
+                                            <b><t t-esc="formatNumber(region.members)"/></b> membres
+                                        </span>
+                                    </summary>
+
+                                    <div class="region-details__content">
+                                        <div class="region-indicators">
+                                            <div><span>Population 2023</span><b><t t-esc="formatNumber(region.population)"/></b></div>
+                                            <div><span>Électeurs inscrits 2024</span><b><t t-esc="formatNumber(region.electors)"/></b></div>
+                                            <div><span>Inscrits / population</span><b><t t-esc="formatPercent(region.electoral_ratio_pct)"/></b></div>
+                                            <div><span>Membres / électeurs</span><b><t t-esc="formatPercent(region.member_elector_ratio_pct)"/></b></div>
+                                        </div>
+
+                                        <div class="subtable">
+                                            <div class="subtable__head">
+                                                <span>Département</span>
+                                                <span>Communes</span>
+                                                <span>Sections</span>
+                                                <span>Ouvertes</span>
+                                                <span>Membres</span>
+                                            </div>
+                                            <t t-foreach="region.departments_rows" t-as="department" t-key="department.id">
+                                                <div class="subtable__department">
+                                                    <span><strong><t t-esc="department.name"/></strong></span>
+                                                    <span><t t-esc="formatNumber(department.communes)"/></span>
+                                                    <span><t t-esc="formatNumber(department.sections)"/></span>
+                                                    <span><t t-esc="formatNumber(department.sections_open)"/></span>
+                                                    <span><strong><t t-esc="formatNumber(department.members)"/></strong></span>
+                                                </div>
+                                                <div class="subtable__communes">
+                                                    <t t-foreach="department.commune_rows" t-as="commune" t-key="commune.id">
+                                                        <div class="subtable__commune">
+                                                            <span>↳ <t t-esc="commune.name"/></span>
+                                                            <span><t t-esc="formatNumber(commune.sections)"/> sections</span>
+                                                            <span><t t-esc="formatNumber(commune.sections_open)"/> ouvertes</span>
+                                                            <span><t t-esc="formatNumber(commune.members)"/> membres</span>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </details>
+                            </t>
+                        </div>
+                    </div>
+
+                    <div class="kiiraaye-dashboard__grid kiiraaye-dashboard__grid--three">
+                        <div class="panel">
+                            <div class="panel__title"><span>10 régions — effectif membre actif</span></div>
+                            <div class="rank-list">
+                                <t t-foreach="state.data.top_member_geographies.regions" t-as="row" t-key="row.id">
+                                    <div class="rank-row"><span><t t-esc="row.name"/></span><b><t t-esc="formatNumber(row.members)"/></b></div>
+                                </t>
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <div class="panel__title"><span>10 départements — effectif membre actif</span></div>
+                            <div class="rank-list">
+                                <t t-foreach="state.data.top_member_geographies.departments" t-as="row" t-key="row.id">
+                                    <div class="rank-row"><span><t t-esc="row.name"/></span><b><t t-esc="formatNumber(row.members)"/></b></div>
+                                </t>
+                            </div>
+                        </div>
+                        <div class="panel">
+                            <div class="panel__title"><span>10 communes — effectif membre actif</span></div>
+                            <div class="rank-list">
+                                <t t-foreach="state.data.top_member_geographies.communes" t-as="row" t-key="row.id">
+                                    <div class="rank-row"><span><t t-esc="row.name"/></span><b><t t-esc="formatNumber(row.members)"/></b></div>
+                                </t>
+                            </div>
                         </div>
                     </div>
                 </section>
