@@ -1,4 +1,4 @@
-from collections import Counter
+from collections import defaultdict
 
 from dateutil.relativedelta import relativedelta
 
@@ -10,6 +10,14 @@ class KiiraayeDashboard(models.Model):
     _name = "kiiraaye.dashboard"
     _description = "Tableau de bord Kiiraaye"
     _rec_name = "name"
+
+    # Volumétrie cible du moteur de pilotage.
+    MAX_SUPPORTED_SECTIONS = 1_000_000
+    MAX_SUPPORTED_MEMBERS = 5_000_000
+    MAX_BROWSER_SECTION_ROWS = 20
+    MAX_BROWSER_ORGANISATION_ROWS = 20
+    MAX_BROWSER_GEOGRAPHY_ROWS = 25
+    MAX_FILTER_SECTION_ROWS = 1_000
 
     name = fields.Char(
         string="Nom",
@@ -29,6 +37,45 @@ class KiiraayeDashboard(models.Model):
         "Le code du tableau de bord doit être unique.",
     )
 
+    def _auto_init(self):
+        result = super()._auto_init()
+        # Indexes dédiés aux requêtes de volumétrie du dashboard.
+        indexes = (
+            (
+                "kiiraaye_partisan_create_date_idx",
+                "CREATE INDEX IF NOT EXISTS "
+                "kiiraaye_partisan_create_date_idx "
+                "ON kiiraaye_partisan (create_date)",
+            ),
+            (
+                "kiiraaye_section_partisan_rel_section_idx",
+                "CREATE INDEX IF NOT EXISTS "
+                "kiiraaye_section_partisan_rel_section_idx "
+                "ON kiiraaye_section_partisan_rel (section_id)",
+            ),
+            (
+                "kiiraaye_section_partisan_rel_partisan_idx",
+                "CREATE INDEX IF NOT EXISTS "
+                "kiiraaye_section_partisan_rel_partisan_idx "
+                "ON kiiraaye_section_partisan_rel (partisan_id)",
+            ),
+            (
+                "kiiraaye_organisation_partisan_rel_organisation_idx",
+                "CREATE INDEX IF NOT EXISTS "
+                "kiiraaye_organisation_partisan_rel_organisation_idx "
+                "ON kiiraaye_organisation_partisan_rel (organisation_id)",
+            ),
+            (
+                "kiiraaye_organisation_partisan_rel_partisan_idx",
+                "CREATE INDEX IF NOT EXISTS "
+                "kiiraaye_organisation_partisan_rel_partisan_idx "
+                "ON kiiraaye_organisation_partisan_rel (partisan_id)",
+            ),
+        )
+        for _name, query in indexes:
+            self.env.cr.execute(query)
+        return result
+
     @api.model
     def open_dashboard(self):
         return {
@@ -41,25 +88,24 @@ class KiiraayeDashboard(models.Model):
         if not self.env.user.has_group("kiiraaye_governance.group_kiiraaye_user"):
             raise AccessError(_("Vous n'avez pas accès au tableau de bord Kiiraaye."))
 
-    @api.model
-    def get_dashboard_data(self, filters=None):
-        self._check_dashboard_access()
-        filters = filters or {}
+    @staticmethod
+    def _selection_label(field, value):
+        if not value:
+            return ""
+        selection = field.selection
+        if callable(selection):
+            selection = selection()
+        return dict(selection).get(value, value)
 
-        Section = self.env["kiiraaye.section"]
-        Organisation = self.env["kiiraaye.organisation"]
-        Partisan = self.env["kiiraaye.partisan"]
-        Geography = self.env["kiiraaye.geographie"]
-        Status = self.env["kiiraaye.effectif.status"]
-
-        section_domain = [("active", "=", True)]
+    def _section_domain(self, filters):
+        domain = [("active", "=", True)]
         if filters.get("section_id"):
-            section_domain.append(("id", "=", int(filters["section_id"])))
+            domain.append(("id", "=", int(filters["section_id"])))
 
         geography_id = filters.get("geographie_id")
         if geography_id:
             geography_id = int(geography_id)
-            section_domain += [
+            domain += [
                 "|",
                 "|",
                 "|",
@@ -68,88 +114,147 @@ class KiiraayeDashboard(models.Model):
                 ("commune_id", "child_of", geography_id),
                 ("quartier_id", "child_of", geography_id),
             ]
+        return domain
 
-        sections = Section.search(section_domain)
-        open_sections = sections.filtered(lambda s: s.state == "ouverte")
-        organizations = Organisation.search(
-            [
-                ("active", "=", True),
-                *(
-                    [("id", "=", int(filters["organisation_id"]))]
-                    if filters.get("organisation_id")
-                    else []
-                ),
-            ]
-        )
+    def _member_domain(self, filters):
+        domain = [("active", "=", True)]
 
         if filters.get("section_id"):
-            members = sections.mapped("membre_ids")
+            domain.append(("section_ids", "=", int(filters["section_id"])))
         elif filters.get("organisation_id"):
-            members = organizations.mapped("member_ids")
-        elif geography_id:
-            members = sections.mapped("membre_ids")
-        else:
-            members = Partisan.search([("active", "=", True)])
+            domain.append(
+                ("organisation_ids", "=", int(filters["organisation_id"]))
+            )
+        elif filters.get("geographie_id"):
+            geography_id = int(filters["geographie_id"])
+            domain += [
+                "|",
+                "|",
+                "|",
+                ("region_id", "child_of", geography_id),
+                ("departement_id", "child_of", geography_id),
+                ("commune_id", "child_of", geography_id),
+                ("quartier_id", "child_of", geography_id),
+            ]
+        return domain
 
-        members = members.filtered(lambda m: m.active)
-        all_members = Partisan.search([])
+    def _organisation_domain(self, filters):
+        domain = [("active", "=", True)]
+        if filters.get("organisation_id"):
+            domain.append(("id", "=", int(filters["organisation_id"])))
+        return domain
 
-        status_counter = Counter()
-        for section in sections:
-            status = Status.get_for_count(section.member_count)
-            if status:
-                status_counter[status.name] += 1
-
-        org_status_counter = Counter()
-        for organisation in organizations:
-            status = Status.get_for_count(organisation.member_count)
-            if status:
-                org_status_counter[status.name] += 1
-
-        section_rows = []
-        for section in sorted(
-            sections,
-            key=lambda s: (-s.member_count, s.name or ""),
-        )[:20]:
-            section_rows.append(
+    def _get_top_section_rows(self, member_domain, Section):
+        rows = []
+        grouped = self.env["kiiraaye.partisan"]._read_group(
+            member_domain,
+            ["section_ids"],
+            ["__count"],
+            limit=self.MAX_BROWSER_SECTION_ROWS,
+            order="__count DESC",
+        )
+        for section, count in grouped:
+            if not section:
+                continue
+            record = section[:1]
+            rows.append(
                 {
-                    "id": section.id,
-                    "name": section.name,
-                    "type": dict(section._fields["type_section"].selection).get(
-                        section.type_section, section.type_section or ""
+                    "id": record.id,
+                    "name": record.name,
+                    "type": self._selection_label(
+                        Section._fields["type_section"],
+                        record.type_section,
                     ),
-                    "members": section.member_count,
+                    "members": int(count or 0),
                     "status": (
-                        section.member_status_id.name
-                        if section.member_status_id
+                        record.member_status_id.name
+                        if record.member_status_id
                         else ""
                     ),
-                    "state": dict(section._fields["state"].selection).get(
-                        section.state, section.state or ""
+                    "state": self._selection_label(
+                        Section._fields["state"],
+                        record.state,
                     ),
                 }
             )
+        return rows
 
-        organisation_rows = []
-        for organisation in sorted(
-            organizations,
-            key=lambda o: (-o.member_count, o.name or ""),
-        )[:20]:
-            organisation_rows.append(
+    def _get_top_organisation_rows(self, member_domain, Organisation):
+        rows = []
+        grouped = self.env["kiiraaye.partisan"]._read_group(
+            member_domain,
+            ["organisation_ids"],
+            ["__count"],
+            limit=self.MAX_BROWSER_ORGANISATION_ROWS,
+            order="__count DESC",
+        )
+        for organisation, count in grouped:
+            if not organisation:
+                continue
+            record = organisation[:1]
+            rows.append(
                 {
-                    "id": organisation.id,
-                    "name": organisation.name,
-                    "type": organisation.type_id.name if organisation.type_id else "",
-                    "level": organisation.niveau or 0,
-                    "members": organisation.member_count,
+                    "id": record.id,
+                    "name": record.name,
+                    "type": (
+                        record.type_id.name
+                        if record.type_id
+                        else ""
+                    ),
+                    "level": record.niveau or 0,
+                    "members": int(count or 0),
                     "status": (
-                        organisation.member_status_id.name
-                        if organisation.member_status_id
+                        record.member_status_id.name
+                        if record.member_status_id
                         else ""
                     ),
                 }
             )
+        return rows
 
+    def _get_creation_history(self, member_domain):
+        now = fields.Datetime.now()
+        first_month = (
+            now.replace(
+                day=1,
+                hour=0,
+                minute=0,
+                second=0,
+                microsecond=0,
+            )
+            - relativedelta(months=11)
+        )
+        end_month = first_month + relativedelta(months=12)
+
+        domain = list(member_domain)
+        domain += [
+            ("create_date", ">=", first_month),
+            ("create_date", "<", end_month),
+        ]
+
+        grouped = self.env["kiiraaye.partisan"]._read_group(
+            domain,
+            ["create_date:month"],
+            ["__count"],
+            order="create_date:month",
+        )
+        counts = {}
+        for bucket, count in grouped:
+            if bucket:
+                counts[bucket.strftime("%Y-%m")] = int(count or 0)
+
+        result = []
+        for index in range(12):
+            month = first_month + relativedelta(months=index)
+            result.append(
+                {
+                    "label": month.strftime("%m/%Y"),
+                    "value": counts.get(month.strftime("%Y-%m"), 0),
+                }
+            )
+        return result
+
+    def _geography_coverage(self, Geography, Section, Partisan):
         level_labels = {
             "pays": "Pays",
             "niveau1": "Région",
@@ -160,38 +265,154 @@ class KiiraayeDashboard(models.Model):
             "niveau6": "Zone locale",
             "localite": "Localité",
         }
-        level_counter = Counter()
-        for zone in Geography.search([("active", "=", True)]):
-            level_counter[level_labels.get(zone.niveau, zone.niveau)] += 1
 
-        member_state = {
-            "actifs": len(members),
-            "inactifs": len(all_members.filtered(lambda m: not m.active)),
-            "total": len(all_members),
+        level_groups = self.env["kiiraaye.geographie"]._read_group(
+            [("active", "=", True)],
+            ["niveau"],
+            ["__count"],
+            order="niveau",
+        )
+        geography_levels = [
+            {
+                "label": level_labels.get(level, level),
+                "value": int(count or 0),
+            }
+            for level, count in level_groups
+        ]
+
+        zones = Geography.search(
+            [("active", "=", True)],
+            order="niveau, name",
+            limit=self.MAX_BROWSER_GEOGRAPHY_ROWS,
+        )
+
+        section_counts = {
+            field_name: {
+                record.id: int(count or 0)
+                for record, count in Section._read_group(
+                    [("active", "=", True)],
+                    [field_name],
+                    ["__count"],
+                    order="__count DESC",
+                )
+                if record
+            }
+            for field_name in (
+                "region_id",
+                "departement_id",
+                "commune_id",
+                "quartier_id",
+            )
         }
 
-        now = fields.Datetime.now()
-        monthly = []
-        cursor = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0) - relativedelta(
-            months=11
-        )
-        for index in range(12):
-            start = cursor + relativedelta(months=index)
-            end = start + relativedelta(months=1)
-            count = len(
-                members.filtered(
-                    lambda m: m.create_date
-                    and start <= m.create_date < end
+        member_counts = {
+            field_name: {
+                record.id: int(count or 0)
+                for record, count in Partisan._read_group(
+                    [("active", "=", True)],
+                    [field_name],
+                    ["__count"],
+                    order="__count DESC",
                 )
+                if record
+            }
+            for field_name in (
+                "region_id",
+                "departement_id",
+                "commune_id",
+                "quartier_id",
             )
-            monthly.append(
+        }
+
+        field_by_level = {
+            "niveau1": "region_id",
+            "niveau2": "departement_id",
+            "niveau3": "commune_id",
+            "niveau5": "quartier_id",
+        }
+
+        rows = []
+        for zone in zones:
+            field_name = field_by_level.get(zone.niveau)
+            rows.append(
                 {
-                    "label": start.strftime("%m/%Y"),
-                    "value": count,
+                    "id": zone.id,
+                    "name": zone.name,
+                    "level": level_labels.get(zone.niveau, zone.niveau),
+                    "sections": (
+                        section_counts.get(field_name, {}).get(zone.id, 0)
+                        if field_name
+                        else 0
+                    ),
+                    "members": (
+                        member_counts.get(field_name, {}).get(zone.id, 0)
+                        if field_name
+                        else 0
+                    ),
                 }
             )
 
-        values = [item["value"] for item in monthly]
+        rows.sort(
+            key=lambda row: (
+                -row["members"],
+                -row["sections"],
+                row["name"],
+            )
+        )
+        return geography_levels, rows
+
+    @api.model
+    def get_dashboard_data(self, filters=None):
+        self._check_dashboard_access()
+        filters = filters or {}
+
+        Section = self.env["kiiraaye.section"]
+        Organisation = self.env["kiiraaye.organisation"]
+        Partisan = self.env["kiiraaye.partisan"]
+        Geography = self.env["kiiraaye.geographie"]
+
+        section_domain = self._section_domain(filters)
+        member_domain = self._member_domain(filters)
+        organisation_domain = self._organisation_domain(filters)
+
+        # IMPORTANT :
+        # Ne jamais charger des millions de recordsets dans le navigateur.
+        # Les gros volumes sont comptés/agrégés en base et seuls des petits
+        # échantillons sont envoyés à OWL.
+        section_count = Section.search_count(section_domain)
+        open_section_count = Section.search_count(
+            section_domain + [("state", "=", "ouverte")]
+        )
+        organisation_count = Organisation.search_count(organisation_domain)
+
+        current_member_count = Partisan.search_count(member_domain)
+        total_member_count = Partisan.search_count([])
+        inactive_member_count = Partisan.search_count([("active", "=", False)])
+
+        section_rows = self._get_top_section_rows(member_domain, Section)
+        organisation_rows = self._get_top_organisation_rows(
+            member_domain,
+            Organisation,
+        )
+        member_creation = self._get_creation_history(member_domain)
+
+        geography_levels, geography_rows = self._geography_coverage(
+            Geography,
+            Section,
+            Partisan,
+        )
+
+        status_counter = defaultdict(int)
+        for row in section_rows:
+            if row["status"]:
+                status_counter[row["status"]] += 1
+
+        organisation_status_counter = defaultdict(int)
+        for row in organisation_rows:
+            if row["status"]:
+                organisation_status_counter[row["status"]] += 1
+
+        values = [item["value"] for item in member_creation]
         trend = 0.0
         if len(values) >= 2:
             x_mean = (len(values) - 1) / 2.0
@@ -201,133 +422,143 @@ class KiiraayeDashboard(models.Model):
                 for x, y in enumerate(values)
             )
             denominator = sum(
-                (x - x_mean) ** 2 for x in range(len(values))
+                (x - x_mean) ** 2
+                for x in range(len(values))
             )
             if denominator:
                 trend = numerator / denominator
 
         projection = []
-        base_total = len(members)
+        projected_total = current_member_count
         for step in range(1, 7):
-            projected_additions = max(0, round(
-                values[-1] + trend * step
-            ))
-            base_total += projected_additions
+            projected_additions = max(
+                0,
+                round(values[-1] + trend * step),
+            )
+            projected_total += projected_additions
             projection.append(
                 {
                     "label": (
-                        cursor
-                        + relativedelta(months=11 + step)
+                        fields.Datetime.from_string(
+                            fields.Datetime.to_string(
+                                fields.Datetime.now()
+                            )
+                        )
+                        + relativedelta(months=step)
                     ).strftime("%m/%Y"),
-                    "value": base_total,
+                    "value": projected_total,
                 }
             )
 
-        geography_rows = []
-        zones_without_sections = 0
-        zones = Geography.search(
-            [("active", "=", True)],
-            order="niveau, name",
-            limit=60,
+        avg_members_per_section = (
+            round(current_member_count / section_count, 1)
+            if section_count
+            else 0
         )
-        for zone in zones:
-            zone_sections = Section.search(
-                [
-                    ("active", "=", True),
-                    "|",
-                    "|",
-                    "|",
-                    ("region_id", "child_of", zone.id),
-                    ("departement_id", "child_of", zone.id),
-                    ("commune_id", "child_of", zone.id),
-                    ("quartier_id", "child_of", zone.id),
-                ]
-            )
-            zone_members = zone_sections.mapped("membre_ids").filtered(
-                lambda m: m.active
-            )
-            if not zone_sections:
-                zones_without_sections += 1
-            geography_rows.append(
-                {
-                    "id": zone.id,
-                    "name": zone.name,
-                    "level": level_labels.get(zone.niveau, zone.niveau),
-                    "sections": len(zone_sections),
-                    "members": len(zone_members),
-                }
-            )
 
-        geography_rows.sort(
-            key=lambda row: (-row["members"], -row["sections"], row["name"])
-        )
+        section_filter_rows = [
+            {"id": section.id, "name": section.name}
+            for section in Section.search(
+                [("active", "=", True)],
+                order="name",
+                limit=self.MAX_FILTER_SECTION_ROWS,
+            )
+        ]
+
+        organisation_filter_rows = [
+            {"id": organisation.id, "name": organisation.name}
+            for organisation in Organisation.search(
+                [("active", "=", True)],
+                order="name",
+                limit=500,
+            )
+        ]
+
+        geography_filter_rows = [
+            {
+                "id": zone.id,
+                "name": zone.name,
+                "level": {
+                    "pays": "Pays",
+                    "niveau1": "Région",
+                    "niveau2": "Département",
+                    "niveau3": "Commune / Ville",
+                    "niveau4": "Niveau local",
+                    "niveau5": "Quartier",
+                    "niveau6": "Zone locale",
+                    "localite": "Localité",
+                }.get(zone.niveau, zone.niveau),
+            }
+            for zone in Geography.search(
+                [("active", "=", True)],
+                order="niveau, name",
+                limit=1000,
+            )
+        ]
 
         return {
+            "capacity": {
+                "sections_supported": self.MAX_SUPPORTED_SECTIONS,
+                "members_supported": self.MAX_SUPPORTED_MEMBERS,
+                "browser_section_rows": self.MAX_BROWSER_SECTION_ROWS,
+                "browser_organisation_rows": self.MAX_BROWSER_ORGANISATION_ROWS,
+                "strategy": "Comptage et agrégation en base, payload OWL limité.",
+            },
             "filters": {
-                "sections": [
-                    {"id": section.id, "name": section.name}
-                    for section in Section.search(
-                        [("active", "=", True)],
-                        order="name",
-                        limit=1000,
-                    )
-                ],
-                "organisations": [
-                    {"id": organisation.id, "name": organisation.name}
-                    for organisation in Organisation.search(
-                        [("active", "=", True)],
-                        order="name",
-                        limit=500,
-                    )
-                ],
-                "geographies": [
-                    {
-                        "id": zone.id,
-                        "name": zone.name,
-                        "level": level_labels.get(zone.niveau, zone.niveau),
-                    }
-                    for zone in Geography.search(
-                        [("active", "=", True)],
-                        order="niveau, name",
-                        limit=1000,
-                    )
-                ],
+                "sections": section_filter_rows,
+                "organisations": organisation_filter_rows,
+                "geographies": geography_filter_rows,
             },
             "kpis": {
-                "members": len(members),
-                "all_members": len(all_members),
-                "sections": len(sections),
-                "open_sections": len(open_sections),
-                "organisations": len(organizations),
-                "geographies": Geography.search_count([("active", "=", True)]),
-                "zones_without_sections": zones_without_sections,
-                "avg_members_per_section": (
-                    round(sum(s.member_count for s in sections) / len(sections), 1)
-                    if sections
-                    else 0
+                "members": current_member_count,
+                "all_members": total_member_count,
+                "sections": section_count,
+                "open_sections": open_section_count,
+                "organisations": organisation_count,
+                "geographies": Geography.search_count(
+                    [("active", "=", True)]
                 ),
+                "zones_without_sections": sum(
+                    1 for row in geography_rows if not row["sections"]
+                ),
+                "avg_members_per_section": avg_members_per_section,
             },
-            "member_state": member_state,
+            "member_state": {
+                "actifs": (
+                    current_member_count
+                    if filters.get("section_id")
+                    or filters.get("organisation_id")
+                    or filters.get("geographie_id")
+                    else total_member_count - inactive_member_count
+                ),
+                "inactifs": inactive_member_count,
+                "total": total_member_count,
+            },
             "section_statuses": [
                 {"label": label, "value": value}
                 for label, value in sorted(status_counter.items())
             ],
             "organisation_statuses": [
                 {"label": label, "value": value}
-                for label, value in sorted(org_status_counter.items())
+                for label, value in sorted(
+                    organisation_status_counter.items()
+                )
             ],
             "sections": section_rows,
             "organisations": organisation_rows,
-            "geography_rows": geography_rows[:25],
-            "geography_levels": [
-                {"label": label, "value": value}
-                for label, value in sorted(level_counter.items())
-            ],
-            "member_creation": monthly,
+            "geography_rows": geography_rows,
+            "geography_levels": geography_levels,
+            "member_creation": member_creation,
             "member_projection": projection,
-            "projection_type": "Projection d'effectif à partir de la tendance des créations de membres",
+            "projection_type": (
+                "Projection descriptive de l'évolution des effectifs "
+                "à partir de la tendance des créations de membres."
+            ),
             "historical_election": {
                 "available": False,
-                "message": _("Aucune donnée d'élection historique n'est actuellement structurée dans le module."),
+                "message": _(
+                    "Aucune donnée d'élection historique n'est actuellement "
+                    "structurée dans le module."
+                ),
             },
         }
