@@ -337,7 +337,8 @@ class KiiraayePartisanGovernance(models.Model):
             if not vals.get("national_id"):
                 vals["national_id"] = False
 
-            self._apply_coordinator_scope_on_create(vals)
+            if not self.env.context.get("kiiraaye_demo_generation"):
+                self._apply_coordinator_scope_on_create(vals)
 
         records = super().create(vals_list)
         self.env["kiiraaye.section"].sudo()._sync_coordinator_access()
