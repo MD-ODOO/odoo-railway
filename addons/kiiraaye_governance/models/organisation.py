@@ -32,6 +32,12 @@ class KiiraayeOrganisation(models.Model):
         ondelete="restrict",
         index=True,
     )
+    niveau = fields.Integer(
+        related="type_id.niveau",
+        string="Niveau",
+        store=True,
+        readonly=True,
+    )
     sequence = fields.Integer(
         string="Séquence",
         default=10,
