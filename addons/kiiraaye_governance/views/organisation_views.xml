@@ -12,6 +12,7 @@
                 <field name="niveau" string="Niveau"/>
                 <field name="parent_id"/>
                 <field name="member_count"/>
+                <field name="member_status_id" string="Statut d'effectif"/>
                 <field name="active"/>
             </list>
         </field>
@@ -66,6 +67,10 @@
                     </div>
 
                     <group>
+                        <group string="Effectif">
+                            <field name="member_count" string="Nombre de membres" readonly="1"/>
+                            <field name="member_status_id" string="Statut d'effectif" readonly="1"/>
+                        </group>
                         <group string="Identification">
                             <field name="code"/>
                             <field name="type_id" options="{'no_create': True}"/>
