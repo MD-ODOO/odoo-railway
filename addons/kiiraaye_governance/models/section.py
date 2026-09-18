@@ -431,7 +431,7 @@ class KiiraayeBureauLigne(models.Model):
 
     section_id = fields.Many2one(
         "kiiraaye.section",
-        string="Section / Coordination",
+        string="(Section/Coordination)",
         required=True,
         ondelete="cascade",
     )
