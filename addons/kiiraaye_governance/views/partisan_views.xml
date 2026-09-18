@@ -7,6 +7,8 @@
             <list string="Membres">
                 <field name="reference"/>
                 <field name="nom_complet"/>
+                <field name="profession_id"/>
+                <field name="cadre_id"/>
                 <field name="date_naissance"/>
                 <field name="national_id"/>
                 <field name="country_id"/>
@@ -24,6 +26,8 @@
             <search>
                 <field name="reference"/>
                 <field name="nom_complet"/>
+                <field name="profession_id"/>
+                <field name="cadre_id"/>
                 <field name="national_id"/>
                 <field name="phone"/>
                 <field name="email"/>
@@ -48,7 +52,18 @@
                             type="object"
                             string="Imprimer la carte"
                             icon="fa-print"/>
+                    <button name="%(action_kiiraaye_cadre_assign_wizard)d"
+                            type="action"
+                            string="Affecter à un cadre"
+                            icon="fa-users"
+                            invisible="cadre_id"/>
+                    <button name="%(action_kiiraaye_cadre_assign_wizard)d"
+                            type="action"
+                            string="Modifier le cadre"
+                            icon="fa-users"
+                            invisible="not cadre_id"/>
                 </header>
+
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_view_membership_card"
@@ -67,6 +82,14 @@
                                 <span class="o_stat_text">Imprimer</span>
                             </div>
                         </button>
+                        <button name="%(action_kiiraaye_cadre_assign_wizard)d"
+                                type="action"
+                                class="oe_stat_button"
+                                icon="fa-users">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Cadre</span>
+                            </div>
+                        </button>
                     </div>
 
                     <field name="photo" widget="image" class="oe_avatar"/>
@@ -76,18 +99,43 @@
                         <h3><field name="reference" readonly="1"/></h3>
                     </div>
 
+                    <!-- Bannière cadre : visible sur toutes les fiches membres lorsqu'un cadre est affecté. -->
+                    <div class="alert alert-primary"
+                         role="alert"
+                         invisible="not cadre_id">
+                        <strong>CADRE DU MEMBRE</strong>
+                        <div class="mt-1">
+                            <field name="cadre_id" readonly="1" nolabel="1"/>
+                        </div>
+                    </div>
+
+                    <!-- Bannière poste : liste des postes validés et actifs du membre. -->
+                    <div class="alert alert-success"
+                         role="alert"
+                         invisible="not poste_banner">
+                        <strong>POSTE(S) OCCUPÉ(S)</strong>
+                        <div class="mt-1">
+                            <field name="poste_banner" readonly="1" nolabel="1"/>
+                        </div>
+                    </div>
+
                     <group string="Informations personnelles">
                         <group>
                             <field name="prenom" string="Prénom"/>
                             <field name="nom" string="Nom"/>
                             <field name="date_naissance" string="Date de naissance"/>
                             <field name="lieu_naissance" string="Lieu de naissance"/>
+                            <field name="profession_id"
+                                   string="Profession"
+                                   options="{'no_create': True}"/>
                         </group>
                         <group>
                             <field name="national_id" string="N° pièce d'identité"/>
                             <field name="phone" string="Téléphone" widget="phone"/>
                             <field name="email" string="E-mail" widget="email"/>
                             <field name="active" string="Actif"/>
+                            <field name="poste_banner" invisible="1"/>
+                            <field name="cadre_id" invisible="1"/>
                             <field name="qr_code_value" string="Valeur QR" readonly="1" invisible="1"/>
                         </group>
                     </group>
