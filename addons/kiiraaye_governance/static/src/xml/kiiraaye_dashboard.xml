@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="kiiraaye_governance.KiiraayeDashboard">
+        <div class="kiiraaye-dashboard o_action">
+            <div class="kiiraaye-dashboard__header">
+                <div>
+                    <div class="kiiraaye-dashboard__eyebrow">KIIRAAYE</div>
+                    <h1>Tableau de bord</h1>
+                    <p>Vue descriptive des membres, sections, organisations et du référentiel géographique.</p>
+                </div>
+                <button class="btn btn-outline-secondary" t-on-click="refresh">
+                    <i class="fa fa-refresh me-1"/> Actualiser
+                </button>
+            </div>
+
+            <div t-if="state.error" class="alert alert-danger">
+                <t t-esc="state.error"/>
+            </div>
+
+            <div t-if="state.loading" class="kiiraaye-dashboard__loading">
+                <i class="fa fa-spinner fa-spin"/> Chargement des indicateurs...
+            </div>
+
+            <t t-else="">
+                <div class="kiiraaye-dashboard__tabs">
+                    <button t-att-class="state.view === 'global' ? 'active' : ''" t-on-click="() => setView('global')">Global</button>
+                    <button t-att-class="state.view === 'section' ? 'active' : ''" t-on-click="() => setView('section')">Section</button>
+                    <button t-att-class="state.view === 'lieu' ? 'active' : ''" t-on-click="() => setView('lieu')">Lieu</button>
+                    <button t-att-class="state.view === 'membre' ? 'active' : ''" t-on-click="() => setView('membre')">Membre</button>
+                    <button t-att-class="state.view === 'historique' ? 'active' : ''" t-on-click="() => setView('historique')">Historique électoral</button>
+                </div>
+
+                <section t-if="state.view === 'global'">
+                    <div class="kiiraaye-dashboard__grid kiiraaye-dashboard__grid--kpi">
+                        <div class="kpi-card"><span>Membres actifs</span><strong><t t-esc="formatNumber(state.data.kpis.members)"/></strong><small>selon le périmètre courant</small></div>
+                        <div class="kpi-card"><span>Sections</span><strong><t t-esc="formatNumber(state.data.kpis.sections)"/></strong><small><t t-esc="formatNumber(state.data.kpis.open_sections)"/> ouvertes</small></div>
+                        <div class="kpi-card"><span>Organisations</span><strong><t t-esc="formatNumber(state.data.kpis.organisations)"/></strong><small>structures actives</small></div>
+                        <div class="kpi-card"><span>Zones géographiques</span><strong><t t-esc="formatNumber(state.data.kpis.geographies)"/></strong><small>référentiel actif</small></div>
+                        <div class="kpi-card"><span>Moyenne membres / section</span><strong><t t-esc="formatNumber(state.data.kpis.avg_members_per_section)"/></strong><small>sur le périmètre courant</small></div>
+                    </div>
+
+                    <div class="kiiraaye-dashboard__grid kiiraaye-dashboard__grid--two">
+                        <div class="panel">
+                            <div class="panel__title"><span>Statuts d'effectif des sections</span></div>
+                            <div class="bars">
+                                <t t-foreach="state.data.section_statuses" t-as="item" t-key="item.label">
+                                    <div class="bar-row">
+                                        <span><t t-esc="item.label"/></span>
+                                        <div class="bar"><i t-att-style="'width:' + barWidth(item.value, Math.max(...state.data.section_statuses.map(x => x.value), 1)) + '%;'"/></div>
+                                        <b><t t-esc="item.value"/></b>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <div class="panel__title"><span>Statuts d'effectif des organisations</span></div>
+                            <div class="bars">
+                                <t t-foreach="state.data.organisation_statuses" t-as="item" t-key="item.label">
+                                    <div class="bar-row">
+                                        <span><t t-esc="item.label"/></span>
+                                        <div class="bar"><i t-att-style="'width:' + barWidth(item.value, Math.max(...state.data.organisation_statuses.map(x => x.value), 1)) + '%;'"/></div>
+                                        <b><t t-esc="item.value"/></b>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section t-if="state.view === 'section'">
+                    <div class="panel">
+                        <div class="panel__title"><span>Sections et effectifs</span><small>20 premières lignes du périmètre</small></div>
+                        <div class="data-table">
+                            <div class="data-row data-row--head"><span>Section</span><span>Type</span><span>État</span><span>Effectif</span><span>Statut</span></div>
+                            <t t-foreach="state.data.sections" t-as="row" t-key="row.id">
+                                <div class="data-row">
+                                    <span><t t-esc="row.name"/></span>
+                                    <span><t t-esc="row.type"/></span>
+                                    <span><t t-esc="row.state"/></span>
+                                    <span><strong><t t-esc="formatNumber(row.members)"/></strong></span>
+                                    <span class="pill"><t t-esc="row.status"/></span>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </section>
+
+                <section t-if="state.view === 'lieu'">
+                    <div class="kiiraaye-dashboard__grid kiiraaye-dashboard__grid--two">
+                        <div class="panel">
+                            <div class="panel__title"><span>Répartition du référentiel géographique</span></div>
+                            <div class="bars">
+                                <t t-foreach="state.data.geography_levels" t-as="item" t-key="item.label">
+                                    <div class="bar-row">
+                                        <span><t t-esc="item.label"/></span>
+                                        <div class="bar"><i t-att-style="'width:' + barWidth(item.value, Math.max(...state.data.geography_levels.map(x => x.value), 1)) + '%;'"/></div>
+                                        <b><t t-esc="item.value"/></b>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                        <div class="panel callout">
+                            <div class="panel__title"><span>Lecture du lieu</span></div>
+                            <p>Utilisez cette vue pour contrôler la couverture du référentiel et le rattachement des sections à la hiérarchie géographique.</p>
+                            <div class="mini-stat"><span>Zones actives</span><b><t t-esc="formatNumber(state.data.kpis.geographies)"/></b></div>
+                            <div class="mini-stat"><span>Sections rattachées</span><b><t t-esc="formatNumber(state.data.kpis.sections)"/></b></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section t-if="state.view === 'membre'">
+                    <div class="kiiraaye-dashboard__grid kiiraaye-dashboard__grid--kpi">
+                        <div class="kpi-card"><span>Total membres</span><strong><t t-esc="formatNumber(state.data.member_state.total)"/></strong></div>
+                        <div class="kpi-card"><span>Actifs</span><strong><t t-esc="formatNumber(state.data.member_state.actifs)"/></strong></div>
+                        <div class="kpi-card"><span>Inactifs</span><strong><t t-esc="formatNumber(state.data.member_state.inactifs)"/></strong></div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel__title">
+                            <span>Créations de membres — 12 derniers mois</span>
+                            <small>évolution descriptive</small>
+                        </div>
+                        <div class="bars bars--large">
+                            <t t-foreach="state.data.member_creation" t-as="item" t-key="item.label">
+                                <div class="bar-column">
+                                    <div class="bar-value"><t t-esc="item.value"/></div>
+                                    <div class="bar-vertical"><i t-att-style="'height:' + barWidth(item.value, maxCreationValue) + '%;'"/></div>
+                                    <small><t t-esc="item.label"/></small>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel__title">
+                            <span>Projection d'effectif</span>
+                            <small><t t-esc="state.data.projection_type"/></small>
+                        </div>
+                        <div class="bars bars--large">
+                            <t t-foreach="state.data.member_projection" t-as="item" t-key="item.label">
+                                <div class="bar-column">
+                                    <div class="bar-value"><t t-esc="item.value"/></div>
+                                    <div class="bar-vertical bar-vertical--projection"><i t-att-style="'height:' + barWidth(item.value, maxProjectionValue) + '%;'"/></div>
+                                    <small><t t-esc="item.label"/></small>
+                                </div>
+                            </t>
+                        </div>
+                        <div class="callout">
+                            Cette projection porte sur l'évolution de l'effectif des membres, pas sur un résultat électoral.
+                        </div>
+                    </div>
+                </section>
+
+                <section t-if="state.view === 'historique'">
+                    <div class="panel">
+                        <div class="panel__title"><span>Historique électoral</span></div>
+                        <div class="empty-state">
+                            <i class="fa fa-line-chart"/>
+                            <h3>Données historiques non structurées</h3>
+                            <p><t t-esc="state.data.historical_election.message"/></p>
+                            <p>Le module actuel ne contient pas encore un modèle de résultats électoraux permettant de produire des indicateurs historiques vérifiables.</p>
+                        </div>
+                    </div>
+                </section>
+            </t>
+        </div>
+    </t>
+</templates>
