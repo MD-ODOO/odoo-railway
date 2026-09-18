@@ -3,7 +3,7 @@
     <t t-name="kiiraaye_governance.KiiraayeDashboard">
         <div class="kiiraaye-dashboard o_action">
             <div class="kiiraaye-dashboard__header">
-                <div>
+                <div class="kiiraaye-dashboard__header-main">
                     <div class="kiiraaye-dashboard__eyebrow">KIIRAAYE</div>
                     <h1>Tableau de bord</h1>
                     <p>Vue descriptive des membres, sections, organisations et du référentiel géographique.</p>
@@ -13,9 +13,16 @@
                         <b>5 000 000 membres</b>
                     </div>
                 </div>
-                <button class="btn btn-outline-secondary" t-on-click="refresh">
-                    <i class="fa fa-refresh me-1"/> Actualiser
-                </button>
+                <div class="kiiraaye-dashboard__header-actions">
+                    <img
+                        src="/kiiraaye_governance/static/src/img/kiiraaye_logo.svg"
+                        class="kiiraaye-dashboard__logo"
+                        alt="Logo KIIRAAY"
+                    />
+                    <button class="btn btn-outline-secondary" t-on-click="refresh">
+                        <i class="fa fa-refresh me-1"/> Actualiser
+                    </button>
+                </div>
             </div>
 
             <div t-if="state.error" class="alert alert-danger">
