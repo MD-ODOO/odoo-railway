@@ -16,9 +16,6 @@
                                options="{'no_create': True, 'no_create_edit': True}"
                                domain="[('active', '=', True), ('id', 'not in', organisation_id.member_ids)]"/>
                         <field name="member_id" invisible="1"/>
-                        <field name="current_organisation_ids"
-                               widget="many2many_tags"
-                               string="Organisations actuelles"/>
                     </group>
                     <div class="alert alert-info" role="alert">
                         Sélectionnez plusieurs membres en une seule opération. Un membre peut appartenir simultanément à plusieurs organisations.
