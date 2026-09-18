@@ -447,13 +447,14 @@ class KiiraayeDashboard(models.Model):
 
         projection = []
         projected_total = current_member_count
+        last_creation_value = values[-1] if values else 0
         projection_base = (
             fields.Datetime.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         )
         for step in range(1, 7):
             projected_additions = max(
                 0,
-                round(values[-1] + trend * step),
+                round(last_creation_value + trend * step),
             )
             projected_total += projected_additions
             projection.append(
