@@ -218,65 +218,6 @@
                         </div>
                     </div>
 
-                    <div class="panel">
-                        <div class="panel__title">
-                            <span>Détail régional des sections</span>
-                            <small>ouvrez une région pour afficher ses départements et communes</small>
-                        </div>
-                        <div class="region-details">
-                            <t t-foreach="state.data.section_geography_overview" t-as="region" t-key="'details-' + region.id">
-                                <details class="region-details__item">
-                                    <summary>
-                                        <span class="region-details__name"><t t-esc="region.name"/></span>
-                                        <span class="region-details__meta">
-                                            <b><t t-esc="formatNumber(region.sections_open)"/></b> ouvertes /
-                                            <b><t t-esc="formatNumber(region.sections)"/></b> sections ·
-                                            <b><t t-esc="formatNumber(region.members)"/></b> membres
-                                        </span>
-                                    </summary>
-
-                                    <div class="region-details__content">
-                                        <div class="region-indicators">
-                                            <div><span>Population 2023</span><b><t t-esc="formatNumber(region.population)"/></b></div>
-                                            <div><span>Électeurs inscrits 2024</span><b><t t-esc="formatNumber(region.electors)"/></b></div>
-                                            <div><span>Inscrits / population</span><b><t t-esc="formatPercent(region.electoral_ratio_pct)"/></b></div>
-                                            <div><span>Membres / électeurs</span><b><t t-esc="formatPercent(region.member_elector_ratio_pct)"/></b></div>
-                                        </div>
-
-                                        <div class="subtable">
-                                            <div class="subtable__head">
-                                                <span>Département</span>
-                                                <span>Communes</span>
-                                                <span>Sections</span>
-                                                <span>Ouvertes</span>
-                                                <span>Membres</span>
-                                            </div>
-                                            <t t-foreach="region.departments_rows" t-as="department" t-key="department.id">
-                                                <div class="subtable__department">
-                                                    <span><strong><t t-esc="department.name"/></strong></span>
-                                                    <span><t t-esc="formatNumber(department.communes)"/></span>
-                                                    <span><t t-esc="formatNumber(department.sections)"/></span>
-                                                    <span><t t-esc="formatNumber(department.sections_open)"/></span>
-                                                    <span><strong><t t-esc="formatNumber(department.members)"/></strong></span>
-                                                </div>
-                                                <div class="subtable__communes">
-                                                    <t t-foreach="department.commune_rows" t-as="commune" t-key="commune.id">
-                                                        <div class="subtable__commune">
-                                                            <span>↳ <t t-esc="commune.name"/></span>
-                                                            <span><t t-esc="formatNumber(commune.sections)"/> sections</span>
-                                                            <span><t t-esc="formatNumber(commune.sections_open)"/> ouvertes</span>
-                                                            <span><t t-esc="formatNumber(commune.members)"/> membres</span>
-                                                        </div>
-                                                    </t>
-                                                </div>
-                                            </t>
-                                        </div>
-                                    </div>
-                                </details>
-                            </t>
-                        </div>
-                    </div>
-
                     <div class="kiiraaye-dashboard__grid kiiraaye-dashboard__grid--three">
                         <div class="panel">
                             <div class="panel__title"><span>10 régions — effectif membre actif</span></div>
@@ -382,7 +323,7 @@
                             </div>
                             <div class="region-details">
                                 <t t-foreach="state.data.section_geography_overview" t-as="region" t-key="'detail-' + region.id">
-                                    <details class="region-details__item" open="false">
+                                    <details class="region-details__item">
                                         <summary>
                                             <span class="region-details__name"><t t-esc="region.name"/></span>
                                             <span class="region-details__meta">
