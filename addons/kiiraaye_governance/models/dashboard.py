@@ -144,7 +144,7 @@ class KiiraayeDashboard(models.Model):
             domain.append(("id", "=", int(filters["organisation_id"])))
         return domain
 
-    def _get_top_section_rows(self, member_domain, Section):
+    def _get_top_section_rows(self, section_domain, member_domain, Section):
         """Retourne quelques sections sans grouper directement sur un Many2many.
 
         Odoo 19 utilise un agrégateur SQL pour _read_group et le regroupement
@@ -153,9 +153,8 @@ class KiiraayeDashboard(models.Model):
         faisons les comptages par section, ce qui reste borné à 20 requêtes.
         """
         rows = []
-        section_domain = self._section_domain({})
-        # Le filtre section/geographie est déjà porté par member_domain pour
-        # le comptage des membres ; on limite l'échantillon à 20 sections.
+        # Le domaine géographique/section limite l'échantillon ; le domaine
+        # membre reste utilisé pour le comptage des membres.
         sections = Section.search(
             section_domain,
             order="name, id",
@@ -185,7 +184,7 @@ class KiiraayeDashboard(models.Model):
         rows.sort(key=lambda row: (-row["members"], row["name"]))
         return rows
 
-    def _get_top_organisation_rows(self, member_domain, Organisation):
+    def _get_top_organisation_rows(self, organisation_domain, member_domain, Organisation):
         """Retourne quelques organisations avec un comptage borné.
 
         Le regroupement direct sur organisation_ids (Many2many) est évité afin
@@ -193,19 +192,11 @@ class KiiraayeDashboard(models.Model):
         """
         rows = []
         organisations = Organisation.search(
-            [("active", "=", True)],
+            organisation_domain,
             order="name, id",
             limit=self.MAX_BROWSER_ORGANISATION_ROWS,
         )
         for record in organisations:
-            # Si une organisation est sélectionnée, ne montrer que celle-ci.
-            if member_domain and any(
-                clause[:2] == ("organisation_ids", "=")
-                and clause[2] != record.id
-                for clause in member_domain
-                if isinstance(clause, (list, tuple)) and len(clause) >= 3
-            ):
-                continue
             count = self.env["kiiraaye.partisan"].search_count(
                 list(member_domain) + [("organisation_ids", "=", record.id)]
             )
@@ -408,9 +399,14 @@ class KiiraayeDashboard(models.Model):
         geography_rows = []
 
         if current_view in ("global", "section"):
-            section_rows = self._get_top_section_rows(member_domain, Section)
+            section_rows = self._get_top_section_rows(
+                section_domain,
+                member_domain,
+                Section,
+            )
         if current_view == "global":
             organisation_rows = self._get_top_organisation_rows(
+                organisation_domain,
                 member_domain,
                 Organisation,
             )
