@@ -26,3 +26,4 @@ access_kiiraaye_effectif_status_user,kiiraaye.effectif.status user,model_kiiraay
 access_kiiraaye_effectif_status_manager,kiiraaye.effectif.status manager,model_kiiraaye_effectif_status,kiiraaye_governance.group_kiiraaye_manager,1,1,1,1
 access_kiiraaye_dashboard_user,kiiraaye.dashboard user,model_kiiraaye_dashboard,kiiraaye_governance.group_kiiraaye_user,1,0,0,0
 access_kiiraaye_dashboard_manager,kiiraaye.dashboard manager,model_kiiraaye_dashboard,kiiraaye_governance.group_kiiraaye_manager,1,1,1,1
+access_kiiraaye_demo_data_wizard,kiiraaye.demo.data.wizard,model_kiiraaye_demo_data_wizard,kiiraaye_governance.group_kiiraaye_manager,1,1,1,1
