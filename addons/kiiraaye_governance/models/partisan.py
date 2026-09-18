@@ -145,7 +145,7 @@ class KiiraayePartisan(models.Model):
     def action_open_organisation_assignment(self):
         self.ensure_one()
         action = self.env.ref(
-            "kiiraaye_governance.action_kiiraaye_organisation_assign_wizard"
+            "kiiraaye_governance.action_kiiraaye_organisation_add_member_wizard"
         ).read()[0]
         action["context"] = dict(
             self.env.context,
