@@ -720,6 +720,14 @@ class KiiraayeDashboard(models.Model):
             )
         ]
 
+        section_geo_region_count = len(section_geography_overview)
+        section_geo_department_count = sum(
+            row["departments"] for row in section_geography_overview
+        )
+        section_geo_commune_count = sum(
+            row["communes"] for row in section_geography_overview
+        )
+
         return {
             "capacity": {
                 "sections_supported": self.MAX_SUPPORTED_SECTIONS,
@@ -746,6 +754,9 @@ class KiiraayeDashboard(models.Model):
                     1 for row in geography_rows if not row["sections"]
                 ),
                 "avg_members_per_section": avg_members_per_section,
+                "region_count": section_geo_region_count,
+                "department_count": section_geo_department_count,
+                "commune_count": section_geo_commune_count,
             },
             "member_state": {
                 "actifs": (
