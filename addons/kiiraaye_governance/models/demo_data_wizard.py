@@ -1,5 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class KiiraayeDemoDataWizard(models.TransientModel):
@@ -30,9 +30,9 @@ class KiiraayeDemoDataWizard(models.TransientModel):
     def _check_quantities(self):
         for record in self:
             if record.section_count < 1 or record.section_count > 1_000_000:
-                raise UserError(_("Le nombre de sections doit être compris entre 1 et 1 000 000."))
+                raise ValidationError(_("Le nombre de sections doit être compris entre 1 et 1 000 000."))
             if record.member_count < 1 or record.member_count > 5_000_000:
-                raise UserError(_("Le nombre de membres doit être compris entre 1 et 5 000 000."))
+                raise ValidationError(_("Le nombre de membres doit être compris entre 1 et 5 000 000."))
 
     def _get_demo_country(self):
         country = self.env["res.country"].search(
