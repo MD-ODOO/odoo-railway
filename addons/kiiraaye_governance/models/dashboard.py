@@ -1,4 +1,5 @@
 from collections import defaultdict
+import unicodedata
 
 from dateutil.relativedelta import relativedelta
 
@@ -214,6 +215,203 @@ class KiiraayeDashboard(models.Model):
         rows.sort(key=lambda row: (-row["members"], row["name"]))
         return rows
 
+    REGIONAL_REFERENCE_STATS = {
+        "DAKAR": {"population": 4004426, "electors": 1829821},
+        "ZIGUINCHOR": {"population": 617567, "electors": 308259},
+        "DIOURBEL": {"population": 2080333, "electors": 635793},
+        "SAINT-LOUIS": {"population": 1202441, "electors": 563642},
+        "TAMBACOUNDA": {"population": 987152, "electors": 287149},
+        "KAOLACK": {"population": 1336720, "electors": 464437},
+        "THIES": {"population": 2463677, "electors": 1003310},
+        "LOUGA": {"population": 1125908, "electors": 460639},
+        "FATICK": {"population": 906918, "electors": 348525},
+        "KOLDA": {"population": 914798, "electors": 265611},
+        "MATAM": {"population": 831630, "electors": 315863},
+        "KAFFRINE": {"population": 820405, "electors": 268124},
+        "KEDOUGOU": {"population": 245147, "electors": 72413},
+        "SEDHIOU": {"population": 589266, "electors": 210264},
+    }
+    REGIONAL_REFERENCE_SOURCE = (
+        "Population : ANSD / RGPH-5 2023 ; "
+        "électeurs inscrits : DGE, carte électorale 2024."
+    )
+
+    @staticmethod
+    def _normalize_geo_name(value):
+        value = unicodedata.normalize("NFKD", value or "")
+        value = "".join(ch for ch in value if not unicodedata.combining(ch))
+        return " ".join(value.upper().replace("_", " ").split())
+
+    def _regional_external_stats(self, region):
+        stats = self.REGIONAL_REFERENCE_STATS.get(
+            self._normalize_geo_name(region.name)
+        )
+        if not stats:
+            return {
+                "population": 0,
+                "electors": 0,
+                "electoral_ratio_pct": 0.0,
+                "member_elector_ratio_pct": 0.0,
+                "member_population_ratio_pct": 0.0,
+                "reference_available": False,
+            }
+        return {
+            "population": stats["population"],
+            "electors": stats["electors"],
+            "electoral_ratio_pct": round(
+                stats["electors"] / stats["population"] * 100, 2
+            )
+            if stats["population"]
+            else 0.0,
+            "member_elector_ratio_pct": 0.0,
+            "member_population_ratio_pct": 0.0,
+            "reference_available": True,
+        }
+
+    def _get_section_geography_overview(self, Geography, Section, Partisan):
+        """Vue région > département > commune avec sections et membres."""
+        active_geo_domain = [("active", "=", True)]
+        regions = Geography.search(
+            active_geo_domain + [("niveau", "=", "niveau1")],
+            order="name, id",
+        )
+        departments = Geography.search(
+            active_geo_domain + [("niveau", "=", "niveau2")],
+            order="name, id",
+        )
+        communes = Geography.search(
+            active_geo_domain + [("niveau", "=", "niveau3")],
+            order="name, id",
+        )
+
+        def grouped_counts(model, domain, field_name):
+            return {
+                record.id: int(count or 0)
+                for record, count in model._read_group(
+                    domain,
+                    [field_name],
+                    ["__count"],
+                    order="__count DESC",
+                )
+                if record
+            }
+
+        section_active_domain = [("active", "=", True)]
+        section_open_domain = section_active_domain + [("state", "=", "ouverte")]
+        member_active_domain = [("active", "=", True)]
+
+        section_region = grouped_counts(Section, section_active_domain, "region_id")
+        section_region_open = grouped_counts(Section, section_open_domain, "region_id")
+        section_department = grouped_counts(Section, section_active_domain, "departement_id")
+        section_department_open = grouped_counts(Section, section_open_domain, "departement_id")
+        section_commune = grouped_counts(Section, section_active_domain, "commune_id")
+        section_commune_open = grouped_counts(Section, section_open_domain, "commune_id")
+
+        member_region = grouped_counts(Partisan, member_active_domain, "region_id")
+        member_department = grouped_counts(Partisan, member_active_domain, "departement_id")
+        member_commune = grouped_counts(Partisan, member_active_domain, "commune_id")
+
+        departments_by_region = defaultdict(list)
+        for department in departments:
+            current = department.parent_id
+            while current and current.niveau != "niveau1":
+                current = current.parent_id
+            if current:
+                departments_by_region[current.id].append(department)
+
+        communes_by_department = defaultdict(list)
+        for commune in communes:
+            current = commune.parent_id
+            while current and current.niveau != "niveau2":
+                current = current.parent_id
+            if current:
+                communes_by_department[current.id].append(commune)
+
+        overview = []
+        for region in regions:
+            external = self._regional_external_stats(region)
+            region_members = member_region.get(region.id, 0)
+            external["member_elector_ratio_pct"] = round(
+                region_members / external["electors"] * 100, 2
+            ) if external["electors"] else 0.0
+            external["member_population_ratio_pct"] = round(
+                region_members / external["population"] * 100, 2
+            ) if external["population"] else 0.0
+
+            department_rows = []
+            for department in departments_by_region.get(region.id, []):
+                commune_rows = [
+                    {
+                        "id": commune.id,
+                        "name": commune.name,
+                        "sections": section_commune.get(commune.id, 0),
+                        "sections_open": section_commune_open.get(commune.id, 0),
+                        "members": member_commune.get(commune.id, 0),
+                    }
+                    for commune in communes_by_department.get(department.id, [])
+                ]
+                department_rows.append(
+                    {
+                        "id": department.id,
+                        "name": department.name,
+                        "sections": section_department.get(department.id, 0),
+                        "sections_open": section_department_open.get(department.id, 0),
+                        "members": member_department.get(department.id, 0),
+                        "communes": len(commune_rows),
+                        "commune_rows": commune_rows,
+                    }
+                )
+
+            overview.append(
+                {
+                    "id": region.id,
+                    "name": region.name,
+                    "departments": len(department_rows),
+                    "communes": sum(item["communes"] for item in department_rows),
+                    "sections": section_region.get(region.id, 0),
+                    "sections_open": section_region_open.get(region.id, 0),
+                    "members": region_members,
+                    "population": external["population"],
+                    "electors": external["electors"],
+                    "electoral_ratio_pct": external["electoral_ratio_pct"],
+                    "member_elector_ratio_pct": external["member_elector_ratio_pct"],
+                    "member_population_ratio_pct": external["member_population_ratio_pct"],
+                    "reference_available": external["reference_available"],
+                    "departments_rows": department_rows,
+                }
+            )
+
+        return overview
+
+    def _get_top_member_geographies(self, Partisan):
+        domain = [("active", "=", True)]
+
+        def top_rows(field_name, label):
+            rows = []
+            for record, count in Partisan._read_group(
+                domain,
+                [field_name],
+                ["__count"],
+                limit=10,
+                order="__count DESC",
+            ):
+                if record:
+                    rows.append(
+                        {
+                            "id": record.id,
+                            "name": record.name,
+                            "members": int(count or 0),
+                            "level": label,
+                        }
+                    )
+            return rows
+
+        return {
+            "regions": top_rows("region_id", "Région"),
+            "departments": top_rows("departement_id", "Département"),
+            "communes": top_rows("commune_id", "Commune"),
+        }
+
     def _get_creation_history(self, member_domain):
         now = fields.Datetime.now()
         first_month = (
@@ -397,6 +595,16 @@ class KiiraayeDashboard(models.Model):
         member_creation = []
         geography_levels = []
         geography_rows = []
+        section_geography_overview = []
+        top_member_geographies = {"regions": [], "departments": [], "communes": []}
+
+        if current_view == "section":
+            section_geography_overview = self._get_section_geography_overview(
+                Geography,
+                Section,
+                Partisan,
+            )
+            top_member_geographies = self._get_top_member_geographies(Partisan)
 
         if current_view in ("global", "section"):
             section_rows = self._get_top_section_rows(
@@ -562,6 +770,9 @@ class KiiraayeDashboard(models.Model):
             ],
             "sections": section_rows,
             "organisations": organisation_rows,
+            "section_geography_overview": section_geography_overview,
+            "top_member_geographies": top_member_geographies,
+            "regional_reference_source": self.REGIONAL_REFERENCE_SOURCE,
             "geography_rows": geography_rows,
             "geography_levels": geography_levels,
             "member_creation": member_creation,
