@@ -81,8 +81,11 @@ class KiiraayeOrganisation(models.Model):
                 continue
             if record.parent_id == record:
                 raise ValidationError(_("Une organisation ne peut pas être sa propre organisation parente."))
-            if record.parent_id in record.child_of(record):
-                raise ValidationError(_("La hiérarchie des organisations contient une boucle."))
+            current = record.parent_id
+            while current:
+                if current == record:
+                    raise ValidationError(_("La hiérarchie des organisations contient une boucle."))
+                current = current.parent_id
 
     def action_add_member(self):
         self.ensure_one()
