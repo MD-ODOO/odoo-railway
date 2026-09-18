@@ -14,11 +14,14 @@
                     </div>
                 </div>
                 <div class="kiiraaye-dashboard__header-actions">
-                    <img
-                        src="/kiiraaye_governance/static/src/img/kiiraaye_logo.svg"
-                        class="kiiraaye-dashboard__logo"
-                        alt="Logo KIIRAAY"
-                    />
+                    <div t-if="state.data.company and state.data.company.id" class="kiiraaye-dashboard__company-brand">
+                        <img
+                            t-att-src="'/web/image/res.company/' + state.data.company.id + '/logo'"
+                            class="kiiraaye-dashboard__logo"
+                            t-att-alt="state.data.company.name"
+                            title="Logo de la société active"
+                        />
+                    </div>
                     <button class="btn btn-outline-secondary" t-on-click="refresh">
                         <i class="fa fa-refresh me-1"/> Actualiser
                     </button>
