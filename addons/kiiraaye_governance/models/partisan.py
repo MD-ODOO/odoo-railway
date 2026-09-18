@@ -40,9 +40,24 @@ class KiiraayePartisan(models.Model):
     )
     cadre_id = fields.Many2one(
         "kiiraaye.cadre",
-        string="Cadre",
+        string="Cadre historique",
         ondelete="restrict",
         index=True,
+        copy=False,
+    )
+    organisation_ids = fields.Many2many(
+        "kiiraaye.organisation",
+        "kiiraaye_organisation_partisan_rel",
+        "partisan_id",
+        "organisation_id",
+        string="Organisations",
+    )
+    attachment_ids = fields.Many2many(
+        "ir.attachment",
+        "kiiraaye_partisan_attachment_rel",
+        "partisan_id",
+        "attachment_id",
+        string="Pièces jointes",
     )
     section_ids = fields.Many2many(
         "kiiraaye.section",
@@ -55,6 +70,10 @@ class KiiraayePartisan(models.Model):
         "kiiraaye.attribution.poste",
         "partisan_id",
         string="Postes occupés",
+    )
+    organisation_banner = fields.Char(
+        string="Organisation(s) actuelle(s)",
+        compute="_compute_organisation_banner",
     )
     poste_banner = fields.Char(
         string="Poste(s) actuel(s)",
@@ -74,6 +93,20 @@ class KiiraayePartisan(models.Model):
         "UNIQUE(national_id)",
         "Le numéro de pièce d'identité doit être unique lorsqu'il est renseigné.",
     )
+
+    @api.depends(
+        "organisation_ids.name",
+        "organisation_ids.type_id.name",
+    )
+    def _compute_organisation_banner(self):
+        for record in self:
+            values = []
+            for organisation in record.organisation_ids:
+                label = organisation.name
+                if organisation.type_id:
+                    label = f"{organisation.type_id.name} : {organisation.name}"
+                values.append(label)
+            record.organisation_banner = " • ".join(dict.fromkeys(values))
 
     @api.depends(
         "attribution_poste_ids.state",
@@ -108,6 +141,18 @@ class KiiraayePartisan(models.Model):
         return self.env.ref(
             "kiiraaye_governance.action_report_kiiraaye_member_card"
         ).report_action(self)
+
+    def action_open_organisation_assignment(self):
+        self.ensure_one()
+        action = self.env.ref(
+            "kiiraaye_governance.action_kiiraaye_organisation_assign_wizard"
+        ).read()[0]
+        action["context"] = dict(
+            self.env.context,
+            default_partisan_id=self.id,
+            active_id=self.id,
+        )
+        return action
 
     def action_open_cadre_assignment(self):
         self.ensure_one()
