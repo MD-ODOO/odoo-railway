@@ -14,6 +14,8 @@
                 <field name="commune_id"/>
                 <field name="quartier_id"/>
                 <field name="date_creation"/>
+                <field name="member_count" string="Membres"/>
+                <field name="member_status_id" string="Statut d'effectif"/>
                 <field name="state"/>
                 <field name="active"/>
             </list>
@@ -56,11 +58,23 @@
                     <button name="action_open_siege" type="object" string="Ouvrir l'adresse du siège" class="oe_highlight"/>
                 </header>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <div class="oe_stat_button" role="button">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value"><field name="member_count"/></span>
+                                <span class="o_stat_text">Membres</span>
+                            </div>
+                        </div>
+                    </div>
                     <div class="oe_title">
                         <label for="name"/>
                         <h1><field name="name"/></h1>
                     </div>
                     <group>
+                        <group string="Effectif">
+                            <field name="member_count" string="Nombre de membres" readonly="1"/>
+                            <field name="member_status_id" string="Statut d'effectif" readonly="1"/>
+                        </group>
                         <group string="Identification">
                             <field name="reference" readonly="True"/>
                             <field name="type_section"/>
