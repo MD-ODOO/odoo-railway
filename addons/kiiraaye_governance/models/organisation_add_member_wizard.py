@@ -15,7 +15,12 @@ class KiiraayeOrganisationAddMemberWizard(models.TransientModel):
     member_ids = fields.Many2many(
         "kiiraaye.partisan",
         string="Membres à ajouter",
-        domain="[('active', '=', True)]",
+        domain="[('active', '=', True), ('id', 'not in', existing_member_ids)]",
+    )
+    existing_member_ids = fields.Many2many(
+        related="organisation_id.member_ids",
+        string="Membres déjà dans l'organisation",
+        readonly=True,
     )
     member_id = fields.Many2one(
         "kiiraaye.partisan",
