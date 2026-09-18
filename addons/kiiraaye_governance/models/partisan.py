@@ -44,18 +44,6 @@ class KiiraayePartisan(models.Model):
         ondelete="restrict",
         index=True,
     )
-    profession_id = fields.Many2one(
-        "kiiraaye.profession",
-        string="Profession",
-        ondelete="restrict",
-        index=True,
-    )
-    cadre_id = fields.Many2one(
-        "kiiraaye.cadre",
-        string="Cadre",
-        ondelete="restrict",
-        index=True,
-    )
     section_ids = fields.Many2many(
         "kiiraaye.section",
         "kiiraaye_section_partisan_rel",
@@ -67,10 +55,6 @@ class KiiraayePartisan(models.Model):
         "kiiraaye.attribution.poste",
         "partisan_id",
         string="Postes occupés",
-    )
-    poste_banner = fields.Char(
-        string="Poste(s) actuel(s)",
-        compute="_compute_member_banners",
     )
     poste_banner = fields.Char(
         string="Poste(s) actuel(s)",
