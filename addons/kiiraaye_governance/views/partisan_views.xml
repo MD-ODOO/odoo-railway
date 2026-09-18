@@ -73,20 +73,20 @@
                         <h1><field name="nom_complet" readonly="1"/></h1>
                         <h3><field name="reference" readonly="1"/></h3>
                     </div>
-                    <group>
+                    <group string="Informations personnelles">
                         <group>
-                            <field name="prenom"/>
-                            <field name="nom"/>
-                            <field name="date_naissance"/>
-                            <field name="lieu_naissance"/>
+                            <field name="prenom" string="Prénom"/>
+                            <field name="nom" string="Nom"/>
+                            <field name="date_naissance" string="Date de naissance"/>
+                            <field name="lieu_naissance" string="Lieu de naissance"/>
                         </group>
                         <group>
-                            <field name="national_id"/>
-                            <field name="country_id"/>
-                            <field name="phone" widget="phone"/>
-                            <field name="email" widget="email"/>
-                            <field name="active"/>
-                            <field name="qr_code_value" readonly="1" invisible="1"/>
+                            <field name="national_id" string="N° pièce d'identité"/>
+                            <field name="country_id" string="Pays"/>
+                            <field name="phone" string="Téléphone" widget="phone"/>
+                            <field name="email" string="E-mail" widget="email"/>
+                            <field name="active" string="Actif"/>
+                            <field name="qr_code_value" string="Valeur QR" readonly="1" invisible="1"/>
                         </group>
                     </group>
                     <notebook>

@@ -62,6 +62,26 @@ class KiiraayePartisanGovernance(models.Model):
         self.commune_id = section.commune_id
         self.quartier_id = section.quartier_id
 
+    @api.onchange("country_id")
+    def _onchange_governance_country_id(self):
+        """Réinitialise toute la chaîne géographique lorsqu'on change de pays."""
+        self.region_id = False
+        self.departement_id = False
+        self.commune_id = False
+        self.quartier_id = False
+        return {
+            "domain": {
+                "region_id": [
+                    ("country_id", "=", self.country_id.id),
+                    ("niveau", "=", "niveau1"),
+                    ("active", "=", True),
+                ] if self.country_id else [("id", "=", False)],
+                "departement_id": [("id", "=", False)],
+                "commune_id": [("id", "=", False)],
+                "quartier_id": [("id", "=", False)],
+            }
+        }
+
     @api.onchange("region_id")
     def _onchange_governance_region_id(self):
         if self.departement_id and self.departement_id.parent_id != self.region_id:
