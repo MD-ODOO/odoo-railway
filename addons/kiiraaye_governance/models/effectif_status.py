@@ -26,6 +26,7 @@ class KiiraayeEffectifStatus(models.Model):
     )
     max_members = fields.Integer(
         string="Maximum de membres",
+        default=False,
         help="Laisser vide pour une borne supérieure illimitée.",
     )
     sequence = fields.Integer(
