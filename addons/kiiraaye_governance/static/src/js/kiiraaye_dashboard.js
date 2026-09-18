@@ -112,6 +112,13 @@ export class KiiraayeDashboard extends Component {
     formatNumber(value) {
         return new Intl.NumberFormat("fr-FR").format(value || 0);
     }
+
+    formatPercent(value) {
+        return new Intl.NumberFormat("fr-FR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }).format(Number(value) || 0) + " %";
+    }
 }
 
 registry.category("actions").add("kiiraaye_dashboard", KiiraayeDashboard);
