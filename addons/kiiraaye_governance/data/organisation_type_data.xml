@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo noupdate="1">
+<odoo noupdate="0">
     <record id="organisation_type_cadre" model="kiiraaye.organisation.type">
-        <field name="name">Cadre</field>
+        <field name="name">Organisation</field>
         <field name="code">CADRE</field>
         <field name="niveau">1</field>
         <field name="sequence">10</field>
