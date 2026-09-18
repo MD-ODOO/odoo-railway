@@ -269,7 +269,7 @@ class KiiraayeDashboard(models.Model):
                     for section in Section.search(
                         [("active", "=", True)],
                         order="name",
-                        limit=500,
+                        limit=1000,
                     )
                 ],
                 "organisations": [
