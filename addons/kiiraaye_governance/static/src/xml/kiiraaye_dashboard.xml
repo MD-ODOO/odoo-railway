@@ -126,17 +126,17 @@
                     <div class="kiiraaye-dashboard__grid kiiraaye-dashboard__grid--kpi">
                         <div class="kpi-card">
                             <span>Régions</span>
-                            <strong><t t-esc="formatNumber(state.data.section_geography_overview.length)"/></strong>
+                            <strong><t t-esc="formatNumber(state.data.kpis.region_count)"/></strong>
                             <small>dans le référentiel</small>
                         </div>
                         <div class="kpi-card">
                             <span>Départements</span>
-                            <strong><t t-esc="formatNumber(state.data.top_member_geographies.departments.length ? state.data.section_geography_overview.reduce((sum, row) => sum + row.departments, 0) : 0)"/></strong>
+                            <strong><t t-esc="formatNumber(state.data.kpis.department_count)"/></strong>
                             <small>rattachés aux régions</small>
                         </div>
                         <div class="kpi-card">
                             <span>Communes</span>
-                            <strong><t t-esc="formatNumber(state.data.section_geography_overview.reduce((sum, row) => sum + row.communes, 0))"/></strong>
+                            <strong><t t-esc="formatNumber(state.data.kpis.commune_count)"/></strong>
                             <small>rattachées aux départements</small>
                         </div>
                         <div class="kpi-card">
