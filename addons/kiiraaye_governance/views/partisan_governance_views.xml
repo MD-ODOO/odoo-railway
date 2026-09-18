@@ -5,7 +5,7 @@
         <field name="model">kiiraaye.partisan</field>
         <field name="inherit_id" ref="kiiraaye_governance.view_kiiraaye_partisan_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//group[@string='Informations personnelles']" position="after">
+            <xpath expr="//field[@name='prenom']/parent::group" position="after">
                 <group string="Affectation territoriale" colspan="2">
                     <group>
                         <field name="country_id"
