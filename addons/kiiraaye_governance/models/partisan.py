@@ -116,11 +116,20 @@ class KiiraayePartisan(models.Model):
     )
     def _compute_member_banners(self):
         for record in self:
-            names = record.attribution_poste_ids.filtered(
-                lambda line: line.state == "validee" and line.active and line.position_id
-            ).mapped("position_id.name")
-            unique_names = list(dict.fromkeys(name for name in names if name))
-            record.poste_banner = " • ".join(unique_names)
+            lines = record.attribution_poste_ids.filtered(
+                lambda line: line.state == "validee"
+                and line.active
+                and line.position_id
+            )
+            values = []
+            for line in lines:
+                label = line.position_id.name
+                if line.section_id:
+                    label = f"{label} — Section : {line.section_id.name}"
+                values.append(label)
+            record.poste_banner = " • ".join(
+                dict.fromkeys(value for value in values if value)
+            )
 
     @api.depends("prenom", "nom")
     def _compute_nom_complet(self):
@@ -150,7 +159,7 @@ class KiiraayePartisan(models.Model):
         action["context"] = dict(
             self.env.context,
             default_partisan_id=self.id,
-            default_member_ids=[(6, 0, [self.id])],
+            default_member_ids=[self.id],
             active_id=self.id,
         )
         return action
