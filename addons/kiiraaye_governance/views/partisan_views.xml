@@ -177,7 +177,7 @@
                         </page>
 
                         <page string="Organisations">
-                            <field name="organisation_ids" widget="many2many_tags">
+                            <field name="organisation_ids">
                                 <list>
                                     <field name="name"/>
                                     <field name="type_id"/>
