@@ -52,13 +52,13 @@
                             type="object"
                             string="Imprimer la carte"
                             icon="fa-print"/>
-                    <button name="%(action_kiiraaye_cadre_assign_wizard)d"
-                            type="action"
+                    <button name="action_open_cadre_assignment"
+                            type="object"
                             string="Affecter à un cadre"
                             icon="fa-users"
                             invisible="cadre_id"/>
-                    <button name="%(action_kiiraaye_cadre_assign_wizard)d"
-                            type="action"
+                    <button name="action_open_cadre_assignment"
+                            type="object"
                             string="Modifier le cadre"
                             icon="fa-users"
                             invisible="not cadre_id"/>
@@ -82,8 +82,8 @@
                                 <span class="o_stat_text">Imprimer</span>
                             </div>
                         </button>
-                        <button name="%(action_kiiraaye_cadre_assign_wizard)d"
-                                type="action"
+                        <button name="action_open_cadre_assignment"
+                                type="object"
                                 class="oe_stat_button"
                                 icon="fa-users">
                             <div class="o_stat_info">
