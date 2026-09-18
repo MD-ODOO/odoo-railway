@@ -40,13 +40,18 @@ class KiiraayeOrganisationAddMemberWizard(models.TransientModel):
             if organisation:
                 vals["organisation_id"] = organisation.id
         if member_ids:
-            if isinstance(member_ids, (list, tuple)) and member_ids and isinstance(member_ids[0], (list, tuple)):
-                selected_ids = []
-                for command in member_ids:
-                    if command[0] == 6:
-                        selected_ids.extend(command[2] or [])
-                    elif command[0] == 4:
-                        selected_ids.append(command[1])
+            selected_ids = []
+            if isinstance(member_ids, (list, tuple)):
+                if all(isinstance(value, int) for value in member_ids):
+                    selected_ids = list(member_ids)
+                else:
+                    for command in member_ids:
+                        if isinstance(command, (list, tuple)) and command:
+                            if command[0] == 6:
+                                selected_ids.extend(command[2] or [])
+                            elif command[0] == 4:
+                                selected_ids.append(command[1])
+            if selected_ids:
                 vals["member_ids"] = [(6, 0, list(dict.fromkeys(selected_ids)))]
         elif member_id:
             member = self.env["kiiraaye.partisan"].browse(member_id).exists()
