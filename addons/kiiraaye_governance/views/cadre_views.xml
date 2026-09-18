@@ -4,7 +4,7 @@
         <field name="name">kiiraaye.cadre.list</field>
         <field name="model">kiiraaye.cadre</field>
         <field name="arch" type="xml">
-            <list string="Cadres">
+            <list string="Anciennes organisations">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="code"/>
@@ -19,7 +19,7 @@
         <field name="name">kiiraaye.cadre.form</field>
         <field name="model">kiiraaye.cadre</field>
         <field name="arch" type="xml">
-            <form string="Cadre Kiiraaye">
+            <form string="Ancienne organisation Kiiraaye">
                 <sheet>
                     <div class="oe_title">
                         <h1><field name="name"/></h1>
@@ -32,13 +32,13 @@
                             <field name="active"/>
                         </group>
                         <group string="Description">
-                            <field name="description" nolabel="1" placeholder="Description du cadre..."/>
+                            <field name="description" nolabel="1" placeholder="Description de l'ancienne organisation..."/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Membres">
                             <field name="member_ids" readonly="1">
-                                <list string="Membres du cadre">
+                                <list string="Membres de l'ancienne organisation">
                                     <field name="reference"/>
                                     <field name="nom_complet"/>
                                     <field name="profession_id"/>
@@ -54,7 +54,7 @@
     </record>
 
     <record id="action_kiiraaye_cadre" model="ir.actions.act_window">
-        <field name="name">Cadres</field>
+        <field name="name">Anciennes organisations</field>
         <field name="res_model">kiiraaye.cadre</field>
         <field name="view_mode">list,form</field>
     </record>
