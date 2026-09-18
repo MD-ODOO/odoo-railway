@@ -11,10 +11,11 @@
                     </div>
                     <group>
                         <field name="organisation_id" options="{'no_create': True}"/>
+                        <field name="existing_member_ids" invisible="1"/>
                         <field name="member_ids"
                                widget="many2many_tags"
                                options="{'no_create': True, 'no_create_edit': True}"
-                               domain="[('active', '=', True), ('id', 'not in', organisation_id.member_ids)]"/>
+                               domain="[('active', '=', True), ('id', 'not in', existing_member_ids)]"/>
                         <field name="member_id" invisible="1"/>
                     </group>
                     <div class="alert alert-info" role="alert">
