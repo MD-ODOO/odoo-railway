@@ -52,6 +52,14 @@ class KiiraayeOrganisation(models.Model):
         string="Actif",
         default=True,
     )
+    legacy_cadre_id = fields.Many2one(
+        "kiiraaye.cadre",
+        string="Cadre historique",
+        ondelete="set null",
+        copy=False,
+        index=True,
+    )
+
     member_ids = fields.Many2many(
         "kiiraaye.partisan",
         "kiiraaye_organisation_partisan_rel",
