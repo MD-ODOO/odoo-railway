@@ -13,7 +13,6 @@ export class KiiraayeDashboard extends Component {
         this.state = useState({
             loading: true,
             view: "global",
-            sectionTab: "synthese",
             data: null,
             filters: {
                 section_id: false,
@@ -57,33 +56,6 @@ export class KiiraayeDashboard extends Component {
 
     async refresh() {
         await this.loadDashboard();
-    }
-
-    setSectionTab(tab) {
-        this.state.sectionTab = tab;
-    }
-
-    get maxRegionMembers() {
-        return Math.max(
-            ...(this.state.data?.section_geography_overview || []).map((row) => row.members),
-            1
-        );
-    }
-
-    regionMemberShare(row) {
-        const total = this.state.data?.kpis?.members || 0;
-        return total ? (Number(row.members || 0) / total) * 100 : 0;
-    }
-
-    regionMemberLevel(row) {
-        const share = this.regionMemberShare(row);
-        if (share >= 15) {
-            return "high";
-        }
-        if (share >= 5) {
-            return "medium";
-        }
-        return "low";
     }
 
     async onFilterChange(field, ev) {
