@@ -87,6 +87,27 @@ class KiiraayeSection(models.Model):
         default="ouverte",
     )
     active = fields.Boolean(string="Actif", default=True)
+    member_count = fields.Integer(
+        string="Nombre de membres",
+        compute="_compute_member_count",
+    )
+    member_status_id = fields.Many2one(
+        "kiiraaye.effectif.status",
+        string="Statut d'effectif",
+        compute="_compute_member_status",
+    )
+
+    @api.depends("membre_ids")
+    def _compute_member_count(self):
+        for record in self:
+            record.member_count = len(record.membre_ids)
+
+    @api.depends("member_count")
+    def _compute_member_status(self):
+        Status = self.env["kiiraaye.effectif.status"]
+        for record in self:
+            record.member_status_id = Status.get_for_count(record.member_count)
+
     membre_ids = fields.Many2many(
         "kiiraaye.partisan",
         "kiiraaye_section_partisan_rel",
