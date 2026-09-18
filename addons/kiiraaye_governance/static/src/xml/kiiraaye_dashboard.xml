@@ -119,6 +119,28 @@
                 </section>
 
                 <section t-if="state.view === 'section'">
+                    <div class="kiiraaye-dashboard__section-tabs">
+                        <button
+                            t-att-class="state.sectionTab === 'synthese' ? 'active' : ''"
+                            t-on-click="() => this.setSectionTab('synthese')"
+                        >
+                            <i class="fa fa-th-large me-1"/> Synthèse
+                        </button>
+                        <button
+                            t-att-class="state.sectionTab === 'region' ? 'active' : ''"
+                            t-on-click="() => this.setSectionTab('region')"
+                        >
+                            <i class="fa fa-bar-chart me-1"/> Région
+                        </button>
+                        <button
+                            t-att-class="state.sectionTab === 'detail' ? 'active' : ''"
+                            t-on-click="() => this.setSectionTab('detail')"
+                        >
+                            <i class="fa fa-sitemap me-1"/> Détail régional
+                        </button>
+                    </div>
+
+                    <div t-if="state.sectionTab === 'synthese'">
                     <div class="panel">
                         <div class="panel__title">
                             <span>Vue territoriale des sections</span>
@@ -277,6 +299,137 @@
                             <div class="rank-list">
                                 <t t-foreach="state.data.top_member_geographies.communes" t-as="row" t-key="row.id">
                                     <div class="rank-row"><span><t t-esc="row.name"/></span><b><t t-esc="formatNumber(row.members)"/></b></div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    </div>
+
+                    <div t-if="state.sectionTab === 'region'" class="kiiraaye-dashboard__section-subview">
+                        <div class="panel">
+                            <div class="panel__title">
+                                <span>Répartition des membres inscrits par région</span>
+                                <small>valeur = membres actifs enregistrés · couleur = part relative du total</small>
+                            </div>
+
+                            <div class="region-chart__legend">
+                                <span><i class="region-chart__legend-dot region-chart__legend-dot--low"/> Moins de 5 %</span>
+                                <span><i class="region-chart__legend-dot region-chart__legend-dot--medium"/> 5 à 15 %</span>
+                                <span><i class="region-chart__legend-dot region-chart__legend-dot--high"/> 15 % et plus</span>
+                            </div>
+
+                            <div class="region-chart">
+                                <t t-foreach="state.data.section_geography_overview" t-as="region" t-key="'chart-' + region.id">
+                                    <div class="region-chart__row">
+                                        <div class="region-chart__label">
+                                            <strong><t t-esc="region.name"/></strong>
+                                            <span><t t-esc="formatPercent(regionMemberShare(region))"/> du total</span>
+                                        </div>
+                                        <div class="region-chart__track">
+                                            <i
+                                                t-att-class="'region-chart__bar region-chart__bar--' + regionMemberLevel(region)"
+                                                t-att-style="'width:' + barWidth(region.members, maxRegionMembers) + '%;'"
+                                            />
+                                        </div>
+                                        <div
+                                            t-att-class="'region-chart__value region-chart__value--' + regionMemberLevel(region)"
+                                        >
+                                            <t t-esc="formatNumber(region.members)"/>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <div class="panel__title">
+                                <span>Valeurs régionales</span>
+                                <small>membres inscrits, sections et départements</small>
+                            </div>
+                            <div class="data-table data-table--wide">
+                                <div class="data-row data-row--region-values-head">
+                                    <span>Région</span>
+                                    <span>Membres</span>
+                                    <span>Part du total</span>
+                                    <span>Sections</span>
+                                    <span>Départements</span>
+                                </div>
+                                <t t-foreach="state.data.section_geography_overview" t-as="region" t-key="'values-' + region.id">
+                                    <div class="data-row data-row--region-values">
+                                        <span><strong><t t-esc="region.name"/></strong></span>
+                                        <span>
+                                            <b
+                                                t-att-class="'region-value-badge region-value-badge--' + regionMemberLevel(region)"
+                                            >
+                                                <t t-esc="formatNumber(region.members)"/>
+                                            </b>
+                                        </span>
+                                        <span><t t-esc="formatPercent(regionMemberShare(region))"/></span>
+                                        <span><t t-esc="formatNumber(region.sections)"/></span>
+                                        <span><t t-esc="formatNumber(region.departments)"/></span>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div t-if="state.sectionTab === 'detail'" class="kiiraaye-dashboard__section-subview">
+                        <div class="panel">
+                            <div class="panel__title">
+                                <span>Détail régional</span>
+                                <small>Région → départements → communes</small>
+                            </div>
+                            <div class="region-details">
+                                <t t-foreach="state.data.section_geography_overview" t-as="region" t-key="'detail-' + region.id">
+                                    <details class="region-details__item" open="false">
+                                        <summary>
+                                            <span class="region-details__name"><t t-esc="region.name"/></span>
+                                            <span class="region-details__meta">
+                                                <b><t t-esc="formatNumber(region.members)"/></b> membres ·
+                                                <b><t t-esc="formatNumber(region.departments)"/></b> départements ·
+                                                <b><t t-esc="formatNumber(region.sections_open)"/></b> sections ouvertes
+                                            </span>
+                                        </summary>
+
+                                        <div class="region-details__content">
+                                            <div class="region-indicators">
+                                                <div><span>Membres inscrits</span><b><t t-esc="formatNumber(region.members)"/></b></div>
+                                                <div><span>Sections</span><b><t t-esc="formatNumber(region.sections)"/></b></div>
+                                                <div><span>Départements</span><b><t t-esc="formatNumber(region.departments)"/></b></div>
+                                                <div><span>Communes</span><b><t t-esc="formatNumber(region.communes)"/></b></div>
+                                            </div>
+
+                                            <div class="subtable">
+                                                <div class="subtable__head">
+                                                    <span>Département</span>
+                                                    <span>Communes</span>
+                                                    <span>Sections</span>
+                                                    <span>Ouvertes</span>
+                                                    <span>Membres</span>
+                                                </div>
+                                                <t t-foreach="region.departments_rows" t-as="department" t-key="'detail-dep-' + department.id">
+                                                    <div class="subtable__department">
+                                                        <span><strong><t t-esc="department.name"/></strong></span>
+                                                        <span><t t-esc="formatNumber(department.communes)"/></span>
+                                                        <span><t t-esc="formatNumber(department.sections)"/></span>
+                                                        <span><t t-esc="formatNumber(department.sections_open)"/></span>
+                                                        <span><strong><t t-esc="formatNumber(department.members)"/></strong></span>
+                                                    </div>
+                                                    <div class="subtable__communes">
+                                                        <t t-foreach="department.commune_rows" t-as="commune" t-key="'detail-com-' + commune.id">
+                                                            <div class="subtable__commune">
+                                                                <span>↳ <t t-esc="commune.name"/></span>
+                                                                <span><t t-esc="formatNumber(commune.sections)"/> sections</span>
+                                                                <span><t t-esc="formatNumber(commune.sections_open)"/> ouvertes</span>
+                                                                <span><t t-esc="formatNumber(commune.members)"/> membres</span>
+                                                            </div>
+                                                        </t>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </details>
                                 </t>
                             </div>
                         </div>
