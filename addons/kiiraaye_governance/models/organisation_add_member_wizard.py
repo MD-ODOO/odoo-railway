@@ -27,14 +27,16 @@ class KiiraayeOrganisationAddMemberWizard(models.TransientModel):
     @api.model
     def default_get(self, fields_list):
         vals = super().default_get(fields_list)
-        organisation_id = (
-            self.env.context.get("default_organisation_id")
-            or self.env.context.get("active_id")
-        )
+        organisation_id = self.env.context.get("default_organisation_id")
+        member_id = self.env.context.get("default_partisan_id") or self.env.context.get("active_id")
         if organisation_id:
             organisation = self.env["kiiraaye.organisation"].browse(organisation_id).exists()
             if organisation:
                 vals["organisation_id"] = organisation.id
+        if member_id:
+            member = self.env["kiiraaye.partisan"].browse(member_id).exists()
+            if member:
+                vals["member_id"] = member.id
         return vals
 
     @api.onchange("organisation_id")
