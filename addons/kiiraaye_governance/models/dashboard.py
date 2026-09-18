@@ -729,6 +729,10 @@ class KiiraayeDashboard(models.Model):
         )
 
         return {
+            "company": {
+                "id": self.env.company.id,
+                "name": self.env.company.name,
+            },
             "capacity": {
                 "sections_supported": self.MAX_SUPPORTED_SECTIONS,
                 "members_supported": self.MAX_SUPPORTED_MEMBERS,
