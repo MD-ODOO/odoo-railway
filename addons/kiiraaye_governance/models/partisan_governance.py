@@ -5,6 +5,21 @@ from odoo.exceptions import UserError
 class KiiraayePartisanGovernance(models.Model):
     _inherit = "kiiraaye.partisan"
 
+    coordonnateur_banner = fields.Char(
+        string="Coordonnateur de section(s)",
+        compute="_compute_coordonnateur_banner",
+    )
+
+    @api.depends("section_ids.cordonnateur_id", "section_ids.name")
+    def _compute_coordonnateur_banner(self):
+        for record in self:
+            sections = record.section_ids.filtered(
+                lambda section: section.cordonnateur_id == record
+            )
+            record.coordonnateur_banner = " • ".join(
+                f"{section.name}" for section in sections if section.name
+            )
+
     user_id = fields.Many2one(
         "res.users",
         string="Utilisateur Odoo",
