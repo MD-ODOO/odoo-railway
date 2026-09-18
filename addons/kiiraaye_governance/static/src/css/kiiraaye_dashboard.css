@@ -47,6 +47,30 @@
     color: #66717d;
 }
 
+.kiiraaye-dashboard__header-main {
+    min-width: 0;
+}
+
+.kiiraaye-dashboard__header-actions {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    flex-shrink: 0;
+}
+
+.kiiraaye-dashboard__logo {
+    display: block;
+    width: 105px;
+    height: 122px;
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid #e3e8ee;
+    border-radius: 14px;
+    padding: 7px;
+    box-sizing: border-box;
+    box-shadow: 0 7px 24px rgba(30, 45, 60, .06);
+}
+
 .kiiraaye-dashboard__loading {
     padding: 80px 20px;
     text-align: center;
@@ -308,6 +332,16 @@
 @media (max-width: 900px) {
     .kiiraaye-dashboard__grid--two {
         grid-template-columns: 1fr;
+    }
+
+    .kiiraaye-dashboard__header {
+        flex-direction: column;
+    }
+
+    .kiiraaye-dashboard__header-actions {
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .kiiraaye-dashboard__grid--kpi {
