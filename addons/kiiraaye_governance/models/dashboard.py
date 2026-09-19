@@ -719,16 +719,20 @@ class KiiraayeDashboard(models.Model):
     def get_dashboard_data(self, filters=None):
         self._check_dashboard_access()
         filters = filters or {}
-        current_view = filters.get("view", "global")
+        current_view = filters.get("view", "section")
+        section_scope = filters.get("section_scope", "national")
+        if section_scope not in ("national", "diaspora"):
+            section_scope = "national"
 
         Section = self.env["kiiraaye.section"]
         Organisation = self.env["kiiraaye.organisation"]
         Partisan = self.env["kiiraaye.partisan"]
         Geography = self.env["kiiraaye.geographie"]
 
-        section_domain = self._section_domain(filters)
-        member_domain = self._member_domain(filters)
+        section_domain = self._section_scope_domain(section_scope, filters)
+        member_domain = self._member_scope_domain(section_scope, filters)
         organisation_domain = self._organisation_domain(filters)
+        effectif = self._effectif_overview()
 
         # IMPORTANT :
         # Ne jamais charger des millions de recordsets dans le navigateur.
@@ -750,27 +754,33 @@ class KiiraayeDashboard(models.Model):
         geography_levels = []
         geography_rows = []
         section_geography_overview = []
+        diaspora_country_rows = []
+        diaspora_country_count = 0
         top_member_geographies = {"regions": [], "departments": [], "communes": []}
 
-        if current_view == "section":
+        if current_view == "section" and section_scope == "national":
             section_geography_overview = self._get_section_geography_overview(
                 Geography,
                 Section,
                 Partisan,
+                section_domain=section_domain,
+                member_domain=member_domain,
             )
             top_member_geographies = self._get_top_member_geographies(Partisan)
 
-        if current_view in ("global", "section"):
+        if current_view == "section" and section_scope == "diaspora":
+            diaspora_country_rows, diaspora_country_count = self._get_diaspora_country_overview(
+                Section,
+                Partisan,
+                section_domain,
+                member_domain,
+            )
+
+        if current_view == "section":
             section_rows = self._get_top_section_rows(
                 section_domain,
                 member_domain,
                 Section,
-            )
-        if current_view == "global":
-            organisation_rows = self._get_top_organisation_rows(
-                organisation_domain,
-                member_domain,
-                Organisation,
             )
         if current_view == "membre":
             member_creation = self._get_creation_history(member_domain)
@@ -875,17 +885,82 @@ class KiiraayeDashboard(models.Model):
         ]
 
         section_geo_region_count = len(section_geography_overview)
-        section_geo_department_count = sum(
+        section_geo_region_occupied = sum(
+            1 for row in section_geography_overview if row["sections"]
+        )
+        section_geo_department_total = sum(
             row["departments"] for row in section_geography_overview
         )
-        section_geo_commune_count = sum(
+        section_geo_department_occupied = sum(
+            row["departments_occupied"] for row in section_geography_overview
+        )
+        section_geo_commune_total = sum(
             row["communes"] for row in section_geography_overview
         )
+        section_geo_commune_occupied = sum(
+            row["communes_occupied"]
+            for row in section_geography_overview
+        )
+
+        if section_scope == "national":
+            national_country = self.env["res.country"].search(
+                [("code", "=", "SN")],
+                limit=1,
+            )
+            if national_country:
+                region_total = Geography.search_count([
+                    ("active", "=", True),
+                    ("country_id", "=", national_country.id),
+                    ("niveau", "=", "niveau1"),
+                ])
+                department_total = Geography.search_count([
+                    ("active", "=", True),
+                    ("country_id", "=", national_country.id),
+                    ("niveau", "=", "niveau2"),
+                ])
+                commune_total = Geography.search_count([
+                    ("active", "=", True),
+                    ("country_id", "=", national_country.id),
+                    ("niveau", "=", "niveau3"),
+                ])
+            else:
+                region_total = department_total = commune_total = 0
+            region_occupied = section_geo_region_occupied
+            department_occupied = section_geo_department_occupied
+            commune_occupied = section_geo_commune_occupied
+        else:
+            region_total = department_total = commune_total = 0
+            region_occupied = department_occupied = commune_occupied = 0
 
         return {
             "company": {
                 "id": self.env.company.id,
                 "name": self.env.company.name,
+            },
+            "effectif": effectif,
+            "section_scope": section_scope,
+            "section_scope_label": (
+                "Sections nationales"
+                if section_scope == "national"
+                else "Sections diaspora"
+            ),
+            "geography_scope": {
+                "regions": {
+                    "occupied": region_occupied,
+                    "total": region_total,
+                },
+                "departments": {
+                    "occupied": department_occupied,
+                    "total": department_total,
+                },
+                "communes": {
+                    "occupied": commune_occupied,
+                    "total": commune_total,
+                },
+            },
+            "diaspora": {
+                "countries_covered": diaspora_country_count,
+                "countries": diaspora_country_rows,
             },
             "capacity": {
                 "sections_supported": self.MAX_SUPPORTED_SECTIONS,
@@ -912,9 +987,12 @@ class KiiraayeDashboard(models.Model):
                     1 for row in geography_rows if not row["sections"]
                 ),
                 "avg_members_per_section": avg_members_per_section,
-                "region_count": section_geo_region_count,
-                "department_count": section_geo_department_count,
-                "commune_count": section_geo_commune_count,
+                "region_count": region_occupied,
+                "region_total": region_total,
+                "department_count": department_occupied,
+                "department_total": department_total,
+                "commune_count": commune_occupied,
+                "commune_total": commune_total,
             },
             "member_state": {
                 "actifs": (
