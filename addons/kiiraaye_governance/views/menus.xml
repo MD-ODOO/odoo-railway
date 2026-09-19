@@ -13,14 +13,14 @@
     <menuitem id="menu_kiiraaye_configuration" name="Configuration" parent="menu_kiiraaye_root" sequence="90" groups="kiiraaye_governance.group_kiiraaye_manager"/>
     <menuitem id="menu_kiiraaye_demo_data" name="Données de démonstration" parent="menu_kiiraaye_configuration" action="action_kiiraaye_demo_data_wizard" sequence="99"/>
     <record id="action_kiiraaye_load_senegal_localities" model="ir.actions.server">
-        <field name="name">Charger 80 localités GalsenAPI du Sénégal</field>
+        <field name="name">Charger tous les villages Sénégal du Sénégal</field>
         <field name="model_id" ref="base.model_res_country"/>
         <field name="state">code</field>
         <field name="code"><![CDATA[
 country = env["res.country"].search([("code", "=", "SN")], limit=1)
 if not country:
     raise UserError(_("Le pays Sénégal (SN) est introuvable."))
-action = country.action_load_senegal_quartiers()
+action = country.action_load_senegal_all_villages()
         ]]></field>
     </record>
 
