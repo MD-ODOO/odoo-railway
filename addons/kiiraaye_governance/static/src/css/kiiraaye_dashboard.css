@@ -589,6 +589,11 @@
     background: #FAFCFD;
 }
 
+.region-indicator--coordinator b {
+    white-space: normal;
+    line-height: 1.35;
+}
+
 .region-indicators span,
 .region-indicators b {
     display: block;
