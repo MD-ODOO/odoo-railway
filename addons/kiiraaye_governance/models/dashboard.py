@@ -468,6 +468,9 @@ class KiiraayeDashboard(models.Model):
                         "sections_open": section_department_open.get(department.id, 0),
                         "members": member_department.get(department.id, 0),
                         "communes": len(commune_rows),
+                        "communes_occupied": sum(
+                            1 for commune in commune_rows if commune["sections"]
+                        ),
                         "commune_rows": commune_rows,
                     }
                 )
