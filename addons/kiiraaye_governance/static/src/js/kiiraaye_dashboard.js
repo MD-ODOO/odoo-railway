@@ -128,15 +128,26 @@ export class KiiraayeDashboard extends Component {
     }
 
     async openCommuneDetail(regionId, departmentId, communeId) {
-        await this.openDepartmentDetail(regionId, departmentId);
-        await new Promise((resolve) => setTimeout(resolve, 0));
-
-        const target = document.getElementById(
-            "kiiraaye-commune-detail-" + regionId + "-" + departmentId + "-" + communeId
-        );
-        if (target) {
-            target.scrollIntoView({ behavior: "smooth", block: "center" });
+        const id = Number(communeId) || false;
+        if (!id) {
+            return;
         }
+
+        await this.action.doAction({
+            type: "ir.actions.act_window",
+            name: "Sections de la commune",
+            res_model: "kiiraaye.section",
+            views: [
+                [false, "list"],
+                [false, "form"],
+            ],
+            view_mode: "list,form",
+            domain: [["commune_id", "=", id]],
+            context: {
+                search_default_commune_id: id,
+            },
+            target: "current",
+        });
     }
 
     memberElectorGapClass(row) {
