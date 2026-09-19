@@ -27,7 +27,7 @@
                                         icon="fa-refresh"/>
                                 <button name="action_load_senegal_quartiers"
                                         type="object"
-                                        string="Charger les 80 prochains villages / quartiers"
+                                        string="Charger les 80 prochaines localités ANSD"
                                         icon="fa-map-marker"
                                         invisible="code != 'SN'"/>
                             </div>
