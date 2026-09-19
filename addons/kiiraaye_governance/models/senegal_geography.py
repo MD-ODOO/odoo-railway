@@ -252,7 +252,7 @@ class ResCountrySenegalGeography(models.Model):
             )
         return records
 
-    def _load_senegal_quartiers(self, communes):
+    def _load_senegal_quartiers(self, communes, minimum_units=100):
         """Charge les unités locales réelles sous les communes.
 
         Priorité au répertoire ANSD RGPH-5 2023. Lorsque le flux ANSD courant
@@ -387,7 +387,7 @@ class ResCountrySenegalGeography(models.Model):
         # un changement de structure du flux ANSD ; on complète alors avec
         # les villages GalsenAPI, qui sont directement rattachés à leur commune.
         loaded_galsen = 0
-        if loaded_ansd < 100:
+        if loaded_ansd < max(0, minimum_units):
             try:
                 villages = self._galsen_get_all("villages")
                 seen_uids = {
@@ -496,6 +496,16 @@ class ResCountrySenegalGeography(models.Model):
             ])
 
         communes = {record.id: record for record in commune_records}
+        # Le code des communes conserve l'identifiant GalsenAPI utilisé par
+        # les villages. On rend donc le dictionnaire accessible par les deux
+        # identifiants pour que le fallback fonctionne aussi depuis ce bouton.
+        for record in commune_records:
+            try:
+                api_id = int(record.code)
+            except (TypeError, ValueError):
+                continue
+            communes[api_id] = record
+
         loaded, skipped = self._load_senegal_quartiers(communes)
         self._set_senegal_geography_status(
             _(
@@ -525,7 +535,11 @@ class ResCountrySenegalGeography(models.Model):
         departments = self._load_senegal_departments(regions)
         self._load_senegal_arrondissements(departments)
         communes = self._load_senegal_communes(departments)
-        quartiers, skipped_localities = self._load_senegal_quartiers(communes)
+        minimum_units = self.env.context.get("kiiraaye_minimum_local_units", 100)
+        quartiers, skipped_localities = self._load_senegal_quartiers(
+            communes,
+            minimum_units=minimum_units,
+        )
 
         self._set_senegal_geography_status(
             "Référentiel Sénégal chargé automatiquement : "
