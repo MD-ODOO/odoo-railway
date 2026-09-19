@@ -441,25 +441,56 @@ class KiiraayeDashboard(models.Model):
         section_commune = grouped_counts(Section, section_active_domain, "commune_id")
         section_commune_open = grouped_counts(Section, section_open_domain, "commune_id")
 
-        regional_coordinators = {}
-        regional_coordination_domain = [
-            ("active", "=", True),
-            ("type_section", "=", "regionale"),
-            ("region_id", "!=", False),
-        ]
-        if senegal:
-            regional_coordination_domain.append(("country_id", "=", senegal.id))
-        regional_coordinations = Section.search(
-            regional_coordination_domain,
-            order="region_id, id",
-        )
-        for coordination in regional_coordinations:
-            if coordination.region_id.id not in regional_coordinators:
-                regional_coordinators[coordination.region_id.id] = (
-                    coordination.cordonnateur_id.nom_complet
-                    if coordination.cordonnateur_id
-                    else ""
-                )
+        coordinator_domains = {
+            "region": [
+                ("active", "=", True),
+                ("type_section", "=", "regionale"),
+                ("region_id", "!=", False),
+            ],
+            "department": [
+                ("active", "=", True),
+                ("type_section", "=", "departementale"),
+                ("departement_id", "!=", False),
+            ],
+            "commune": [
+                ("active", "=", True),
+                ("type_section", "=", "communale"),
+                ("commune_id", "!=", False),
+            ],
+        }
+        coordinator_maps = {
+            "region": defaultdict(list),
+            "department": defaultdict(list),
+            "commune": defaultdict(list),
+        }
+        for level, domain in coordinator_domains.items():
+            if senegal:
+                domain.append(("country_id", "=", senegal.id))
+            field_name = {
+                "region": "region_id",
+                "department": "departement_id",
+                "commune": "commune_id",
+            }[level]
+            for coordination in Section.search(domain, order=f"{field_name}, id"):
+                if coordination.cordonnateur_id:
+                    coordinator_name = coordination.cordonnateur_id.nom_complet
+                    if coordinator_name and coordinator_name not in coordinator_maps[level][getattr(coordination, field_name).id]:
+                        coordinator_maps[level][getattr(coordination, field_name).id].append(
+                            coordinator_name
+                        )
+
+        regional_coordinators = {
+            geo_id: " · ".join(names)
+            for geo_id, names in coordinator_maps["region"].items()
+        }
+        department_coordinators = {
+            geo_id: " · ".join(names)
+            for geo_id, names in coordinator_maps["department"].items()
+        }
+        commune_coordinators = {
+            geo_id: " · ".join(names)
+            for geo_id, names in coordinator_maps["commune"].items()
+        }
 
         member_region = grouped_counts(Partisan, member_active_domain, "region_id")
         member_department = grouped_counts(Partisan, member_active_domain, "departement_id")
@@ -501,6 +532,7 @@ class KiiraayeDashboard(models.Model):
                         "sections": section_commune.get(commune.id, 0),
                         "sections_open": section_commune_open.get(commune.id, 0),
                         "members": member_commune.get(commune.id, 0),
+                        "coordinator": commune_coordinators.get(commune.id, ""),
                     }
                     for commune in communes_by_department.get(department.id, [])
                 ]
@@ -511,6 +543,7 @@ class KiiraayeDashboard(models.Model):
                         "sections": section_department.get(department.id, 0),
                         "sections_open": section_department_open.get(department.id, 0),
                         "members": member_department.get(department.id, 0),
+                        "coordinator": department_coordinators.get(department.id, ""),
                         "communes": len(commune_rows),
                         "communes_occupied": sum(
                             1 for commune in commune_rows if commune["sections"]
