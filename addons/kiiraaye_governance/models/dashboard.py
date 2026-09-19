@@ -339,6 +339,26 @@ class KiiraayeDashboard(models.Model):
         "électeurs inscrits : DGE, carte électorale 2024."
     )
 
+    NATIONAL_REFERENCE_SOURCE = (
+        "Population nationale : somme des références régionales ANSD / RGPH-5 2023 ; "
+        "électeurs inscrits : somme des références régionales DGE 2024."
+    )
+
+    def _national_reference_stats(self):
+        population = sum(
+            item.get("population", 0)
+            for item in self.REGIONAL_REFERENCE_STATS.values()
+        )
+        electors = sum(
+            item.get("electors", 0)
+            for item in self.REGIONAL_REFERENCE_STATS.values()
+        )
+        return {
+            "population": population,
+            "electors": electors,
+        }
+
+
     @staticmethod
     def _normalize_geo_name(value):
         value = unicodedata.normalize("NFKD", value or "")
@@ -740,6 +760,19 @@ class KiiraayeDashboard(models.Model):
         member_domain = self._member_scope_domain(section_scope, filters)
         organisation_domain = self._organisation_domain(filters)
         effectif = self._effectif_overview()
+        national_reference = self._national_reference_stats()
+        national_population = national_reference["population"]
+        national_electors = national_reference["electors"]
+        national_member_population_ratio_pct = (
+            round(current_member_count / national_population * 100, 2)
+            if national_population
+            else 0.0
+        )
+        national_member_elector_ratio_pct = (
+            round(current_member_count / national_electors * 100, 2)
+            if national_electors
+            else 0.0
+        )
 
         # IMPORTANT :
         # Ne jamais charger des millions de recordsets dans le navigateur.
@@ -951,6 +984,13 @@ class KiiraayeDashboard(models.Model):
                 if section_scope == "national"
                 else "Sections diaspora"
             ),
+            "national_reference": {
+                "population": national_population,
+                "electors": national_electors,
+                "member_population_ratio_pct": national_member_population_ratio_pct,
+                "member_elector_ratio_pct": national_member_elector_ratio_pct,
+                "source": self.NATIONAL_REFERENCE_SOURCE,
+            },
             "geography_scope": {
                 "regions": {
                     "occupied": region_occupied,
