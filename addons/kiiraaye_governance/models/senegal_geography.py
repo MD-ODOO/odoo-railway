@@ -24,11 +24,11 @@ class ResCountrySenegalGeography(models.Model):
     _inherit = "res.country"
 
     kiiraaye_geo_village_page = fields.Integer(
-        string="Page villages GalsenAPI",
+        string="Lots de localités ANSD",
         default=0,
         readonly=True,
         copy=False,
-        help="Dernière page de villages GalsenAPI traitée avec succès.",
+        help="Dernier lot de localités ANSD traité avec succès.",
     )
     kiiraaye_geo_village_loaded = fields.Integer(
         string="Villages / unités locales chargés",
