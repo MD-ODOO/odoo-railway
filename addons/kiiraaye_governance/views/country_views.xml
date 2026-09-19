@@ -40,7 +40,7 @@
                                 icon="fa-map-marker">
                             <div class="o_field_widget o_stat_info">
                                 <span class="o_stat_text">Charger</span>
-                                <span class="o_stat_text">80 localités ANSD</span>
+                                <span class="o_stat_text">80 localités GalsenAPI</span>
                             </div>
                         </button>
                     </div>
@@ -49,7 +49,7 @@
                         <div class="mt-2">
                             <button name="action_load_senegal_quartiers"
                                     type="object"
-                                    string="Charger 80 localités ANSD"
+                                    string="Charger 80 localités GalsenAPI"
                                     class="btn btn-primary"
                                     icon="fa-map-marker"/>
                         </div>
