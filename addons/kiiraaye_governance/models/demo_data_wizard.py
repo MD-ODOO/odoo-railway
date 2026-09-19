@@ -117,14 +117,23 @@ class KiiraayeDemoDataWizard(models.TransientModel):
         Partisan = self.env["kiiraaye.partisan"].sudo()
         Section = self.env["kiiraaye.section"].sudo()
         Geo = self.env["kiiraaye.geographie"].sudo()
+        BureauLine = self.env["kiiraaye.bureau.ligne"].sudo()
 
         demo_members = Partisan.search([("is_demo_data", "=", True)])
         demo_sections = Section.search([("is_demo_data", "=", True)])
+        demo_bureau = BureauLine.search([
+            ("section_id", "in", demo_sections.ids),
+        ])
 
-        if demo_members:
-            demo_members.unlink()
+        # Les lignes de bureau référencent les membres : elles doivent être
+        # supprimées avant les sections/membres pour éviter les contraintes
+        # de clé étrangère et les références orphelines.
+        if demo_bureau:
+            demo_bureau.unlink()
         if demo_sections:
             demo_sections.unlink()
+        if demo_members:
+            demo_members.unlink()
 
         # Nettoyage des anciennes hiérarchies fictives générées par les
         # versions précédentes du wizard.
@@ -524,7 +533,124 @@ class KiiraayeDemoDataWizard(models.TransientModel):
                 if region_members:
                     coord.write({"member_ids": [(6, 0, region_members.ids)]})
 
-        total_sections = len(sections) + len(created_diaspora)
+        # ================================================================
+        # COORDINATIONS RÉGIONALES ET DÉPARTEMENTALES
+        # ================================================================
+        # Le tableau de bord affiche un coordonnateur à trois niveaux :
+        # régional, départemental et communal. Les sections communales ont
+        # déjà leurs lignes COORD ; on complète donc ici les deux niveaux
+        # supérieurs avec des sections de démonstration.
+        coord_position = Position.search(
+            [("code", "=", "COORD"), ("active", "=", True)],
+            limit=1,
+        )
+        regional_coord_sections = Section.browse()
+        departmental_coord_sections = Section.browse()
+        coordination_members = set()
+
+        def first_member_for(field_name, geo_id):
+            return created_members.filtered(
+                lambda member, field_name=field_name, geo_id=geo_id:
+                    getattr(member, field_name).id == geo_id
+            )[:1]
+
+        for region in regions:
+            existing = Section.search(
+                [
+                    ("active", "=", True),
+                    ("type_section", "=", "regionale"),
+                    ("country_id", "=", country.id),
+                    ("region_id", "=", region.id),
+                ],
+                limit=1,
+            )
+            if existing:
+                continue
+
+            coordinator_member = first_member_for("region_id", region.id)
+            if not coordinator_member:
+                continue
+
+            coordination = Section.create(
+                {
+                    "type_section": "regionale",
+                    "country_id": country.id,
+                    "region_id": region.id,
+                    "is_demo_data": True,
+                    "active": True,
+                    "state": "ouverte",
+                }
+            )
+            coordination.write({
+                "membre_ids": [(6, 0, [coordinator_member.id])],
+            })
+            if coord_position:
+                BureauLine.create(
+                    {
+                        "section_id": coordination.id,
+                        "position_id": coord_position.id,
+                        "partisan_id": coordinator_member.id,
+                        "date_debut": fields.Date.context_today(self),
+                        "active": True,
+                        "sequence": coord_position.sequence,
+                    }
+                )
+            regional_coord_sections |= coordination
+            coordination_members.add(coordinator_member.id)
+            self.env.cr.commit()
+
+        for department in departments:
+            existing = Section.search(
+                [
+                    ("active", "=", True),
+                    ("type_section", "=", "departementale"),
+                    ("country_id", "=", country.id),
+                    ("departement_id", "=", department.id),
+                ],
+                limit=1,
+            )
+            if existing:
+                continue
+
+            coordinator_member = first_member_for("departement_id", department.id)
+            if not coordinator_member:
+                continue
+
+            coordination = Section.create(
+                {
+                    "type_section": "departementale",
+                    "country_id": country.id,
+                    "region_id": ancestor(department, "niveau1").id,
+                    "departement_id": department.id,
+                    "is_demo_data": True,
+                    "active": True,
+                    "state": "ouverte",
+                }
+            )
+            coordination.write({
+                "membre_ids": [(6, 0, [coordinator_member.id])],
+            })
+            if coord_position:
+                BureauLine.create(
+                    {
+                        "section_id": coordination.id,
+                        "position_id": coord_position.id,
+                        "partisan_id": coordinator_member.id,
+                        "date_debut": fields.Date.context_today(self),
+                        "active": True,
+                        "sequence": coord_position.sequence,
+                    }
+                )
+            departmental_coord_sections |= coordination
+            coordination_members.add(coordinator_member.id)
+            self.env.cr.commit()
+
+        total_sections = (
+            len(sections)
+            + len(created_diaspora)
+            + len(regional_coord_sections)
+            + len(departmental_coord_sections)
+        )
         diaspora_names = ", ".join(
             record.country_id.name for record in created_diaspora
         )
@@ -535,12 +661,15 @@ class KiiraayeDemoDataWizard(models.TransientModel):
             "params": {
                 "title": _("Données de démonstration générées"),
                 "message": _(
-                    "%s sections communales rattachées aux vraies données géographiques "
-                    "du Sénégal, %s coordinations diaspora, %s membres, %s lignes de bureau "
-                    "et %s organisations de démonstration générés. Pays diaspora : %s."
+                    "%s sections communales, %s coordinations régionales, "
+                    "%s coordinations départementales, %s coordinations diaspora, "
+                    "%s membres, %s lignes de bureau et %s organisations de démonstration "
+                    "générés. Pays diaspora : %s."
                 )
                 % (
                     len(sections),
+                    len(regional_coord_sections),
+                    len(departmental_coord_sections),
                     len(created_diaspora),
                     self.member_count,
                     len(bureau_lines),
