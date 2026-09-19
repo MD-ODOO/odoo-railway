@@ -345,15 +345,17 @@ class ResCountrySenegalGeography(models.Model):
 
         return loaded, page - 1
 
-    def _load_senegal_quartiers(self, communes, minimum_units=100):
-        """Compatibilité : les quartiers/unités locales viennent des vrais villages GalsenAPI."""
-        limit = minimum_units if minimum_units and minimum_units > 0 else None
+    def _load_senegal_quartiers(
+        self, communes, minimum_units=80, start_page=1, max_pages=None
+    ):
+        """Compatibilité : charge les villages réels GalsenAPI par pages de 80."""
         return self._load_senegal_villages_galsen(
             communes,
             page_size=80,
-            limit=limit,
-        ), 0
-
+            limit=minimum_units if minimum_units else None,
+            start_page=start_page,
+            max_pages=max_pages,
+        )
 
     def _set_senegal_geography_status(self, message):
         self.sudo().write({
@@ -373,7 +375,7 @@ class ResCountrySenegalGeography(models.Model):
         })
 
     def action_load_senegal_quartiers(self):
-        """Charge une page de 80 villages réels sous les communes correspondantes."""
+        """Charge une seule page de 80 villages réels correspondants aux communes."""
         self.ensure_one()
         if self.code != "SN":
             raise UserError(_("Cette opération est réservée au Sénégal."))
@@ -396,10 +398,9 @@ class ResCountrySenegalGeography(models.Model):
         if not communes:
             raise UserError(_("Les identifiants GalsenAPI des communes sont introuvables."))
 
-        loaded, processed_page = self._load_senegal_villages_galsen(
+        loaded, processed_page = self._load_senegal_quartiers(
             communes,
-            page_size=80,
-            limit=80,
+            minimum_units=80,
             start_page=self.kiiraaye_geo_village_page + 1,
             max_pages=1,
         )
@@ -409,8 +410,8 @@ class ResCountrySenegalGeography(models.Model):
         })
 
         message = _(
-            "Page %s traitée : %s villages réels ajoutés. "
-            "Les villages sont rattachés à leur commune correspondante."
+            "Page %s traitée : %s villages réels ajoutés sur les communes correspondantes. "
+            "Relancez le bouton pour charger les 80 suivants."
         ) % (processed_page, loaded)
         self._set_senegal_geography_status(message)
         self.env.cr.commit()
@@ -438,14 +439,17 @@ class ResCountrySenegalGeography(models.Model):
         communes = self._load_senegal_communes(departments)
         # Une synchronisation administrative ne télécharge qu'une page de
         # 80 villages. Les pages suivantes sont chargées séparément.
-        quartiers, skipped_localities = self._load_senegal_quartiers(
+        quartiers, processed_page = self._load_senegal_quartiers(
             communes,
             minimum_units=80,
+            start_page=self.kiiraaye_geo_village_page + 1,
+            max_pages=1,
         )
         self.sudo().write({
-            "kiiraaye_geo_village_page": self.kiiraaye_geo_village_page + 1,
+            "kiiraaye_geo_village_page": processed_page,
             "kiiraaye_geo_village_loaded": self.kiiraaye_geo_village_loaded + quartiers,
         })
+        skipped_localities = 0
         self.env.cr.commit()
 
         self._set_senegal_geography_status(
