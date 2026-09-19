@@ -303,13 +303,12 @@ class ResCountrySenegalGeography(models.Model):
                 # n'est donc plus perdu simplement parce que le FK commune est nul.
                 parent = commune
                 if not parent and region_pcode:
-                    region_records = self.env["kiiraaye.geographie"].sudo().search([
+                    parent = self.env["kiiraaye.geographie"].sudo().search([
                         ("country_id", "=", self.id),
                         ("niveau", "=", "niveau1"),
                         ("active", "=", True),
-                        ("code", "=", region_pcode),
+                        ("source_uid", "=", f"GALSEN-REGION-{region_pcode}"),
                     ], limit=1)
-                    parent = region_records
 
                 if not parent:
                     skipped += 1
