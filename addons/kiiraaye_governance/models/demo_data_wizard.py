@@ -8,12 +8,12 @@ class KiiraayeDemoDataWizard(models.TransientModel):
 
     section_count = fields.Integer(
         string="Nombre de sections",
-        default=1000,
+        default=200,
         required=True,
     )
     member_count = fields.Integer(
         string="Nombre de membres",
-        default=10000,
+        default=2000,
         required=True,
     )
     quartier_prefix = fields.Char(
@@ -119,7 +119,8 @@ class KiiraayeDemoDataWizard(models.TransientModel):
             or len(quarters) < self.section_count
         ):
             country.with_context(
-                kiiraaye_minimum_local_units=self.section_count
+                kiiraaye_demo_fast=True,
+                kiiraaye_minimum_local_units=self.section_count,
             ).action_load_senegal_default_geography()
             regions = Geo.search(
                 [
@@ -362,9 +363,12 @@ class KiiraayeDemoDataWizard(models.TransientModel):
                 }
             )
 
-        Partisan.with_context(
-            kiiraaye_demo_generation=True
-        ).create(member_vals)
+        # Création par lots pour éviter une transaction HTTP trop lourde.
+        batch_size = 250
+        for start in range(0, len(member_vals), batch_size):
+            Partisan.with_context(
+                kiiraaye_demo_generation=True
+            ).create(member_vals[start:start + batch_size])
 
         total_sections = len(sections) + len(created_diaspora)
         diaspora_names = ", ".join(
