@@ -3,11 +3,12 @@
     <menuitem id="menu_kiiraaye_root" name="KIIRAAY" sequence="10" groups="kiiraaye_governance.group_kiiraaye_user"/>
     <menuitem id="menu_kiiraaye_dashboard" name="Tableau de bord" parent="menu_kiiraaye_root" action="action_kiiraaye_dashboard" sequence="5"/>
 
-    <menuitem id="menu_kiiraaye_organisation" name="Organisation" parent="menu_kiiraaye_root" sequence="10"/>
-    <menuitem id="menu_kiiraaye_sections" name="Sections / Coordinations" parent="menu_kiiraaye_organisation" action="action_kiiraaye_section" sequence="10"/>
-    <menuitem id="menu_kiiraaye_members" name="Membres" parent="menu_kiiraaye_organisation" action="action_kiiraaye_partisan" sequence="20"/>
-    <menuitem id="menu_kiiraaye_cadres" name="KIIRAAYE Organisation" parent="menu_kiiraaye_organisation" action="action_kiiraaye_organisation" sequence="30"/>
-    <menuitem id="menu_kiiraaye_attributions" name="Attributions de postes" parent="menu_kiiraaye_organisation" action="action_kiiraaye_attribution_poste" sequence="40"/>
+    <menuitem id="menu_kiiraaye_sections_root" name="Sections / Coordinations" parent="menu_kiiraaye_root" action="action_kiiraaye_section" sequence="10"/>
+    <menuitem id="menu_kiiraaye_members_root" name="Membres" parent="menu_kiiraaye_root" action="action_kiiraaye_partisan" sequence="20"/>
+    <menuitem id="menu_kiiraaye_organisations_root" name="Organisations" parent="menu_kiiraaye_root" action="action_kiiraaye_organisation" sequence="30"/>
+    <menuitem id="menu_kiiraaye_governance_root" name="Gouvernance" parent="menu_kiiraaye_root" sequence="40"/>
+    <menuitem id="menu_kiiraaye_attributions" name="Attributions de postes" parent="menu_kiiraaye_governance_root" action="action_kiiraaye_attribution_poste" sequence="10"/>
+    <menuitem id="menu_kiiraaye_cadres" name="Anciennes organisations" parent="menu_kiiraaye_governance_root" action="action_kiiraaye_cadre" sequence="20"/>
 
     <menuitem id="menu_kiiraaye_configuration" name="Configuration" parent="menu_kiiraaye_root" sequence="90" groups="kiiraaye_governance.group_kiiraaye_manager"/>
     <menuitem id="menu_kiiraaye_demo_data" name="Données de démonstration" parent="menu_kiiraaye_configuration" action="action_kiiraaye_demo_data_wizard" sequence="99"/>
