@@ -355,6 +355,10 @@
                                                         <div class="department-card__header">
                                                             <div>
                                                                 <strong><t t-esc="department.name"/></strong>
+                                                                <span>
+                                                                    Coordonnateur départemental :
+                                                                    <b><t t-esc="department.coordinator || 'Non renseigné'"/></b>
+                                                                </span>
                                                                 <span><t t-esc="formatNumber(department.members)"/> membres</span>
                                                             </div>
                                                             <div class="department-card__badges">
@@ -385,6 +389,10 @@
                                                                         <span class="commune-card__name">↳ <t t-esc="commune.name"/></span>
                                                                         <span><t t-esc="formatNumber(commune.sections)"/> sections</span>
                                                                         <span><t t-esc="formatNumber(commune.sections_open)"/> ouvertes</span>
+                                                                        <span>
+                                                                            Coordonnateur communal :
+                                                                            <b><t t-esc="commune.coordinator || 'Non renseigné'"/></b>
+                                                                        </span>
                                                                         <strong><t t-esc="formatNumber(commune.members)"/> membres</strong>
                                                                     </div>
                                                                 </t>
