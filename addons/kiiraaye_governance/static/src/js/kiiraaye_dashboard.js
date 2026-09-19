@@ -12,7 +12,8 @@ export class KiiraayeDashboard extends Component {
         this.action = useService("action");
         this.state = useState({
             loading: true,
-            view: "global",
+            view: "section",
+            sectionScope: "national",
             data: null,
             filters: {
                 section_id: false,
@@ -37,6 +38,7 @@ export class KiiraayeDashboard extends Component {
                 [{
                     ...this.state.filters,
                     view: this.state.view,
+                    section_scope: this.state.sectionScope,
                 }]
             );
         } catch (error) {
@@ -56,6 +58,52 @@ export class KiiraayeDashboard extends Component {
 
     async refresh() {
         await this.loadDashboard();
+    }
+
+    async setSectionScope(scope) {
+        if (this.state.sectionScope === scope) {
+            return;
+        }
+        this.state.sectionScope = scope;
+        // Les filtres géographiques sénégalais ne doivent pas polluer la vue diaspora.
+        if (scope === "diaspora") {
+            this.state.filters.geographie_id = false;
+        }
+        this.state.filters.section_id = false;
+        await this.loadDashboard();
+    }
+
+    coveragePercent(occupied, total) {
+        const denominator = Number(total) || 0;
+        return denominator ? (Number(occupied || 0) / denominator) * 100 : 0;
+    }
+
+    coverageClass(occupied, total) {
+        const ratio = this.coveragePercent(occupied, total);
+        if (!Number(total)) {
+            return "empty";
+        }
+        if (ratio >= 100) {
+            return "complete";
+        }
+        if (ratio >= 66) {
+            return "high";
+        }
+        if (ratio >= 33) {
+            return "medium";
+        }
+        return "low";
+    }
+
+    coverageLabel(occupied, total) {
+        return this.formatNumber(occupied) + " / " + this.formatNumber(total);
+    }
+
+    get maxDiasporaMembers() {
+        return Math.max(
+            ...(this.state.data?.diaspora?.countries || []).map((row) => row.members),
+            1
+        );
     }
 
     async onFilterChange(field, ev) {
