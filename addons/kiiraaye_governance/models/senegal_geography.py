@@ -252,11 +252,12 @@ class ResCountrySenegalGeography(models.Model):
             )
         return records
 
-    def _load_senegal_villages_galsen(self, communes, page_size=80, max_pages=None):
-        """Charge les villages réels de GalsenAPI sous leur commune correspondante.
+    def _load_senegal_villages_galsen(self, communes, page_size=80, limit=None):
+        """Charge les villages réels de GalsenAPI sous leur commune réelle.
 
-        Le téléchargement est paginé à 80 éléments afin d'éviter une réponse
-        trop lourde. Chaque village est rattaché à sa commune GalsenAPI réelle.
+        Le téléchargement est paginé à 80. ``limit`` permet au wizard de
+        démonstration de ne charger que le nombre nécessaire.
+        Sans limite, le référentiel local complet est chargé.
         """
         Geo = self.env["kiiraaye.geographie"].sudo()
         seen_uids = set(
@@ -269,10 +270,9 @@ class ResCountrySenegalGeography(models.Model):
 
         loaded = 0
         page = 1
-        while True:
-            if max_pages and page > max_pages:
-                break
+        target = int(limit) if limit else None
 
+        while True:
             payload = self._galsen_get(
                 f"{_GALSEN_API_BASE}/villages/",
                 {"page": page, "page_size": page_size},
@@ -285,7 +285,6 @@ class ResCountrySenegalGeography(models.Model):
                 village_id = item.get("id")
                 village_name = (item.get("nom") or "").strip()
                 commune_id = item.get("commune")
-
                 if not village_id or not village_name or not commune_id:
                     continue
 
@@ -306,7 +305,7 @@ class ResCountrySenegalGeography(models.Model):
                         "parent_id": commune.id,
                         "niveau": "niveau5",
                         "source_admin_level": "MANUAL",
-                        "designation_locale": "Village / Quartier / unité locale",
+                        "designation_locale": "Village / quartier / unité locale",
                         "source": "GalsenAPI (Galsenify, données publiques)",
                         "source_url": f"{_GALSEN_API_BASE}/villages/{village_id}/",
                         "active": True,
@@ -314,6 +313,9 @@ class ResCountrySenegalGeography(models.Model):
                 )
                 seen_uids.add(source_uid)
                 loaded += 1
+
+                if target and loaded >= target:
+                    return loaded
 
             if len(rows) < page_size:
                 break
