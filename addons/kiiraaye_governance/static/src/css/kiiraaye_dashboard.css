@@ -646,3 +646,309 @@
         grid-template-columns: 1fr;
     }
 }
+
+
+.kiiraaye-dashboard__effectif-overview {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.effectif-card {
+    position: relative;
+    overflow: hidden;
+    padding: 18px 20px;
+    background: var(--kiiraaye-surface);
+    border: 1px solid var(--kiiraaye-border);
+    border-radius: 16px;
+    box-shadow: 0 7px 24px rgba(30, 45, 60, .06);
+}
+
+.effectif-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 5px;
+    background: var(--kiiraaye-blue);
+}
+
+.effectif-card--diaspora::before {
+    background: var(--kiiraaye-red);
+}
+
+.effectif-card--total::before {
+    background: var(--kiiraaye-ink);
+}
+
+.effectif-card__label {
+    color: #607883;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.effectif-card__value {
+    margin-top: 4px;
+    color: var(--kiiraaye-ink);
+    font-size: 32px;
+    font-weight: 900;
+}
+
+.effectif-card__note {
+    margin-top: 5px;
+    color: #748892;
+    font-size: 11px;
+}
+
+.kiiraaye-dashboard__section-scope-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    margin-bottom: 16px;
+    padding: 5px;
+    overflow-x: auto;
+    background: var(--kiiraaye-surface);
+    border: 1px solid var(--kiiraaye-border);
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(23, 56, 74, .05);
+    scrollbar-width: thin;
+}
+
+.kiiraaye-dashboard__section-scope-tabs button {
+    flex: 0 0 auto;
+    border: 0;
+    background: transparent;
+    color: #607883;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.kiiraaye-dashboard__section-scope-tabs button.active {
+    color: #fff;
+    background: var(--kiiraaye-blue);
+    box-shadow: inset 0 -3px 0 var(--kiiraaye-red);
+}
+
+.kiiraaye-dashboard__section-scope-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.coverage-kpi--blue {
+    border-top-color: var(--kiiraaye-blue) !important;
+}
+
+.coverage-kpi--red {
+    border-top-color: var(--kiiraaye-red) !important;
+}
+
+.coverage-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 70px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.coverage-badge--low,
+.coverage-number--low {
+    color: var(--kiiraaye-red-dark);
+    background: var(--kiiraaye-red-soft);
+}
+
+.coverage-badge--medium,
+.coverage-number--medium {
+    color: #8A6412;
+    background: #FFF4D7;
+}
+
+.coverage-badge--high,
+.coverage-number--high {
+    color: var(--kiiraaye-blue-dark);
+    background: #DDF3F9;
+}
+
+.coverage-badge--complete,
+.coverage-number--complete {
+    color: #fff;
+    background: var(--kiiraaye-blue-dark);
+}
+
+.coverage-badge--empty,
+.coverage-number--empty {
+    color: #748892;
+    background: #EEF3F5;
+}
+
+.coverage-caption {
+    display: block;
+    margin-top: 3px;
+    color: #748892;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.coverage-row--low > span:first-child {
+    border-left: 3px solid var(--kiiraaye-red);
+    padding-left: 8px;
+}
+
+.coverage-row--medium > span:first-child {
+    border-left: 3px solid #D6A93A;
+    padding-left: 8px;
+}
+
+.coverage-row--high > span:first-child {
+    border-left: 3px solid var(--kiiraaye-blue);
+    padding-left: 8px;
+}
+
+.coverage-row--complete > span:first-child {
+    border-left: 3px solid var(--kiiraaye-blue-dark);
+    padding-left: 8px;
+}
+
+.coverage-number {
+    display: inline-flex;
+    min-width: 70px;
+    justify-content: center;
+    padding: 5px 9px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.region-details--vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.region-details__item--low {
+    border-left: 5px solid var(--kiiraaye-red);
+}
+
+.region-details__item--medium {
+    border-left: 5px solid #D6A93A;
+}
+
+.region-details__item--high {
+    border-left: 5px solid var(--kiiraaye-blue);
+}
+
+.region-details__item--complete {
+    border-left: 5px solid var(--kiiraaye-blue-dark);
+}
+
+.department-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.department-card {
+    padding: 13px 14px;
+    background: #FAFCFD;
+    border: 1px solid #DFEBEF;
+    border-radius: 12px;
+}
+
+.department-card__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.department-card__header strong,
+.department-card__header span {
+    display: block;
+}
+
+.department-card__header strong {
+    color: var(--kiiraaye-ink);
+    font-size: 13px;
+}
+
+.department-card__header span {
+    margin-top: 3px;
+    color: #748892;
+    font-size: 10px;
+}
+
+.department-card__badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.department-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 11px;
+    padding-top: 10px;
+    border-top: 1px solid #E7EFF2;
+}
+
+.commune-card {
+    display: grid;
+    grid-template-columns: minmax(180px, 2fr) 1fr 1fr 1.1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 10px;
+    background: #fff;
+    border: 1px solid #E7EFF2;
+    border-radius: 8px;
+    color: #617A86;
+    font-size: 11px;
+}
+
+.commune-card__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--kiiraaye-ink);
+    font-weight: 700;
+}
+
+.commune-card--empty {
+    display: block;
+    color: #7A8C94;
+    font-style: italic;
+}
+
+.data-row--diaspora-head,
+.data-row--diaspora {
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+}
+
+@media (max-width: 950px) {
+    .kiiraaye-dashboard__effectif-overview {
+        grid-template-columns: 1fr;
+    }
+
+    .department-card__header {
+        flex-direction: column;
+    }
+
+    .department-card__badges {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 650px) {
+    .commune-card {
+        grid-template-columns: 1fr;
+    }
+}
