@@ -68,7 +68,12 @@ class KiiraayeDemoDataWizard(models.TransientModel):
         return Geo.create(values)
 
     def _get_demo_hierarchy(self, country):
-        """Retourne la hiérarchie réelle Sénégal -> commune -> village."""
+        """Retourne uniquement la hiérarchie déjà chargée dans Odoo.
+
+        Le wizard de démonstration ne déclenche plus de chargement réseau.
+        Les villages/quartiers réels doivent être chargés au préalable depuis
+        la fiche du Sénégal, par pages de 80.
+        """
         Geo = self.env["kiiraaye.geographie"].sudo()
 
         regions = Geo.search([
@@ -88,66 +93,24 @@ class KiiraayeDemoDataWizard(models.TransientModel):
         ], order="name, id")
 
         if not regions or not departments or not communes:
-            # Initialisation du référentiel administratif réel si la base est vide.
-            country.action_load_senegal_default_geography()
-            regions = Geo.search([
-                ("country_id", "=", country.id),
-                ("niveau", "=", "niveau1"),
-                ("active", "=", True),
-            ], order="name, id")
-            departments = Geo.search([
-                ("country_id", "=", country.id),
-                ("niveau", "=", "niveau2"),
-                ("active", "=", True),
-            ], order="name, id")
-            communes = Geo.search([
-                ("country_id", "=", country.id),
-                ("niveau", "=", "niveau3"),
-                ("active", "=", True),
-            ], order="name, id")
+            raise UserError(_(
+                "Chargez d'abord les régions, départements et communes du Sénégal "
+                "dans le Référentiel géographique."
+            ))
 
-        if not regions or not departments or not communes:
-            raise UserError(_("Le référentiel réel du Sénégal est incomplet après synchronisation."))
-
-        # Ne pas fabriquer de quartier. On charge uniquement les villages
-        # réels correspondants aux communes depuis GalsenAPI, par pages de 80.
         quarters = Geo.search([
             ("country_id", "=", country.id),
             ("niveau", "=", "niveau5"),
             ("active", "=", True),
         ], order="parent_id, name, id")
 
-        existing_galsen_count = Geo.search_count([
-            ("country_id", "=", country.id),
-            ("niveau", "=", "niveau5"),
-            ("active", "=", True),
-            ("source_uid", "like", "GALSEN-VILLAGE-%"),
-        ])
-        if existing_galsen_count < self.section_count:
-            # Les villages GalsenAPI référencent la commune avec son
-            # identifiant GalsenAPI, conservé dans kiiraaye.geographie.code.
-            communes_map = {}
-            for record in communes:
-                try:
-                    communes_map[int(record.code)] = record
-                except (TypeError, ValueError):
-                    continue
-
-            if not communes_map:
-                raise UserError(
-                    _("Aucun identifiant GalsenAPI exploitable n'est disponible pour les communes du Sénégal.")
-                )
-
-            country._load_senegal_villages_galsen(
-                communes_map,
-                page_size=80,
-                limit=self.section_count,
-            )
-            quarters = Geo.search([
-                ("country_id", "=", country.id),
-                ("niveau", "=", "niveau5"),
-                ("active", "=", True),
-            ], order="parent_id, name, id")
+        if len(quarters) < self.section_count:
+            raise UserError(_(
+                "Chargez d'abord les villages / quartiers réels. "
+                "%s unités locales sont disponibles, %s sont nécessaires pour la démo. "
+                "Utilisez le bouton « Charger les 80 prochains villages / quartiers » "
+                "et recommencez la génération."
+            ) % (len(quarters), self.section_count))
 
         return regions, departments, communes, quarters
 
