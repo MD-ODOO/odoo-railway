@@ -441,6 +441,26 @@ class KiiraayeDashboard(models.Model):
         section_commune = grouped_counts(Section, section_active_domain, "commune_id")
         section_commune_open = grouped_counts(Section, section_open_domain, "commune_id")
 
+        regional_coordinators = {}
+        regional_coordination_domain = [
+            ("active", "=", True),
+            ("type_section", "=", "regionale"),
+            ("region_id", "!=", False),
+        ]
+        if senegal:
+            regional_coordination_domain.append(("country_id", "=", senegal.id))
+        regional_coordinations = Section.search(
+            regional_coordination_domain,
+            order="region_id, id",
+        )
+        for coordination in regional_coordinations:
+            if coordination.region_id.id not in regional_coordinators:
+                regional_coordinators[coordination.region_id.id] = (
+                    coordination.cordonnateur_id.nom_complet
+                    if coordination.cordonnateur_id
+                    else ""
+                )
+
         member_region = grouped_counts(Partisan, member_active_domain, "region_id")
         member_department = grouped_counts(Partisan, member_active_domain, "departement_id")
         member_commune = grouped_counts(Partisan, member_active_domain, "commune_id")
@@ -517,6 +537,7 @@ class KiiraayeDashboard(models.Model):
                     "sections": section_region.get(region.id, 0),
                     "sections_open": section_region_open.get(region.id, 0),
                     "members": region_members,
+                    "coordinator": regional_coordinators.get(region.id, ""),
                     "population": external["population"],
                     "electors": external["electors"],
                     "electoral_ratio_pct": external["electoral_ratio_pct"],
