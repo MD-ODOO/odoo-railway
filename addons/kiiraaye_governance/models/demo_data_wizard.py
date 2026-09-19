@@ -109,7 +109,15 @@ class KiiraayeDemoDataWizard(models.TransientModel):
             order="parent_id, name, id",
         )
 
-        if not regions or not departments or not communes:
+        # Les niveaux administratifs peuvent déjà être présents alors que
+        # les unités locales sont incomplètes. Dans ce cas, on recharge aussi
+        # le référentiel local afin de disposer d'assez d'unités réelles.
+        if (
+            not regions
+            or not departments
+            or not communes
+            or len(quarters) < self.section_count
+        ):
             country.action_load_senegal_default_geography()
             regions = Geo.search(
                 [
