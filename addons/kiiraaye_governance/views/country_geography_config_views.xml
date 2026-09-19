@@ -14,9 +14,9 @@
                                 string="1. Charger Régions / Départements / Communes"
                                 class="oe_highlight"
                                 icon="fa-refresh"/>
-                        <button name="action_load_senegal_quartiers"
+                        <button name="action_load_senegal_all_villages"
                                 type="object"
-                                string="2. Charger 80 localités GalsenAPI"
+                                string="2. Charger tous les villages GalsenAPI"
                                 class="oe_highlight"
                                 icon="fa-map-marker"/>
                     </div>
@@ -46,9 +46,9 @@
                                         string="Synchroniser le référentiel"
                                         class="oe_highlight"
                                         icon="fa-refresh"/>
-                                <button name="action_load_senegal_quartiers"
+                                <button name="action_load_senegal_all_villages"
                                         type="object"
-                                        string="Charger 80 localités GalsenAPI"
+                                        string="Charger tous les villages GalsenAPI"
                                         icon="fa-map-marker"
                                         invisible="code != 'SN'"/>
                             </div>
