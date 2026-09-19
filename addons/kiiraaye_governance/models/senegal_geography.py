@@ -269,7 +269,7 @@ class ResCountrySenegalGeography(models.Model):
 
         villages = 0
         page = 1
-        page_size = 200
+        page_size = 80
         seen_uids = set(
             Geo.search([
                 ("country_id", "=", self.id),
