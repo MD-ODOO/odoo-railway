@@ -5,6 +5,27 @@
         <field name="model">res.country</field>
         <field name="inherit_id" ref="kiiraaye_governance.view_kiiraaye_country_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//form/sheet" position="inside">
+                <div class="alert alert-info" role="alert" invisible="code != 'SN'">
+                    <strong>Référentiel géographique du Sénégal</strong>
+                    <div class="mt-2">
+                        <button name="action_sync_kiiraaye_geography"
+                                type="object"
+                                string="1. Charger Régions / Départements / Communes"
+                                class="oe_highlight"
+                                icon="fa-refresh"/>
+                        <button name="action_load_senegal_quartiers"
+                                type="object"
+                                string="2. Charger 80 localités ANSD"
+                                class="oe_highlight"
+                                icon="fa-map-marker"/>
+                    </div>
+                    <div class="mt-2">
+                        <span>Utilisez le deuxième bouton pour charger progressivement les quartiers / villages / hameaux réels.</span>
+                    </div>
+                </div>
+            </xpath>
+
             <xpath expr="//notebook" position="inside">
                 <page string="Configuration géographique">
                     <field name="code" invisible="1"/>
@@ -27,7 +48,7 @@
                                         icon="fa-refresh"/>
                                 <button name="action_load_senegal_quartiers"
                                         type="object"
-                                        string="Charger les 80 prochaines localités ANSD"
+                                        string="Charger 80 localités ANSD"
                                         icon="fa-map-marker"
                                         invisible="code != 'SN'"/>
                             </div>
