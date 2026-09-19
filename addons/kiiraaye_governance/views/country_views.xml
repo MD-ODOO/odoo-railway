@@ -40,7 +40,7 @@
                                 icon="fa-map-marker">
                             <div class="o_field_widget o_stat_info">
                                 <span class="o_stat_text">Charger</span>
-                                <span class="o_stat_text">80 localités GalsenAPI</span>
+                                <span class="o_stat_text">tous les villages GalsenAPI</span>
                             </div>
                         </button>
                     </div>
