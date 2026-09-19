@@ -13,7 +13,7 @@ class KiiraayeDemoDataWizard(models.TransientModel):
     )
     member_count = fields.Integer(
         string="Nombre de membres",
-        default=2000,
+        default=500,
         required=True,
     )
     quartier_prefix = fields.Char(
@@ -276,6 +276,10 @@ class KiiraayeDemoDataWizard(models.TransientModel):
         if not sections:
             raise UserError(_("Aucune section communale de démonstration n'a pu être créée."))
 
+        # Persister les sections avant la création des membres : une coupure
+        # de la connexion cliente ne doit pas annuler toute la préparation.
+        self.env.cr.commit()
+
         # Référentiel diaspora réel : pays de résidence existant dans Odoo.
         # Aucun faux pays n'est créé. Une coordination diaspora est créée par
         # pays, dans la limite de 10 pays représentatifs.
@@ -369,6 +373,7 @@ class KiiraayeDemoDataWizard(models.TransientModel):
             Partisan.with_context(
                 kiiraaye_demo_generation=True
             ).create(member_vals[start:start + batch_size])
+            self.env.cr.commit()
 
         total_sections = len(sections) + len(created_diaspora)
         diaspora_names = ", ".join(
