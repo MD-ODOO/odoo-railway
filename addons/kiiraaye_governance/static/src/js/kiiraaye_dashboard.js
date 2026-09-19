@@ -14,6 +14,7 @@ export class KiiraayeDashboard extends Component {
             loading: true,
             view: "section",
             sectionScope: "national",
+            selectedRegionId: false,
             data: null,
             filters: {
                 section_id: false,
@@ -101,6 +102,41 @@ export class KiiraayeDashboard extends Component {
 
     memberElectorGap(row) {
         return Number(row?.member_elector_ratio_pct || 0) - Number(row?.electoral_ratio_pct || 0);
+    }
+
+    async openRegionDetail(regionId) {
+        this.state.selectedRegionId = Number(regionId) || false;
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        const target = document.getElementById("kiiraaye-region-detail-" + this.state.selectedRegionId);
+        if (target) {
+            target.open = true;
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }
+
+    async openDepartmentDetail(regionId, departmentId) {
+        await this.openRegionDetail(regionId);
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        const target = document.getElementById(
+            "kiiraaye-department-detail-" + regionId + "-" + departmentId
+        );
+        if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }
+
+    async openCommuneDetail(regionId, departmentId, communeId) {
+        await this.openDepartmentDetail(regionId, departmentId);
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        const target = document.getElementById(
+            "kiiraaye-commune-detail-" + regionId + "-" + departmentId + "-" + communeId
+        );
+        if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
     }
 
     memberElectorGapClass(row) {
