@@ -459,8 +459,8 @@
 
 .data-row--region-head,
 .data-row--region {
-    min-width: 1250px;
-    grid-template-columns: 1.35fr .75fr .75fr .7fr .65fr .8fr 1fr 1fr .85fr .9fr;
+    min-width: 1420px;
+    grid-template-columns: 1.35fr .8fr .8fr .7fr .75fr .9fr 1fr 1fr .95fr .95fr 1fr;
 }
 
 .data-row--region-head {
@@ -953,4 +953,106 @@
     .commune-card {
         grid-template-columns: 1fr;
     }
+}
+
+
+.ratio-badge,
+.gap-badge {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 72px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.ratio-badge--reference {
+    color: #355665;
+    background: #EEF4F6;
+}
+
+.ratio-badge--above,
+.gap-badge--above {
+    color: var(--kiiraaye-blue-dark);
+    background: #DDF3F9;
+}
+
+.ratio-badge--near,
+.gap-badge--near {
+    color: #3F7182;
+    background: #EAF7FB;
+}
+
+.ratio-badge--notable,
+.gap-badge--notable {
+    color: #8A6412;
+    background: #FFF4D7;
+}
+
+.ratio-badge--large,
+.gap-badge--large {
+    color: var(--kiiraaye-red-dark);
+    background: var(--kiiraaye-red-soft);
+}
+
+.gap-caption {
+    display: block;
+    margin-top: 3px;
+    color: #748892;
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+.region-gap-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    margin: 0 0 14px;
+    padding: 10px 12px;
+    background: #F7FAFB;
+    border: 1px solid var(--kiiraaye-border);
+    border-radius: 10px;
+}
+
+.region-gap-legend__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #607883;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.region-gap-legend__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+
+.region-gap-legend__dot--above {
+    background: var(--kiiraaye-blue);
+}
+
+.region-gap-legend__dot--near {
+    background: #9ED8E8;
+}
+
+.region-gap-legend__dot--notable {
+    background: #D6A93A;
+}
+
+.region-gap-legend__dot--large {
+    background: var(--kiiraaye-red);
+}
+
+.region-detail-note {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-left: 3px solid var(--kiiraaye-blue);
+    background: #F4F9FB;
+    color: #667D88;
+    font-size: 10px;
+    line-height: 1.55;
 }
