@@ -320,12 +320,7 @@ class ResCountrySenegalGeography(models.Model):
     def _load_senegal_villages_galsen(
         self, communes, page_size=80, limit=None, start_page=1, max_pages=None
     ):
-        """Charge les villages réels de GalsenAPI par pages de 80.
-
-        ``communes`` doit être indexé avec l'identifiant GalsenAPI de la
-        commune. ``limit`` limite le nombre de nouveaux villages créés et
-        ``max_pages`` limite le nombre de pages API parcourues.
-        """
+        """Charge exclusivement les villages réels exposés par GalsenAPI."""
         Geo = self.env["kiiraaye.geographie"].sudo()
         seen_uids = set(
             Geo.search([
@@ -336,12 +331,14 @@ class ResCountrySenegalGeography(models.Model):
         )
 
         loaded = 0
+        skipped = 0
+        scanned = 0
         page = max(1, int(start_page or 1))
+        pages_processed = 0
         target = int(limit) if limit else None
-        processed_pages = 0
 
         while True:
-            if max_pages and processed_pages >= max_pages:
+            if max_pages and pages_processed >= max_pages:
                 break
 
             payload = self._galsen_get(
@@ -353,203 +350,77 @@ class ResCountrySenegalGeography(models.Model):
                 break
 
             for item in rows:
+                scanned += 1
+
                 village_id = item.get("id")
                 village_name = (item.get("nom") or "").strip()
                 commune_id = item.get("commune")
-                if not village_id or not village_name or not commune_id:
+                region_pcode = item.get("region")
+
+                if not village_id or not village_name:
+                    skipped += 1
                     continue
 
-                commune = communes.get(commune_id)
+                # Le serializer GalsenAPI expose commune comme clé primaire.
+                # On accepte aussi un objet {'id': ...} pour rester compatible
+                # avec d'éventuelles variantes de l'API.
+                if isinstance(commune_id, dict):
+                    commune_id = commune_id.get("id")
+
+                try:
+                    commune_id = int(commune_id)
+                except (TypeError, ValueError):
+                    commune_id = False
+
+                commune = communes.get(commune_id) if commune_id else False
                 if not commune:
+                    skipped += 1
                     continue
 
                 source_uid = f"GALSEN-VILLAGE-{village_id}"
                 if source_uid in seen_uids:
                     continue
 
-                self._upsert_senegal_geo(
-                    source_uid,
-                    {
-                        "name": village_name,
-                        "code": str(village_id),
-                        "country_id": self.id,
-                        "parent_id": commune.id,
-                        "niveau": "niveau5",
-                        "source_admin_level": "MANUAL",
-                        "designation_locale": "Village / quartier / unité locale",
-                        "source": "GalsenAPI (Galsenify, données publiques)",
-                        "source_url": f"{_GALSEN_API_BASE}/villages/{village_id}/",
-                        "active": True,
-                    },
-                )
+                values = {
+                    "name": village_name,
+                    "code": str(village_id),
+                    "country_id": self.id,
+                    "parent_id": commune.id,
+                    "niveau": "niveau5",
+                    "source_admin_level": "MANUAL",
+                    "designation_locale": "Village / quartier / unité locale",
+                    "source": "GalsenAPI (Galsenify, données publiques)",
+                    "source_url": f"{_GALSEN_API_BASE}/villages/{village_id}/",
+                    "active": True,
+                }
+
+                self._upsert_senegal_geo(source_uid, values)
                 seen_uids.add(source_uid)
                 loaded += 1
 
                 if target and loaded >= target:
-                    return loaded, page
+                    return loaded, page, skipped, scanned
 
-            processed_pages += 1
+            pages_processed += 1
             page += 1
 
             if len(rows) < page_size:
                 break
 
-        return loaded, page - 1
+        return loaded, max(start_page, page - 1), skipped, scanned
 
-    def _load_senegal_quartiers_ansd(
-        self, commune_records, limit=80, start_page=1
+    def _load_senegal_quartiers(
+        self, communes, minimum_units=80, start_page=1, max_pages=1
     ):
-        """Charge les localités réelles ANSD 2023, 80 nouvelles lignes par lot."""
-        Geo = self.env["kiiraaye.geographie"].sudo()
-
-        commune_index = {}
-        for commune in commune_records:
-            department = commune.parent_id
-            while department and department.niveau != "niveau2":
-                department = department.parent_id
-            if not department:
-                continue
-            region = department.parent_id
-            while region and region.niveau != "niveau1":
-                region = region.parent_id
-            if not region:
-                continue
-
-            key = (
-                self._normalize_match_label(region.name),
-                self._normalize_match_label(department.name),
-                self._normalize_match_label(commune.name),
-            )
-            commune_index[key] = commune
-
-        if not commune_index:
-            raise UserError(
-                _("Aucune commune exploitable n'est disponible pour rattacher les localités ANSD.")
-            )
-
-        existing = Geo.search([
-            ("country_id", "=", self.id),
-            ("niveau", "=", "niveau5"),
-            ("active", "=", True),
-        ])
-        existing_by_parent_name = {
-            (record.parent_id.id, self._normalize_match_label(record.name))
-            for record in existing
-            if record.parent_id
-        }
-
-        imported_uids = set(
-            Geo.search([
-                ("country_id", "=", self.id),
-                ("niveau", "=", "niveau5"),
-                ("source_uid", "like", "ANSD-RGPH5-LOCALITE-%"),
-            ]).mapped("source_uid")
+        """Compatibilité : source unique GalsenAPI, par lots de 80."""
+        return self._load_senegal_villages_galsen(
+            communes,
+            page_size=80,
+            limit=minimum_units if minimum_units else None,
+            start_page=start_page,
+            max_pages=max_pages,
         )
 
-        csv_text = self._ansd_get_csv()
-        if not csv_text.strip():
-            raise UserError(_("Le répertoire ANSD des localités est vide."))
-
-        sample = csv_text[:8192]
-        try:
-            delimiter = csv.Sniffer().sniff(sample, delimiters=",;\\t|").delimiter
-        except csv.Error:
-            delimiter = ";"
-
-        reader = csv.DictReader(io.StringIO(csv_text), delimiter=delimiter)
-        normalized_headers = {
-            self._normalize_csv_header(header): header
-            for header in (reader.fieldnames or [])
-            if header
-        }
-
-        if not normalized_headers:
-            raise UserError(_("Le fichier CSV ANSD ne contient pas d'en-têtes exploitables."))
-
-        def get_value(row, *candidates):
-            for candidate in candidates:
-                actual = normalized_headers.get(self._normalize_csv_header(candidate))
-                if actual:
-                    value = row.get(actual)
-                    if value not in (None, ""):
-                        return str(value).strip()
-            return ""
-
-        created = 0
-        skipped = 0
-        scanned = 0
-
-        for row in reader:
-            scanned += 1
-            region_name = get_value(row, "Région", "Region")
-            department_name = get_value(row, "Département", "Departement")
-            commune_name = get_value(
-                row, "COMMUNE", "Commune", "Commune / Municipalité"
-            )
-            locality_name = get_value(
-                row,
-                "QUARTIER/VILLAGE/HAMEAU",
-                "Quartier/Village/Hameau",
-                "Quartier / Village / Hameau",
-                "Quartier",
-                "Village",
-                "Hameau",
-            )
-            com_arrt_ville = get_value(
-                row, "COM ARRT/VILLE", "COM_ARRT/VILLE", "Com Arrt/Ville"
-            )
-
-            if not region_name or not department_name or not commune_name or not locality_name:
-                skipped += 1
-                continue
-
-            key = (
-                self._normalize_match_label(region_name),
-                self._normalize_match_label(department_name),
-                self._normalize_match_label(commune_name),
-            )
-            commune = commune_index.get(key)
-            if not commune:
-                skipped += 1
-                continue
-
-            source_uid = self._locality_uid(
-                department_name,
-                commune_name,
-                locality_name,
-                com_arrt_ville,
-            )
-
-            normalized_name = self._normalize_match_label(locality_name)
-            if source_uid in imported_uids or (
-                commune.id,
-                normalized_name,
-            ) in existing_by_parent_name:
-                continue
-
-            self._upsert_senegal_geo(
-                source_uid,
-                {
-                    "name": locality_name,
-                    "code": source_uid.split("-")[-1],
-                    "country_id": self.id,
-                    "parent_id": commune.id,
-                    "niveau": "niveau5",
-                    "source_admin_level": "MANUAL",
-                    "designation_locale": "Quartier / Village / Hameau",
-                    "source": _ANSD_LOCALITES_SOURCE,
-                    "source_url": _ANSD_LOCALITES_SOURCE_URL,
-                    "active": True,
-                },
-            )
-            imported_uids.add(source_uid)
-            existing_by_parent_name.add((commune.id, normalized_name))
-            created += 1
-
-            if created >= int(limit or 80):
-                break
-
-        return created, max(1, int(start_page or 1)), skipped, scanned
 
     def _set_senegal_geography_status(self, message):
         self.sudo().write({
@@ -569,7 +440,7 @@ class ResCountrySenegalGeography(models.Model):
         })
 
     def action_load_senegal_quartiers(self):
-        """Charge 80 nouvelles localités réelles du répertoire ANSD 2023."""
+        """Charge 80 nouveaux villages réels depuis GalsenAPI."""
         self.ensure_one()
         if self.code != "SN":
             raise UserError(_("Cette opération est réservée au Sénégal."))
@@ -583,49 +454,39 @@ class ResCountrySenegalGeography(models.Model):
 
         if not commune_records:
             raise UserError(
-                _("Les communes du Sénégal doivent être chargées avant les villages/quartiers.")
+                _("Les communes du Sénégal doivent être chargées avant les villages.")
             )
 
-        try:
-            loaded, processed_page, skipped, scanned = self._load_senegal_quartiers_ansd(
-                commune_records,
-                limit=80,
-                start_page=self.kiiraaye_geo_village_page + 1,
+        communes = {}
+        for record in commune_records:
+            try:
+                communes[int(record.code)] = record
+            except (TypeError, ValueError):
+                continue
+
+        if not communes:
+            raise UserError(
+                _("Les identifiants des communes GalsenAPI sont introuvables.")
             )
-        except UserError as exc:
-            self.sudo().write({
-                "kiiraaye_geo_status": "error",
-                "kiiraaye_geo_last_sync": fields.Datetime.now(),
-                "kiiraaye_geo_message": str(exc),
-            })
-            raise
+
+        loaded, processed_page, skipped, scanned = self._load_senegal_quartiers(
+            communes,
+            minimum_units=80,
+            start_page=self.kiiraaye_geo_village_page + 1,
+            max_pages=1,
+        )
 
         new_total = self.kiiraaye_geo_village_loaded + loaded
         self.sudo().write({
-            "kiiraaye_geo_village_page": processed_page if loaded else self.kiiraaye_geo_village_page,
+            "kiiraaye_geo_village_page": processed_page,
             "kiiraaye_geo_village_loaded": new_total,
         })
 
-        if loaded:
-            message = _(
-                "Lot %s : %s nouvelles localités ANSD chargées. "
-                "Total chargé : %s. %s lignes analysées, %s non rattachées/ignorées. "
-                "Relancez le bouton pour charger les 80 suivantes."
-            ) % (
-                processed_page,
-                loaded,
-                new_total,
-                scanned,
-                skipped,
-            )
-            notification_type = "success"
-        else:
-            message = _(
-                "Aucune nouvelle localité n'a été chargée. "
-                "Le répertoire ANSD a été parcouru pour les communes disponibles. "
-                "Total chargé : %s."
-            ) % new_total
-            notification_type = "warning"
+        message = _(
+            "GalsenAPI — page %s : %s villages chargés. "
+            "Total : %s. %s villages analysés, %s ignorés faute de rattachement à une commune locale. "
+            "Relancez le bouton pour charger la page suivante."
+        ) % (processed_page, loaded, new_total, scanned, skipped)
 
         self._set_senegal_geography_status(message)
         self.env.cr.commit()
@@ -634,9 +495,9 @@ class ResCountrySenegalGeography(models.Model):
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
-                "title": _("Localités ANSD"),
+                "title": _("Villages GalsenAPI"),
                 "message": message,
-                "type": notification_type,
+                "type": "success" if loaded else "warning",
                 "sticky": False,
             },
         }
