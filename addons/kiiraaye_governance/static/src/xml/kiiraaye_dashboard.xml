@@ -122,6 +122,9 @@
                             <p class="dashboard-note">
                                 Les indicateurs « X / Y » présentent le nombre d'unités couvertes par Kiiraay
                                 sur le nombre total d'unités présentes dans le référentiel du Sénégal.
+                                « Membres / électeurs » est comparé à titre descriptif au repère
+                                « Inscrits / population ». Cet écart ne constitue ni une probabilité
+                                électorale ni une prévision de résultat.
                             </p>
                         </div>
 
@@ -170,6 +173,7 @@
                                     <span>Électeurs 2024</span>
                                     <span>Inscrits / pop.</span>
                                     <span>Membres / électeurs</span>
+                                    <span>Écart au repère</span>
                                 </div>
                                 <t t-foreach="state.data.section_geography_overview" t-as="row" t-key="row.id">
                                     <div
@@ -200,8 +204,24 @@
                                         <span><strong><t t-esc="formatNumber(row.members)"/></strong></span>
                                         <span><t t-esc="formatNumber(row.population)"/></span>
                                         <span><t t-esc="formatNumber(row.electors)"/></span>
-                                        <span><t t-esc="formatPercent(row.electoral_ratio_pct)"/></span>
-                                        <span><t t-esc="formatPercent(row.member_elector_ratio_pct)"/></span>
+                                        <span>
+                                            <b class="ratio-badge ratio-badge--reference">
+                                                <t t-esc="formatPercent(row.electoral_ratio_pct)"/>
+                                            </b>
+                                        </span>
+                                        <span>
+                                            <b t-att-class="'ratio-badge ratio-badge--' + memberElectorGapClass(row)">
+                                                <t t-esc="formatPercent(row.member_elector_ratio_pct)"/>
+                                            </b>
+                                        </span>
+                                        <span>
+                                            <b t-att-class="'gap-badge gap-badge--' + memberElectorGapClass(row)">
+                                                <t t-esc="formatPercent(memberElectorGap(row))"/>
+                                            </b>
+                                            <small class="gap-caption">
+                                                <t t-esc="memberElectorGapLabel(row)"/>
+                                            </small>
+                                        </span>
                                     </div>
                                 </t>
                             </div>
@@ -246,6 +266,24 @@
                                                     </b>
                                                 </div>
                                                 <div><span>Sections</span><b><t t-esc="formatNumber(region.sections)"/></b></div>
+                                                <div>
+                                                    <span>Membres / électeurs</span>
+                                                    <b t-att-class="'ratio-badge ratio-badge--' + memberElectorGapClass(region)">
+                                                        <t t-esc="formatPercent(region.member_elector_ratio_pct)"/>
+                                                    </b>
+                                                </div>
+                                                <div>
+                                                    <span>Inscrits / population</span>
+                                                    <b class="ratio-badge ratio-badge--reference">
+                                                        <t t-esc="formatPercent(region.electoral_ratio_pct)"/>
+                                                    </b>
+                                                </div>
+                                                <div>
+                                                    <span>Écart au repère</span>
+                                                    <b t-att-class="'gap-badge gap-badge--' + memberElectorGapClass(region)">
+                                                        <t t-esc="formatPercent(memberElectorGap(region))"/>
+                                                    </b>
+                                                </div>
                                                 <div><span>Membres</span><b><t t-esc="formatNumber(region.members)"/></b></div>
                                             </div>
 
