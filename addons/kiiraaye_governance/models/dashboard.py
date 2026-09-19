@@ -463,6 +463,24 @@ class KiiraayeDashboard(models.Model):
             "department": defaultdict(list),
             "commune": defaultdict(list),
         }
+
+        def get_coordinator_name(coordination):
+            # Source principale : coordonnateur explicitement renseigné.
+            if coordination.cordonnateur_id:
+                return coordination.cordonnateur_id.nom_complet or ""
+
+            # Compatibilité avec les bureaux : si le champ coordonnateur
+            # n'est pas renseigné, le titulaire du poste COORD est utilisé.
+            bureau_line = coordination.bureau_ligne_ids.filtered(
+                lambda line: (
+                    line.active
+                    and line.position_id
+                    and line.position_id.code == "COORD"
+                    and line.partisan_id
+                )
+            )[:1]
+            return bureau_line.partisan_id.nom_complet if bureau_line else ""
+
         for level, domain in coordinator_domains.items():
             if senegal:
                 domain.append(("country_id", "=", senegal.id))
@@ -472,10 +490,11 @@ class KiiraayeDashboard(models.Model):
                 "commune": "commune_id",
             }[level]
             for coordination in Section.search(domain, order=f"{field_name}, id"):
-                if coordination.cordonnateur_id:
-                    coordinator_name = coordination.cordonnateur_id.nom_complet
-                    if coordinator_name and coordinator_name not in coordinator_maps[level][getattr(coordination, field_name).id]:
-                        coordinator_maps[level][getattr(coordination, field_name).id].append(
+                coordinator_name = get_coordinator_name(coordination)
+                geography = getattr(coordination, field_name)
+                if geography and coordinator_name:
+                    if coordinator_name not in coordinator_maps[level][geography.id]:
+                        coordinator_maps[level][geography.id].append(
                             coordinator_name
                         )
 
