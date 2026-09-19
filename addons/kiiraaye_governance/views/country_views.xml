@@ -45,7 +45,17 @@
                         </button>
                     </div>
                     <div class="alert alert-info" role="alert" invisible="code != 'SN'">
-                        <strong>Chargement des données géographiques du Sénégal</strong>
+                        <strong>Référentiel géographique du Sénégal</strong>
+                        <div class="mt-2">
+                            <field name="kiiraaye_geo_village_import_running" invisible="1"/>
+                            <field name="kiiraaye_geo_village_loaded"
+                                   string="Villages GalsenAPI chargés"
+                                   readonly="1"/>
+                            <field name="kiiraaye_geo_village_import_message"
+                                   string="État de l'import"
+                                   readonly="1"
+                                   nolabel="1"/>
+                        </div>
                         <div class="mt-2">
                             <button name="action_load_senegal_all_villages"
                                     type="object"
