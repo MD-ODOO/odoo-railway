@@ -23,6 +23,20 @@ _ANSD_LOCALITES_SOURCE = "ANSD - RGPH-5 2023, Répertoire des localités"
 class ResCountrySenegalGeography(models.Model):
     _inherit = "res.country"
 
+    kiiraaye_geo_village_page = fields.Integer(
+        string="Page villages GalsenAPI",
+        default=0,
+        readonly=True,
+        copy=False,
+        help="Dernière page de villages GalsenAPI traitée avec succès.",
+    )
+    kiiraaye_geo_village_loaded = fields.Integer(
+        string="Villages / unités locales chargés",
+        default=0,
+        readonly=True,
+        copy=False,
+    )
+
     @staticmethod
     def _galsen_get(url, params=None):
         import json
@@ -252,12 +266,14 @@ class ResCountrySenegalGeography(models.Model):
             )
         return records
 
-    def _load_senegal_villages_galsen(self, communes, page_size=80, limit=None):
-        """Charge les villages réels de GalsenAPI sous leur commune réelle.
+    def _load_senegal_villages_galsen(
+        self, communes, page_size=80, limit=None, start_page=1, max_pages=None
+    ):
+        """Charge les villages réels de GalsenAPI par pages de 80.
 
-        Le téléchargement est paginé à 80. ``limit`` permet au wizard de
-        démonstration de ne charger que le nombre nécessaire.
-        Sans limite, le référentiel local complet est chargé.
+        ``communes`` doit être indexé avec l'identifiant GalsenAPI de la
+        commune. ``limit`` limite le nombre de nouveaux villages créés et
+        ``max_pages`` limite le nombre de pages API parcourues.
         """
         Geo = self.env["kiiraaye.geographie"].sudo()
         seen_uids = set(
@@ -269,10 +285,14 @@ class ResCountrySenegalGeography(models.Model):
         )
 
         loaded = 0
-        page = 1
+        page = max(1, int(start_page or 1))
         target = int(limit) if limit else None
+        processed_pages = 0
 
         while True:
+            if max_pages and processed_pages >= max_pages:
+                break
+
             payload = self._galsen_get(
                 f"{_GALSEN_API_BASE}/villages/",
                 {"page": page, "page_size": page_size},
@@ -315,13 +335,15 @@ class ResCountrySenegalGeography(models.Model):
                 loaded += 1
 
                 if target and loaded >= target:
-                    return loaded
+                    return loaded, page
+
+            processed_pages += 1
+            page += 1
 
             if len(rows) < page_size:
                 break
-            page += 1
 
-        return loaded
+        return loaded, page - 1
 
     def _load_senegal_quartiers(self, communes, minimum_units=100):
         """Compatibilité : les quartiers/unités locales viennent des vrais villages GalsenAPI."""
@@ -351,7 +373,7 @@ class ResCountrySenegalGeography(models.Model):
         })
 
     def action_load_senegal_quartiers(self):
-        """Charge uniquement les quartiers/unités locales sous les communes existantes."""
+        """Charge une page de 80 villages réels sous les communes correspondantes."""
         self.ensure_one()
         if self.code != "SN":
             raise UserError(_("Cette opération est réservée au Sénégal."))
@@ -362,43 +384,43 @@ class ResCountrySenegalGeography(models.Model):
             ("niveau", "=", "niveau3"),
             ("active", "=", True),
         ])
-
-        # Si les communes n'existent pas encore, on construit d'abord le
-        # référentiel administratif. Le chargement des unités locales reste
-        # ensuite ciblé sur les communes.
         if not commune_records:
-            self.action_load_senegal_default_geography()
-            commune_records = Geo.search([
-                ("country_id", "=", self.id),
-                ("niveau", "=", "niveau3"),
-                ("active", "=", True),
-            ])
+            raise UserError(_("Les communes du Sénégal doivent être chargées avant les villages."))
 
-        communes = {record.id: record for record in commune_records}
-        # Le code des communes conserve l'identifiant GalsenAPI utilisé par
-        # les villages. On rend donc le dictionnaire accessible par les deux
-        # identifiants pour que le fallback fonctionne aussi depuis ce bouton.
+        communes = {}
         for record in commune_records:
             try:
-                api_id = int(record.code)
+                communes[int(record.code)] = record
             except (TypeError, ValueError):
                 continue
-            communes[api_id] = record
+        if not communes:
+            raise UserError(_("Les identifiants GalsenAPI des communes sont introuvables."))
 
-        loaded, skipped = self._load_senegal_quartiers(communes)
-        self._set_senegal_geography_status(
-            _(
-                "Chargement ANSD terminé : %s unités locales/quartiers rattachées aux %s communes. "
-                "%s lignes ignorées faute de rattachement exploitable."
-            ) % (loaded, len(communes), skipped)
+        loaded, processed_page = self._load_senegal_villages_galsen(
+            communes,
+            page_size=80,
+            limit=80,
+            start_page=self.kiiraaye_geo_village_page + 1,
+            max_pages=1,
         )
+        self.sudo().write({
+            "kiiraaye_geo_village_page": processed_page,
+            "kiiraaye_geo_village_loaded": self.kiiraaye_geo_village_loaded + loaded,
+        })
+
+        message = _(
+            "Page %s traitée : %s villages réels ajoutés. "
+            "Les villages sont rattachés à leur commune correspondante."
+        ) % (processed_page, loaded)
+        self._set_senegal_geography_status(message)
+        self.env.cr.commit()
 
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
-                "title": _("Quartiers / unités locales chargés"),
-                "message": self.kiiraaye_geo_message,
+                "title": _("Villages chargés"),
+                "message": message,
                 "type": "success",
                 "sticky": False,
             },
@@ -414,11 +436,17 @@ class ResCountrySenegalGeography(models.Model):
         departments = self._load_senegal_departments(regions)
         self._load_senegal_arrondissements(departments)
         communes = self._load_senegal_communes(departments)
-        minimum_units = self.env.context.get("kiiraaye_minimum_local_units", 100)
+        # Une synchronisation administrative ne télécharge qu'une page de
+        # 80 villages. Les pages suivantes sont chargées séparément.
         quartiers, skipped_localities = self._load_senegal_quartiers(
             communes,
-            minimum_units=minimum_units,
+            minimum_units=80,
         )
+        self.sudo().write({
+            "kiiraaye_geo_village_page": self.kiiraaye_geo_village_page + 1,
+            "kiiraaye_geo_village_loaded": self.kiiraaye_geo_village_loaded + quartiers,
+        })
+        self.env.cr.commit()
 
         self._set_senegal_geography_status(
             "Référentiel Sénégal chargé automatiquement : "
