@@ -281,21 +281,33 @@ class KiiraayeDemoDataWizard(models.TransientModel):
 
         all_demo_sections = sections | diaspora_sections.browse([r.id for r in created_diaspora])
 
+        # Identités de démonstration synthétiques : prénoms et noms de
+        # famille courants au Sénégal. Elles ne correspondent pas à des
+        # personnes réelles et aucun numéro d'identité réel n'est généré.
         senegal_first_names = [
             "Mamadou", "Ibrahima", "Abdoulaye", "Ousmane", "Cheikh",
             "Moussa", "Samba", "Modou", "Lamine", "Pape",
             "Moustapha", "Babacar", "Serigne", "Boubacar", "Amadou",
             "Alioune", "Malick", "Issa", "Souleymane", "El Hadji",
+            "Khadim", "Tidiane", "Mountaga", "Mor", "Papa",
+            "Matar", "Baye", "Ndiaga", "Seydou", "Birame",
             "Aïssatou", "Fatou", "Mariama", "Aminata", "Khady",
             "Astou", "Ndeye", "Sokhna", "Mame", "Coumba",
             "Awa", "Bineta", "Adama", "Rokhaya", "Diary",
-            "Nabou", "Khadim", "Fama", "Seynabou", "Marème",
+            "Nabou", "Fama", "Seynabou", "Marème", "Ndèye",
+            "Kiné", "Hawa", "Anta", "Penda", "Yacine",
+            "Sokhna Awa", "Mame Diarra", "Fatoumata", "Aminata", "Binta",
+            "Aïda", "Nafissatou", "Mame Fama", "Ramatoulaye", "Sokhna Khady",
         ]
         senegal_last_names = [
             "Diop", "Ndiaye", "Fall", "Ba", "Sow", "Sy", "Gueye",
             "Diallo", "Cissé", "Faye", "Seck", "Sarr", "Mbaye",
-            "Thiam", "Kane", "Niang", "Lo", "Dieng", "Dieng",
-            "Diouf", "Camara", "Touré", "Samb", "Ndao", "Wade",
+            "Thiam", "Kane", "Niang", "Lo", "Dieng", "Diouf",
+            "Camara", "Touré", "Samb", "Ndao", "Wade", "Gningue",
+            "Ndour", "Dia", "Kébé", "Sagna", "Bâ", "Tall",
+            "Dème", "Badiane", "Coly", "Sonko", "Baldé", "Tine",
+            "Kandé", "Mané", "Fofana", "Konaté", "Barry", "Sène",
+            "Seck", "Cissé", "Gomis", "Sylla", "Khouma", "Sall",
         ]
 
         member_vals = []
