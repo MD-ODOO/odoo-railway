@@ -380,7 +380,11 @@ class KiiraayeDashboard(models.Model):
         member_domain=None,
     ):
         """Vue région > département > commune avec sections et membres."""
+        senegal = self.env["res.country"].search([("code", "=", "SN")], limit=1)
         active_geo_domain = [("active", "=", True)]
+        if senegal:
+            active_geo_domain.append(("country_id", "=", senegal.id))
+
         regions = Geography.search(
             active_geo_domain + [("niveau", "=", "niveau1")],
             order="name, id",
@@ -850,7 +854,7 @@ class KiiraayeDashboard(models.Model):
         section_filter_rows = [
             {"id": section.id, "name": section.name}
             for section in Section.search(
-                [("active", "=", True)],
+                self._section_scope_domain(section_scope, {}),
                 order="name",
                 limit=self.MAX_FILTER_SECTION_ROWS,
             )
