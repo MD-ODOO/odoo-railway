@@ -20,6 +20,13 @@ class KiiraayeDashboard(models.Model):
     MAX_BROWSER_GEOGRAPHY_ROWS = 25
     MAX_FILTER_SECTION_ROWS = 1_000
 
+    NATIONAL_SECTION_TYPES = (
+        "communale",
+        "departementale",
+        "regionale",
+        "nationale",
+    )
+
     name = fields.Char(
         string="Nom",
         required=True,
@@ -138,6 +145,102 @@ class KiiraayeDashboard(models.Model):
                 ("quartier_id", "child_of", geography_id),
             ]
         return domain
+
+    def _section_scope_domain(self, scope, filters=None):
+        filters = filters or {}
+        country = self.env["res.country"].search([("code", "=", "SN")], limit=1)
+
+        if scope == "diaspora":
+            domain = [
+                ("active", "=", True),
+                ("type_section", "=", "diaspora"),
+            ]
+            if country:
+                domain.append(("country_id", "!=", country.id))
+        else:
+            domain = [
+                ("active", "=", True),
+                ("type_section", "in", self.NATIONAL_SECTION_TYPES),
+            ]
+            if country:
+                domain.append(("country_id", "=", country.id))
+
+        if filters.get("section_id"):
+            domain.append(("id", "=", int(filters["section_id"])))
+
+        geography_id = filters.get("geographie_id")
+        if geography_id and scope == "national":
+            geography_id = int(geography_id)
+            domain += [
+                "|",
+                "|",
+                "|",
+                ("region_id", "child_of", geography_id),
+                ("departement_id", "child_of", geography_id),
+                ("commune_id", "child_of", geography_id),
+                ("quartier_id", "child_of", geography_id),
+            ]
+        return domain
+
+    def _member_scope_domain(self, scope, filters=None):
+        filters = filters or {}
+        country = self.env["res.country"].search([("code", "=", "SN")], limit=1)
+        domain = [("active", "=", True)]
+
+        if scope == "diaspora":
+            domain.append(("section_ids.type_section", "=", "diaspora"))
+            if country:
+                domain.append(("section_ids.country_id", "!=", country.id))
+        else:
+            domain.append((
+                "section_ids.type_section",
+                "in",
+                self.NATIONAL_SECTION_TYPES,
+            ))
+            if country:
+                domain.append(("section_ids.country_id", "=", country.id))
+
+        if filters.get("section_id"):
+            domain.append(("section_ids", "=", int(filters["section_id"])))
+        if filters.get("organisation_id"):
+            domain.append(("organisation_ids", "=", int(filters["organisation_id"])))
+
+        geography_id = filters.get("geographie_id")
+        if geography_id and scope == "national":
+            geography_id = int(geography_id)
+            domain += [
+                "|",
+                "|",
+                "|",
+                ("region_id", "child_of", geography_id),
+                ("departement_id", "child_of", geography_id),
+                ("commune_id", "child_of", geography_id),
+                ("quartier_id", "child_of", geography_id),
+            ]
+        return domain
+
+    def _effectif_overview(self):
+        Partisan = self.env["kiiraaye.partisan"]
+        national_count = Partisan.search_count(self._member_scope_domain("national"))
+        diaspora_count = Partisan.search_count(self._member_scope_domain("diaspora"))
+
+        total_domain = [
+            ("active", "=", True),
+            "|",
+            "&",
+            ("section_ids.type_section", "in", self.NATIONAL_SECTION_TYPES),
+            ("section_ids.country_id.code", "=", "SN"),
+            "&",
+            ("section_ids.type_section", "=", "diaspora"),
+            ("section_ids.country_id.code", "!=", "SN"),
+        ]
+        total_count = Partisan.search_count(total_domain)
+
+        return {
+            "national": int(national_count or 0),
+            "diaspora": int(diaspora_count or 0),
+            "total": int(total_count or 0),
+        }
 
     def _organisation_domain(self, filters):
         domain = [("active", "=", True)]
@@ -268,7 +371,14 @@ class KiiraayeDashboard(models.Model):
             "reference_available": True,
         }
 
-    def _get_section_geography_overview(self, Geography, Section, Partisan):
+    def _get_section_geography_overview(
+        self,
+        Geography,
+        Section,
+        Partisan,
+        section_domain=None,
+        member_domain=None,
+    ):
         """Vue région > département > commune avec sections et membres."""
         active_geo_domain = [("active", "=", True)]
         regions = Geography.search(
@@ -296,9 +406,9 @@ class KiiraayeDashboard(models.Model):
                 if record
             }
 
-        section_active_domain = [("active", "=", True)]
+        section_active_domain = list(section_domain or [("active", "=", True)])
         section_open_domain = section_active_domain + [("state", "=", "ouverte")]
-        member_active_domain = [("active", "=", True)]
+        member_active_domain = list(member_domain or [("active", "=", True)])
 
         section_region = grouped_counts(Section, section_active_domain, "region_id")
         section_region_open = grouped_counts(Section, section_open_domain, "region_id")
@@ -367,7 +477,16 @@ class KiiraayeDashboard(models.Model):
                     "id": region.id,
                     "name": region.name,
                     "departments": len(department_rows),
+                    "departments_occupied": sum(
+                        1 for item in department_rows if item["sections"]
+                    ),
                     "communes": sum(item["communes"] for item in department_rows),
+                    "communes_occupied": sum(
+                        1
+                        for item in department_rows
+                        for commune in item["commune_rows"]
+                        if commune["sections"]
+                    ),
                     "sections": section_region.get(region.id, 0),
                     "sections_open": section_region_open.get(region.id, 0),
                     "members": region_members,
@@ -382,6 +501,41 @@ class KiiraayeDashboard(models.Model):
             )
 
         return overview
+
+    def _get_diaspora_country_overview(
+        self,
+        Section,
+        Partisan,
+        section_domain,
+        member_domain,
+    ):
+        grouped = Section._read_group(
+            section_domain,
+            ["country_id"],
+            ["__count"],
+            order="__count DESC",
+        )
+
+        rows = []
+        for country, section_count in grouped:
+            if not country:
+                continue
+            member_count = Partisan.search_count(
+                list(member_domain) + [
+                    ("section_ids.country_id", "=", country.id),
+                ]
+            )
+            rows.append({
+                "id": country.id,
+                "name": country.name,
+                "sections": int(section_count or 0),
+                "members": int(member_count or 0),
+            })
+
+        rows.sort(
+            key=lambda row: (-row["members"], -row["sections"], row["name"])
+        )
+        return rows, len(rows)
 
     def _get_top_member_geographies(self, Partisan):
         domain = [("active", "=", True)]
