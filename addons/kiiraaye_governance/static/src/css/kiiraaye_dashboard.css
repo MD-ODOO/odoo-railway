@@ -487,6 +487,53 @@
     overflow: hidden;
 }
 
+
+.data-row--region {
+    cursor: pointer;
+    transition: background .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+
+.data-row--region:hover {
+    background: #F4F9FB;
+    box-shadow: inset 3px 0 0 var(--kiiraaye-blue);
+}
+
+.data-row--region:focus,
+.data-row--region:active,
+.region-row--selected {
+    background: #EAF7FB;
+}
+
+.region-details__item--selected {
+    box-shadow: 0 0 0 2px rgba(0, 143, 181, .16), 0 7px 24px rgba(30, 45, 60, .08);
+}
+
+.department-card--clickable {
+    cursor: pointer;
+    transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+
+.department-card--clickable:hover {
+    border-color: #BBDDE7;
+    box-shadow: 0 4px 14px rgba(0, 143, 181, .08);
+}
+
+.department-card--clickable:active,
+.commune-card--clickable:active {
+    transform: translateY(1px);
+}
+
+.commune-card--clickable {
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease, box-shadow .15s ease;
+}
+
+.commune-card--clickable:hover {
+    border-color: #C9E3EA;
+    background: #F8FCFD;
+    box-shadow: 0 3px 10px rgba(23, 56, 74, .05);
+}
+
 .region-details__item > summary {
     cursor: pointer;
     display: flex;
