@@ -68,102 +68,115 @@ class KiiraayeDemoDataWizard(models.TransientModel):
         return Geo.create(values)
 
     def _get_demo_hierarchy(self, country):
-        """Retourne le référentiel réel du Sénégal.
+        """Retourne la hiérarchie administrative réelle et prépare les unités locales de démo.
 
-        Les données géographiques proviennent du chargement ANSD/GalsenAPI
-        du module. Aucune région, aucun département ni aucune commune
-        artificiels ne sont créés par le générateur de démo.
+        La génération de démonstration ne dépend plus d'un appel réseau externe.
+        Les régions, départements et communes proviennent du référentiel Sénégal
+        déjà chargé dans Odoo. Les unités locales supplémentaires nécessaires à
+        la démo sont de simples emplacements techniques de démonstration créés
+        sous ces communes réelles.
         """
         Geo = self.env["kiiraaye.geographie"].sudo()
 
-        regions = Geo.search(
-            [
+        regions = Geo.search([
+            ("country_id", "=", country.id),
+            ("niveau", "=", "niveau1"),
+            ("active", "=", True),
+        ], order="name, id")
+        departments = Geo.search([
+            ("country_id", "=", country.id),
+            ("niveau", "=", "niveau2"),
+            ("active", "=", True),
+        ], order="name, id")
+        communes = Geo.search([
+            ("country_id", "=", country.id),
+            ("niveau", "=", "niveau3"),
+            ("active", "=", True),
+        ], order="name, id")
+
+        if not regions or not departments or not communes:
+            # Le chargement administratif reste autorisé ici, mais une seule
+            # fois. Le générateur ne charge jamais le lourd référentiel local.
+            country.action_load_senegal_default_geography()
+            regions = Geo.search([
                 ("country_id", "=", country.id),
                 ("niveau", "=", "niveau1"),
                 ("active", "=", True),
-            ],
-            order="name, id",
-        )
-        departments = Geo.search(
-            [
+            ], order="name, id")
+            departments = Geo.search([
                 ("country_id", "=", country.id),
                 ("niveau", "=", "niveau2"),
                 ("active", "=", True),
-            ],
-            order="name, id",
-        )
-        communes = Geo.search(
-            [
+            ], order="name, id")
+            communes = Geo.search([
                 ("country_id", "=", country.id),
                 ("niveau", "=", "niveau3"),
                 ("active", "=", True),
-            ],
-            order="name, id",
-        )
-        quarters = Geo.search(
-            [
-                ("country_id", "=", country.id),
-                ("niveau", "=", "niveau5"),
-                ("active", "=", True),
-            ],
-            order="parent_id, name, id",
-        )
-
-        # Les niveaux administratifs peuvent déjà être présents alors que
-        # les unités locales sont incomplètes. Dans ce cas, on recharge aussi
-        # le référentiel local afin de disposer d'assez d'unités réelles.
-        if (
-            not regions
-            or not departments
-            or not communes
-            or len(quarters) < self.section_count
-        ):
-            country.with_context(
-                kiiraaye_demo_fast=True,
-                kiiraaye_minimum_local_units=self.section_count,
-            ).action_load_senegal_default_geography()
-            regions = Geo.search(
-                [
-                    ("country_id", "=", country.id),
-                    ("niveau", "=", "niveau1"),
-                    ("active", "=", True),
-                ],
-                order="name, id",
-            )
-            departments = Geo.search(
-                [
-                    ("country_id", "=", country.id),
-                    ("niveau", "=", "niveau2"),
-                    ("active", "=", True),
-                ],
-                order="name, id",
-            )
-            communes = Geo.search(
-                [
-                    ("country_id", "=", country.id),
-                    ("niveau", "=", "niveau3"),
-                    ("active", "=", True),
-                ],
-                order="name, id",
-            )
-            quarters = Geo.search(
-                [
-                    ("country_id", "=", country.id),
-                    ("niveau", "=", "niveau5"),
-                    ("active", "=", True),
-                ],
-                order="parent_id, name, id",
-            )
+            ], order="name, id")
 
         if not regions or not departments or not communes:
             raise UserError(
                 _(
                     "Le référentiel réel du Sénégal est incomplet. "
-                    "Chargez d'abord le référentiel ANSD/GalsenAPI."
+                    "Chargez les régions, départements et communes avant de générer la démo."
                 )
             )
 
-        return regions, departments, communes, quarters
+        quarters = Geo.search([
+            ("country_id", "=", country.id),
+            ("niveau", "=", "niveau5"),
+            ("active", "=", True),
+        ], order="parent_id, name, id")
+
+        # Les quartiers réels éventuellement présents sont réutilisés en premier.
+        selected = list(quarters[:self.section_count])
+        selected_ids = {record.id for record in selected}
+
+        # Pour une démonstration rapide, compléter avec des unités locales
+        # techniques sous les communes réelles. Aucune donnée fictive n'est
+        # utilisée pour les régions/départements/communes.
+        required = self.section_count - len(selected)
+        if required > 0:
+            existing_demo_locales = Geo.search([
+                ("country_id", "=", country.id),
+                ("niveau", "=", "niveau5"),
+                ("active", "=", True),
+                ("source_uid", "like", "DEMO-KIIRAAYE-LOCAL-%"),
+            ], order="id")
+
+            next_number = len(existing_demo_locales) + 1
+            commune_index = 0
+            batch = []
+            for offset in range(required):
+                commune = communes[commune_index % len(communes)]
+                commune_index += 1
+                source_uid = f"DEMO-KIIRAAYE-LOCAL-{next_number + offset:06d}"
+                batch.append({
+                    "name": f"Unité locale démo {next_number + offset:06d} — {commune.name}",
+                    "code": f"DEMO-{next_number + offset:06d}",
+                    "country_id": country.id,
+                    "parent_id": commune.id,
+                    "niveau": "niveau5",
+                    "source_admin_level": "MANUAL",
+                    "designation_locale": "Unité locale de démonstration",
+                    "source": "Kiiraaye - Données de démonstration",
+                    "source_uid": source_uid,
+                    "active": True,
+                })
+                if len(batch) == 80:
+                    selected.extend(Geo.create(batch))
+                    batch = []
+            if batch:
+                selected.extend(Geo.create(batch))
+
+        if len(selected) < self.section_count:
+            raise UserError(
+                _(
+                    "Impossible de préparer les %s unités locales nécessaires à la démonstration."
+                ) % self.section_count
+            )
+
+        return regions, departments, communes, Geo.browse([record.id for record in selected[:self.section_count]])
 
     def _clear_existing_demo(self):
         Partisan = self.env["kiiraaye.partisan"].sudo()
