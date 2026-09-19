@@ -292,19 +292,34 @@ class ResCountrySenegalGeography(models.Model):
                     commune_id = False
 
                 commune = communes.get(commune_id) if commune_id else False
-                if not commune:
-                    skipped += 1
-                    continue
 
                 source_uid = f"GALSEN-VILLAGE-{village_id}"
                 if source_uid in seen_uids:
+                    continue
+
+                # GalsenAPI peut exposer un village sans commune rattachée.
+                # On conserve tout de même le village dans le référentiel,
+                # rattaché à la région lorsqu'elle est identifiable. Le village
+                # n'est donc plus perdu simplement parce que le FK commune est nul.
+                parent = commune
+                if not parent and region_pcode:
+                    region_records = self.env["kiiraaye.geographie"].sudo().search([
+                        ("country_id", "=", self.id),
+                        ("niveau", "=", "niveau1"),
+                        ("active", "=", True),
+                        ("code", "=", region_pcode),
+                    ], limit=1)
+                    parent = region_records
+
+                if not parent:
+                    skipped += 1
                     continue
 
                 values = {
                     "name": village_name,
                     "code": str(village_id),
                     "country_id": self.id,
-                    "parent_id": commune.id,
+                    "parent_id": parent.id,
                     "niveau": "niveau5",
                     "source_admin_level": "MANUAL",
                     "designation_locale": "Village / quartier / unité locale",
@@ -403,7 +418,7 @@ class ResCountrySenegalGeography(models.Model):
 
         message = _(
             "GalsenAPI — page %s : %s villages chargés. "
-            "Total : %s. %s villages analysés, %s ignorés faute de rattachement à une commune locale. "
+            "Total : %s. %s villages analysés, %s ignorés car aucune région exploitable n'a été trouvée. "
             "Relancez le bouton pour charger la page suivante."
         ) % (processed_page, loaded, new_total, scanned, skipped)
 
