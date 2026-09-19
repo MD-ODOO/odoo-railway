@@ -284,7 +284,9 @@
                                         <summary>
                                             <span class="region-details__name"><t t-esc="region.name"/></span>
                                             <span class="region-details__meta">
-                                                Départements
+                                                Coordonnateur
+                                                <b><t t-esc="region.coordinator || 'Non renseigné'"/></b>
+                                                · Départements
                                                 <b><t t-esc="coverageLabel(region.departments_occupied, region.departments)"/></b>
                                                 · Communes
                                                 <b><t t-esc="coverageLabel(region.communes_occupied, region.communes)"/></b>
@@ -329,6 +331,10 @@
                                                     </b>
                                                 </div>
                                                 <div><span>Membres</span><b><t t-esc="formatNumber(region.members)"/></b></div>
+                                                <div class="region-indicator--coordinator">
+                                                    <span>Coordonnateur régional</span>
+                                                    <b><t t-esc="region.coordinator || 'Non renseigné'"/></b>
+                                                </div>
                                             </div>
 
                                             <div class="region-detail-note">
