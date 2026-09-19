@@ -760,6 +760,18 @@ class KiiraayeDashboard(models.Model):
         member_domain = self._member_scope_domain(section_scope, filters)
         organisation_domain = self._organisation_domain(filters)
         effectif = self._effectif_overview()
+
+        # IMPORTANT :
+        # Ne jamais charger des millions de recordsets dans le navigateur.
+        # Les gros volumes sont comptés/agrégés en base et seuls des petits
+        # échantillons sont envoyés à OWL.
+        section_count = Section.search_count(section_domain)
+        open_section_count = Section.search_count(
+            section_domain + [("state", "=", "ouverte")]
+        )
+        organisation_count = Organisation.search_count(organisation_domain)
+
+        current_member_count = Partisan.search_count(member_domain)
         national_reference = self._national_reference_stats()
         national_population = national_reference["population"]
         national_electors = national_reference["electors"]
@@ -773,18 +785,6 @@ class KiiraayeDashboard(models.Model):
             if national_electors
             else 0.0
         )
-
-        # IMPORTANT :
-        # Ne jamais charger des millions de recordsets dans le navigateur.
-        # Les gros volumes sont comptés/agrégés en base et seuls des petits
-        # échantillons sont envoyés à OWL.
-        section_count = Section.search_count(section_domain)
-        open_section_count = Section.search_count(
-            section_domain + [("state", "=", "ouverte")]
-        )
-        organisation_count = Organisation.search_count(organisation_domain)
-
-        current_member_count = Partisan.search_count(member_domain)
         total_member_count = Partisan.search_count([])
         inactive_member_count = Partisan.search_count([("active", "=", False)])
 
