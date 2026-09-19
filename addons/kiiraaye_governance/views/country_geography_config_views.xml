@@ -16,7 +16,7 @@
                                 icon="fa-refresh"/>
                         <button name="action_load_senegal_quartiers"
                                 type="object"
-                                string="2. Charger 80 localités ANSD"
+                                string="2. Charger 80 localités GalsenAPI"
                                 class="oe_highlight"
                                 icon="fa-map-marker"/>
                     </div>
@@ -48,7 +48,7 @@
                                         icon="fa-refresh"/>
                                 <button name="action_load_senegal_quartiers"
                                         type="object"
-                                        string="Charger 80 localités ANSD"
+                                        string="Charger 80 localités GalsenAPI"
                                         icon="fa-map-marker"
                                         invisible="code != 'SN'"/>
                             </div>
