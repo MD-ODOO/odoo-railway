@@ -23,6 +23,37 @@
                         <field name="code"/>
                         <field name="phone_code"/>
                     </group>
+                    <separator string="Référentiel géographique"/>
+                    <div class="oe_button_box" name="kiiraaye_geo_action_box" invisible="code != 'SN'">
+                        <button name="action_sync_kiiraaye_geography"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-refresh">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Synchroniser</span>
+                                <span class="o_stat_text">Régions / Communes</span>
+                            </div>
+                        </button>
+                        <button name="action_load_senegal_quartiers"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-map-marker">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Charger</span>
+                                <span class="o_stat_text">80 localités ANSD</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="alert alert-info" role="alert" invisible="code != 'SN'">
+                        <strong>Chargement des données géographiques du Sénégal</strong>
+                        <div class="mt-2">
+                            <button name="action_load_senegal_quartiers"
+                                    type="object"
+                                    string="Charger 80 localités ANSD"
+                                    class="btn btn-primary"
+                                    icon="fa-map-marker"/>
+                        </div>
+                    </div>
                     <notebook>
                         <page string="Géographie Kiiraaye">
                             <field name="kiiraaye_geographie_ids" domain="[('niveau', '!=', 'pays')]">
