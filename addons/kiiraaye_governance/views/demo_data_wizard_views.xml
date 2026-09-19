@@ -12,8 +12,8 @@
 
                     <div class="alert alert-info" role="alert">
                         <strong>Jeu de données recommandé :</strong>
-                        1 000 sections, 10 000 membres et des quartiers nommés
-                        « Quartier 1 », « Quartier 2 », « Quartier 3 », etc.
+                        200 sections, 1 200 membres, les cinq postes standards
+                        du bureau, une organisation racine et plusieurs coordinations.
                     </div>
 
                     <group>
@@ -21,8 +21,7 @@
                             <field name="section_count"/>
                             <field name="member_count"/>
                         </group>
-                        <group string="Nommage">
-                            <field name="quartier_prefix"/>
+                        <group string="Données">
                             <field name="replace_existing"/>
                         </group>
                     </group>
