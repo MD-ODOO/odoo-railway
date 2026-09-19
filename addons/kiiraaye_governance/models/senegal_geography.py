@@ -87,11 +87,10 @@ class ResCountrySenegalGeography(models.Model):
             with urlopen(request, timeout=180, context=ssl_context) as response:
                 return response.read().decode("utf-8-sig")
 
-        except ssl.SSLCertVerificationError as secure_exc:
-            # Certains environnements Railway ont un magasin CA incomplet
-            # pour la chaîne actuelle de ansd.sn. On retente uniquement
-            # ce téléchargement avec la validation de certificat désactivée.
-            # Cette voie de secours est limitée à la source ANSD publique.
+        except (ssl.SSLCertVerificationError, ssl.SSLError) as secure_exc:
+            # Sur certains environnements Railway, urllib encapsule parfois
+            # l'erreur SSL dans une URLError. On retente alors uniquement
+            # cette URL ANSD publique avec un contexte sans vérification.
             _logger.warning(
                 "Certificat SSL ANSD non vérifiable, tentative de secours: %s",
                 secure_exc,
@@ -103,11 +102,33 @@ class ResCountrySenegalGeography(models.Model):
             except (HTTPError, URLError, TimeoutError, UnicodeDecodeError, ssl.SSLError) as fallback_exc:
                 raise UserError(
                     _("Impossible de récupérer le Répertoire des localités ANSD depuis %s.\n\n"
-                      "La connexion sécurisée a échoué (%s) et la tentative de secours a également échoué (%s).")
+                      "La connexion SSL a échoué (%s) et la tentative de secours a également échoué (%s).")
                     % (_ANSD_LOCALITES_URL, secure_exc, fallback_exc)
                 )
 
-        except (HTTPError, URLError, TimeoutError, UnicodeDecodeError, ssl.SSLError) as exc:
+        except URLError as exc:
+            reason = getattr(exc, "reason", None)
+            if isinstance(reason, ssl.SSLError) or "CERTIFICATE_VERIFY_FAILED" in str(reason):
+                _logger.warning(
+                    "URLError contenant une erreur de certificat ANSD, tentative de secours: %s",
+                    exc,
+                )
+                try:
+                    insecure_context = ssl._create_unverified_context()
+                    with urlopen(request, timeout=180, context=insecure_context) as response:
+                        return response.read().decode("utf-8-sig")
+                except (HTTPError, URLError, TimeoutError, UnicodeDecodeError, ssl.SSLError) as fallback_exc:
+                    raise UserError(
+                        _("Impossible de récupérer le Répertoire des localités ANSD depuis %s.\n\n"
+                          "La connexion SSL a échoué (%s) et la tentative de secours a également échoué (%s).")
+                        % (_ANSD_LOCALITES_URL, exc, fallback_exc)
+                    )
+            raise UserError(
+                _("Impossible de récupérer le Répertoire des localités ANSD depuis %s.\n\n%s")
+                % (_ANSD_LOCALITES_URL, exc)
+            )
+
+        except (HTTPError, TimeoutError, UnicodeDecodeError, ssl.SSLError) as exc:
             raise UserError(
                 _("Impossible de récupérer le Répertoire des localités ANSD depuis %s.\n\n%s")
                 % (_ANSD_LOCALITES_URL, exc)
