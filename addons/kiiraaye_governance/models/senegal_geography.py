@@ -66,8 +66,17 @@ class ResCountrySenegalGeography(models.Model):
     def _ansd_get_csv():
         from urllib.error import HTTPError, URLError
         from urllib.request import Request, urlopen
+        import ssl
 
         try:
+            # Railway peut disposer d'un magasin de certificats système incomplet.
+            # On utilise le bundle CA de certifi lorsqu'il est disponible.
+            try:
+                import certifi
+                ssl_context = ssl.create_default_context(cafile=certifi.where())
+            except ImportError:
+                ssl_context = ssl.create_default_context()
+
             request = Request(
                 _ANSD_LOCALITES_URL,
                 headers={
@@ -75,9 +84,9 @@ class ResCountrySenegalGeography(models.Model):
                     "Accept": "text/csv,application/csv;q=0.9,*/*;q=0.8",
                 },
             )
-            with urlopen(request, timeout=180) as response:
+            with urlopen(request, timeout=180, context=ssl_context) as response:
                 return response.read().decode("utf-8-sig")
-        except (HTTPError, URLError, TimeoutError, UnicodeDecodeError) as exc:
+        except (HTTPError, URLError, TimeoutError, UnicodeDecodeError, ssl.SSLError) as exc:
             raise UserError(
                 _("Impossible de récupérer le Répertoire des localités ANSD depuis %s.\n\n%s")
                 % (_ANSD_LOCALITES_URL, exc)
