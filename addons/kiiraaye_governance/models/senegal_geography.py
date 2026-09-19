@@ -252,24 +252,13 @@ class ResCountrySenegalGeography(models.Model):
             )
         return records
 
-    def _load_senegal_quartiers_galsen_fast(self, communes, minimum_units):
-        """Charge uniquement le nombre d'unités locales nécessaire pour la démo."""
+    def _load_senegal_villages_galsen(self, communes, page_size=80, max_pages=None):
+        """Charge les villages réels de GalsenAPI sous leur commune correspondante.
+
+        Le téléchargement est paginé à 80 éléments afin d'éviter une réponse
+        trop lourde. Chaque village est rattaché à sa commune GalsenAPI réelle.
+        """
         Geo = self.env["kiiraaye.geographie"].sudo()
-        target = max(0, int(minimum_units or 0))
-        if target <= 0:
-            return 0, 0
-
-        existing_count = Geo.search_count([
-            ("country_id", "=", self.id),
-            ("niveau", "=", "niveau5"),
-            ("active", "=", True),
-        ])
-        if existing_count >= target:
-            return 0, 0
-
-        villages = 0
-        page = 1
-        page_size = 80
         seen_uids = set(
             Geo.search([
                 ("country_id", "=", self.id),
@@ -278,10 +267,12 @@ class ResCountrySenegalGeography(models.Model):
             ]).mapped("source_uid")
         )
 
-        # On parcourt les pages GalsenAPI jusqu'à atteindre le besoin.
-        # Contrairement à _galsen_get_all(), il n'est jamais nécessaire de
-        # télécharger l'ensemble des milliers de villages.
-        while existing_count + villages < target:
+        loaded = 0
+        page = 1
+        while True:
+            if max_pages and page > max_pages:
+                break
+
             payload = self._galsen_get(
                 f"{_GALSEN_API_BASE}/villages/",
                 {"page": page, "page_size": page_size},
@@ -294,6 +285,7 @@ class ResCountrySenegalGeography(models.Model):
                 village_id = item.get("id")
                 village_name = (item.get("nom") or "").strip()
                 commune_id = item.get("commune")
+
                 if not village_id or not village_name or not commune_id:
                     continue
 
@@ -314,24 +306,20 @@ class ResCountrySenegalGeography(models.Model):
                         "parent_id": commune.id,
                         "niveau": "niveau5",
                         "source_admin_level": "MANUAL",
-                        "designation_locale": "Village / unité locale",
+                        "designation_locale": "Village / Quartier / unité locale",
                         "source": "GalsenAPI (Galsenify, données publiques)",
                         "source_url": f"{_GALSEN_API_BASE}/villages/{village_id}/",
                         "active": True,
                     },
                 )
                 seen_uids.add(source_uid)
-                villages += 1
-
-                if existing_count + villages >= target:
-                    break
+                loaded += 1
 
             if len(rows) < page_size:
                 break
-
             page += 1
 
-        return villages, 0
+        return loaded
 
     def _load_senegal_quartiers(self, communes, minimum_units=100):
         """Charge les unités locales réelles sous les communes.
