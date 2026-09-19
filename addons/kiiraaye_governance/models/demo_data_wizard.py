@@ -13,7 +13,7 @@ class KiiraayeDemoDataWizard(models.TransientModel):
     )
     member_count = fields.Integer(
         string="Nombre de membres",
-        default=500,
+        default=1200,
         required=True,
     )
     quartier_prefix = fields.Char(
@@ -70,9 +70,9 @@ class KiiraayeDemoDataWizard(models.TransientModel):
     def _get_demo_hierarchy(self, country):
         """Retourne uniquement la hiérarchie déjà chargée dans Odoo.
 
-        Le wizard de démonstration ne déclenche plus de chargement réseau.
-        Les villages/quartiers réels doivent être chargés au préalable depuis
-        la fiche du Sénégal, par pages de 80.
+        Le wizard de démonstration ne déclenche aucun chargement réseau.
+        Les villages/quartiers réels doivent être chargés au préalable via
+        l'import GalsenAPI en arrière-plan.
         """
         Geo = self.env["kiiraaye.geographie"].sudo()
 
@@ -106,10 +106,9 @@ class KiiraayeDemoDataWizard(models.TransientModel):
 
         if len(quarters) < self.section_count:
             raise UserError(_(
-                "Chargez d'abord les villages / quartiers réels. "
+                "Chargez d'abord les villages / quartiers réels depuis GalsenAPI. "
                 "%s unités locales sont disponibles, %s sont nécessaires pour la démo. "
-                "Utilisez le bouton « Charger les 80 prochains villages / quartiers » "
-                "et recommencez la génération."
+                "Relancez l'import des villages puis recommencez la génération."
             ) % (len(quarters), self.section_count))
 
         return regions, departments, communes, quarters
@@ -143,6 +142,12 @@ class KiiraayeDemoDataWizard(models.TransientModel):
         demo_locales = Geo.search([
             ("source_uid", "like", "DEMO-KIIRAAYE-LOCAL-%")
         ])
+        demo_organisations = self.env["kiiraaye.organisation"].sudo().search([
+            ("code", "like", "DEMO-KIIRAAYE-ORG-%")
+        ])
+        demo_professions = self.env["kiiraaye.profession"].sudo().search([
+            ("code", "like", "DEMO-KIIRAAYE-PROF-%")
+        ])
 
         if demo_quartiers:
             demo_quartiers.unlink()
@@ -150,6 +155,10 @@ class KiiraayeDemoDataWizard(models.TransientModel):
             demo_locales.unlink()
         if demo_geo:
             demo_geo.unlink()
+        if demo_organisations:
+            demo_organisations.unlink()
+        if demo_professions:
+            demo_professions.unlink()
 
     def action_generate(self):
         self.ensure_one()
@@ -161,6 +170,49 @@ class KiiraayeDemoDataWizard(models.TransientModel):
         regions, departments, communes, quarters = self._get_demo_hierarchy(country)
         Section = self.env["kiiraaye.section"].sudo()
         Partisan = self.env["kiiraaye.partisan"].sudo()
+        BureauLine = self.env["kiiraaye.bureau.ligne"].sudo()
+        Position = self.env["kiiraaye.position"].sudo()
+        Organisation = self.env["kiiraaye.organisation"].sudo()
+        OrganisationType = self.env["kiiraaye.organisation.type"].sudo()
+        Profession = self.env["kiiraaye.profession"].sudo()
+
+        positions = Position.search(
+            [
+                ("code", "in", ("COORD", "ORG", "COM", "MASS", "ELEC")),
+                ("active", "=", True),
+            ],
+            order="sequence, id",
+        )
+        if len(positions) < 5:
+            raise UserError(
+                _("Les cinq postes standards du bureau doivent être configurés avant la démo.")
+            )
+
+        profession_specs = [
+            ("Agriculteur", "AGRI"),
+            ("Enseignant", "ENS"),
+            ("Commerçant", "COMMERCE"),
+            ("Entrepreneur", "ENT"),
+            ("Salarié", "SAL"),
+            ("Artisan", "ART"),
+            ("Technicien", "TECH"),
+            ("Profession libérale", "LIB"),
+        ]
+        professions = Profession.browse()
+        for name, short_code in profession_specs:
+            code = f"DEMO-KIIRAAYE-PROF-{short_code}"
+            profession = Profession.search([("code", "=", code)], limit=1)
+            if not profession:
+                profession = Profession.create(
+                    {
+                        "name": name,
+                        "code": code,
+                        "sequence": len(professions) + 10,
+                        "active": True,
+                        "description": "Profession synthétique utilisée uniquement pour les données de démonstration.",
+                    }
+                )
+            professions |= profession
 
         # Les sections communales sont distribuées sur les vrais quartiers
         # ANSD déjà présents dans le référentiel du Sénégal.
@@ -306,11 +358,13 @@ class KiiraayeDemoDataWizard(models.TransientModel):
         ]
 
         member_vals = []
+        member_section_targets = []
         if not all_demo_sections:
             raise UserError(_("Aucune section de démonstration n'est disponible."))
 
         for index in range(1, self.member_count + 1):
             section = all_demo_sections[(index - 1) % len(all_demo_sections)]
+            member_section_targets.append(section)
             first_name = senegal_first_names[(index - 1) % len(senegal_first_names)]
             last_name = senegal_last_names[
                 ((index - 1) // len(senegal_first_names)) % len(senegal_last_names)
@@ -330,6 +384,11 @@ class KiiraayeDemoDataWizard(models.TransientModel):
                         if section.commune_id
                         else section.country_id.name
                     ),
+                    "profession_id": (
+                        professions[(index - 1) % len(professions)].id
+                        if professions
+                        else False
+                    ),
                     "active": True,
                     "is_demo_data": True,
                     "section_ids": [(6, 0, [section.id])],
@@ -337,12 +396,102 @@ class KiiraayeDemoDataWizard(models.TransientModel):
             )
 
         # Création par lots pour éviter une transaction HTTP trop lourde.
+        # On conserve la correspondance membre -> section pour construire
+        # immédiatement les bureaux de démonstration.
+        created_members = Partisan.browse()
+        section_member_map = {}
         batch_size = 80
         for start in range(0, len(member_vals), batch_size):
-            Partisan.with_context(
+            batch_members = Partisan.with_context(
                 kiiraaye_demo_generation=True
             ).create(member_vals[start:start + batch_size])
+            created_members |= batch_members
+            for member, section in zip(
+                batch_members,
+                member_section_targets[start:start + batch_size],
+            ):
+                section_member_map.setdefault(section.id, []).append(member)
             self.env.cr.commit()
+
+        # Les cinq postes standards sont matérialisés directement dans le
+        # bureau pour que la démo soit immédiatement exploitable, sans
+        # fabriquer de faux PV.
+        standard_positions = positions[:5]
+        bureau_vals = []
+        bureau_sections = sections
+        for section in bureau_sections:
+            members = section_member_map.get(section.id, [])
+            for position, member in zip(standard_positions, members[:5]):
+                bureau_vals.append(
+                    {
+                        "section_id": section.id,
+                        "position_id": position.id,
+                        "partisan_id": member.id,
+                        "date_debut": fields.Date.context_today(self),
+                        "active": True,
+                        "sequence": position.sequence,
+                    }
+                )
+
+        bureau_lines = BureauLine.browse()
+        for start in range(0, len(bureau_vals), batch_size):
+            bureau_lines |= BureauLine.create(bureau_vals[start:start + batch_size])
+            self.env.cr.commit()
+
+        # Organisations de démonstration : une organisation racine et des
+        # coordinations rattachées à quelques régions réellement importées.
+        organisation_type = OrganisationType.search(
+            [("code", "=", "CADRE"), ("active", "=", True)],
+            limit=1,
+        )
+        coordination_type = OrganisationType.search(
+            [("code", "=", "COORDINATION"), ("active", "=", True)],
+            limit=1,
+        )
+        demo_organisations = Organisation.browse()
+        root_org = Organisation.browse()
+        if organisation_type:
+            root_org = Organisation.search(
+                [("code", "=", "DEMO-KIIRAAYE-ORG-NATIONAL")],
+                limit=1,
+            )
+            if not root_org:
+                root_org = Organisation.create(
+                    {
+                        "name": "Organisation nationale — Démo",
+                        "code": "DEMO-KIIRAAYE-ORG-NATIONAL",
+                        "type_id": organisation_type.id,
+                        "sequence": 1,
+                        "active": True,
+                        "description": "Organisation synthétique utilisée pour la démonstration du module.",
+                    }
+                )
+            demo_organisations |= root_org
+            if created_members:
+                root_org.write({"member_ids": [(6, 0, created_members.ids)]})
+
+        if coordination_type:
+            for index, region in enumerate(regions[:5], 1):
+                code = f"DEMO-KIIRAAYE-ORG-REGION-{index}"
+                coord = Organisation.search([("code", "=", code)], limit=1)
+                if not coord:
+                    coord = Organisation.create(
+                        {
+                            "name": f"Coordination régionale — {region.name}",
+                            "code": code,
+                            "type_id": coordination_type.id,
+                            "parent_id": root_org.id if root_org else False,
+                            "sequence": index + 1,
+                            "active": True,
+                            "description": "Coordination synthétique utilisée pour la démonstration.",
+                        }
+                    )
+                demo_organisations |= coord
+                region_members = created_members.filtered(
+                    lambda member, region_id=region.id: member.region_id.id == region_id
+                )
+                if region_members:
+                    coord.write({"member_ids": [(6, 0, region_members.ids)]})
 
         total_sections = len(sections) + len(created_diaspora)
         diaspora_names = ", ".join(
@@ -356,13 +505,15 @@ class KiiraayeDemoDataWizard(models.TransientModel):
                 "title": _("Données de démonstration générées"),
                 "message": _(
                     "%s sections communales rattachées aux vraies données géographiques "
-                    "du Sénégal, %s coordinations diaspora et %s membres générés. "
-                    "Pays diaspora : %s."
+                    "du Sénégal, %s coordinations diaspora, %s membres, %s lignes de bureau "
+                    "et %s organisations de démonstration générés. Pays diaspora : %s."
                 )
                 % (
                     len(sections),
                     len(created_diaspora),
                     self.member_count,
+                    len(bureau_lines),
+                    len(demo_organisations),
                     diaspora_names or _("aucun"),
                 ),
                 "type": "success",
@@ -378,7 +529,7 @@ class KiiraayeDemoDataWizard(models.TransientModel):
             "tag": "display_notification",
             "params": {
                 "title": _("Données de démonstration supprimées"),
-                "message": _("Les sections, membres et quartiers de démonstration ont été supprimés."),
+                "message": _("Les sections, membres, bureaux, organisations et professions de démonstration ont été supprimés. Les données géographiques réelles restent intactes."),
                 "type": "success",
                 "sticky": False,
             },
