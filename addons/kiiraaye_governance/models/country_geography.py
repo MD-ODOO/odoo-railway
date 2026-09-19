@@ -56,6 +56,7 @@ class ResCountryGeography(models.Model):
         required=True,
         ondelete={
             "geoboundaries": "set default",
+            "galsenapi": "set default",
             "manuel": "set default",
         },
     )
