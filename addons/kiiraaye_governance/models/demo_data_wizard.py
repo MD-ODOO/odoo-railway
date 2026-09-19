@@ -170,7 +170,23 @@ class KiiraayeDemoDataWizard(models.TransientModel):
         # Nettoyage des anciennes hiérarchies fictives générées par les
         # versions précédentes du wizard.
         demo_geo = Geo.search([
-            ("source_uid", "i    def action_generate(self):
+            ("source_uid", "in", [
+                "DEMO-KIIRAAYE-REGION",
+                "DEMO-KIIRAAYE-DEPARTEMENT",
+                "DEMO-KIIRAAYE-COMMUNE",
+                "DEMO-KIIRAAYE-PAYS",
+            ])
+        ])
+        demo_quartiers = Geo.search([
+            ("source_uid", "like", "DEMO-KIIRAAYE-QUARTIER-%")
+        ])
+
+        if demo_quartiers:
+            demo_quartiers.unlink()
+        if demo_geo:
+            demo_geo.unlink()
+
+    def action_generate(self):
         self.ensure_one()
         country = self._get_demo_country()
 
