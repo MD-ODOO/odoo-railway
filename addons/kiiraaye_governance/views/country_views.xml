@@ -34,7 +34,7 @@
                                 <span class="o_stat_text">Régions / Communes</span>
                             </div>
                         </button>
-                        <button name="action_load_senegal_quartiers"
+                        <button name="action_load_senegal_all_villages"
                                 type="object"
                                 class="oe_stat_button"
                                 icon="fa-map-marker">
@@ -47,9 +47,9 @@
                     <div class="alert alert-info" role="alert" invisible="code != 'SN'">
                         <strong>Chargement des données géographiques du Sénégal</strong>
                         <div class="mt-2">
-                            <button name="action_load_senegal_quartiers"
+                            <button name="action_load_senegal_all_villages"
                                     type="object"
-                                    string="Charger 80 localités GalsenAPI"
+                                    string="Charger tous les villages GalsenAPI"
                                     class="btn btn-primary"
                                     icon="fa-map-marker"/>
                         </div>
