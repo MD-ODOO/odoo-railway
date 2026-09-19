@@ -161,6 +161,24 @@
                                 <span>Sections regroupées par région</span>
                                 <small>Kiiraay / global</small>
                             </div>
+                            <div class="region-gap-legend">
+                                <span class="region-gap-legend__item">
+                                    <i class="region-gap-legend__dot region-gap-legend__dot--above"/>
+                                    Au-dessus du repère
+                                </span>
+                                <span class="region-gap-legend__item">
+                                    <i class="region-gap-legend__dot region-gap-legend__dot--near"/>
+                                    Écart faible
+                                </span>
+                                <span class="region-gap-legend__item">
+                                    <i class="region-gap-legend__dot region-gap-legend__dot--notable"/>
+                                    Écart notable
+                                </span>
+                                <span class="region-gap-legend__item">
+                                    <i class="region-gap-legend__dot region-gap-legend__dot--large"/>
+                                    Écart important
+                                </span>
+                            </div>
                             <div class="data-table data-table--wide">
                                 <div class="data-row data-row--region-head">
                                     <span>Région</span>
@@ -285,6 +303,13 @@
                                                     </b>
                                                 </div>
                                                 <div><span>Membres</span><b><t t-esc="formatNumber(region.members)"/></b></div>
+                                            </div>
+
+                                            <div class="region-detail-note">
+                                                Lecture descriptive : « Membres / électeurs » est comparé au repère
+                                                « Inscrits / population ». Le niveau d'écart signale uniquement
+                                                une différence entre ces deux ratios et ne constitue pas une probabilité
+                                                de victoire ni une prévision électorale.
                                             </div>
 
                                             <div class="department-stack">
