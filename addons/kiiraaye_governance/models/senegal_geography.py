@@ -345,17 +345,160 @@ class ResCountrySenegalGeography(models.Model):
 
         return loaded, page - 1
 
-    def _load_senegal_quartiers(
-        self, communes, minimum_units=80, start_page=1, max_pages=None
+    def _load_senegal_quartiers_ansd(
+        self, commune_records, limit=80, start_page=1
     ):
-        """Compatibilité : charge les villages réels GalsenAPI par pages de 80."""
-        return self._load_senegal_villages_galsen(
-            communes,
-            page_size=80,
-            limit=minimum_units if minimum_units else None,
-            start_page=start_page,
-            max_pages=max_pages,
+        """Charge les localités réelles ANSD 2023, 80 nouvelles lignes par lot."""
+        Geo = self.env["kiiraaye.geographie"].sudo()
+
+        commune_index = {}
+        for commune in commune_records:
+            department = commune.parent_id
+            while department and department.niveau != "niveau2":
+                department = department.parent_id
+            if not department:
+                continue
+            region = department.parent_id
+            while region and region.niveau != "niveau1":
+                region = region.parent_id
+            if not region:
+                continue
+
+            key = (
+                self._normalize_match_label(region.name),
+                self._normalize_match_label(department.name),
+                self._normalize_match_label(commune.name),
+            )
+            commune_index[key] = commune
+
+        if not commune_index:
+            raise UserError(
+                _("Aucune commune exploitable n'est disponible pour rattacher les localités ANSD.")
+            )
+
+        existing = Geo.search([
+            ("country_id", "=", self.id),
+            ("niveau", "=", "niveau5"),
+            ("active", "=", True),
+        ])
+        existing_by_parent_name = {
+            (record.parent_id.id, self._normalize_match_label(record.name))
+            for record in existing
+            if record.parent_id
+        }
+
+        imported_uids = set(
+            Geo.search([
+                ("country_id", "=", self.id),
+                ("niveau", "=", "niveau5"),
+                ("source_uid", "like", "ANSD-RGPH5-LOCALITE-%"),
+            ]).mapped("source_uid")
         )
+
+        csv_text = self._ansd_get_csv()
+        if not csv_text.strip():
+            raise UserError(_("Le répertoire ANSD des localités est vide."))
+
+        sample = csv_text[:8192]
+        try:
+            delimiter = csv.Sniffer().sniff(sample, delimiters=",;\\t|").delimiter
+        except csv.Error:
+            delimiter = ";"
+
+        reader = csv.DictReader(io.StringIO(csv_text), delimiter=delimiter)
+        normalized_headers = {
+            self._normalize_csv_header(header): header
+            for header in (reader.fieldnames or [])
+            if header
+        }
+
+        if not normalized_headers:
+            raise UserError(_("Le fichier CSV ANSD ne contient pas d'en-têtes exploitables."))
+
+        def get_value(row, *candidates):
+            for candidate in candidates:
+                actual = normalized_headers.get(self._normalize_csv_header(candidate))
+                if actual:
+                    value = row.get(actual)
+                    if value not in (None, ""):
+                        return str(value).strip()
+            return ""
+
+        created = 0
+        skipped = 0
+        scanned = 0
+
+        for row in reader:
+            scanned += 1
+            region_name = get_value(row, "Région", "Region")
+            department_name = get_value(row, "Département", "Departement")
+            commune_name = get_value(
+                row, "COMMUNE", "Commune", "Commune / Municipalité"
+            )
+            locality_name = get_value(
+                row,
+                "QUARTIER/VILLAGE/HAMEAU",
+                "Quartier/Village/Hameau",
+                "Quartier / Village / Hameau",
+                "Quartier",
+                "Village",
+                "Hameau",
+            )
+            com_arrt_ville = get_value(
+                row, "COM ARRT/VILLE", "COM_ARRT/VILLE", "Com Arrt/Ville"
+            )
+
+            if not region_name or not department_name or not commune_name or not locality_name:
+                skipped += 1
+                continue
+
+            key = (
+                self._normalize_match_label(region_name),
+                self._normalize_match_label(department_name),
+                self._normalize_match_label(commune_name),
+            )
+            commune = commune_index.get(key)
+            if not commune:
+                skipped += 1
+                continue
+
+            source_uid = self._locality_uid(
+                department_name,
+                commune_name,
+                locality_name,
+                com_arrt_ville,
+            )
+
+            normalized_name = self._normalize_match_label(locality_name)
+            if source_uid in imported_uids or (
+                commune.id,
+                normalized_name,
+            ) in existing_by_parent_name:
+                continue
+
+            self._upsert_senegal_geo(
+                source_uid,
+                {
+                    "name": locality_name,
+                    "code": source_uid.split("-")[-1],
+                    "country_id": self.id,
+                    "parent_id": commune.id,
+                    "niveau": "niveau5",
+                    "source_admin_level": "MANUAL",
+                    "designation_locale": "Quartier / Village / Hameau",
+                    "source": _ANSD_LOCALITES_SOURCE,
+                    "source_url": _ANSD_LOCALITES_SOURCE_URL,
+                    "active": True,
+                },
+            )
+            imported_uids.add(source_uid)
+            existing_by_parent_name.add((commune.id, normalized_name))
+            created += 1
+
+            if created >= int(limit or 80):
+                break
+
+        return created, max(1, int(start_page or 1)), skipped, scanned
 
     def _set_senegal_geography_status(self, message):
         self.sudo().write({
@@ -375,7 +518,7 @@ class ResCountrySenegalGeography(models.Model):
         })
 
     def action_load_senegal_quartiers(self):
-        """Charge une seule page de 80 villages réels correspondants aux communes."""
+        """Charge 80 nouvelles localités réelles du répertoire ANSD 2023."""
         self.ensure_one()
         if self.code != "SN":
             raise UserError(_("Cette opération est réservée au Sénégal."))
@@ -385,34 +528,54 @@ class ResCountrySenegalGeography(models.Model):
             ("country_id", "=", self.id),
             ("niveau", "=", "niveau3"),
             ("active", "=", True),
-        ])
+        ], order="name, id")
+
         if not commune_records:
-            raise UserError(_("Les communes du Sénégal doivent être chargées avant les villages."))
+            raise UserError(
+                _("Les communes du Sénégal doivent être chargées avant les villages/quartiers.")
+            )
 
-        communes = {}
-        for record in commune_records:
-            try:
-                communes[int(record.code)] = record
-            except (TypeError, ValueError):
-                continue
-        if not communes:
-            raise UserError(_("Les identifiants GalsenAPI des communes sont introuvables."))
+        try:
+            loaded, processed_page, skipped, scanned = self._load_senegal_quartiers_ansd(
+                commune_records,
+                limit=80,
+                start_page=self.kiiraaye_geo_village_page + 1,
+            )
+        except UserError as exc:
+            self.sudo().write({
+                "kiiraaye_geo_status": "error",
+                "kiiraaye_geo_last_sync": fields.Datetime.now(),
+                "kiiraaye_geo_message": str(exc),
+            })
+            raise
 
-        loaded, processed_page = self._load_senegal_quartiers(
-            communes,
-            minimum_units=80,
-            start_page=self.kiiraaye_geo_village_page + 1,
-            max_pages=1,
-        )
+        new_total = self.kiiraaye_geo_village_loaded + loaded
         self.sudo().write({
-            "kiiraaye_geo_village_page": processed_page,
-            "kiiraaye_geo_village_loaded": self.kiiraaye_geo_village_loaded + loaded,
+            "kiiraaye_geo_village_page": processed_page if loaded else self.kiiraaye_geo_village_page,
+            "kiiraaye_geo_village_loaded": new_total,
         })
 
-        message = _(
-            "Page %s traitée : %s villages réels ajoutés sur les communes correspondantes. "
-            "Relancez le bouton pour charger les 80 suivants."
-        ) % (processed_page, loaded)
+        if loaded:
+            message = _(
+                "Lot %s : %s nouvelles localités ANSD chargées. "
+                "Total chargé : %s. %s lignes analysées, %s non rattachées/ignorées. "
+                "Relancez le bouton pour charger les 80 suivantes."
+            ) % (
+                processed_page,
+                loaded,
+                new_total,
+                scanned,
+                skipped,
+            )
+            notification_type = "success"
+        else:
+            message = _(
+                "Aucune nouvelle localité n'a été chargée. "
+                "Le répertoire ANSD a été parcouru pour les communes disponibles. "
+                "Total chargé : %s."
+            ) % new_total
+            notification_type = "warning"
+
         self._set_senegal_geography_status(message)
         self.env.cr.commit()
 
@@ -420,9 +583,9 @@ class ResCountrySenegalGeography(models.Model):
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
-                "title": _("Villages chargés"),
+                "title": _("Localités ANSD"),
                 "message": message,
-                "type": "success",
+                "type": notification_type,
                 "sticky": False,
             },
         }
@@ -437,27 +600,14 @@ class ResCountrySenegalGeography(models.Model):
         departments = self._load_senegal_departments(regions)
         self._load_senegal_arrondissements(departments)
         communes = self._load_senegal_communes(departments)
-        # Une synchronisation administrative ne télécharge qu'une page de
-        # 80 villages. Les pages suivantes sont chargées séparément.
-        quartiers, processed_page = self._load_senegal_quartiers(
-            communes,
-            minimum_units=80,
-            start_page=self.kiiraaye_geo_village_page + 1,
-            max_pages=1,
-        )
-        self.sudo().write({
-            "kiiraaye_geo_village_page": processed_page,
-            "kiiraaye_geo_village_loaded": self.kiiraaye_geo_village_loaded + quartiers,
-        })
-        skipped_localities = 0
         self.env.cr.commit()
 
         self._set_senegal_geography_status(
-            "Référentiel Sénégal chargé automatiquement : "
-            f"{len(regions)} régions, {len(departments)} départements, "
-            f"{len(communes)} communes, {quartiers} unités locales de niveau 5. "
-            "Le niveau 5 reprend fidèlement la colonne ANSD « Quartier/Village/Hameau » "
-            f"({skipped_localities} lignes ignorées faute de rattachement exploitable)."
+            "Référentiel administratif Sénégal chargé : "
+            f"{len(regions)} régions, {len(departments)} départements et "
+            f"{len(communes)} communes. "
+            "Les quartiers/villages/hameaux ANSD 2023 sont chargés séparément "
+            "par lots de 80 avec le bouton dédié."
         )
 
         return {
