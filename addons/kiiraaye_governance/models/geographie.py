@@ -33,7 +33,7 @@ class KiiraayeGeographie(models.Model):
             ("niveau2", "Département / District / Comté"),
             ("niveau3", "Commune / Municipalité / Ville"),
             ("niveau4", "Communauté rurale / niveau local"),
-            ("niveau5", "Quartier"),
+            ("niveau5", "Village / Quartier / Unité locale"),
             ("niveau6", "Sous-quartier / Zone locale"),
             ("localite", "Localité / Autre"),
         ],
