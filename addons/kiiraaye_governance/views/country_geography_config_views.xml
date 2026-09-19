@@ -17,6 +17,8 @@
                         <group>
                             <field name="kiiraaye_geo_status"/>
                             <field name="kiiraaye_geo_last_sync"/>
+                            <field name="kiiraaye_geo_village_page"/>
+                            <field name="kiiraaye_geo_village_loaded"/>
                             <div class="d-flex gap-2">
                                 <button name="action_sync_kiiraaye_geography"
                                         type="object"
@@ -25,7 +27,7 @@
                                         icon="fa-refresh"/>
                                 <button name="action_load_senegal_quartiers"
                                         type="object"
-                                        string="Charger les quartiers des communes"
+                                        string="Charger les 80 prochains villages / quartiers"
                                         icon="fa-map-marker"
                                         invisible="code != 'SN'"/>
                             </div>
