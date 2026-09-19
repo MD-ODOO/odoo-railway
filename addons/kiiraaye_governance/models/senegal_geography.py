@@ -253,136 +253,206 @@ class ResCountrySenegalGeography(models.Model):
         return records
 
     def _load_senegal_quartiers(self, communes):
-        """Charge les unités locales ANSD sous leur commune.
+        """Charge les unités locales réelles sous les communes.
 
-        L'ANSD expose la colonne « QUARTIER/VILLAGE/HAMEAU ». Le flux ne permet
-        pas de distinguer automatiquement ces trois catégories. Elles sont donc
-        conservées fidèlement comme unités locales de niveau 5.
+        Priorité au répertoire ANSD RGPH-5 2023. Lorsque le flux ANSD courant
+        ne permet pas de rattacher suffisamment d'unités, un repli GalsenAPI
+        est utilisé. GalsenAPI expose les villages avec leur commune et
+        constitue une source réelle complémentaire pour le référentiel local.
         """
-        csv_text = self._ansd_get_csv()
+        Geo = self.env["kiiraaye.geographie"].sudo()
 
-        # Le fichier ANSD peut changer de séparateur ou de forme d'en-tête.
-        # On détecte le séparateur et on normalise les noms de colonnes.
+        loaded_ansd = 0
+        skipped_ansd = 0
+
+        # 1) Source ANSD : répertoire officiel des localités RGPH-5 2023.
         try:
-            dialect = csv.Sniffer().sniff(csv_text[:12000], delimiters=",;\t|")
-        except csv.Error:
-            dialect = csv.excel
+            csv_text = self._ansd_get_csv()
 
-        reader = csv.DictReader(io.StringIO(csv_text), dialect=dialect)
-        if not reader.fieldnames:
-            raise UserError(_("Le fichier ANSD des localités est vide ou sans en-tête exploitable."))
+            try:
+                dialect = csv.Sniffer().sniff(csv_text[:12000], delimiters=",;\\t|")
+            except csv.Error:
+                dialect = csv.excel
 
-        normalized_headers = {
-            self._normalize_csv_header(header): header
-            for header in reader.fieldnames
-            if header
-        }
+            reader = csv.DictReader(io.StringIO(csv_text), dialect=dialect)
+            if reader.fieldnames:
+                normalized_headers = {
+                    self._normalize_csv_header(header): header
+                    for header in reader.fieldnames
+                    if header
+                }
 
-        def row_value(row, name):
-            original = normalized_headers.get(name)
-            return (row.get(original) or "").strip() if original else ""
+                def row_value(row, name):
+                    original = normalized_headers.get(name)
+                    return (row.get(original) or "").strip() if original else ""
 
-        # Correspondance tolérante aux différences d'apostrophes, tirets,
-        # espaces et accents entre GalsenAPI et ANSD (ex. M'BOUR / MBOUR).
-        communes_by_key = {}
-        for commune in communes.values():
-            department = commune.parent_id
-            if not department:
-                continue
-            communes_by_key[
-                (
-                    self._normalize_match_label(department.name),
-                    self._normalize_match_label(commune.name),
-                )
-            ] = commune
+                communes_by_key = {}
+                for commune in communes.values():
+                    department = commune.parent_id
+                    if not department:
+                        continue
+                    communes_by_key[
+                        (
+                            self._normalize_match_label(department.name),
+                            self._normalize_match_label(commune.name),
+                        )
+                    ] = commune
 
-        # Rattachement secondaire par identifiant de la commune quand le
-        # code apparaît dans le fichier source, en complément du nom.
-        communes_by_code = {
-            self._normalize_match_label(commune.code): commune
-            for commune in communes.values()
-            if commune.code
-        }
+                communes_by_code = {
+                    self._normalize_match_label(commune.code): commune
+                    for commune in communes.values()
+                    if commune.code
+                }
 
-        seen = set()
-        loaded = 0
-        skipped = 0
-        unmatched_departments = set()
-        unmatched_communes = set()
+                seen = set()
+                for row in reader:
+                    department_name = row_value(row, "departement")
+                    commune_name = row_value(row, "commune")
+                    com_arrt_ville = row_value(row, "com_arrt_ville")
+                    locality_name = (
+                        row_value(row, "quartier_village_hameau")
+                        or row_value(row, "localite")
+                    )
 
-        for row in reader:
-            department_name = row_value(row, "departement")
-            commune_name = row_value(row, "commune")
-            com_arrt_ville = row_value(row, "com_arrt_ville")
-            locality_name = row_value(row, "quartier_village_hameau") or row_value(row, "localite")
+                    if not department_name or not commune_name or not locality_name:
+                        skipped_ansd += 1
+                        continue
 
-            if not department_name or not commune_name or not locality_name:
-                skipped += 1
-                continue
+                    commune = communes_by_key.get(
+                        (
+                            self._normalize_match_label(department_name),
+                            self._normalize_match_label(commune_name),
+                        )
+                    )
 
-            department_key = self._normalize_match_label(department_name)
-            commune_key = self._normalize_match_label(commune_name)
-            commune = communes_by_key.get((department_key, commune_key))
+                    if not commune:
+                        commune_code = (
+                            row_value(row, "code_commune")
+                            or row_value(row, "id_commune")
+                        )
+                        commune = (
+                            communes_by_code.get(
+                                self._normalize_match_label(commune_code)
+                            )
+                            if commune_code
+                            else False
+                        )
 
-            # Certaines éditions de l'ANSD peuvent inclure le code communal.
-            if not commune:
-                commune_code = row_value(row, "code_commune") or row_value(row, "id_commune")
-                commune = communes_by_code.get(self._normalize_match_label(commune_code)) if commune_code else False
+                    if not commune:
+                        skipped_ansd += 1
+                        continue
 
-            if not commune:
-                unmatched_departments.add(department_name)
-                unmatched_communes.add(f"{department_name} / {commune_name}")
-                skipped += 1
-                continue
+                    locality_key = (
+                        commune.id,
+                        self._normalize_local_label(locality_name),
+                        self._normalize_local_label(com_arrt_ville),
+                    )
+                    if locality_key in seen:
+                        continue
+                    seen.add(locality_key)
 
-            locality_key = (
-                commune.id,
-                self._normalize_local_label(locality_name),
-                self._normalize_local_label(com_arrt_ville),
-            )
-            if locality_key in seen:
-                continue
-            seen.add(locality_key)
-
-            source_uid = self._locality_uid(
-                commune.parent_id.id,
-                commune.name,
-                locality_name,
-                com_arrt_ville,
-            )
-            self._upsert_senegal_geo(
-                source_uid,
-                {
-                    "name": locality_name,
-                    "code": source_uid[-12:],
-                    "country_id": self.id,
-                    "parent_id": commune.id,
-                    "niveau": "niveau5",
-                    "source_admin_level": "MANUAL",
-                    "designation_locale": "Quartier / Village / Hameau",
-                    "source": _ANSD_LOCALITES_SOURCE,
-                    "source_url": _ANSD_LOCALITES_SOURCE_URL,
-                    "source_year": 2023,
-                    "source_license": "CC BY 4.0",
-                    "active": True,
-                },
-            )
-            loaded += 1
-
-        if unmatched_communes:
-            examples = ", ".join(sorted(unmatched_communes)[:10])
+                    source_uid = self._locality_uid(
+                        commune.parent_id.id,
+                        commune.name,
+                        locality_name,
+                        com_arrt_ville,
+                    )
+                    self._upsert_senegal_geo(
+                        source_uid,
+                        {
+                            "name": locality_name,
+                            "code": source_uid[-12:],
+                            "country_id": self.id,
+                            "parent_id": commune.id,
+                            "niveau": "niveau5",
+                            "source_admin_level": "MANUAL",
+                            "designation_locale": "Quartier / Village / Hameau",
+                            "source": _ANSD_LOCALITES_SOURCE,
+                            "source_url": _ANSD_LOCALITES_SOURCE_URL,
+                            "source_year": 2023,
+                            "source_license": "CC BY 4.0",
+                            "active": True,
+                        },
+                    )
+                    loaded_ansd += 1
+        except UserError as exc:
             _logger.warning(
-                "Géographie Sénégal : %s communes ANSD non rattachées. Exemples : %s",
-                len(unmatched_communes),
-                examples,
+                "Géographie Sénégal : chargement ANSD indisponible, "
+                "fallback GalsenAPI activé : %s",
+                exc,
             )
 
+        # 2) Fallback réel GalsenAPI si l'import ANSD actuel est trop pauvre.
+        # Trois unités ou quelques lignes seulement indiquent généralement
+        # un changement de structure du flux ANSD ; on complète alors avec
+        # les villages GalsenAPI, qui sont directement rattachés à leur commune.
+        loaded_galsen = 0
+        if loaded_ansd < 100:
+            try:
+                villages = self._galsen_get_all("villages")
+                seen_uids = {
+                    value
+                    for value in Geo.search(
+                        [
+                            ("country_id", "=", self.id),
+                            ("niveau", "=", "niveau5"),
+                            ("active", "=", True),
+                            ("source_uid", "like", "GALSEN-VILLAGE-%"),
+                        ]
+                    ).mapped("source_uid")
+                    if value
+                }
+
+                for item in villages:
+                    village_id = item.get("id")
+                    village_name = (item.get("nom") or "").strip()
+                    commune_id = item.get("commune")
+
+                    if not village_id or not village_name or not commune_id:
+                        continue
+
+                    commune = communes.get(commune_id)
+                    if not commune:
+                        continue
+
+                    source_uid = f"GALSEN-VILLAGE-{village_id}"
+                    if source_uid in seen_uids:
+                        continue
+
+                    self._upsert_senegal_geo(
+                        source_uid,
+                        {
+                            "name": village_name,
+                            "code": str(village_id),
+                            "country_id": self.id,
+                            "parent_id": commune.id,
+                            "niveau": "niveau5",
+                            "source_admin_level": "MANUAL",
+                            "designation_locale": "Village / unité locale",
+                            "source": "GalsenAPI (Galsenify, données publiques)",
+                            "source_url": f"{_GALSEN_API_BASE}/villages/{village_id}/",
+                            "active": True,
+                        },
+                    )
+                    seen_uids.add(source_uid)
+                    loaded_galsen += 1
+            except UserError as exc:
+                _logger.warning(
+                    "Géographie Sénégal : fallback GalsenAPI indisponible : %s",
+                    exc,
+                )
+
+        total_loaded = loaded_ansd + loaded_galsen
         _logger.info(
-            "Géographie Sénégal : %s unités locales ANSD chargées en niveau 5, %s lignes ignorées.",
-            loaded,
-            skipped,
+            "Géographie Sénégal : %s unités locales chargées "
+            "(ANSD=%s, GalsenAPI=%s), %s lignes ANSD ignorées.",
+            total_loaded,
+            loaded_ansd,
+            loaded_galsen,
+            skipped_ansd,
         )
-        return loaded, skipped
+        return total_loaded, skipped_ansd
+
 
     def _set_senegal_geography_status(self, message):
         self.sudo().write({
