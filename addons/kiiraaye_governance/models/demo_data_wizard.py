@@ -118,7 +118,9 @@ class KiiraayeDemoDataWizard(models.TransientModel):
             or not communes
             or len(quarters) < self.section_count
         ):
-            country.action_load_senegal_default_geography()
+            country.with_context(
+                kiiraaye_minimum_local_units=self.section_count
+            ).action_load_senegal_default_geography()
             regions = Geo.search(
                 [
                     ("country_id", "=", country.id),
