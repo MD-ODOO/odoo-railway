@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import logging
-import re
-import unicodedata
 
 from odoo import fields, models, _
 from odoo.exceptions import UserError
@@ -70,41 +68,6 @@ class ResCountrySenegalGeography(models.Model):
             page += 1
         return results
 
-    @staticmethod
-    def _normalize_local_label(value):
-        value = unicodedata.normalize("NFKD", str(value or ""))
-        value = value.encode("ascii", "ignore").decode("ascii")
-        value = value.lower().strip()
-        value = re.sub(r"[^a-z0-9]+", " ", value)
-        return re.sub(r"\s+", " ", value).strip()
-
-    @staticmethod
-    def _normalize_match_label(value):
-        """Clé de rapprochement tolérante aux accents, espaces et ponctuation."""
-        value = unicodedata.normalize("NFKD", str(value or ""))
-        value = value.encode("ascii", "ignore").decode("ascii")
-        return re.sub(r"[^a-z0-9]+", "", value.lower())
-
-    @classmethod
-    def _normalize_csv_header(cls, value):
-        value = unicodedata.normalize("NFKD", str(value or ""))
-        value = value.encode("ascii", "ignore").decode("ascii")
-        value = value.lower().strip()
-        value = re.sub(r"[^a-z0-9]+", "_", value)
-        return re.sub(r"_+", "_", value).strip("_")
-
-    @classmethod
-    def _locality_uid(cls, department_id, commune_name, locality_name, com_arrt_ville):
-        raw = "|".join(
-            [
-                str(department_id),
-                cls._normalize_local_label(commune_name),
-                cls._normalize_local_label(locality_name),
-                cls._normalize_local_label(com_arrt_ville),
-            ]
-        )
-        digest = hashlib.sha1(raw.encode("utf-8")).hexdigest()[:20]
-        return f"ANSD-RGPH5-LOCALITE-{digest}"
 
     def _ensure_senegal_root(self):
         self.ensure_one()
@@ -237,19 +200,12 @@ class ResCountrySenegalGeography(models.Model):
         return records
 
     def _load_senegal_villages_galsen(
-        self, communes, page_size=80, limit=None, start_page=1, max_pages=None
+        self, communes, page_size=200, limit=None, start_page=1, max_pages=None
     ):
-        """Charge exclusivement les villages réels exposés par GalsenAPI."""
+        """Charge les villages GalsenAPI par pages et écrit chaque page en lot."""
         Geo = self.env["kiiraaye.geographie"].sudo()
-        seen_uids = set(
-            Geo.search([
-                ("country_id", "=", self.id),
-                ("niveau", "=", "niveau5"),
-                ("source_uid", "like", "GALSEN-VILLAGE-%"),
-            ]).mapped("source_uid")
-        )
-
         loaded = 0
+        updated = 0
         skipped = 0
         scanned = 0
         page = max(1, int(start_page or 1))
@@ -268,92 +224,101 @@ class ResCountrySenegalGeography(models.Model):
             if not rows:
                 break
 
+            scanned += len(rows)
+            candidates = []
             for item in rows:
-                scanned += 1
-
                 village_id = item.get("id")
                 village_name = (item.get("nom") or "").strip()
                 commune_id = item.get("commune")
                 region_pcode = item.get("region")
 
-                if not village_id or not village_name:
-                    skipped += 1
-                    continue
-
-                # Le serializer GalsenAPI expose commune comme clé primaire.
-                # On accepte aussi un objet {'id': ...} pour rester compatible
-                # avec d'éventuelles variantes de l'API.
                 if isinstance(commune_id, dict):
                     commune_id = commune_id.get("id")
-
                 try:
                     commune_id = int(commune_id)
                 except (TypeError, ValueError):
                     commune_id = False
 
-                commune = communes.get(commune_id) if commune_id else False
-
-                source_uid = f"GALSEN-VILLAGE-{village_id}"
-                if source_uid in seen_uids:
+                if not village_id or not village_name:
+                    skipped += 1
                     continue
 
-                # GalsenAPI peut exposer un village sans commune rattachée.
-                # On conserve tout de même le village dans le référentiel,
-                # rattaché à la région lorsqu'elle est identifiable. Le village
-                # n'est donc plus perdu simplement parce que le FK commune est nul.
-                parent = commune
+                parent = communes.get(commune_id) if commune_id else False
                 if not parent and region_pcode:
-                    parent = self.env["kiiraaye.geographie"].sudo().search([
+                    parent = Geo.search([
                         ("country_id", "=", self.id),
                         ("niveau", "=", "niveau1"),
                         ("active", "=", True),
                         ("source_uid", "=", f"GALSEN-REGION-{region_pcode}"),
                     ], limit=1)
-
                 if not parent:
                     skipped += 1
                     continue
 
-                values = {
-                    "name": village_name,
-                    "code": str(village_id),
-                    "country_id": self.id,
-                    "parent_id": parent.id,
-                    "niveau": "niveau5",
-                    "source_admin_level": "MANUAL",
-                    "designation_locale": "Village / quartier / unité locale",
-                    "source": "GalsenAPI",
-                    "source_url": f"{_GALSEN_API_BASE}/villages/{village_id}/",
-                    "active": True,
-                }
+                candidates.append((
+                    f"GALSEN-VILLAGE-{village_id}",
+                    village_id,
+                    village_name,
+                    parent,
+                ))
 
-                self._upsert_senegal_geo(source_uid, values)
-                seen_uids.add(source_uid)
-                loaded += 1
+            if candidates:
+                uids = [item[0] for item in candidates]
+                existing = Geo.search([
+                    ("country_id", "=", self.id),
+                    ("niveau", "=", "niveau5"),
+                    ("source_uid", "in", uids),
+                ])
+                existing_by_uid = {record.source_uid: record for record in existing}
+                create_vals = []
 
-                if target and loaded >= target:
-                    return loaded, page, skipped, scanned
+                for source_uid, village_id, village_name, parent in candidates:
+                    values = {
+                        "name": village_name,
+                        "code": str(village_id),
+                        "country_id": self.id,
+                        "parent_id": parent.id,
+                        "niveau": "niveau5",
+                        "source_admin_level": "MANUAL",
+                        "designation_locale": "Village / quartier / unité locale",
+                        "source": "GalsenAPI",
+                        "source_url": f"{_GALSEN_API_BASE}/villages/{village_id}/",
+                        "active": True,
+                    }
+                    record = existing_by_uid.get(source_uid)
+                    if record:
+                        record.write(values)
+                        updated += 1
+                    else:
+                        values["source_uid"] = source_uid
+                        create_vals.append(values)
+
+                if create_vals:
+                    Geo.create(create_vals)
+                    loaded += len(create_vals)
 
             pages_processed += 1
             page += 1
+            self.env.cr.commit()
 
+            if target and loaded >= target:
+                break
             if len(rows) < page_size:
                 break
 
-        return loaded, max(start_page, page - 1), skipped, scanned
+        return loaded, updated, max(start_page, page - 1), skipped, scanned
 
     def _load_senegal_quartiers(
-        self, communes, minimum_units=80, start_page=1, max_pages=1
+        self, communes, minimum_units=200, start_page=1, max_pages=None
     ):
-        """Compatibilité : source unique GalsenAPI, par lots de 80."""
+        """Compatibilité : le chargeur utilise désormais GalsenAPI sans ANSD."""
         return self._load_senegal_villages_galsen(
             communes,
-            page_size=80,
+            page_size=200,
             limit=minimum_units if minimum_units else None,
             start_page=start_page,
             max_pages=max_pages,
         )
-
 
     def _set_senegal_geography_status(self, message):
         self.sudo().write({
@@ -373,54 +338,65 @@ class ResCountrySenegalGeography(models.Model):
         })
 
     def action_load_senegal_quartiers(self):
-        """Charge 80 nouveaux villages réels depuis GalsenAPI."""
+        """Compatibilité : charge tous les villages GalsenAPI."""
+        self.ensure_one()
+        return self.action_load_senegal_all_villages()
+
+    def action_load_senegal_all_villages(self):
+        """Charge tous les villages GalsenAPI en une seule opération."""
         self.ensure_one()
         if self.code != "SN":
             raise UserError(_("Cette opération est réservée au Sénégal."))
 
+        root = self._ensure_senegal_root()
         Geo = self.env["kiiraaye.geographie"].sudo()
-        commune_records = Geo.search([
+
+        regions = Geo.search([
             ("country_id", "=", self.id),
-            ("niveau", "=", "niveau3"),
+            ("niveau", "=", "niveau1"),
             ("active", "=", True),
-        ], order="name, id")
+        ])
+        if not regions:
+            regions = self._load_senegal_regions(root)
 
-        if not commune_records:
-            raise UserError(
-                _("Les communes du Sénégal doivent être chargées avant les villages.")
-            )
+        departments = Geo.search([
+            ("country_id", "=", self.id),
+            ("niveau", "=", "niveau2"),
+            ("active", "=", True),
+        ])
+        if not departments:
+            dept_map = {}
+            for region in regions:
+                dept_map[region.source_uid.replace("GALSEN-REGION-", "")] = region
+            departments = self._load_senegal_departments(dept_map).values()
 
-        communes = {}
-        for record in commune_records:
-            try:
-                communes[int(record.code)] = record
-            except (TypeError, ValueError):
-                continue
-
+        dept_map = {}
+        for dept in departments:
+            dept_map[dept.source_uid.replace("GALSEN-DEPT-", "")] = dept
+        communes = self._load_senegal_communes(dept_map)
         if not communes:
-            raise UserError(
-                _("Les identifiants des communes GalsenAPI sont introuvables.")
-            )
+            raise UserError(_("Impossible de charger les communes du Sénégal depuis GalsenAPI."))
 
-        loaded, processed_page, skipped, scanned = self._load_senegal_quartiers(
-            communes,
-            minimum_units=80,
-            start_page=self.kiiraaye_geo_village_page + 1,
-            max_pages=1,
+        loaded, updated, last_page, skipped, scanned = self._load_senegal_villages_galsen(
+            communes, page_size=200, limit=None, start_page=1, max_pages=None
         )
 
-        new_total = self.kiiraaye_geo_village_loaded + loaded
-        self.sudo().write({
-            "kiiraaye_geo_village_page": processed_page,
-            "kiiraaye_geo_village_loaded": new_total,
-        })
-
+        final_count = Geo.search_count([
+            ("country_id", "=", self.id),
+            ("niveau", "=", "niveau5"),
+            ("active", "=", True),
+            ("source", "=", "GalsenAPI"),
+        ])
         message = _(
-            "GalsenAPI — page %s : %s villages chargés. "
-            "Total : %s. %s villages analysés, %s ignorés car aucune région exploitable n'a été trouvée. "
-            "Relancez le bouton pour charger la page suivante."
-        ) % (processed_page, loaded, new_total, scanned, skipped)
+            "GalsenAPI : import complet terminé. %s villages actifs dans Odoo. "
+            "Créés : %s, mis à jour : %s, pages traitées : %s, "
+            "lignes analysées : %s, ignorées : %s."
+        ) % (final_count, loaded, updated, last_page, scanned, skipped)
 
+        self.sudo().write({
+            "kiiraaye_geo_village_page": last_page,
+            "kiiraaye_geo_village_loaded": final_count,
+        })
         self._set_senegal_geography_status(message)
         self.env.cr.commit()
 
@@ -430,7 +406,7 @@ class ResCountrySenegalGeography(models.Model):
             "params": {
                 "title": _("Villages GalsenAPI"),
                 "message": message,
-                "type": "success" if loaded else "warning",
+                "type": "success",
                 "sticky": False,
             },
         }
