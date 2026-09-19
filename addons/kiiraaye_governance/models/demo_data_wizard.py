@@ -105,7 +105,20 @@ class KiiraayeDemoDataWizard(models.TransientModel):
             ("source_uid", "like", "GALSEN-VILLAGE-%"),
         ])
         if existing_galsen_count < self.section_count:
-            communes_map = {record.id: record for record in communes}
+            # Les villages GalsenAPI référencent la commune avec son
+            # identifiant GalsenAPI, conservé dans kiiraaye.geographie.code.
+            communes_map = {}
+            for record in communes:
+                try:
+                    communes_map[int(record.code)] = record
+                except (TypeError, ValueError):
+                    continue
+
+            if not communes_map:
+                raise UserError(
+                    _("Aucun identifiant GalsenAPI exploitable n'est disponible pour les communes du Sénégal.")
+                )
+
             country._load_senegal_villages_galsen(
                 communes_map,
                 page_size=80,
