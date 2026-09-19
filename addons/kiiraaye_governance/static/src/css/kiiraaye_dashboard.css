@@ -105,7 +105,7 @@
 
 .kiiraaye-dashboard__tabs {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 8px;
     padding: 6px;
     margin-bottom: 18px;
@@ -116,12 +116,14 @@
 }
 
 .kiiraaye-dashboard__tabs button {
+    flex: 0 0 auto;
     border: 0;
     background: transparent;
     border-radius: 9px;
     padding: 9px 15px;
     font-weight: 700;
     color: #617A86;
+    white-space: nowrap;
 }
 
 .kiiraaye-dashboard__tabs button.active {
