@@ -99,6 +99,38 @@ export class KiiraayeDashboard extends Component {
         return this.formatNumber(occupied) + " / " + this.formatNumber(total);
     }
 
+    memberElectorGap(row) {
+        return Number(row?.member_elector_ratio_pct || 0) - Number(row?.electoral_ratio_pct || 0);
+    }
+
+    memberElectorGapClass(row) {
+        const gap = this.memberElectorGap(row);
+        if (gap >= 0) {
+            return "above";
+        }
+        if (gap >= -5) {
+            return "near";
+        }
+        if (gap >= -15) {
+            return "notable";
+        }
+        return "large";
+    }
+
+    memberElectorGapLabel(row) {
+        const gap = this.memberElectorGap(row);
+        if (gap >= 0) {
+            return "Au-dessus du repère";
+        }
+        if (gap >= -5) {
+            return "Écart faible";
+        }
+        if (gap >= -15) {
+            return "Écart notable";
+        }
+        return "Écart important";
+    }
+
     get maxDiasporaMembers() {
         return Math.max(
             ...(this.state.data?.diaspora?.countries || []).map((row) => row.members),
