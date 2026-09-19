@@ -214,56 +214,87 @@ class KiiraayeDemoDataWizard(models.TransientModel):
                 )
             professions |= profession
 
-        # Les sections communales sont distribuées sur les vrais villages / quartiers
-        # GalsenAPI déjà présents dans le référentiel du Sénégal.
-        available_quarters = quarters
-        if self.section_count > len(available_quarters):
-            raise UserError(
-                _(
-                    "Le nombre demandé (%s) dépasse le nombre de quartiers / unités "
-                    "locales réels disponibles (%s)."
-                ) % (self.section_count, len(available_quarters))
-            )
+        # Les sections communales sont distribuées en priorité sur les
+        # vrais villages / quartiers GalsenAPI dont l'ancêtre communal est
+        # résoluble. Certains enregistrements GalsenAPI historiques n'ont pas
+        # de commune : on complète alors uniquement le jeu de démo avec des
+        # quartiers techniques créés sous de vraies communes, sans modifier
+        # les données géographiques réelles.
+        def ancestor(record, level):
+            current = record
+            while current:
+                if current.niveau == level:
+                    return current
+                current = current.parent_id
+            return self.env["kiiraaye.geographie"]
 
-        existing_quarters = set(
-            Section.search(
+        resolved_quarters = []
+        for quarter in quarters:
+            commune = ancestor(quarter, "niveau3")
+            department = ancestor(quarter, "niveau2")
+            region = ancestor(quarter, "niveau1")
+            if commune and department and region:
+                resolved_quarters.append((quarter, region, department, commune))
+
+        SectionModel = self.env["kiiraaye.section"].sudo()
+        occupied_quarters = set(
+            SectionModel.search(
                 [
                     ("active", "=", True),
                     ("type_section", "=", "communale"),
-                    ("quartier_id", "in", available_quarters.ids),
+                    ("quartier_id", "in", [item[0].id for item in resolved_quarters]),
                 ]
             ).mapped("quartier_id").ids
         )
 
-        selected_quarters = [
-            quarter for quarter in available_quarters
-            if quarter.id not in existing_quarters
-        ][:self.section_count]
+        available_quarters = [
+            item for item in resolved_quarters
+            if item[0].id not in occupied_quarters
+        ]
+
+        # Fallback de démonstration : création de quartiers techniques sous
+        # les vraies communes si les villages GalsenAPI exploitables sont
+        # insuffisants. Ces fiches portent un source_uid DEMO-* et sont donc
+        # supprimables sans toucher au référentiel GalsenAPI.
+        synthetic_needed = max(0, self.section_count - len(available_quarters))
+        if synthetic_needed:
+            synthetic_records = []
+            for index in range(1, synthetic_needed + 1):
+                commune = communes[(index - 1) % len(communes)]
+                department = ancestor(commune, "niveau2")
+                region = ancestor(commune, "niveau1")
+                if not department or not region:
+                    continue
+                source_uid = f"DEMO-KIIRAAYE-QUARTIER-{index}"
+                quarter = self._upsert_geo(
+                    country,
+                    source_uid,
+                    {
+                        "name": f"Quartier Démo {index:04d} — {commune.name}",
+                        "code": f"DEMO-{index:04d}",
+                        "parent_id": commune.id,
+                        "niveau": "niveau5",
+                        "source_admin_level": "MANUAL",
+                        "designation_locale": "Quartier de démonstration",
+                        "active": True,
+                    },
+                )
+                synthetic_records.append((quarter, region, department, commune))
+
+            available_quarters.extend(synthetic_records)
+
+        selected_quarters = available_quarters[:self.section_count]
 
         if not selected_quarters:
             raise UserError(
                 _(
-                    "Aucun quartier réel disponible pour créer les sections de démonstration. "
-                    "Les quartiers sélectionnés sont déjà occupés."
+                    "Aucune localisation communale exploitable n'est disponible pour le démo. "
+                    "Vérifiez que les communes du Sénégal sont bien chargées."
                 )
             )
 
         section_vals = []
-        for quarter in selected_quarters:
-            commune = quarter.parent_id
-            department = commune.parent_id if commune else False
-            region = department.parent_id if department else False
-
-            # Si le parent direct est un niveau intermédiaire, on remonte
-            # jusqu'au niveau attendu par la section.
-            while department and department.niveau != "niveau2":
-                department = department.parent_id
-            while region and region.niveau != "niveau1":
-                region = region.parent_id
-
-            if not commune or commune.niveau != "niveau3" or not department or not region:
-                continue
-
+        for quarter, region, department, commune in selected_quarters:
             section_vals.append(
                 {
                     "type_section": "communale",
