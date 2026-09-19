@@ -122,9 +122,9 @@
                             <p class="dashboard-note">
                                 Les indicateurs « X / Y » présentent le nombre d'unités couvertes par Kiiraay
                                 sur le nombre total d'unités présentes dans le référentiel du Sénégal.
-                                « Membres / électeurs » est comparé à titre descriptif au repère
-                                « Inscrits / population ». Cet écart ne constitue ni une probabilité
-                                électorale ni une prévision de résultat.
+                                Les ratios « Membres / population nationale » et « Membres / électeurs inscrits »
+                                sont des indicateurs descriptifs de couverture. Ils ne constituent pas une
+                                probabilité électorale ni une prévision de résultat.
                             </p>
                         </div>
 
@@ -153,6 +153,29 @@
                                 <span>Membres</span>
                                 <strong><t t-esc="formatNumber(state.data.kpis.members)"/></strong>
                                 <small>membres actifs nationaux</small>
+                            </div>
+                        </div>
+
+                        <div class="kiiraaye-dashboard__grid kiiraaye-dashboard__grid--two">
+                            <div class="kpi-card coverage-kpi coverage-kpi--blue">
+                                <span>Membres / population nationale</span>
+                                <strong>
+                                    <t t-esc="formatPercent(state.data.national_reference.member_population_ratio_pct)"/>
+                                </strong>
+                                <small>
+                                    <t t-esc="formatNumber(state.data.kpis.members)"/> membres /
+                                    <t t-esc="formatNumber(state.data.national_reference.population)"/> habitants
+                                </small>
+                            </div>
+                            <div class="kpi-card coverage-kpi coverage-kpi--red">
+                                <span>Membres / électeurs inscrits</span>
+                                <strong>
+                                    <t t-esc="formatPercent(state.data.national_reference.member_elector_ratio_pct)"/>
+                                </strong>
+                                <small>
+                                    <t t-esc="formatNumber(state.data.kpis.members)"/> membres /
+                                    <t t-esc="formatNumber(state.data.national_reference.electors)"/> électeurs
+                                </small>
                             </div>
                         </div>
 
