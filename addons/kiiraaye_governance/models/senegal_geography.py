@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-import csv
-import hashlib
-import io
 import logging
 import re
 import unicodedata
@@ -12,13 +9,6 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 _GALSEN_API_BASE = "https://galsenapi.lassanasiby.com/api/v1"
-_ANSD_LOCALITES_URL = (
-    "https://www.ansd.sn/data-recensement.csv"
-    "?field_liste_annee_value=2023&_format=csv"
-)
-_ANSD_LOCALITES_SOURCE_URL = "https://www.ansd.sn/donnees-recensements"
-_ANSD_LOCALITES_SOURCE = "ANSD - RGPH-5 2023, Répertoire des localités"
-
 
 class ResCountrySenegalGeography(models.Model):
     _inherit = "res.country"
@@ -62,77 +52,6 @@ class ResCountrySenegalGeography(models.Model):
                 % (full_url, exc)
             )
 
-    @staticmethod
-    def _ansd_get_csv():
-        from urllib.error import HTTPError, URLError
-        from urllib.request import Request, urlopen
-        import ssl
-
-        request = Request(
-            _ANSD_LOCALITES_URL,
-            headers={
-                "User-Agent": "Kiiraaye-Gouvernance/19.0",
-                "Accept": "text/csv,application/csv;q=0.9,*/*;q=0.8",
-            },
-        )
-
-        try:
-            # Tentative sécurisée avec le magasin CA disponible.
-            try:
-                import certifi
-                ssl_context = ssl.create_default_context(cafile=certifi.where())
-            except ImportError:
-                ssl_context = ssl.create_default_context()
-
-            with urlopen(request, timeout=180, context=ssl_context) as response:
-                return response.read().decode("utf-8-sig")
-
-        except (ssl.SSLCertVerificationError, ssl.SSLError) as secure_exc:
-            # Sur certains environnements Railway, urllib encapsule parfois
-            # l'erreur SSL dans une URLError. On retente alors uniquement
-            # cette URL ANSD publique avec un contexte sans vérification.
-            _logger.warning(
-                "Certificat SSL ANSD non vérifiable, tentative de secours: %s",
-                secure_exc,
-            )
-            try:
-                insecure_context = ssl._create_unverified_context()
-                with urlopen(request, timeout=180, context=insecure_context) as response:
-                    return response.read().decode("utf-8-sig")
-            except (HTTPError, URLError, TimeoutError, UnicodeDecodeError, ssl.SSLError) as fallback_exc:
-                raise UserError(
-                    _("Impossible de récupérer le Répertoire des localités ANSD depuis %s.\n\n"
-                      "La connexion SSL a échoué (%s) et la tentative de secours a également échoué (%s).")
-                    % (_ANSD_LOCALITES_URL, secure_exc, fallback_exc)
-                )
-
-        except URLError as exc:
-            reason = getattr(exc, "reason", None)
-            if isinstance(reason, ssl.SSLError) or "CERTIFICATE_VERIFY_FAILED" in str(reason):
-                _logger.warning(
-                    "URLError contenant une erreur de certificat ANSD, tentative de secours: %s",
-                    exc,
-                )
-                try:
-                    insecure_context = ssl._create_unverified_context()
-                    with urlopen(request, timeout=180, context=insecure_context) as response:
-                        return response.read().decode("utf-8-sig")
-                except (HTTPError, URLError, TimeoutError, UnicodeDecodeError, ssl.SSLError) as fallback_exc:
-                    raise UserError(
-                        _("Impossible de récupérer le Répertoire des localités ANSD depuis %s.\n\n"
-                          "La connexion SSL a échoué (%s) et la tentative de secours a également échoué (%s).")
-                        % (_ANSD_LOCALITES_URL, exc, fallback_exc)
-                    )
-            raise UserError(
-                _("Impossible de récupérer le Répertoire des localités ANSD depuis %s.\n\n%s")
-                % (_ANSD_LOCALITES_URL, exc)
-            )
-
-        except (HTTPError, TimeoutError, UnicodeDecodeError, ssl.SSLError) as exc:
-            raise UserError(
-                _("Impossible de récupérer le Répertoire des localités ANSD depuis %s.\n\n%s")
-                % (_ANSD_LOCALITES_URL, exc)
-            )
 
     @classmethod
     def _galsen_get_all(cls, endpoint):
@@ -389,7 +308,7 @@ class ResCountrySenegalGeography(models.Model):
                     "niveau": "niveau5",
                     "source_admin_level": "MANUAL",
                     "designation_locale": "Village / quartier / unité locale",
-                    "source": "GalsenAPI (Galsenify, données publiques)",
+                    "source": "GalsenAPI",
                     "source_url": f"{_GALSEN_API_BASE}/villages/{village_id}/",
                     "active": True,
                 }
@@ -518,7 +437,7 @@ class ResCountrySenegalGeography(models.Model):
             "Référentiel administratif Sénégal chargé : "
             f"{len(regions)} régions, {len(departments)} départements et "
             f"{len(communes)} communes. "
-            "Les quartiers/villages/hameaux ANSD 2023 sont chargés séparément "
+            "Les villages réels GalsenAPI sont chargés séparément "
             "par lots de 80 avec le bouton dédié."
         )
 
