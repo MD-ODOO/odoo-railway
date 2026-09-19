@@ -195,7 +195,9 @@
                                 </div>
                                 <t t-foreach="state.data.section_geography_overview" t-as="row" t-key="row.id">
                                     <div
-                                        t-att-class="'data-row data-row--region coverage-row coverage-row--' + coverageClass(row.departments_occupied, row.departments)"
+                                        t-att-class="'data-row data-row--region coverage-row coverage-row--' + coverageClass(row.departments_occupied, row.departments) + (state.selectedRegionId === row.id ? ' region-row--selected' : '')"
+                                        t-on-click="() => this.openRegionDetail(row.id)"
+                                        title="Ouvrir le détail de cette région"
                                     >
                                         <span>
                                             <strong><t t-esc="row.name"/></strong>
@@ -253,7 +255,8 @@
                             <div class="region-details region-details--vertical">
                                 <t t-foreach="state.data.section_geography_overview" t-as="region" t-key="'vertical-' + region.id">
                                     <details
-                                        t-att-class="'region-details__item region-details__item--' + coverageClass(region.departments_occupied, region.departments)"
+                                        t-att-id="'kiiraaye-region-detail-' + region.id"
+                                        t-att-class="'region-details__item region-details__item--' + coverageClass(region.departments_occupied, region.departments) + (state.selectedRegionId === region.id ? ' region-details__item--selected' : '')"
                                     >
                                         <summary>
                                             <span class="region-details__name"><t t-esc="region.name"/></span>
@@ -314,7 +317,12 @@
 
                                             <div class="department-stack">
                                                 <t t-foreach="region.departments_rows" t-as="department" t-key="'dep-' + department.id">
-                                                    <div class="department-card">
+                                                    <div
+                                                        t-att-id="'kiiraaye-department-detail-' + region.id + '-' + department.id"
+                                                        class="department-card department-card--clickable"
+                                                        t-on-click="() => this.openDepartmentDetail(region.id, department.id)"
+                                                        title="Voir le détail du département"
+                                                    >
                                                         <div class="department-card__header">
                                                             <div>
                                                                 <strong><t t-esc="department.name"/></strong>
@@ -339,7 +347,12 @@
                                                         <div class="department-card__body">
                                                             <t t-if="department.commune_rows">
                                                                 <t t-foreach="department.commune_rows" t-as="commune" t-key="'comm-' + commune.id">
-                                                                    <div class="commune-card">
+                                                                    <div
+                                                                        t-att-id="'kiiraaye-commune-detail-' + region.id + '-' + department.id + '-' + commune.id"
+                                                                        class="commune-card commune-card--clickable"
+                                                                        t-on-click="() => this.openCommuneDetail(region.id, department.id, commune.id)"
+                                                                        title="Voir le détail de la commune"
+                                                                    >
                                                                         <span class="commune-card__name">↳ <t t-esc="commune.name"/></span>
                                                                         <span><t t-esc="formatNumber(commune.sections)"/> sections</span>
                                                                         <span><t t-esc="formatNumber(commune.sections_open)"/> ouvertes</span>
