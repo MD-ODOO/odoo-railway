@@ -1,6 +1,6 @@
 {
     "name": "Kiiraaye Gouvernance",
-    "version": "19.0.2.22.42",
+    "version": "19.0.2.22.43",
     "category": "Organization",
     "summary": "Référentiel géographique et gestion des sections/coordinations Kiiraaye",
     "description": "Référentiel pays et subdivisions administratives, sections/coordinations, membres, bureaux, cartes membres, attributions de postes et contrôle d'accès hiérarchique.",
@@ -16,6 +16,7 @@
         "data/position_data.xml",
         "data/organisation_type_data.xml",
         "data/effectif_status_data.xml",
+        "data/geography_cron.xml",
         "views/geographie_views.xml",
         "views/partisan_views.xml",
         "views/partisan_governance_views.xml",
