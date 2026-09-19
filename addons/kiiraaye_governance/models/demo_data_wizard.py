@@ -88,7 +88,26 @@ class KiiraayeDemoDataWizard(models.TransientModel):
         ], order="name, id")
 
         if not regions or not departments or not communes:
-            raise UserError(_("Le référentiel réel du Sénégal est incomplet. Chargez d'abord les régions, départements et communes."))
+            # Initialisation du référentiel administratif réel si la base est vide.
+            country.action_load_senegal_default_geography()
+            regions = Geo.search([
+                ("country_id", "=", country.id),
+                ("niveau", "=", "niveau1"),
+                ("active", "=", True),
+            ], order="name, id")
+            departments = Geo.search([
+                ("country_id", "=", country.id),
+                ("niveau", "=", "niveau2"),
+                ("active", "=", True),
+            ], order="name, id")
+            communes = Geo.search([
+                ("country_id", "=", country.id),
+                ("niveau", "=", "niveau3"),
+                ("active", "=", True),
+            ], order="name, id")
+
+        if not regions or not departments or not communes:
+            raise UserError(_("Le référentiel réel du Sénégal est incomplet après synchronisation."))
 
         # Ne pas fabriquer de quartier. On charge uniquement les villages
         # réels correspondants aux communes depuis GalsenAPI, par pages de 80.
