@@ -259,10 +259,10 @@
                                                             </div>
                                                             <div class="department-card__badges">
                                                                 <b t-att-class="'coverage-badge coverage-badge--' + coverageClass(
-                                                                    sum(department.commune_rows, 'dummy'),
+                                                                    department.communes_occupied,
                                                                     department.communes
                                                                 )">
-                                                                    <t t-esc="formatNumber(department.communes)"/> communes
+                                                                    <t t-esc="coverageLabel(department.communes_occupied, department.communes)"/> communes
                                                                 </b>
                                                                 <b class="coverage-badge coverage-badge--high">
                                                                     <t t-esc="coverageLabel(department.sections_open, department.sections)"/> sections
