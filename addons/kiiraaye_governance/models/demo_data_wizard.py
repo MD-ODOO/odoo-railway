@@ -94,26 +94,8 @@ class KiiraayeDemoDataWizard(models.TransientModel):
             ("active", "=", True),
         ], order="name, id")
 
-        if not regions or not departments or not communes:
-            # Le chargement administratif reste autorisé ici, mais une seule
-            # fois. Le générateur ne charge jamais le lourd référentiel local.
-            country.action_load_senegal_default_geography()
-            regions = Geo.search([
-                ("country_id", "=", country.id),
-                ("niveau", "=", "niveau1"),
-                ("active", "=", True),
-            ], order="name, id")
-            departments = Geo.search([
-                ("country_id", "=", country.id),
-                ("niveau", "=", "niveau2"),
-                ("active", "=", True),
-            ], order="name, id")
-            communes = Geo.search([
-                ("country_id", "=", country.id),
-                ("niveau", "=", "niveau3"),
-                ("active", "=", True),
-            ], order="name, id")
-
+        # Aucun appel réseau pendant la génération de démonstration :
+        # le référentiel administratif doit déjà être présent dans Odoo.
         if not regions or not departments or not communes:
             raise UserError(
                 _(
@@ -204,9 +186,14 @@ class KiiraayeDemoDataWizard(models.TransientModel):
         demo_quartiers = Geo.search([
             ("source_uid", "like", "DEMO-KIIRAAYE-QUARTIER-%")
         ])
+        demo_locales = Geo.search([
+            ("source_uid", "like", "DEMO-KIIRAAYE-LOCAL-%")
+        ])
 
         if demo_quartiers:
             demo_quartiers.unlink()
+        if demo_locales:
+            demo_locales.unlink()
         if demo_geo:
             demo_geo.unlink()
 
