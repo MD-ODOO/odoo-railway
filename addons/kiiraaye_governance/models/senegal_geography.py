@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from odoo import fields, models, _
+from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -21,6 +21,17 @@ class ResCountrySenegalGeography(models.Model):
     kiiraaye_geo_village_loaded = fields.Integer(
         string="Villages / unités locales chargés",
         default=0,
+        readonly=True,
+        copy=False,
+    )
+    kiiraaye_geo_village_import_running = fields.Boolean(
+        string="Import des villages en cours",
+        default=False,
+        readonly=True,
+        copy=False,
+    )
+    kiiraaye_geo_village_import_message = fields.Text(
+        string="État de l'import des villages",
         readonly=True,
         copy=False,
     )
@@ -212,6 +223,8 @@ class ResCountrySenegalGeography(models.Model):
         pages_processed = 0
         target = int(limit) if limit else None
 
+        finished = False
+
         while True:
             if max_pages and pages_processed >= max_pages:
                 break
@@ -222,6 +235,7 @@ class ResCountrySenegalGeography(models.Model):
             )
             rows = payload.get("results", []) if isinstance(payload, dict) else []
             if not rows:
+                finished = True
                 break
 
             scanned += len(rows)
@@ -304,9 +318,10 @@ class ResCountrySenegalGeography(models.Model):
             if target and loaded >= target:
                 break
             if len(rows) < page_size:
+                finished = True
                 break
 
-        return loaded, updated, max(start_page, page - 1), skipped, scanned
+        return loaded, updated, max(start_page, page - 1), skipped, scanned, finished
 
     def _load_senegal_quartiers(
         self, communes, minimum_units=200, start_page=1, max_pages=None
@@ -338,12 +353,12 @@ class ResCountrySenegalGeography(models.Model):
         })
 
     def action_load_senegal_quartiers(self):
-        """Compatibilité : charge tous les villages GalsenAPI."""
+        """Compatibilité : démarre l'import complet en arrière-plan."""
         self.ensure_one()
         return self.action_load_senegal_all_villages()
 
     def action_load_senegal_all_villages(self):
-        """Charge tous les villages GalsenAPI en une seule opération."""
+        """Lance l'import complet sans maintenir la requête HTTP ouverte."""
         self.ensure_one()
         if self.code != "SN":
             raise UserError(_("Cette opération est réservée au Sénégal."))
@@ -365,51 +380,131 @@ class ResCountrySenegalGeography(models.Model):
             ("active", "=", True),
         ])
         if not departments:
-            dept_map = {}
-            for region in regions:
-                dept_map[region.source_uid.replace("GALSEN-REGION-", "")] = region
-            departments = self._load_senegal_departments(dept_map).values()
+            departments = self._load_senegal_departments({
+                r.source_uid.replace("GALSEN-REGION-", ""): r for r in regions
+            })
 
-        dept_map = {}
-        for dept in departments:
-            dept_map[dept.source_uid.replace("GALSEN-DEPT-", "")] = dept
+        dept_map = {
+            dept.source_uid.replace("GALSEN-DEPT-", ""): dept
+            for dept in departments
+        }
         communes = self._load_senegal_communes(dept_map)
         if not communes:
-            raise UserError(_("Impossible de charger les communes du Sénégal depuis GalsenAPI."))
+            raise UserError(
+                _("Impossible de charger les communes du Sénégal depuis GalsenAPI.")
+            )
 
-        loaded, updated, last_page, skipped, scanned = self._load_senegal_villages_galsen(
-            communes, page_size=200, limit=None, start_page=1, max_pages=None
-        )
-
-        final_count = Geo.search_count([
+        current_count = Geo.search_count([
             ("country_id", "=", self.id),
             ("niveau", "=", "niveau5"),
             ("active", "=", True),
             ("source", "=", "GalsenAPI"),
         ])
-        message = _(
-            "GalsenAPI : import complet terminé. %s villages actifs dans Odoo. "
-            "Créés : %s, mis à jour : %s, pages traitées : %s, "
-            "lignes analysées : %s, ignorées : %s."
-        ) % (final_count, loaded, updated, last_page, scanned, skipped)
 
         self.sudo().write({
-            "kiiraaye_geo_village_page": last_page,
-            "kiiraaye_geo_village_loaded": final_count,
+            "kiiraaye_geo_village_import_running": True,
+            "kiiraaye_geo_village_import_message": (
+                "Import complet GalsenAPI démarré en arrière-plan. "
+                "Les villages sont traités par lots côté serveur."
+            ),
+            "kiiraaye_geo_village_loaded": current_count,
+            "kiiraaye_geo_village_page": 0,
         })
-        self._set_senegal_geography_status(message)
         self.env.cr.commit()
 
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
-                "title": _("Villages GalsenAPI"),
-                "message": message,
+                "title": _("Import des villages lancé"),
+                "message": _(
+                    "L'import complet des villages GalsenAPI est lancé en arrière-plan. "
+                    "Vous pouvez continuer à utiliser Odoo."
+                ),
                 "type": "success",
                 "sticky": False,
             },
         }
+
+    @api.model
+    def action_process_senegal_village_imports(self):
+        """Traite quelques pages à chaque passage du cron pour éviter les timeouts HTTP."""
+        Geo = self.env["kiiraaye.geographie"].sudo()
+        countries = Geo.env["res.country"].sudo().search([
+            ("code", "=", "SN"),
+            ("kiiraaye_geo_village_import_running", "=", True),
+        ])
+
+        for country in countries:
+            root = country._ensure_senegal_root()
+            regions = Geo.search([
+                ("country_id", "=", country.id),
+                ("niveau", "=", "niveau1"),
+                ("active", "=", True),
+            ])
+            if not regions:
+                regions = country._load_senegal_regions(root)
+
+            departments = Geo.search([
+                ("country_id", "=", country.id),
+                ("niveau", "=", "niveau2"),
+                ("active", "=", True),
+            ])
+            if not departments:
+                departments = country._load_senegal_departments({
+                    r.source_uid.replace("GALSEN-REGION-", ""): r for r in regions
+                })
+
+            dept_map = {
+                dept.source_uid.replace("GALSEN-DEPT-", ""): dept
+                for dept in departments
+            }
+            communes = country._load_senegal_communes(dept_map)
+            if not communes:
+                country.sudo().write({
+                    "kiiraaye_geo_village_import_running": False,
+                    "kiiraaye_geo_village_import_message":
+                        "Import arrêté : impossible de charger les communes GalsenAPI.",
+                })
+                continue
+
+            start_page = max(1, country.kiiraaye_geo_village_page + 1)
+            loaded, updated, last_page, skipped, scanned, finished = (
+                country._load_senegal_villages_galsen(
+                    communes,
+                    page_size=200,
+                    limit=None,
+                    start_page=start_page,
+                    max_pages=5,
+                )
+            )
+
+            final_count = Geo.search_count([
+                ("country_id", "=", country.id),
+                ("niveau", "=", "niveau5"),
+                ("active", "=", True),
+                ("source", "=", "GalsenAPI"),
+            ])
+
+            country.sudo().write({
+                "kiiraaye_geo_village_page": last_page,
+                "kiiraaye_geo_village_loaded": final_count,
+                "kiiraaye_geo_village_import_running": not finished,
+                "kiiraaye_geo_village_import_message": (
+                    _("Import GalsenAPI en cours : %s villages actifs. "
+                      "Créés : %s, mis à jour : %s. Pages traitées jusqu'à %s.") %
+                    (final_count, loaded, updated, last_page)
+                    if not finished
+                    else
+                    _("Import GalsenAPI terminé : %s villages actifs. "
+                      "Créés : %s, mis à jour : %s, pages traitées : %s, "
+                      "lignes analysées : %s, ignorées : %s.") %
+                    (final_count, loaded, updated, last_page, scanned, skipped)
+                ),
+            })
+            self.env.cr.commit()
+
+        return True
 
     def action_load_senegal_default_geography(self):
         self.ensure_one()
