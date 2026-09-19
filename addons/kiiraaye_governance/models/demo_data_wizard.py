@@ -272,13 +272,16 @@ class KiiraayeDemoDataWizard(models.TransientModel):
                 }
             )
 
-        sections = Section.create(section_vals)
+        # Création des sections par lots de 80 pour limiter la durée de
+        # chaque opération et rendre le traitement plus résilient.
+        sections = Section.browse()
+        batch_size = 80
+        for start in range(0, len(section_vals), batch_size):
+            sections |= Section.create(section_vals[start:start + batch_size])
+            self.env.cr.commit()
+
         if not sections:
             raise UserError(_("Aucune section communale de démonstration n'a pu être créée."))
-
-        # Persister les sections avant la création des membres : une coupure
-        # de la connexion cliente ne doit pas annuler toute la préparation.
-        self.env.cr.commit()
 
         # Référentiel diaspora réel : pays de résidence existant dans Odoo.
         # Aucun faux pays n'est créé. Une coordination diaspora est créée par
@@ -368,7 +371,7 @@ class KiiraayeDemoDataWizard(models.TransientModel):
             )
 
         # Création par lots pour éviter une transaction HTTP trop lourde.
-        batch_size = 250
+        batch_size = 80
         for start in range(0, len(member_vals), batch_size):
             Partisan.with_context(
                 kiiraaye_demo_generation=True
