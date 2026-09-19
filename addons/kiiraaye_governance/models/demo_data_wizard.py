@@ -214,8 +214,8 @@ class KiiraayeDemoDataWizard(models.TransientModel):
                 )
             professions |= profession
 
-        # Les sections communales sont distribuées sur les vrais quartiers
-        # ANSD déjà présents dans le référentiel du Sénégal.
+        # Les sections communales sont distribuées sur les vrais villages / quartiers
+        # GalsenAPI déjà présents dans le référentiel du Sénégal.
         available_quarters = quarters
         if self.section_count > len(available_quarters):
             raise UserError(
