@@ -48,6 +48,7 @@ class ResCountryGeography(models.Model):
     kiiraaye_geo_source = fields.Selection(
         [
             ("geoboundaries", "GeoBoundaries / gbOpen"),
+            ("galsenapi", "GalsenAPI"),
             ("manuel", "Référentiel manuel"),
         ],
         string="Source géographique",
