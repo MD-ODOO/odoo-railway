@@ -24,5 +24,4 @@ from . import dashboard
 from . import demo_data_wizard
 from . import ralliement
 from . import ralliement_add_member_wizard
-from . import section_hierarchy_wizard
 from . import resend_mail
