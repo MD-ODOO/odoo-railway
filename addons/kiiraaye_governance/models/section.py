@@ -46,7 +46,6 @@ class KiiraayeSection(models.Model):
         help="Champ utilisé pour afficher le widget de hiérarchie OWL",
     )
 
-    @api.depends("id")
     def _compute_hierarchy_anchor(self):
         for record in self:
             record.hierarchy_anchor = bool(record.id)
