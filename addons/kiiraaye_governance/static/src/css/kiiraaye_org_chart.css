@@ -1,0 +1,184 @@
+.k_org_chart_wrapper {
+    min-height: 260px;
+    padding: 28px 10px 35px;
+    overflow-x: auto;
+    overflow-y: visible;
+    text-align: center;
+}
+
+.k_org_chart_group_up,
+.k_org_chart_self,
+.k_org_chart_group_down {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+}
+
+.k_org_chart_group_up {
+    flex-direction: column-reverse;
+    margin-bottom: 22px;
+}
+
+.k_org_chart_group_up .k_org_chart_entry::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    width: 2px;
+    height: 22px;
+    transform: translateX(-50%);
+    background: #c8cbd1;
+}
+
+.k_org_chart_self {
+    z-index: 2;
+    margin-bottom: 28px;
+}
+
+.k_org_chart_self .k_org_chart_entry::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    width: 2px;
+    height: 28px;
+    transform: translateX(-50%);
+    background: #9aa0aa;
+}
+
+.k_org_chart_group_down {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 26px 14px;
+    padding-top: 18px;
+}
+
+.k_org_chart_group_down::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 12%;
+    right: 12%;
+    height: 2px;
+    background: #9aa0aa;
+}
+
+.k_org_chart_group_down .k_org_chart_entry::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -18px;
+    width: 2px;
+    height: 18px;
+    transform: translateX(-50%);
+    background: #9aa0aa;
+}
+
+.k_org_chart_entry {
+    width: 330px;
+    max-width: 330px;
+}
+
+.k_org_chart_card {
+    width: 100%;
+    min-height: 82px;
+    padding: 10px 12px;
+    border: 1px solid #d9dce2;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(16, 24, 40, 0.08);
+    color: inherit;
+    text-decoration: none;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+
+.k_org_chart_card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(16, 24, 40, 0.12);
+    border-color: #adb3bd;
+    color: inherit;
+    text-decoration: none;
+}
+
+.k_org_chart_self .k_org_chart_card {
+    border-width: 2px;
+    border-color: #6f7785;
+    box-shadow: 0 4px 16px rgba(16, 24, 40, 0.13);
+}
+
+.k_org_chart_icon {
+    width: 42px;
+    height: 42px;
+    margin-right: 10px;
+    border-radius: 8px;
+    background: #eef1f5;
+    color: #4f5866;
+    font-size: 18px;
+}
+
+.k_org_chart_content {
+    text-align: left;
+    min-width: 0;
+}
+
+.k_org_chart_name {
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.k_org_chart_type {
+    margin-top: 3px;
+    font-size: 12px;
+    line-height: 1.25;
+}
+
+.k_org_chart_members {
+    min-width: 58px;
+    margin-left: 8px;
+}
+
+.k_org_chart_members strong,
+.k_org_chart_members small {
+    display: block;
+}
+
+.k_org_chart_members strong {
+    font-size: 16px;
+    line-height: 1;
+}
+
+.k_org_chart_members small {
+    margin-top: 3px;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6c7280;
+}
+
+.k_org_chart_more {
+    position: absolute;
+    top: -30px;
+    z-index: 3;
+}
+
+.k_org_chart_more a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid #d0d4da;
+    background: #fff;
+    color: #4f5866;
+    text-decoration: none;
+}
+
+.k_org_chart_empty {
+    padding: 25px;
+    color: #727985;
+    font-style: italic;
+}
