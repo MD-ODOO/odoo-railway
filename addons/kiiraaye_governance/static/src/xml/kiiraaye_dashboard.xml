@@ -94,6 +94,7 @@
                     <button t-att-class="state.view === 'section' ? 'active' : ''" t-on-click="() => this.setView('section')">Sections</button>
                     <button t-att-class="state.view === 'lieu' ? 'active' : ''" t-on-click="() => this.setView('lieu')">Lieu</button>
                     <button t-att-class="state.view === 'membre' ? 'active' : ''" t-on-click="() => this.setView('membre')">Membre</button>
+                    <button t-att-class="state.view === 'ralliement' ? 'active' : ''" t-on-click="() => this.setView('ralliement')">Ralliements</button>
                     <button t-att-class="state.view === 'historique' ? 'active' : ''" t-on-click="() => this.setView('historique')">Historique électoral</button>
                 </div>
 
@@ -538,6 +539,45 @@
                                 </t>
                             </div>
                         </div>
+                </section>
+
+                <section t-if="state.view === 'ralliement'">
+                    <div class="panel">
+                        <div class="panel__title">
+                            <span>Kiiraay Ralliements</span>
+                            <small>Partis · Organisations · Associations · Mouvements · Coopératives</small>
+                        </div>
+                        <div class="kiiraaye-dashboard__grid kiiraaye-dashboard__grid--kpi">
+                            <t t-foreach="state.data.ralliements" t-as="rally" t-key="rally.type">
+                                <div class="kpi-card coverage-kpi coverage-kpi--blue">
+                                    <span><t t-esc="rally.label"/></span>
+                                    <strong><t t-esc="formatNumber(rally.count)"/></strong>
+                                    <small><t t-esc="formatNumber(rally.members)"/> membres rattachés</small>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel__title">
+                            <span>Répartition des membres par ralliement</span>
+                            <small>lecture descriptive</small>
+                        </div>
+                        <div class="data-table">
+                            <div class="data-row data-row--diaspora-head">
+                                <span>Type</span>
+                                <span>Nombre de ralliements</span>
+                                <span>Membres</span>
+                            </div>
+                            <t t-foreach="state.data.ralliements" t-as="rally" t-key="'r-' + rally.type">
+                                <div class="data-row data-row--diaspora">
+                                    <span><strong><t t-esc="rally.label"/></strong></span>
+                                    <span><t t-esc="formatNumber(rally.count)"/></span>
+                                    <span><b class="coverage-badge coverage-badge--high"><t t-esc="formatNumber(rally.members)"/></b></span>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
                 </section>
 
                 <section t-if="state.view === 'membre'" >
