@@ -273,34 +273,6 @@
 
                         <div class="panel">
                             <div class="panel__title">
-                                <span>Coordonnateurs territoriaux</span>
-                                <small>région · département · commune</small>
-                            </div>
-                            <div class="data-table">
-                                <div class="data-row data-row--geo-head">
-                                    <span>Niveau</span>
-                                    <span>Section / Coordination</span>
-                                    <span>Coordonnateur</span>
-                                </div>
-                                <t t-if="state.data.coordinators.length">
-                                    <t t-foreach="state.data.coordinators" t-as="coordinator" t-key="coordinator.id">
-                                        <div class="data-row data-row--geo">
-                                            <span><strong><t t-esc="coordinator.type"/></strong></span>
-                                            <span><t t-esc="coordinator.name"/></span>
-                                            <span><strong><t t-esc="coordinator.coordinator"/></strong></span>
-                                        </div>
-                                    </t>
-                                </t>
-                                <t t-else="">
-                                    <div class="empty-state">
-                                        Aucun coordonnateur territorial n'est actuellement renseigné.
-                                    </div>
-                                </t>
-                            </div>
-                        </div>
-
-                        <div class="panel">
-                            <div class="panel__title">
                                 <span>Détail régional</span>
                                 <small>lecture verticale : région → département → commune</small>
                             </div>
