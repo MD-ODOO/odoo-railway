@@ -162,9 +162,29 @@ class KiiraayeSection(models.Model):
 
     def action_view_hierarchy(self):
         self.ensure_one()
-        action = self.env.ref("kiiraaye_governance.action_kiiraaye_section_org_chart").read()[0]
-        action["res_id"] = self.id
-        action["context"] = dict(self.env.context, active_id=self.id, active_ids=[self.id], active_model="kiiraaye.section")
+        # Ne dépend pas d'un XMLID d'action pouvant être absent après une mise à jour.
+        view = self.env["ir.ui.view"].search(
+            [("model", "=", "kiiraaye.section"), ("name", "=", "kiiraaye.section.org.chart")],
+            order="id desc",
+            limit=1,
+        )
+        action = {
+            "type": "ir.actions.act_window",
+            "name": _("Hiérarchie de la section"),
+            "res_model": "kiiraaye.section",
+            "view_mode": "form",
+            "res_id": self.id,
+            "target": "current",
+            "context": dict(
+                self.env.context,
+                active_id=self.id,
+                active_ids=[self.id],
+                active_model="kiiraaye.section",
+            ),
+        }
+        if view:
+            action["views"] = [(view.id, "form")]
+            action["view_id"] = view.id
         return action
 
     def _section_hierarchy_parent(self):
