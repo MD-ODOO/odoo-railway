@@ -32,6 +32,11 @@ class KiiraayeOrganisation(models.Model):
         ondelete="restrict",
         index=True,
     )
+    child_ids = fields.One2many(
+        "kiiraaye.organisation",
+        "parent_id",
+        string="Organisations enfants",
+    )
     niveau = fields.Integer(
         related="type_id.niveau",
         string="Niveau",
