@@ -87,6 +87,13 @@
                     </group>
 
                     <notebook>
+                        <page string="Hiérarchie">
+                            <field name="parent_id"
+                                   widget="kiiraaye_org_chart"
+                                   nolabel="1"
+                                   readonly="1"
+                                   class="k_org_chart_field"/>
+                        </page>
                         <page string="Membres">
                             <field name="member_ids" readonly="1">
                                 <list string="Membres de l'organisation">
