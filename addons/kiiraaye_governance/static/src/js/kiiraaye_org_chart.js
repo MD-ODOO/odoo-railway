@@ -18,6 +18,10 @@ export class KiiraayeOrgChart extends Component {
         this.state = useState({
             organisationId: null,
             maxLevel: null,
+            managers: [],
+            children: [],
+            self: null,
+            managersMore: false,
         });
         this.lastOrganisationId = null;
         this.lastParentId = null;
@@ -41,10 +45,10 @@ export class KiiraayeOrgChart extends Component {
 
     async fetchOrganisationData(organisationId, parentId = null) {
         if (!organisationId) {
-            this.managers = [];
-            this.children = [];
-            this.self = null;
-            this.managersMore = false;
+            this.state.managers = [];
+            this.state.children = [];
+            this.state.self = null;
+            this.state.managersMore = false;
             return;
         }
 
@@ -66,10 +70,10 @@ export class KiiraayeOrgChart extends Component {
             };
         }
 
-        this.managers = data.managers || [];
-        this.children = data.children || [];
-        this.self = data.self || null;
-        this.managersMore = Boolean(data.managers_more);
+        this.state.managers = data.managers || [];
+        this.state.children = data.children || [];
+        this.state.self = data.self || null;
+        this.state.managersMore = Boolean(data.managers_more);
     }
 
     async _onOrganisationRedirect(organisationId) {
