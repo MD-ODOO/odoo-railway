@@ -9,6 +9,7 @@
                 <field name="nom_complet"/>
                 <field name="profession_id"/>
                 <field name="organisation_ids" widget="many2many_tags"/>
+                <field name="ralliement_ids" widget="many2many_tags"/>
                 <field name="date_naissance"/>
                 <field name="national_id"/>
                 <field name="country_id"/>
@@ -172,6 +173,18 @@
                                     <field name="commune_id"/>
                                     <field name="quartier_id"/>
                                     <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Ralliements">
+                            <field name="ralliement_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="type_ralliement"/>
+                                    <field name="country_id"/>
+                                    <field name="active"/>
                                 </list>
                             </field>
                         </page>
