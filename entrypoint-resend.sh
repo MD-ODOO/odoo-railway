@@ -20,13 +20,12 @@ import sys
 path = sys.argv[1]
 
 values = {
-    # Force the Railway PostgreSQL connection. The official Odoo image
-    # ships with db_host/db_port/db_user/db_password entries in odoo.conf,
-    # so the standard entrypoint may otherwise keep using the local socket.
-    "db_host": os.getenv("HOST", ""),
-    "db_port": os.getenv("PORT", "5432"),
-    "db_user": os.getenv("USER", ""),
-    "db_password": os.getenv("PASSWORD", ""),
+    # Dedicated Odoo database variables. These are intentionally separate
+    # from Railway's generic HOST/USER/PASSWORD variables.
+    "db_host": os.getenv("ODOO_DB_HOST", "postgres.railway.internal"),
+    "db_port": os.getenv("ODOO_DB_PORT", "5432"),
+    "db_user": os.getenv("ODOO_DB_USER", "odoo"),
+    "db_password": os.getenv("ODOO_DB_PASSWORD", "passer"),
 }
 
 values.update({
