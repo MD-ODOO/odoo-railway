@@ -68,4 +68,4 @@ PY
 
 export RESEND_PASSWORD
 export ODOO_RC="${RUNTIME_CONFIG}"
-exec /entrypoint.sh "$@"
+exec /entrypoint.sh "$@" -c "${RUNTIME_CONFIG}"
