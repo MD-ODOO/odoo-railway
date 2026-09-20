@@ -72,6 +72,14 @@ class KiiraayePartisan(models.Model):
         "section_id",
         string="Sections / Coordinations",
     )
+
+    ralliement_ids = fields.Many2many(
+        "kiiraaye.ralliement",
+        "kiiraaye_ralliement_partisan_rel",
+        "partisan_id",
+        "ralliement_id",
+        string="Ralliements",
+    )
     attribution_poste_ids = fields.One2many(
         "kiiraaye.attribution.poste",
         "partisan_id",
