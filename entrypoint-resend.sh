@@ -67,4 +67,7 @@ PY
 
 export RESEND_PASSWORD
 export ODOO_RC="${RUNTIME_CONFIG}"
-exec /entrypoint.sh "$@" -c "${RUNTIME_CONFIG}"
+# Do not invoke the official entrypoint here: Railway exposes generic
+# HOST/PORT/USER/PASSWORD variables which can make it inject the
+# PostgreSQL user "postgres" and override our Odoo config.
+exec odoo -c "${RUNTIME_CONFIG}" "$@"
