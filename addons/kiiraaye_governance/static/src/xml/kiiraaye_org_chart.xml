@@ -26,9 +26,9 @@
 
     <t t-name="kiiraaye_governance.kiiraaye_org_chart">
         <div class="k_org_chart_wrapper">
-            <t t-if="self">
-                <div t-if="managers.length" class="k_org_chart_group_up">
-                    <div t-if="managersMore" class="k_org_chart_more">
+            <t t-if="state.self">
+                <div t-if="state.managers.length" class="k_org_chart_group_up">
+                    <div t-if="state.managersMore" class="k_org_chart_more">
                         <a href="#"
                            title="Afficher tous les niveaux supérieurs"
                            t-on-click.prevent="_onMoreManagers">
@@ -36,24 +36,24 @@
                         </a>
                     </div>
 
-                    <t t-foreach="managers" t-as="organisation" t-key="organisation.id">
+                    <t t-foreach="state.managers" t-as="organisation" t-key="organisation.id">
                         <t t-call="kiiraaye_governance.kiiraaye_org_chart_entry"/>
                     </t>
                 </div>
 
                 <div class="k_org_chart_self">
                     <t t-call="kiiraaye_governance.kiiraaye_org_chart_entry">
-                        <t t-set="organisation" t-value="self"/>
+                        <t t-set="organisation" t-value="state.self"/>
                     </t>
                 </div>
 
-                <div t-if="children.length" class="k_org_chart_group_down">
-                    <t t-foreach="children" t-as="organisation" t-key="organisation.id">
+                <div t-if="state.children.length" class="k_org_chart_group_down">
+                    <t t-foreach="state.children" t-as="organisation" t-key="organisation.id">
                         <t t-call="kiiraaye_governance.kiiraaye_org_chart_entry"/>
                     </t>
                 </div>
 
-                <div t-if="!managers.length and !children.length" class="k_org_chart_empty">
+                <div t-if="!state.managers.length and !state.children.length" class="k_org_chart_empty">
                     Aucune organisation parente ou enfant n'est définie pour cette organisation.
                 </div>
             </t>
