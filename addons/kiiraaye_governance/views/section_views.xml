@@ -157,4 +157,47 @@
         <field name="search_view_id" ref="view_kiiraaye_section_search"/>
         <field name="limit">1000</field>
     </record>
+
+    <!-- Vue OWL Schéma Hiérarchique Direct pour les Sections -->
+    <record id="view_kiiraaye_section_org_chart" model="ir.ui.view">
+        <field name="name">kiiraaye.section.org.chart</field>
+        <field name="model">kiiraaye.section</field>
+        <field name="arch" type="xml">
+            <form string="Hiérarchie de la section" create="0" edit="0">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Section / Coordination">
+                            <field name="reference" readonly="1"/>
+                            <field name="type_section" readonly="1"/>
+                            <field name="country_id" readonly="1"/>
+                            <field name="cordonnateur_id" readonly="1"/>
+                        </group>
+                        <group string="Localisation">
+                            <field name="region_id" readonly="1"/>
+                            <field name="departement_id" readonly="1"/>
+                            <field name="commune_id" readonly="1"/>
+                            <field name="quartier_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <div class="o_horizontal_separator">Schéma hiérarchique</div>
+                    <field name="id"
+                           widget="kiiraaye_org_chart"
+                           nolabel="1"
+                           readonly="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_kiiraaye_section_org_chart" model="ir.actions.act_window">
+        <field name="name">Hiérarchie de la section</field>
+        <field name="res_model">kiiraaye.section</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_kiiraaye_section_org_chart"/>
+        <field name="target">current</field>
+    </record>
+
 </odoo>

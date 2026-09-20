@@ -52,7 +52,9 @@ export class KiiraayeOrgChart extends Component {
             return;
         }
 
-        let data = await rpc("/kiiraaye/get_org_chart", {
+        const endpoint = this.props.record.resModel === "kiiraaye.section" ? "/kiiraaye/get_section_org_chart" : "/kiiraaye/get_org_chart";
+
+        let data = await rpc(endpoint, {
             organisation_id: organisationId,
             new_parent_id: parentId,
             context: {
@@ -77,10 +79,11 @@ export class KiiraayeOrgChart extends Component {
     }
 
     async _onOrganisationRedirect(organisationId) {
+        const resModel = this.props.record.resModel;
         await this.actionService.doAction({
             type: "ir.actions.act_window",
-            name: "Organisation KIIRAAYE",
-            res_model: "kiiraaye.organisation",
+            name: resModel === "kiiraaye.section" ? "Section / Coordination" : "Organisation KIIRAAYE",
+            res_model: resModel,
             res_id: organisationId,
             views: [[false, "form"]],
             target: "current",

@@ -432,14 +432,75 @@ class KiiraayeSection(models.Model):
     def action_view_hierarchy(self):
         self.ensure_one()
         action = self.env.ref(
-            "kiiraaye_governance.action_kiiraaye_section_hierarchy"
+            "kiiraaye_governance.action_kiiraaye_section_org_chart"
         ).read()[0]
+        action["res_id"] = self.id
         action["context"] = dict(
             self.env.context,
-            default_section_id=self.id,
             active_id=self.id,
+            active_ids=[self.id],
+            active_model="kiiraaye.section",
         )
         return action
+
+
+    def _section_hierarchy_parent(self):
+        """Retourne le parent hiérarchique selon le type et la géographie."""
+        self.ensure_one()
+        Section = self.env["kiiraaye.section"]
+
+        if self.type_section == "regionale":
+            return Section.search([
+                ("type_section", "=", "nationale"),
+                ("country_id", "=", self.country_id.id),
+                ("active", "=", True),
+            ], order="id", limit=1)
+
+        if self.type_section == "departementale":
+            return Section.search([
+                ("type_section", "=", "regionale"),
+                ("country_id", "=", self.country_id.id),
+                ("region_id", "=", self.region_id.id),
+                ("active", "=", True),
+            ], order="id", limit=1)
+
+        if self.type_section == "communale":
+            return Section.search([
+                ("type_section", "=", "departementale"),
+                ("country_id", "=", self.country_id.id),
+                ("region_id", "=", self.region_id.id),
+                ("departement_id", "=", self.departement_id.id),
+                ("active", "=", True),
+            ], order="id", limit=1)
+
+        return Section.browse()
+
+    def _section_hierarchy_children(self):
+        """Retourne les enfants hiérarchiques selon le type et la géographie."""
+        self.ensure_one()
+        Section = self.env["kiiraaye.section"]
+        domain = [
+            ("active", "=", True),
+            ("country_id", "=", self.country_id.id),
+        ]
+
+        if self.type_section == "nationale":
+            domain.append(("type_section", "=", "regionale"))
+        elif self.type_section == "regionale":
+            domain += [
+                ("type_section", "=", "departementale"),
+                ("region_id", "=", self.region_id.id),
+            ]
+        elif self.type_section == "departementale":
+            domain += [
+                ("type_section", "=", "communale"),
+                ("region_id", "=", self.region_id.id),
+                ("departement_id", "=", self.departement_id.id),
+            ]
+        else:
+            return Section.browse()
+
+        return Section.search(domain, order="name, id")
 
     def action_open_siege(self):
         self.ensure_one()
