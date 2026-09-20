@@ -1,12 +1,12 @@
 {
     "name": "Kiiraaye Gouvernance",
-    "version": "19.0.2.22.53",
+    "version": "19.0.2.22.54",
     "category": "Organization",
     "summary": "Référentiel géographique et gestion des sections/coordinations Kiiraaye",
     "description": "Référentiel pays et subdivisions administratives, sections/coordinations, membres, bureaux, cartes membres, attributions de postes et contrôle d'accès hiérarchique.",
     "author": "Kiiraaye",
     "license": "LGPL-3",
-    "depends": ["base"],
+    "depends": ["base", "mail"],
     "data": [
         "security/groups.xml",
         "security/ir.model.access.csv",
