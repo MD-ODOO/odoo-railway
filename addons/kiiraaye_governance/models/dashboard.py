@@ -863,6 +863,8 @@ class KiiraayeDashboard(models.Model):
 
         section_rows = []
         organisation_rows = []
+        coordinator_rows = []
+        ralliement_rows = []
         member_creation = []
         geography_levels = []
         geography_rows = []
@@ -894,6 +896,65 @@ class KiiraayeDashboard(models.Model):
                 section_domain,
                 member_domain,
                 Section,
+            )
+
+        # Coordonnateurs territoriaux : source = champ explicite ou titulaire
+        # du poste COORD dans le bureau.
+        if section_scope == "national":
+            territorial_sections = Section.search(
+                [
+                    ("active", "=", True),
+                    ("country_id.code", "=", "SN"),
+                    ("type_section", "in", ("regionale", "departementale", "communale")),
+                ],
+                order="type_section, name, id",
+                limit=1000,
+            )
+            for coordination in territorial_sections:
+                coordinator = coordination.cordonnateur_id
+                if not coordinator:
+                    line = coordination.bureau_ligne_ids.filtered(
+                        lambda item: (
+                            item.active
+                            and item.position_id
+                            and item.position_id.code == "COORD"
+                            and item.partisan_id
+                        )
+                    )[:1]
+                    coordinator = line.partisan_id if line else False
+                if not coordinator:
+                    continue
+                coordinator_rows.append(
+                    {
+                        "id": coordination.id,
+                        "type": self._selection_label(
+                            Section._fields["type_section"],
+                            coordination.type_section,
+                        ),
+                        "name": coordination.name,
+                        "coordinator": coordinator.nom_complet,
+                    }
+                )
+
+        Ralliement = self.env["kiiraaye.ralliement"]
+        ralliement_labels = dict(Ralliement._fields["type_ralliement"].selection)
+        for type_value in ("parti", "organisation", "association", "mouvement", "cooperative"):
+            count = Ralliement.search_count(
+                [("active", "=", True), ("type_ralliement", "=", type_value)]
+            )
+            member_count = Partisan.search_count(
+                [
+                    ("active", "=", True),
+                    ("ralliement_ids.type_ralliement", "=", type_value),
+                ]
+            )
+            ralliement_rows.append(
+                {
+                    "type": type_value,
+                    "label": ralliement_labels.get(type_value, type_value),
+                    "count": count,
+                    "members": member_count,
+                }
             )
         if current_view == "membre":
             member_creation = self._get_creation_history(member_domain)
@@ -1137,6 +1198,8 @@ class KiiraayeDashboard(models.Model):
             ],
             "sections": section_rows,
             "organisations": organisation_rows,
+            "coordinators": coordinator_rows,
+            "ralliements": ralliement_rows,
             "section_geography_overview": section_geography_overview,
             "top_member_geographies": top_member_geographies,
             "regional_reference_source": self.REGIONAL_REFERENCE_SOURCE,
