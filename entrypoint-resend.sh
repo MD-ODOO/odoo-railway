@@ -70,4 +70,9 @@ export ODOO_RC="${RUNTIME_CONFIG}"
 # Do not invoke the official entrypoint here: Railway exposes generic
 # HOST/PORT/USER/PASSWORD variables which can make it inject the
 # PostgreSQL user "postgres" and override our Odoo config.
-exec odoo -c "${RUNTIME_CONFIG}" "$@"
+exec odoo -c "${RUNTIME_CONFIG}" \
+    --db_host="${ODOO_DB_HOST:-postgres.railway.internal}" \
+    --db_port="${ODOO_DB_PORT:-5432}" \
+    --db_user="${ODOO_DB_USER:-odoo}" \
+    --db_password="${ODOO_DB_PASSWORD:-}" \
+    "$@"
