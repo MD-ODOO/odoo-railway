@@ -554,6 +554,26 @@ class KiiraayeDemoDataWizard(models.TransientModel):
                     getattr(member, field_name).id == geo_id
             )[:1]
 
+        def create_demo_coordinator(first_name, last_name, region, department=False):
+            values = {
+                "prenom": first_name,
+                "nom": last_name,
+                "country_id": country.id,
+                "region_id": region.id if region else False,
+                "departement_id": department.id if department else False,
+                "commune_id": False,
+                "quartier_id": False,
+                "lieu_naissance": department.name if department else region.name if region else country.name,
+                "profession_id": professions[0].id if professions else False,
+                "active": True,
+                "is_demo_data": True,
+            }
+            member = Partisan.with_context(
+                kiiraaye_demo_generation=True
+            ).create(values)
+            self.env.cr.commit()
+            return member
+
         for region in regions:
             existing = Section.search(
                 [
@@ -569,7 +589,12 @@ class KiiraayeDemoDataWizard(models.TransientModel):
 
             coordinator_member = first_member_for("region_id", region.id)
             if not coordinator_member:
-                continue
+                coordinator_member = create_demo_coordinator(
+                    "Coordonnateur",
+                    f"Région {region.name}",
+                    region,
+                )
+                created_members |= coordinator_member
 
             coordination = Section.create(
                 {
@@ -614,7 +639,13 @@ class KiiraayeDemoDataWizard(models.TransientModel):
 
             coordinator_member = first_member_for("departement_id", department.id)
             if not coordinator_member:
-                continue
+                coordinator_member = create_demo_coordinator(
+                    "Coordonnateur",
+                    f"Département {department.name}",
+                    ancestor(department, "niveau1"),
+                    department=department,
+                )
+                created_members |= coordinator_member
 
             coordination = Section.create(
                 {
@@ -645,6 +676,42 @@ class KiiraayeDemoDataWizard(models.TransientModel):
             coordination_members.add(coordinator_member.id)
             self.env.cr.commit()
 
+        # ================================================================
+        # RALLIEMENTS DE DÉMONSTRATION
+        # ================================================================
+        Ralliement = self.env["kiiraaye.ralliement"].sudo()
+        ralliement_specs = [
+            ("Parti", "parti", "PARTI"),
+            ("Organisation", "organisation", "ORG"),
+            ("Association", "association", "ASSO"),
+            ("Mouvement", "mouvement", "MVT"),
+            ("Coopérative", "cooperative", "COOP"),
+        ]
+        demo_ralliements = Ralliement.browse()
+        for label, type_value, short_code in ralliement_specs:
+            code = f"DEMO-KIIRAAYE-RALLIEMENT-{short_code}"
+            rally = Ralliement.search([("code", "=", code)], limit=1)
+            if not rally:
+                rally = Ralliement.create(
+                    {
+                        "name": f"{label} — Démo",
+                        "code": code,
+                        "type_ralliement": type_value,
+                        "country_id": country.id,
+                        "date_creation": fields.Date.context_today(self),
+                        "active": True,
+                        "description": f"{label} synthétique créé pour démontrer la gestion des ralliements.",
+                    }
+                )
+            demo_ralliements |= rally
+
+            if created_members:
+                chunk = created_members.ids[
+                    (len(demo_ralliements) - 1) * 40 : len(demo_ralliements) * 40
+                ]
+                if chunk:
+                    rally.write({"member_ids": [(6, 0, chunk)]})
+
         total_sections = (
             len(sections)
             + len(created_diaspora)
@@ -663,8 +730,8 @@ class KiiraayeDemoDataWizard(models.TransientModel):
                 "message": _(
                     "%s sections communales, %s coordinations régionales, "
                     "%s coordinations départementales, %s coordinations diaspora, "
-                    "%s membres, %s lignes de bureau et %s organisations de démonstration "
-                    "générés. Pays diaspora : %s."
+                    "%s membres, %s lignes de bureau, %s organisations et %s ralliements "
+                    "de démonstration générés. Pays diaspora : %s."
                 )
                 % (
                     len(sections),
@@ -674,6 +741,7 @@ class KiiraayeDemoDataWizard(models.TransientModel):
                     self.member_count,
                     len(bureau_lines),
                     len(demo_organisations),
+                    len(demo_ralliements),
                     diaspora_names or _("aucun"),
                 ),
                 "type": "success",
