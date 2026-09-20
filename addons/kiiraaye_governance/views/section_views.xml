@@ -56,6 +56,7 @@
             <form string="Section / Coordination">
                 <header>
                     <button name="action_open_siege" type="object" string="Ouvrir l'adresse du siège" class="oe_highlight"/>
+                    <button name="action_view_hierarchy" type="object" string="Voir la hiérarchie" icon="fa-sitemap"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
