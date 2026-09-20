@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kiiraaye_section_hierarchy_wizard" model="ir.ui.view">
+        <field name="name">kiiraaye.section.hierarchy.wizard.form</field>
+        <field name="model">kiiraaye.section.hierarchy.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Hiérarchie géographique de la section">
+                <sheet>
+                    <div class="oe_title">
+                        <h2><field name="section_id" readonly="1"/></h2>
+                    </div>
+
+                    <div class="alert alert-info" role="alert">
+                        Hiérarchie de la section : du quartier / village vers la région.
+                    </div>
+
+                    <group>
+                        <group string="Localisation">
+                            <field name="quartier_id" readonly="1"/>
+                            <field name="commune_id" readonly="1"/>
+                        </group>
+                        <group string="Niveaux supérieurs">
+                            <field name="departement_id" readonly="1"/>
+                            <field name="region_id" readonly="1"/>
+                            <field name="country_id" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <div class="o_horizontal_separator">Parcours géographique</div>
+                    <div style="padding:18px 8px;font-size:14px;font-weight:700;text-align:center;">
+                        <span><field name="quartier_id" readonly="1"/></span>
+                        <span style="margin:0 10px;">→</span>
+                        <span><field name="commune_id" readonly="1"/></span>
+                        <span style="margin:0 10px;">→</span>
+                        <span><field name="departement_id" readonly="1"/></span>
+                        <span style="margin:0 10px;">→</span>
+                        <span><field name="region_id" readonly="1"/></span>
+                    </div>
+
+                    <footer>
+                        <button string="Fermer" special="cancel" class="btn-primary"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_kiiraaye_section_hierarchy" model="ir.actions.act_window">
+        <field name="name">Hiérarchie géographique</field>
+        <field name="res_model">kiiraaye.section.hierarchy.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_kiiraaye_section_hierarchy_wizard"/>
+        <field name="target">new</field>
+    </record>
+</odoo>
