@@ -498,6 +498,48 @@ class KiiraayeDashboard(models.Model):
                             coordinator_name
                         )
 
+        # Deuxième filet : certains paramétrages peuvent avoir une
+        # coordination créée avec le bon niveau géographique mais une ligne
+        # COORD enregistrée dans le bureau d'une structure apparentée.
+        # On tente alors de retrouver le premier titulaire COORD actif sur
+        # la même zone géographique.
+        fallback_field_by_level = {
+            "region": "region_id",
+            "department": "departement_id",
+            "commune": "commune_id",
+        }
+        for level, field_name in fallback_field_by_level.items():
+            geographies = {
+                geography_id
+                for geography_id in coordinator_maps[level]
+            }
+            if level == "region":
+                geographies.update(region.id for region in regions)
+            elif level == "department":
+                geographies.update(department.id for department in departments)
+            else:
+                geographies.update(commune.id for commune in communes)
+
+            for geography_id in geographies:
+                if coordinator_maps[level].get(geography_id):
+                    continue
+                candidates = Section.search(
+                    [
+                        ("active", "=", True),
+                        ("country_id.code", "=", "SN"),
+                        (field_name, "=", geography_id),
+                        ("bureau_ligne_ids.active", "=", True),
+                        ("bureau_ligne_ids.position_id.code", "=", "COORD"),
+                    ],
+                    order="id",
+                    limit=20,
+                )
+                for candidate in candidates:
+                    coordinator_name = get_coordinator_name(candidate)
+                    if coordinator_name:
+                        coordinator_maps[level][geography_id].append(coordinator_name)
+                        break
+
         regional_coordinators = {
             geo_id: " · ".join(names)
             for geo_id, names in coordinator_maps["region"].items()
