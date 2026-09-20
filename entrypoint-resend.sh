@@ -29,14 +29,13 @@ values = {
     "db_password": os.getenv("PASSWORD", ""),
 }
 
-if os.getenv("RESEND_PASSWORD", ""):
-    values.update({
-        "smtp_server": os.getenv("RESEND_SMTP_HOST", "smtp.resend.com"),
-        "smtp_port": os.getenv("RESEND_SMTP_PORT", "465"),
-        "smtp_user": os.getenv("RESEND_SMTP_USER", "resend"),
-        "smtp_password": os.getenv("RESEND_SMTP_PASSWORD") or os.getenv("RESEND_API_KEY", ""),
-        "smtp_ssl": os.getenv("RESEND_SMTP_SSL", "true"),
-    })
+values.update({
+    "smtp_server": os.getenv("RESEND_SMTP_HOST", "smtp.resend.com"),
+    "smtp_port": os.getenv("RESEND_SMTP_PORT", "465"),
+    "smtp_user": os.getenv("RESEND_SMTP_USER", "resend"),
+    "smtp_password": os.getenv("RESEND_SMTP_PASSWORD") or os.getenv("RESEND_API_KEY", ""),
+    "smtp_ssl": os.getenv("RESEND_SMTP_SSL", "true"),
+})
 
 from_email = os.getenv("RESEND_FROM_EMAIL")
 if from_email:
