@@ -173,7 +173,7 @@
                             <field name="reference" readonly="1"/>
                             <field name="type_section" readonly="1"/>
                             <field name="country_id" readonly="1"/>
-                            <field name="cordonnateur_id" readonly="1"/>
+                            
                         </group>
                         <group string="Localisation">
                             <field name="region_id" readonly="1"/>

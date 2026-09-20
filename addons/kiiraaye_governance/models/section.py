@@ -135,6 +135,19 @@ class KiiraayeSection(models.Model):
         "commune_id",
         "quartier_id",
     )
+    hierarchy_anchor = fields.Boolean(
+        string="Hiérarchie",
+        compute="_compute_hierarchy_anchor",
+        readonly=True,
+        help="Champ utilisé pour afficher le widget de hiérarchie OWL",
+    )
+
+    @api.depends("id")
+    def _compute_hierarchy_anchor(self):
+        for record in self:
+            record.hierarchy_anchor = bool(record.id)
+
+
     def _compute_name(self):
         """Construit automatiquement le nom selon la hiérarchie sélectionnée."""
         type_labels = dict(self._fields["type_section"].selection)

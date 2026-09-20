@@ -55,7 +55,8 @@ export class KiiraayeOrgChart extends Component {
         const endpoint = this.props.record.resModel === "kiiraaye.section" ? "/kiiraaye/get_section_org_chart" : "/kiiraaye/get_org_chart";
 
         let data = await rpc(endpoint, {
-            organisation_id: organisationId,
+            organisation_id: this.props.record.resModel === "kiiraaye.section" ? null : organisationId,
+            section_id: this.props.record.resModel === "kiiraaye.section" ? organisationId : null,
             new_parent_id: parentId,
             context: {
                 ...user.context,
