@@ -49,6 +49,14 @@
                             class="oe_highlight"/>
                 </header>
                 <sheet>
+                    <widget name="web_ribbon"
+                            title="Actif"
+                            invisible="not active"/>
+                    <widget name="web_ribbon"
+                            title="Inactif"
+                            bg_color="text-bg-danger"
+                            invisible="active"/>
+
                     <div class="oe_button_box" name="button_box">
                         <button name="action_add_member"
                                 type="object"
