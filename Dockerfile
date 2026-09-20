@@ -1,5 +1,8 @@
 FROM odoo:19.0
 
+# Disable the official Odoo image entrypoint so Railway Start Command is executed directly.
+ENTRYPOINT []
+
 USER root
 
 RUN mkdir -p /mnt/extra-addons \
