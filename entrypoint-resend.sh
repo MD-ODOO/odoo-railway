@@ -25,7 +25,7 @@ values = {
     "db_host": os.getenv("ODOO_DB_HOST", "postgres.railway.internal"),
     "db_port": os.getenv("ODOO_DB_PORT", "5432"),
     "db_user": os.getenv("ODOO_DB_USER", "odoo"),
-    "db_password": os.getenv("ODOO_DB_PASSWORD", "passer"),
+    "db_password": os.getenv("ODOO_DB_PASSWORD", ""),
 }
 
 values.update({
