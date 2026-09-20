@@ -429,6 +429,18 @@ class KiiraayeSection(models.Model):
                 )
         return super().create(vals_list)
 
+    def action_view_hierarchy(self):
+        self.ensure_one()
+        action = self.env.ref(
+            "kiiraaye_governance.action_kiiraaye_section_hierarchy"
+        ).read()[0]
+        action["context"] = dict(
+            self.env.context,
+            default_section_id=self.id,
+            active_id=self.id,
+        )
+        return action
+
     def action_open_siege(self):
         self.ensure_one()
         if not self.siege_partner_id:
