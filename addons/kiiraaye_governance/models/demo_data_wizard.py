@@ -157,6 +157,12 @@ class KiiraayeDemoDataWizard(models.TransientModel):
         demo_professions = self.env["kiiraaye.profession"].sudo().search([
             ("code", "like", "DEMO-KIIRAAYE-PROF-%")
         ])
+        demo_ralliements = self.env["kiiraaye.ralliement"].sudo().search([
+            ("code", "like", "DEMO-KIIRAAYE-RALLIEMENT-%")
+        ])
+
+        if demo_ralliements:
+            demo_ralliements.unlink()
 
         if demo_quartiers:
             demo_quartiers.unlink()
