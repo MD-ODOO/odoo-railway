@@ -9,10 +9,6 @@ COPY addons/ /mnt/extra-addons/
 
 RUN chown -R odoo:odoo /mnt/extra-addons
 
-COPY entrypoint-resend.sh /usr/local/bin/entrypoint-resend.sh
-RUN chmod 755 /usr/local/bin/entrypoint-resend.sh
-
 USER odoo
 
-ENTRYPOINT ["/usr/local/bin/entrypoint-resend.sh"]
-CMD ["odoo"]
+CMD ["sh", "-c", "exec odoo --db_host=\"\${ODOO_DB_HOST:-postgres.railway.internal}\" --db_port=\"\${ODOO_DB_PORT:-5432}\" --db_user=\"\${ODOO_DB_USER:-odoo}\" --db_password=\"\${ODOO_DB_PASSWORD:-}\""]
