@@ -17,7 +17,7 @@
 }
 
 .k_org_chart_group_up {
-    flex-direction: column-reverse;
+    flex-direction: column;
     margin-bottom: 22px;
 }
 
@@ -181,4 +181,8 @@
     padding: 25px;
     color: #727985;
     font-style: italic;
+}
+
+.k_org_chart_field {
+    display: block;
 }
