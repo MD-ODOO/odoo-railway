@@ -10,5 +10,6 @@ class IrHttp(models.AbstractModel):
             for company in self.env.user.company_ids.with_context(bin_size=True):
                 result["user_companies"]["allowed_companies"][company.id].update({
                     "has_appsbar_image": bool(company.appbar_image),
+                    "appbar_background_color": company.appbar_background_color or "#172033",
                 })
         return result
