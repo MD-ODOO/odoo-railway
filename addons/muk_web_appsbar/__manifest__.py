@@ -6,7 +6,7 @@
         The applications sidebar appears on hover and expands smoothly.
         The colors are configurable through CSS variables.
     """,
-    "version": "19.0.1.1.12",
+    "version": "19.0.1.1.13",
     "category": "Tools/UI",
     "license": "LGPL-3",
     "author": "MuK IT",
