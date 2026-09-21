@@ -1,42 +1,24 @@
-from __future__ import annotations
-
 from odoo import fields, models
 
 
 class ResUsers(models.Model):
-    """Add the per-user sidebar display preference."""
-
-    _inherit = 'res.users'
-
-    # ----------------------------------------------------------
-    # Properties
-    # ----------------------------------------------------------
+    _inherit = "res.users"
 
     @property
-    def SELF_READABLE_FIELDS(self) -> list[str]:
-        """Allow users to read their own sidebar type."""
-        return super().SELF_READABLE_FIELDS + [
-            'sidebar_type',
-        ]
+    def SELF_READABLE_FIELDS(self):
+        return super().SELF_READABLE_FIELDS + ["sidebar_type"]
 
     @property
-    def SELF_WRITEABLE_FIELDS(self) -> list[str]:
-        """Allow users to write their own sidebar type."""
-        return super().SELF_WRITEABLE_FIELDS + [
-            'sidebar_type',
-        ]
-
-    # ----------------------------------------------------------
-    # Fields
-    # ----------------------------------------------------------
+    def SELF_WRITEABLE_FIELDS(self):
+        return super().SELF_WRITEABLE_FIELDS + ["sidebar_type"]
 
     sidebar_type = fields.Selection(
-        selection=[
-            ('invisible', 'Invisible'),
-            ('small', 'Small'),
-            ('large', 'Large'),
+        [
+            ("invisible", "Invisible"),
+            ("small", "Small"),
+            ("large", "Large"),
         ],
-        string='Sidebar Type',
-        default='large',
+        string="Sidebar Type",
+        default="large",
         required=True,
     )
