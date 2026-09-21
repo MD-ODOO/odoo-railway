@@ -45,6 +45,18 @@
             <t t-foreach="docs" t-as="o">
                 <div class="page" style="width:86mm;height:54mm;margin:0;padding:0;background:#f7f9fc;color:#172033;font-family:'DejaVu Sans',Arial,Helvetica,sans-serif;overflow:hidden;position:relative;">
 
+                    <!-- Bannière membre : style proche de la bannière PAYÉ des factures Odoo -->
+                    <t t-if="o.active">
+                        <div style="position:absolute;top:5.5mm;right:-14mm;width:40mm;padding:1.8mm 0;text-align:center;background:#198754;color:#ffffff;font-size:2.6mm;font-weight:700;letter-spacing:.25mm;transform:rotate(45deg);z-index:20;box-shadow:0 0.6mm 1.2mm rgba(0,0,0,.22);">
+                            ACTIF
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div style="position:absolute;top:5.5mm;right:-14mm;width:40mm;padding:1.8mm 0;text-align:center;background:#dc3545;color:#ffffff;font-size:2.6mm;font-weight:700;letter-spacing:.25mm;transform:rotate(45deg);z-index:20;box-shadow:0 0.6mm 1.2mm rgba(0,0,0,.22);">
+                            INACTIF
+                        </div>
+                    </t>
+
                     <!-- Filigrane logo société -->
                     <t t-if="res_company.logo">
                         <img t-att-src="image_data_uri(res_company.logo)"
