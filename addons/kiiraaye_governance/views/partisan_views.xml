@@ -87,14 +87,23 @@
                         </button>
                     </div>
 
-                    <!-- Bannière de statut du membre, inspirée de la bannière PAYÉ d'Odoo -->
-                    <div style="position:absolute;top:24px;right:-48px;width:210px;padding:8px 0;text-align:center;color:#fff;font-size:15px;font-weight:700;letter-spacing:1px;transform:rotate(45deg);z-index:20;box-shadow:0 3px 8px rgba(0,0,0,.25);"
-                         invisible="active != True">
-                        ACTIF
-                    </div>
-                    <div style="position:absolute;top:24px;right:-48px;width:210px;padding:8px 0;text-align:center;background:#dc3545;color:#fff;font-size:15px;font-weight:700;letter-spacing:1px;transform:rotate(45deg);z-index:20;box-shadow:0 3px 8px rgba(0,0,0,.25);"
-                         invisible="active == True">
-                        INACTIF
+                    <!-- Bannières organisation / poste : largeur maîtrisée pour éviter tout débordement. -->
+                    <div style="position:absolute;top:12px;right:8px;width:300px;max-width:38%;z-index:20;overflow:hidden;">
+                        <div invisible="not organisation_banner"
+                             style="width:100%;box-sizing:border-box;padding:7px 12px;background:#2f5597;color:#fff;font-size:11px;font-weight:700;line-height:14px;border-radius:5px;box-shadow:0 2px 6px rgba(0,0,0,.18);text-align:left;overflow:hidden;word-wrap:break-word;overflow-wrap:anywhere;">
+                            <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">ORGANISATION(S)</div>
+                            <div style="font-weight:600;max-height:42px;overflow:hidden;word-wrap:break-word;overflow-wrap:anywhere;">
+                                <field name="organisation_banner" nolabel="1"/>
+                            </div>
+                        </div>
+
+                        <div invisible="not poste_banner"
+                             style="margin-top:8px;width:96%;box-sizing:border-box;padding:7px 12px;background:#2e7d32;color:#fff;font-size:10px;font-weight:700;line-height:13px;border-radius:5px;box-shadow:0 2px 6px rgba(0,0,0,.18);text-align:left;overflow:hidden;word-wrap:break-word;overflow-wrap:anywhere;">
+                            <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">POSTE(S) / SECTION(S)</div>
+                            <div style="font-weight:600;max-height:52px;overflow:hidden;word-wrap:break-word;overflow-wrap:anywhere;">
+                                <field name="poste_banner" nolabel="1"/>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Photo à gauche + bannières collées à l'extrême droite et inclinées. -->
