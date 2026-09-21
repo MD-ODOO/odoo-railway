@@ -6,7 +6,7 @@
     bottom: 0;
     z-index: 1040;
     width: 230px;
-    background: var(--mk-appbar-background, #172033);
+    background: linear-gradient(180deg, var(--mk-appbar-background, #172033), var(--mk-appbar-active, #2f5597));
     overflow: hidden;
     transform: translateX(calc(-100% + 10px));
     transition: transform 220ms ease, background-color 180ms ease;
@@ -30,7 +30,7 @@
 .mk_apps_sidebar_panel:hover,
 .mk_apps_sidebar_panel:focus-within {
     transform: translateX(0);
-    background: var(--mk-appbar-hover-background, #24385f);
+    background: linear-gradient(180deg, var(--mk-appbar-hover-background, #24385f), var(--mk-appbar-background, #172033));
 }
 
 .mk_apps_sidebar {
@@ -86,7 +86,7 @@
     }
 
     > li.active > a {
-        background: var(--mk-appbar-active, #2f5597);
+        background: linear-gradient(90deg, var(--mk-appbar-active, #2f5597), var(--mk-appbar-hover-item, #198754));
         color: #fff;
     }
 
