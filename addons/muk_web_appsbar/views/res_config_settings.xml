@@ -6,8 +6,39 @@
         <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//setting[@id='inter_company']" position="before">
-                <setting string="AppsBar" company_dependent="1" help="Logo affiché en bas de la barre des applications">
-                    <div class="w-50 row"><field name="appbar_image" widget="image" class="oe_avatar"/></div>
+                <setting string="AppsBar" company_dependent="1"
+                         help="Logo et couleur de fond de la barre dynamique des applications.">
+                    <div class="d-flex flex-column gap-3">
+                        <div>
+                            <label for="appbar_background_color"
+                                   string="Couleur du background"
+                                   class="form-label"/>
+                            <div class="d-flex align-items-center gap-2">
+                                <field name="appbar_background_color"
+                                       widget="color"
+                                       class="w-auto"
+                                       nolabel="1"
+                                       style="min-width: 44px; width: 44px;"/>
+                                <field name="appbar_background_color"
+                                       class="o_input"
+                                       nolabel="1"
+                                       placeholder="#172033"
+                                       style="max-width: 140px;"/>
+                            </div>
+                            <div class="text-muted mt-1">
+                                Choisissez librement la couleur de fond de la barre.
+                                Les couleurs de survol et d'activation sont adaptées automatiquement.
+                            </div>
+                        </div>
+                        <div>
+                            <label for="appbar_image"
+                                   string="Logo en bas de la barre"
+                                   class="form-label"/>
+                            <div class="w-50 row">
+                                <field name="appbar_image" widget="image" class="oe_avatar" nolabel="1"/>
+                            </div>
+                        </div>
+                    </div>
                 </setting>
             </xpath>
         </field>
