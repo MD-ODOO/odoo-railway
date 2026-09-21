@@ -7,9 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//setting[@id='inter_company']" position="before">
                 <setting string="AppsBar" company_dependent="1" help="Logo affiché en bas de la barre des applications">
-                    <div class="w-50 row">
-                        <field name="appbar_image" widget="image" class="oe_avatar"/>
-                    </div>
+                    <div class="w-50 row"><field name="appbar_image" widget="image" class="oe_avatar"/></div>
                 </setting>
             </xpath>
         </field>
