@@ -1,18 +1,10 @@
-from __future__ import annotations
-
 from odoo import fields, models
 
 
 class ResCompany(models.Model):
-    """Add the appbar footer image to companies."""
-
-    _inherit = 'res.company'
-
-    # ----------------------------------------------------------
-    # Fields
-    # ----------------------------------------------------------
+    _inherit = "res.company"
 
     appbar_image = fields.Binary(
-        string='Apps Menu Footer Image',
+        string="Apps Menu Footer Image",
         attachment=True,
     )
