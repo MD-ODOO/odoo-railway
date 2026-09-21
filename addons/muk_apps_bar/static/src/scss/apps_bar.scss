@@ -1,0 +1,105 @@
+/* Couleurs principales : modifier ces variables pour personnaliser la barre. */
+:root {
+    --kiiraaye-appbar-color: #2f5597;
+    --kiiraaye-appbar-hover-color: #198754;
+    --kiiraaye-appbar-text-color: #ffffff;
+    --kiiraaye-appbar-shadow: 0 4px 18px rgba(0, 0, 0, .20);
+}
+
+.o_main_navbar .kiiraaye_apps_bar {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1050;
+    width: 12px;
+    min-width: 12px;
+    padding: 0;
+    margin: 0;
+    border-radius: 0 10px 10px 0;
+    background: var(--kiiraaye-appbar-color);
+    box-shadow: var(--kiiraaye-appbar-shadow);
+    overflow: visible;
+    transition: width .22s ease, background-color .18s ease;
+}
+
+.o_main_navbar .kiiraaye_apps_bar:hover,
+.o_main_navbar .kiiraaye_apps_bar.kiiraaye_apps_bar_open {
+    width: 250px;
+    background: var(--kiiraaye-appbar-hover-color);
+}
+
+.o_main_navbar .kiiraaye_apps_bar > .dropdown-toggle {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    min-width: 12px;
+    height: 54px;
+    padding: 0 !important;
+    color: transparent !important;
+    background: transparent !important;
+    border: 0 !important;
+}
+
+.o_main_navbar .kiiraaye_apps_bar > .dropdown-toggle::before {
+    content: "\f0c9";
+    font-family: FontAwesome;
+    color: var(--kiiraaye-appbar-text-color);
+    font-size: 14px;
+}
+
+.o_main_navbar .kiiraaye_apps_bar:hover > .dropdown-toggle,
+.o_main_navbar .kiiraaye_apps_bar.kiiraaye_apps_bar_open > .dropdown-toggle {
+    width: 250px;
+    justify-content: flex-start;
+    padding-left: 16px !important;
+}
+
+.o_main_navbar .kiiraaye_apps_bar > .dropdown-toggle::after {
+    display: none;
+}
+
+.o_main_navbar .kiiraaye_apps_bar .dropdown-menu {
+    position: absolute !important;
+    left: 0 !important;
+    top: 54px !important;
+    width: 250px !important;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    margin: 0 !important;
+    padding: 8px !important;
+    border: 0;
+    border-radius: 0 0 10px 0;
+    background: var(--kiiraaye-appbar-color);
+    box-shadow: var(--kiiraaye-appbar-shadow);
+}
+
+.o_main_navbar .kiiraaye_apps_bar .dropdown-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 9px 12px;
+    border-radius: 7px;
+    color: var(--kiiraaye-appbar-text-color);
+    transition: background-color .15s ease, transform .15s ease;
+}
+
+.o_main_navbar .kiiraaye_apps_bar .dropdown-menu .dropdown-item:hover {
+    background: rgba(255, 255, 255, .18);
+    color: var(--kiiraaye-appbar-text-color);
+    transform: translateX(3px);
+}
+
+@media (max-width: 768px) {
+    .o_main_navbar .kiiraaye_apps_bar {
+        top: auto;
+        bottom: 20px;
+        transform: none;
+    }
+    .o_main_navbar .kiiraaye_apps_bar:hover,
+    .o_main_navbar .kiiraaye_apps_bar.kiiraaye_apps_bar_open {
+        width: 220px;
+    }
+}
