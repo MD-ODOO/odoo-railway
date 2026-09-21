@@ -112,25 +112,24 @@
                             </group>
                         </div>
 
-                        <!-- Bannières uniques, compactes et contenues dans la zone supérieure du formulaire. -->
-                        <div style="position:absolute;right:12px;top:10px;width:300px;max-width:32%;display:flex;flex-direction:column;align-items:stretch;gap:8px;z-index:5;">
+                        <!-- Bannières orientées comme la bannière native PAYÉ d'Odoo : diagonale 45° depuis l'angle supérieur droit. -->
+                        <div style="position:absolute;right:0;top:0;width:360px;height:150px;overflow:hidden;z-index:10;pointer-events:none;">
                             <div invisible="not organisation_banner"
-                                 style="width:100%;box-sizing:border-box;padding:7px 12px;background:#2f5597;color:#fff;font-size:10px;font-weight:700;line-height:13px;border-radius:4px;box-shadow:0 2px 5px rgba(0,0,0,.16);transform:rotate(-3deg);transform-origin:right center;text-align:left;overflow:hidden;">
-                                <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">ORGANISATION(S)</div>
-                                <div style="font-weight:600;max-height:28px;overflow:hidden;white-space:normal;word-break:break-word;">
+                                 style="position:absolute;top:22px;right:-78px;width:330px;box-sizing:border-box;padding:7px 12px;background:#2f5597;color:#fff;font-size:10px;font-weight:700;line-height:13px;text-align:center;transform:rotate(45deg);transform-origin:center;box-shadow:0 2px 5px rgba(0,0,0,.18);overflow:hidden;">
+                                <span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">ORGANISATION(S)</span>
+                                <span style="display:block;font-size:9px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                                     <field name="organisation_banner" nolabel="1"/>
-                                </div>
+                                </span>
                             </div>
 
                             <div invisible="not poste_banner"
-                                 style="width:96%;box-sizing:border-box;padding:7px 12px;background:#2e7d32;color:#fff;font-size:10px;font-weight:700;line-height:13px;border-radius:4px;box-shadow:0 2px 5px rgba(0,0,0,.16);transform:rotate(-3deg);transform-origin:right center;text-align:left;overflow:hidden;align-self:flex-end;">
-                                <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">POSTE(S) / SECTION(S)</div>
-                                <div style="font-weight:600;max-height:28px;overflow:hidden;white-space:normal;word-break:break-word;">
+                                 style="position:absolute;top:76px;right:-88px;width:300px;box-sizing:border-box;padding:6px 12px;background:#2e7d32;color:#fff;font-size:9px;font-weight:700;line-height:12px;text-align:center;transform:rotate(45deg);transform-origin:center;box-shadow:0 2px 5px rgba(0,0,0,.18);overflow:hidden;">
+                                <span style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">POSTE(S) / SECTION(S)</span>
+                                <span style="display:block;font-size:8px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                                     <field name="poste_banner" nolabel="1"/>
-                                </div>
+                                </span>
                             </div>
                         </div>
-                    </div>
 
                     <group string="Informations personnelles">
                         <group>
