@@ -13,6 +13,6 @@
             "muk_apps_bar/static/src/scss/apps_bar.scss"
         ]
     },
-    "installable": true,
-    "application": false
+    "installable": True,
+    "application": False
 }
