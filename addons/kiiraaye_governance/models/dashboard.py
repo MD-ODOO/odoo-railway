@@ -858,16 +858,35 @@ class KiiraayeDashboard(models.Model):
         return geography_levels, rows
 
     @staticmethod
-    def _election_row(result, members, level, geography_id=None, geography_name=""):
+    def _election_row(
+        result,
+        members,
+        level,
+        geography_id=None,
+        geography_name="",
+    ):
         voters = int(result.get("voters") or 0) if result else 0
         registered = int(result.get("registered_voters") or 0) if result else 0
         valid = int(result.get("valid_votes") or 0) if result else 0
         null_votes = int(result.get("null_votes") or 0) if result else 0
+        diomaye_votes = (
+            int(result.get("diomaye_president_votes") or 0)
+            if result
+            else 0
+        )
 
-        participation_pct = round(voters / registered * 100, 2) if registered else None
-        valid_pct_of_voters = round(valid / voters * 100, 2) if voters else None
-        members_pct_of_voters = round(members / voters * 100, 2) if voters else None
-        gap_pct = round((members - voters) / voters * 100, 2) if voters else None
+        participation_pct = (
+            round(voters / registered * 100, 2) if registered else None
+        )
+        diomaye_pct = (
+            round(diomaye_votes / valid * 100, 2) if valid else None
+        )
+        members_pct_of_voters = (
+            round(members / voters * 100, 2) if voters else None
+        )
+        gap_pct = (
+            round((members - voters) / voters * 100, 2) if voters else None
+        )
 
         if gap_pct is None:
             gap_class = "missing"
@@ -893,8 +912,9 @@ class KiiraayeDashboard(models.Model):
             "voters": voters,
             "null_votes": null_votes,
             "valid_votes": valid,
+            "diomaye_president_votes": diomaye_votes,
+            "diomaye_president_pct": diomaye_pct,
             "participation_pct": participation_pct,
-            "valid_pct_of_voters": valid_pct_of_voters,
             "members": int(members or 0),
             "members_pct_of_voters": members_pct_of_voters,
             "gap_pct": gap_pct,
@@ -918,8 +938,6 @@ class KiiraayeDashboard(models.Model):
                 "election": False,
                 "global": False,
                 "regions": [],
-                "departments": [],
-                "communes": [],
                 "message": _(
                     "Aucune élection historique n'est configurée. "
                     "Ajoutez un scrutin dans Configuration → Historique des élections."
@@ -938,6 +956,7 @@ class KiiraayeDashboard(models.Model):
                 "voters": row.voters,
                 "null_votes": row.null_votes,
                 "valid_votes": row.valid_votes,
+                "diomaye_president_votes": row.diomaye_president_votes,
             }
             for row in direct_results
             if row.geographie_id
@@ -956,6 +975,7 @@ class KiiraayeDashboard(models.Model):
                     "voters": global_result.voters,
                     "null_votes": global_result.null_votes,
                     "valid_votes": global_result.valid_votes,
+                    "diomaye_president_votes": global_result.diomaye_president_votes,
                 },
                 0,
                 "Global",
@@ -989,9 +1009,18 @@ class KiiraayeDashboard(models.Model):
         if senegal:
             geo_domain.append(("country_id", "=", senegal.id))
 
-        regions = Geography.search(geo_domain + [("niveau", "=", "niveau1")], order="name, id")
-        departments = Geography.search(geo_domain + [("niveau", "=", "niveau2")], order="name, id")
-        communes = Geography.search(geo_domain + [("niveau", "=", "niveau3")], order="name, id")
+        regions = Geography.search(
+            geo_domain + [("niveau", "=", "niveau1")],
+            order="name, id",
+        )
+        departments = Geography.search(
+            geo_domain + [("niveau", "=", "niveau2")],
+            order="name, id",
+        )
+        communes = Geography.search(
+            geo_domain + [("niveau", "=", "niveau3")],
+            order="name, id",
+        )
 
         children = defaultdict(list)
         for geography in departments | communes:
@@ -1003,10 +1032,15 @@ class KiiraayeDashboard(models.Model):
             if not results:
                 return None
             return {
-                "registered_voters": sum(item["registered_voters"] for item in results),
+                "registered_voters": sum(
+                    item["registered_voters"] for item in results
+                ),
                 "voters": sum(item["voters"] for item in results),
                 "null_votes": sum(item["null_votes"] for item in results),
                 "valid_votes": sum(item["valid_votes"] for item in results),
+                "diomaye_president_votes": sum(
+                    item["diomaye_president_votes"] for item in results
+                ),
             }
 
         department_effective = {}
@@ -1015,9 +1049,11 @@ class KiiraayeDashboard(models.Model):
                 department_effective[department.id] = direct[department.id]
             else:
                 department_effective[department.id] = merge_results(
-                    [direct.get(commune.id)
-                     for commune in children.get(department.id, [])
-                     if commune.niveau == "niveau3"]
+                    [
+                        direct.get(commune.id)
+                        for commune in children.get(department.id, [])
+                        if commune.niveau == "niveau3"
+                    ]
                 )
 
         region_effective = {}
@@ -1026,41 +1062,56 @@ class KiiraayeDashboard(models.Model):
                 region_effective[region.id] = direct[region.id]
             else:
                 region_effective[region.id] = merge_results(
-                    [department_effective.get(department.id)
-                     for department in children.get(region.id, [])
-                     if department.niveau == "niveau2"]
+                    [
+                        department_effective.get(department.id)
+                        for department in children.get(region.id, [])
+                        if department.niveau == "niveau2"
+                    ]
                 )
 
-        region_rows = [
-            self._election_row(
-                region_effective.get(region.id),
-                member_region.get(region.id, 0),
-                "Région",
-                region.id,
-                region.name,
-            )
-            for region in regions
-        ]
-        department_rows = [
-            self._election_row(
+        department_rows_by_id = {}
+        for department in departments:
+            department_rows_by_id[department.id] = self._election_row(
                 department_effective.get(department.id),
                 member_department.get(department.id, 0),
                 "Département",
                 department.id,
                 department.name,
             )
-            for department in departments
-        ]
-        commune_rows = [
-            self._election_row(
+
+        commune_rows_by_id = {}
+        for commune in communes:
+            commune_rows_by_id[commune.id] = self._election_row(
                 direct.get(commune.id),
                 member_commune.get(commune.id, 0),
                 "Commune",
                 commune.id,
                 commune.name,
             )
-            for commune in communes
-        ]
+
+        # Une seule ligne par région, avec ses départements et communes
+        # regroupés dessous. Cela évite de répéter les totaux régionaux.
+        region_rows = []
+        for region in regions:
+            row = self._election_row(
+                region_effective.get(region.id),
+                member_region.get(region.id, 0),
+                "Région",
+                region.id,
+                region.name,
+            )
+            row["departments"] = []
+            for department in children.get(region.id, []):
+                if department.niveau != "niveau2":
+                    continue
+                department_row = dict(department_rows_by_id.get(department.id, {}))
+                department_row["communes"] = [
+                    dict(commune_rows_by_id[commune.id])
+                    for commune in children.get(department.id, [])
+                    if commune.niveau == "niveau3" and commune.id in commune_rows_by_id
+                ]
+                row["departments"].append(department_row)
+            region_rows.append(row)
 
         return {
             "available": bool(global_data or direct_results),
@@ -1068,17 +1119,20 @@ class KiiraayeDashboard(models.Model):
                 "id": election.id,
                 "name": election.name,
                 "date": election.date.strftime("%d/%m/%Y") if election.date else "",
-                "type": self._selection_label(Election._fields["election_type"], election.election_type),
+                "type": self._selection_label(
+                    Election._fields["election_type"],
+                    election.election_type,
+                ),
                 "source": election.source,
                 "source_url": election.source_url or "",
             },
             "global": global_data,
             "regions": region_rows,
-            "departments": department_rows,
-            "communes": commune_rows,
             "message": _(
-                "Les données électorales manquantes restent en gris. "
-                "Le nombre de membres Kiiraay correspond à l'effectif actif actuel."
+                "Les lignes sont regroupées par région et contiennent les "
+                "départements puis les communes. Les données électorales "
+                "territoriales absentes restent en gris. Les membres Kiiraay "
+                "sont les membres actifs actuels du référentiel."
             ),
         }
 
