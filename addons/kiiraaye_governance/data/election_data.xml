@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo noupdate="1">
+<odoo>
     <record id="election_presidentielle_2024" model="kiiraaye.election">
         <field name="name">Élection présidentielle du 24 mars 2024</field>
         <field name="date">2024-03-24</field>
