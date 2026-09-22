@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="election_presidentielle_2024" model="kiiraaye.election">
+        <field name="name">Élection présidentielle du 24 mars 2024</field>
+        <field name="date">2024-03-24</field>
+        <field name="election_type">presidentielle</field>
+        <field name="source">Direction générale des Élections (DGE) / Conseil constitutionnel</field>
+        <field name="source_url">https://dge.sn/wp-content/uploads/2024/09/Resultats-de-lelection-presidentielle-2024.pdf</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="election_presidentielle_2024_global" model="kiiraaye.election.result">
+        <field name="election_id" ref="election_presidentielle_2024"/>
+        <field name="scope">global</field>
+        <field name="registered_voters">7371890</field>
+        <field name="voters">4519253</field>
+        <field name="null_votes">34125</field>
+        <field name="valid_votes">4485128</field>
+        <field name="source">Conseil constitutionnel — décision n° 7/E/2024</field>
+        <field name="notes">Agrégat national de l'ensemble des candidats.</field>
+    </record>
+</odoo>
