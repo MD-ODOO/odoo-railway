@@ -83,12 +83,34 @@ class KiiraayeElectionResult(models.Model):
         string="Suffrages valablement exprimés",
         default=0,
     )
+    diomaye_president_votes = fields.Integer(
+        string="Voix Diomaye Président",
+        default=0,
+        help="Nombre de voix obtenues par Bassirou Diomaye Diakhar Faye.",
+    )
+    diomaye_president_pct = fields.Float(
+        string="% Diomaye Président",
+        compute="_compute_diomaye_president_pct",
+        digits=(16, 2),
+    )
     source = fields.Char(string="Source")
     notes = fields.Text(string="Notes")
     display_name = fields.Char(
         string="Libellé",
         compute="_compute_display_name",
     )
+
+    @api.depends("valid_votes", "diomaye_president_votes")
+    def _compute_diomaye_president_pct(self):
+        for record in self:
+            record.diomaye_president_pct = (
+                round(
+                    record.diomaye_president_votes / record.valid_votes * 100,
+                    2,
+                )
+                if record.valid_votes
+                else 0.0
+            )
 
     @api.depends("election_id.name", "geographie_id.name", "scope")
     def _compute_display_name(self):
@@ -108,6 +130,7 @@ class KiiraayeElectionResult(models.Model):
         "voters",
         "null_votes",
         "valid_votes",
+        "diomaye_president_votes",
     )
     def _check_result_values(self):
         for record in self:
@@ -124,6 +147,7 @@ class KiiraayeElectionResult(models.Model):
                 "voters",
                 "null_votes",
                 "valid_votes",
+                "diomaye_president_votes",
             ):
                 if getattr(record, field_name) < 0:
                     raise ValidationError(
@@ -135,7 +159,19 @@ class KiiraayeElectionResult(models.Model):
                 )
             if record.valid_votes > record.voters and record.voters:
                 raise ValidationError(
-                    _("Les suffrages valablement exprimés ne peuvent pas dépasser les votants.")
+                    _(
+                        "Les suffrages valablement exprimés ne peuvent pas dépasser les votants."
+                    )
+                )
+            if (
+                record.diomaye_president_votes > record.valid_votes
+                and record.valid_votes
+            ):
+                raise ValidationError(
+                    _(
+                        "Les voix de Diomaye Président ne peuvent pas dépasser les "
+                        "suffrages valablement exprimés."
+                    )
                 )
 
     def participation_pct(self):
