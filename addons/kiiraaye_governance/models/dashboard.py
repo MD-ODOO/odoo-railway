@@ -857,6 +857,231 @@ class KiiraayeDashboard(models.Model):
         )
         return geography_levels, rows
 
+    @staticmethod
+    def _election_row(result, members, level, geography_id=None, geography_name=""):
+        voters = int(result.get("voters") or 0) if result else 0
+        registered = int(result.get("registered_voters") or 0) if result else 0
+        valid = int(result.get("valid_votes") or 0) if result else 0
+        null_votes = int(result.get("null_votes") or 0) if result else 0
+
+        participation_pct = round(voters / registered * 100, 2) if registered else None
+        valid_pct_of_voters = round(valid / voters * 100, 2) if voters else None
+        members_pct_of_voters = round(members / voters * 100, 2) if voters else None
+        gap_pct = round((members - voters) / voters * 100, 2) if voters else None
+
+        if gap_pct is None:
+            gap_class = "missing"
+            gap_label = "Donnée électorale manquante"
+        elif gap_pct >= -5:
+            gap_class = "green"
+            gap_label = "Écart faible"
+        elif gap_pct >= -20:
+            gap_class = "yellow"
+            gap_label = "Écart modéré"
+        elif gap_pct >= -40:
+            gap_class = "orange"
+            gap_label = "Écart marqué"
+        else:
+            gap_class = "red"
+            gap_label = "Écart élevé"
+
+        return {
+            "id": geography_id,
+            "name": geography_name,
+            "level": level,
+            "registered_voters": registered,
+            "voters": voters,
+            "null_votes": null_votes,
+            "valid_votes": valid,
+            "participation_pct": participation_pct,
+            "valid_pct_of_voters": valid_pct_of_voters,
+            "members": int(members or 0),
+            "members_pct_of_voters": members_pct_of_voters,
+            "gap_pct": gap_pct,
+            "gap_class": gap_class,
+            "gap_label": gap_label,
+            "data_available": bool(result),
+        }
+
+    def _historical_election_overview(self, Partisan, Geography):
+        Election = self.env["kiiraaye.election"]
+        Result = self.env["kiiraaye.election.result"]
+
+        election = Election.search(
+            [("active", "=", True)],
+            order="date desc, id desc",
+            limit=1,
+        )
+        if not election:
+            return {
+                "available": False,
+                "election": False,
+                "global": False,
+                "regions": [],
+                "departments": [],
+                "communes": [],
+                "message": _(
+                    "Aucune élection historique n'est configurée. "
+                    "Ajoutez un scrutin dans Configuration → Historique des élections."
+                ),
+            }
+
+        direct_results = Result.search([
+            ("election_id", "=", election.id),
+            ("scope", "=", "geographique"),
+        ])
+        direct = {
+            row.geographie_id.id: {
+                "geographie_id": row.geographie_id.id,
+                "name": row.geographie_id.name,
+                "registered_voters": row.registered_voters,
+                "voters": row.voters,
+                "null_votes": row.null_votes,
+                "valid_votes": row.valid_votes,
+            }
+            for row in direct_results
+            if row.geographie_id
+        }
+
+        global_result = Result.search([
+            ("election_id", "=", election.id),
+            ("scope", "=", "global"),
+        ], order="id desc", limit=1)
+
+        global_data = False
+        if global_result:
+            global_data = self._election_row(
+                {
+                    "registered_voters": global_result.registered_voters,
+                    "voters": global_result.voters,
+                    "null_votes": global_result.null_votes,
+                    "valid_votes": global_result.valid_votes,
+                },
+                0,
+                "Global",
+                None,
+                "Sénégal",
+            )
+            global_data.update({
+                "all_parties_votes": int(global_result.valid_votes or 0),
+                "valid_pct_of_valid_votes": 100.0,
+                "result_label": "Ensemble des candidats / listes",
+            })
+
+        def grouped_members(field_name):
+            return {
+                record.id: int(count or 0)
+                for record, count in Partisan._read_group(
+                    [("active", "=", True)],
+                    [field_name],
+                    ["__count"],
+                    order="__count DESC",
+                )
+                if record
+            }
+
+        member_region = grouped_members("region_id")
+        member_department = grouped_members("departement_id")
+        member_commune = grouped_members("commune_id")
+
+        senegal = self.env["res.country"].search([("code", "=", "SN")], limit=1)
+        geo_domain = [("active", "=", True)]
+        if senegal:
+            geo_domain.append(("country_id", "=", senegal.id))
+
+        regions = Geography.search(geo_domain + [("niveau", "=", "niveau1")], order="name, id")
+        departments = Geography.search(geo_domain + [("niveau", "=", "niveau2")], order="name, id")
+        communes = Geography.search(geo_domain + [("niveau", "=", "niveau3")], order="name, id")
+
+        children = defaultdict(list)
+        for geography in departments | communes:
+            if geography.parent_id:
+                children[geography.parent_id.id].append(geography)
+
+        def merge_results(results):
+            results = [item for item in results if item]
+            if not results:
+                return None
+            return {
+                "registered_voters": sum(item["registered_voters"] for item in results),
+                "voters": sum(item["voters"] for item in results),
+                "null_votes": sum(item["null_votes"] for item in results),
+                "valid_votes": sum(item["valid_votes"] for item in results),
+            }
+
+        department_effective = {}
+        for department in departments:
+            if department.id in direct:
+                department_effective[department.id] = direct[department.id]
+            else:
+                department_effective[department.id] = merge_results(
+                    [direct.get(commune.id)
+                     for commune in children.get(department.id, [])
+                     if commune.niveau == "niveau3"]
+                )
+
+        region_effective = {}
+        for region in regions:
+            if region.id in direct:
+                region_effective[region.id] = direct[region.id]
+            else:
+                region_effective[region.id] = merge_results(
+                    [department_effective.get(department.id)
+                     for department in children.get(region.id, [])
+                     if department.niveau == "niveau2"]
+                )
+
+        region_rows = [
+            self._election_row(
+                region_effective.get(region.id),
+                member_region.get(region.id, 0),
+                "Région",
+                region.id,
+                region.name,
+            )
+            for region in regions
+        ]
+        department_rows = [
+            self._election_row(
+                department_effective.get(department.id),
+                member_department.get(department.id, 0),
+                "Département",
+                department.id,
+                department.name,
+            )
+            for department in departments
+        ]
+        commune_rows = [
+            self._election_row(
+                direct.get(commune.id),
+                member_commune.get(commune.id, 0),
+                "Commune",
+                commune.id,
+                commune.name,
+            )
+            for commune in communes
+        ]
+
+        return {
+            "available": bool(global_data or direct_results),
+            "election": {
+                "id": election.id,
+                "name": election.name,
+                "date": election.date.strftime("%d/%m/%Y") if election.date else "",
+                "type": self._selection_label(Election._fields["election_type"], election.election_type),
+                "source": election.source,
+                "source_url": election.source_url or "",
+            },
+            "global": global_data,
+            "regions": region_rows,
+            "departments": department_rows,
+            "communes": commune_rows,
+            "message": _(
+                "Les données électorales manquantes restent en gris. "
+                "Le nombre de membres Kiiraay correspond à l'effectif actif actuel."
+            ),
+        }
+
     @api.model
     def get_dashboard_data(self, filters=None):
         self._check_dashboard_access()
@@ -1253,11 +1478,5 @@ class KiiraayeDashboard(models.Model):
                 "Projection descriptive de l'évolution des effectifs "
                 "à partir de la tendance des créations de membres."
             ),
-            "historical_election": {
-                "available": False,
-                "message": _(
-                    "Aucune donnée d'élection historique n'est actuellement "
-                    "structurée dans le module."
-                ),
-            },
+            "historical_election": self._historical_election_overview(Partisan, Geography),
         }
