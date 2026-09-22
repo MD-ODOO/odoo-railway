@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kiiraaye_election_list" model="ir.ui.view">
+        <field name="name">kiiraaye.election.list</field>
+        <field name="model">kiiraaye.election</field>
+        <field name="arch" type="xml">
+            <list string="Historique des élections">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="election_type"/>
+                <field name="source"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_kiiraaye_election_form" model="ir.ui.view">
+        <field name="name">kiiraaye.election.form</field>
+        <field name="model">kiiraaye.election</field>
+        <field name="arch" type="xml">
+            <form string="Élection">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="date"/>
+                            <field name="election_type"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="source"/>
+                            <field name="source_url"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Résultats territoriaux">
+                            <field name="result_ids">
+                                <list editable="bottom">
+                                    <field name="scope"/>
+                                    <field name="geographie_id"/>
+                                    <field name="registered_voters"/>
+                                    <field name="voters"/>
+                                    <field name="null_votes"/>
+                                    <field name="valid_votes"/>
+                                    <field name="source"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_kiiraaye_election_result_list" model="ir.ui.view">
+        <field name="name">kiiraaye.election.result.list</field>
+        <field name="model">kiiraaye.election.result</field>
+        <field name="arch" type="xml">
+            <list string="Résultats électoraux">
+                <field name="election_id"/>
+                <field name="scope"/>
+                <field name="geographie_id"/>
+                <field name="registered_voters"/>
+                <field name="voters"/>
+                <field name="valid_votes"/>
+                <field name="source"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_kiiraaye_election_result_form" model="ir.ui.view">
+        <field name="name">kiiraaye.election.result.form</field>
+        <field name="model">kiiraaye.election.result</field>
+        <field name="arch" type="xml">
+            <form string="Résultat électoral">
+                <sheet>
+                    <group>
+                        <field name="election_id"/>
+                        <field name="scope"/>
+                        <field name="geographie_id"/>
+                    </group>
+                    <group string="Chiffres">
+                        <field name="registered_voters"/>
+                        <field name="voters"/>
+                        <field name="null_votes"/>
+                        <field name="valid_votes"/>
+                    </group>
+                    <group string="Source">
+                        <field name="source"/>
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_kiiraaye_election" model="ir.actions.act_window">
+        <field name="name">Historique des élections</field>
+        <field name="res_model">kiiraaye.election</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_kiiraaye_election_result" model="ir.actions.act_window">
+        <field name="name">Résultats électoraux</field>
+        <field name="res_model">kiiraaye.election.result</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>
