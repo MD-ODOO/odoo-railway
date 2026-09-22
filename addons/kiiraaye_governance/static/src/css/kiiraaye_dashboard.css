@@ -1235,6 +1235,187 @@
     font-size: 9px;
 }
 
+
+/* Historique électoral : lecture hiérarchique région -> département -> commune. */
+.election-hierarchy {
+    overflow: hidden;
+}
+
+.election-hierarchy__legend {
+    margin-bottom: 14px;
+    background: #FAFCFD;
+}
+
+.election-hierarchy__table {
+    min-width: 1080px;
+}
+
+.election-hierarchy__head,
+.election-hierarchy__row {
+    display: grid;
+    grid-template-columns: 2.1fr 1fr 1.15fr 1fr 1.25fr 1.15fr 1fr;
+    align-items: center;
+    column-gap: 10px;
+}
+
+.election-hierarchy__head {
+    padding: 10px 12px;
+    background: #F3F7F9;
+    color: #607A86;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+    border-bottom: 1px solid var(--kiiraaye-border);
+}
+
+.election-hierarchy__region,
+.election-hierarchy__department {
+    border-bottom: 1px solid var(--kiiraaye-border);
+}
+
+.election-hierarchy__region > summary,
+.election-hierarchy__department > summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.election-hierarchy__region > summary::-webkit-details-marker,
+.election-hierarchy__department > summary::-webkit-details-marker {
+    display: none;
+}
+
+.election-hierarchy__region > summary::before,
+.election-hierarchy__department > summary::before {
+    content: "▸";
+    display: inline-block;
+    width: 16px;
+    color: #718691;
+    font-size: 12px;
+    transition: transform .15s ease;
+}
+
+.election-hierarchy__region[open] > summary::before,
+.election-hierarchy__department[open] > summary::before {
+    transform: rotate(90deg);
+}
+
+.election-hierarchy__row {
+    position: relative;
+    min-height: 54px;
+    padding: 9px 12px;
+    background: #FFFFFF;
+    box-sizing: border-box;
+}
+
+.election-hierarchy__row > span {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 11px;
+}
+
+.election-hierarchy__row > span:not(:first-child) {
+    text-align: right;
+}
+
+.election-hierarchy__name {
+    display: flex;
+    flex-direction: column;
+    text-align: left !important;
+    padding-left: 4px;
+}
+
+.election-hierarchy__name strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.election-hierarchy__name small {
+    margin-top: 2px;
+    color: #7A8F98;
+    font-size: 9px;
+}
+
+.election-hierarchy__row--region {
+    background: #F8FBFC;
+    font-size: 12px;
+}
+
+.election-hierarchy__row--region:hover,
+.election-hierarchy__row--department:hover,
+.election-hierarchy__row--commune:hover {
+    background: #F5F9FA;
+}
+
+.election-hierarchy__children {
+    padding-left: 18px;
+    background: #FBFCFD;
+    border-left: 3px solid #E7EEF1;
+}
+
+.election-hierarchy__department > summary .election-hierarchy__name {
+    padding-left: 4px;
+}
+
+.election-hierarchy__communes {
+    padding-left: 20px;
+    background: #FFFFFF;
+    border-left: 2px solid #EEF3F5;
+}
+
+.election-hierarchy__row--department {
+    min-height: 48px;
+    background: #FBFCFD;
+}
+
+.election-hierarchy__row--commune {
+    min-height: 44px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    background: #FFFFFF;
+}
+
+.election-hierarchy__row--commune .election-hierarchy__name strong::before {
+    content: "↳ ";
+    color: #8DA0A8;
+}
+
+.election-hierarchy__missing {
+    padding: 12px 16px;
+    color: #8A9AA1;
+    background: #F5F7F8;
+    font-size: 10px;
+    font-style: italic;
+}
+
+.election-hierarchy__row.election-gap--green {
+    box-shadow: inset 4px 0 0 #2E8B57;
+}
+
+.election-hierarchy__row.election-gap--yellow {
+    box-shadow: inset 4px 0 0 #D6A93A;
+}
+
+.election-hierarchy__row.election-gap--orange {
+    box-shadow: inset 4px 0 0 #E67E22;
+}
+
+.election-hierarchy__row.election-gap--red {
+    box-shadow: inset 4px 0 0 var(--kiiraaye-red);
+}
+
+.election-hierarchy__row.election-gap--missing {
+    box-shadow: inset 4px 0 0 #AAB7BD;
+}
+
+@media (max-width: 1100px) {
+    .election-hierarchy__table {
+        overflow-x: auto;
+    }
+}
+
 @media (max-width: 900px) {
     .election-row {
         min-width: 900px;
