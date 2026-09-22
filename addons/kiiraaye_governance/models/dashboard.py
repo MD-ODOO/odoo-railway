@@ -944,6 +944,10 @@ class KiiraayeDashboard(models.Model):
                 ),
             }
 
+        # Charge automatiquement les résultats officiels disponibles pour
+        # la présidentielle 2024 avant de construire les agrégats territoriaux.
+        Result.ensure_presidential_2024_department_results(election)
+
         direct_results = Result.search([
             ("election_id", "=", election.id),
             ("scope", "=", "geographique"),
