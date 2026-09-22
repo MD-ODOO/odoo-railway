@@ -42,6 +42,8 @@
                                     <field name="voters"/>
                                     <field name="null_votes"/>
                                     <field name="valid_votes"/>
+                <field name="diomaye_president_votes"/>
+                <field name="diomaye_president_pct" readonly="1"/>
                                     <field name="source"/>
                                 </list>
                             </field>
