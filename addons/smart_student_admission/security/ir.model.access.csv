@@ -1,0 +1,27 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_smart_student_user,smart.student user,model_smart_student,smart_student_admission.group_smart_user,1,1,1,0
+access_smart_student_manager,smart.student manager,model_smart_student,smart_student_admission.group_smart_manager,1,1,1,1
+access_smart_parent_user,smart.parent user,model_smart_student_parent,smart_student_admission.group_smart_user,1,1,1,0
+access_smart_parent_manager,smart.parent manager,model_smart_student_parent,smart_student_admission.group_smart_manager,1,1,1,1
+access_smart_package_user,smart.package user,model_smart_service_package,smart_student_admission.group_smart_user,1,0,0,0
+access_smart_package_manager,smart.package manager,model_smart_service_package,smart_student_admission.group_smart_manager,1,1,1,1
+access_smart_fee_user,smart.fee user,model_smart_service_fee,smart_student_admission.group_smart_user,1,0,0,0
+access_smart_fee_manager,smart.fee manager,model_smart_service_fee,smart_student_admission.group_smart_manager,1,1,1,1
+access_smart_document_type_user,smart.document.type user,model_smart_document_type,smart_student_admission.group_smart_user,1,0,0,0
+access_smart_document_type_manager,smart.document.type manager,model_smart_document_type,smart_student_admission.group_smart_manager,1,1,1,1
+access_smart_document_user,smart.document user,model_smart_student_document,smart_student_admission.group_smart_user,1,1,1,0
+access_smart_document_manager,smart.document manager,model_smart_student_document,smart_student_admission.group_smart_manager,1,1,1,1
+access_smart_application_user,smart.application user,model_smart_student_application,smart_student_admission.group_smart_user,1,1,1,0
+access_smart_application_manager,smart.application manager,model_smart_student_application,smart_student_admission.group_smart_manager,1,1,1,1
+access_smart_engagement_user,smart.engagement user,model_smart_student_engagement,smart_student_admission.group_smart_user,1,1,1,0
+access_smart_engagement_manager,smart.engagement manager,model_smart_student_engagement,smart_student_admission.group_smart_manager,1,1,1,1
+access_smart_visa_stage_user,smart.visa.stage user,model_smart_visa_stage,smart_student_admission.group_smart_user,1,0,0,0
+access_smart_visa_stage_manager,smart.visa.stage manager,model_smart_visa_stage,smart_student_admission.group_smart_manager,1,1,1,1
+access_smart_visa_user,smart.visa.application user,model_smart_visa_application,smart_student_admission.group_smart_user,1,1,1,0
+access_smart_visa_manager,smart.visa.application manager,model_smart_student_admission.group_smart_manager,1,1,1,1
+access_smart_visa_step_user,smart.visa.application.step user,model_smart_visa_application_step,smart_student_admission.group_smart_user,1,1,1,0
+access_smart_visa_step_manager,smart.visa.application.step manager,model_smart_visa_application_step,smart_student_admission.group_smart_manager,1,1,1,1
+access_smart_caq_user,smart.caq user,model_smart_caq,smart_student_admission.group_smart_user,1,1,1,0
+access_smart_caq_manager,smart.caq manager,model_smart_caq,smart_student_admission.group_smart_manager,1,1,1,1
+access_account_move_smart_manager,account.move smart manager,account.model_account_move,smart_student_admission.group_smart_manager,1,1,1,0
+access_account_payment_smart_manager,account.payment smart manager,account.model_account_payment,smart_student_admission.group_smart_manager,1,1,1,0

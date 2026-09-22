@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_smart_application" model="ir.sequence">
+            <field name="name">Dossier étudiant SMART</field><field name="code">smart.student.application</field>
+            <field name="prefix">DOS/%(year)s/</field><field name="padding">5</field>
+        </record>
+        <record id="seq_smart_engagement" model="ir.sequence">
+            <field name="name">Engagement SMART</field><field name="code">smart.student.engagement</field>
+            <field name="prefix">ENG/%(year)s/</field><field name="padding">5</field>
+        </record>
+        <record id="seq_smart_visa" model="ir.sequence">
+            <field name="name">Procédure Visa SMART</field><field name="code">smart.visa.application</field>
+            <field name="prefix">VISA/%(year)s/</field><field name="padding">5</field>
+        </record>
+        <record id="seq_smart_caq" model="ir.sequence">
+            <field name="name">CAQ SMART</field><field name="code">smart.caq</field>
+            <field name="prefix">CAQ/%(year)s/</field><field name="padding">5</field>
+        </record>
+
+        <record id="product_smart_frais_dossier_fr" model="product.template"><field name="name">SMART - Frais de dossier France</field><field name="detailed_type">service</field><field name="sale_ok">True</field><field name="purchase_ok">False</field><field name="list_price">200000</field></record>
+        <record id="product_smart_honoraires_fr" model="product.template"><field name="name">SMART - Honoraires accompagnement France</field><field name="detailed_type">service</field><field name="sale_ok">True</field><field name="purchase_ok">False</field><field name="list_price">150000</field></record>
+        <record id="product_smart_campus_fr" model="product.template"><field name="name">SMART - Frais Campus France</field><field name="detailed_type">service</field><field name="sale_ok">True</field><field name="purchase_ok">False</field><field name="list_price">85000</field></record>
+        <record id="product_smart_visa_fr" model="product.template"><field name="name">SMART - Frais demande visa France</field><field name="detailed_type">service</field><field name="sale_ok">True</field><field name="purchase_ok">False</field><field name="list_price">50000</field></record>
+        <record id="product_smart_frais_dossier_ca" model="product.template"><field name="name">SMART - Frais de dossier Canada</field><field name="detailed_type">service</field><field name="sale_ok">True</field><field name="purchase_ok">False</field><field name="list_price">300000</field></record>
+        <record id="product_smart_honoraires_ca" model="product.template"><field name="name">SMART - Honoraires accompagnement Canada</field><field name="detailed_type">service</field><field name="sale_ok">True</field><field name="purchase_ok">False</field><field name="list_price">150000</field></record>
+        <record id="product_smart_dossier_ma" model="product.template"><field name="name">SMART - Frais de dossier Maroc</field><field name="detailed_type">service</field><field name="sale_ok">True</field><field name="purchase_ok">False</field><field name="list_price">100000</field></record>
+
+        <record id="pkg_smart_france" model="smart.service.package"><field name="name">France - Préinscription</field><field name="country_id" ref="base.fr"/><field name="application_type">preinscription</field></record>
+        <record id="fee_smart_fr_dossier" model="smart.service.fee"><field name="package_id" ref="pkg_smart_france"/><field name="name">Frais de dossiers</field><field name="fee_type">dossier</field><field name="product_id" search="[('name', '=', 'SMART - Frais de dossier France')]" model="product.product"/><field name="amount">200000</field></record>
+        <record id="fee_smart_fr_honoraires" model="smart.service.fee"><field name="package_id" ref="pkg_smart_france"/><field name="name">Honoraires</field><field name="fee_type">honoraires</field><field name="product_id" search="[('name', '=', 'SMART - Honoraires accompagnement France')]" model="product.product"/><field name="amount">150000</field></record>
+        <record id="fee_smart_fr_campus" model="smart.service.fee"><field name="package_id" ref="pkg_smart_france"/><field name="name">Frais Campus France</field><field name="fee_type">campus</field><field name="product_id" search="[('name', '=', 'SMART - Frais Campus France')]" model="product.product"/><field name="amount">85000</field><field name="is_external">True</field></record>
+        <record id="fee_smart_fr_visa" model="smart.service.fee"><field name="package_id" ref="pkg_smart_france"/><field name="name">Frais demande de visa</field><field name="fee_type">visa</field><field name="product_id" search="[('name', '=', 'SMART - Frais demande visa France')]" model="product.product"/><field name="amount">50000</field><field name="is_external">True</field><field name="stage">visa</field></record>
+
+        <record id="pkg_smart_canada" model="smart.service.package"><field name="name">Canada - Préinscription</field><field name="country_id" ref="base.ca"/><field name="application_type">preinscription</field></record>
+        <record id="fee_smart_ca_dossier" model="smart.service.fee"><field name="package_id" ref="pkg_smart_canada"/><field name="name">Frais de dossiers</field><field name="fee_type">dossier</field><field name="product_id" search="[('name', '=', 'SMART - Frais de dossier Canada')]" model="product.product"/><field name="amount">300000</field></record>
+        <record id="fee_smart_ca_honoraires" model="smart.service.fee"><field name="package_id" ref="pkg_smart_canada"/><field name="name">Honoraires</field><field name="fee_type">honoraires</field><field name="product_id" search="[('name', '=', 'SMART - Honoraires accompagnement Canada')]" model="product.product"/><field name="amount">150000</field></record>
+
+        <record id="pkg_smart_maroc" model="smart.service.package"><field name="name">Maroc - Préinscription</field><field name="country_id" ref="base.ma"/><field name="application_type">preinscription</field></record>
+        <record id="fee_smart_ma_dossier" model="smart.service.fee"><field name="package_id" ref="pkg_smart_maroc"/><field name="name">Frais de dossiers</field><field name="fee_type">dossier</field><field name="product_id" search="[('name', '=', 'SMART - Frais de dossier Maroc')]" model="product.product"/><field name="amount">100000</field></record>
+
+        <record id="stage_ca_prep" model="smart.visa.stage"><field name="name">Préparation du permis d'études</field><field name="code">CA_PREP</field><field name="country_id" ref="base.ca"/><field name="sequence">10</field><field name="stage_kind">preparation</field></record>
+        <record id="stage_ca_caq" model="smart.visa.stage"><field name="name">Demande de CAQ</field><field name="code">CAQ</field><field name="country_id" ref="base.ca"/><field name="sequence">20</field><field name="stage_kind">caq</field></record>
+        <record id="stage_ca_permit" model="smart.visa.stage"><field name="name">Demande de permis d'études</field><field name="code">STUDY_PERMIT</field><field name="country_id" ref="base.ca"/><field name="sequence">30</field><field name="stage_kind">application</field></record>
+        <record id="stage_ca_bio" model="smart.visa.stage"><field name="name">Biométrie / rendez-vous</field><field name="code">BIOMETRICS</field><field name="country_id" ref="base.ca"/><field name="sequence">40</field><field name="stage_kind">biometrics</field></record>
+        <record id="stage_ca_decision" model="smart.visa.stage"><field name="name">Décision</field><field name="code">DECISION</field><field name="country_id" ref="base.ca"/><field name="sequence">50</field><field name="stage_kind">decision</field></record>
+
+        <record id="stage_generic_application" model="smart.visa.stage"><field name="name">Préparation et dépôt de la demande</field><field name="code">GEN_APPLICATION</field><field name="sequence">10</field><field name="stage_kind">application</field></record>
+        <record id="stage_generic_bio" model="smart.visa.stage"><field name="name">Rendez-vous / biométrie</field><field name="code">GEN_BIOMETRICS</field><field name="sequence">20</field><field name="stage_kind">biometrics</field></record>
+        <record id="stage_generic_processing" model="smart.visa.stage"><field name="name">Traitement</field><field name="code">GEN_PROCESSING</field><field name="sequence">30</field><field name="stage_kind">processing</field></record>
+        <record id="stage_generic_decision" model="smart.visa.stage"><field name="name">Décision visa</field><field name="code">GEN_DECISION</field><field name="sequence">40</field><field name="stage_kind">decision</field></record>
+
+        <record id="doc_birth" model="smart.document.type"><field name="name">Extrait de naissance</field><field name="required_for_admission">True</field></record>
+        <record id="doc_id" model="smart.document.type"><field name="name">Pièce nationale d'identité</field><field name="required_for_admission">True</field></record>
+        <record id="doc_passport" model="smart.document.type"><field name="name">Passeport</field><field name="required_for_admission">True</field><field name="required_for_visa">True</field></record>
+        <record id="doc_bulletins" model="smart.document.type"><field name="name">Bulletins de notes</field><field name="required_for_admission">True</field></record>
+        <record id="doc_releves" model="smart.document.type"><field name="name">Relevés de notes</field><field name="required_for_admission">True</field></record>
+        <record id="doc_bac" model="smart.document.type"><field name="name">Relevé / attestation du BAC</field><field name="required_for_admission">True</field></record>
+        <record id="doc_cv" model="smart.document.type"><field name="name">Curriculum Vitae</field><field name="required_for_admission">True</field></record>
+        <record id="doc_motivation" model="smart.document.type"><field name="name">Lettre de motivation</field><field name="required_for_admission">True</field></record>
+        <record id="doc_photo" model="smart.document.type"><field name="name">Photo d'identité fond blanc</field><field name="required_for_admission">True</field></record>
+    </data>
+</odoo>
