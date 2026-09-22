@@ -865,14 +865,14 @@ class KiiraayeDashboard(models.Model):
         geography_id=None,
         geography_name="",
     ):
-        voters = int(result.get("voters") or 0) if result else 0
-        registered = int(result.get("registered_voters") or 0) if result else 0
-        valid = int(result.get("valid_votes") or 0) if result else 0
-        null_votes = int(result.get("null_votes") or 0) if result else 0
+        voters = int(result.get("voters") or 0) if result else None
+        registered = int(result.get("registered_voters") or 0) if result else None
+        valid = int(result.get("valid_votes") or 0) if result else None
+        null_votes = int(result.get("null_votes") or 0) if result else None
         diomaye_votes = (
             int(result.get("diomaye_president_votes") or 0)
             if result
-            else 0
+            else None
         )
 
         participation_pct = (
