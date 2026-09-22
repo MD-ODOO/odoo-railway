@@ -18,7 +18,7 @@ access_smart_engagement_manager,smart.engagement manager,model_smart_student_eng
 access_smart_visa_stage_user,smart.visa.stage user,model_smart_visa_stage,smart_student_admission.group_smart_user,1,0,0,0
 access_smart_visa_stage_manager,smart.visa.stage manager,model_smart_visa_stage,smart_student_admission.group_smart_manager,1,1,1,1
 access_smart_visa_user,smart.visa.application user,model_smart_visa_application,smart_student_admission.group_smart_user,1,1,1,0
-access_smart_visa_manager,smart.visa.application manager,model_smart_student_admission.group_smart_manager,1,1,1,1
+access_smart_visa_manager,smart.visa.application manager,model_smart_visa_application,smart_student_admission.group_smart_manager,1,1,1,1
 access_smart_visa_step_user,smart.visa.application.step user,model_smart_visa_application_step,smart_student_admission.group_smart_user,1,1,1,0
 access_smart_visa_step_manager,smart.visa.application.step manager,model_smart_visa_application_step,smart_student_admission.group_smart_manager,1,1,1,1
 access_smart_caq_user,smart.caq user,model_smart_caq,smart_student_admission.group_smart_user,1,1,1,0
