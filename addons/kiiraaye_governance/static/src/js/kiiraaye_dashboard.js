@@ -246,6 +246,22 @@ export class KiiraayeDashboard extends Component {
             maximumFractionDigits: 2,
         }).format(Number(value) || 0) + " %";
     }
+
+    electionGapClass(row) {
+        return "election-gap--" + (row?.gap_class || "missing");
+    }
+
+    electionGapLabel(row) {
+        return row?.gap_label || "Donnée non renseignée";
+    }
+
+    electionGapValue(row) {
+        return row?.gap_pct == null ? "—" : this.formatPercent(row.gap_pct);
+    }
+
+    electionValue(value) {
+        return value == null ? "—" : this.formatNumber(value);
+    }
 }
 
 registry.category("actions").add("kiiraaye_dashboard", KiiraayeDashboard);
