@@ -1,13 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="smart_category" model="ir.module.category">
-        <field name="name">SMART Assistance Étudiants</field><field name="sequence">35</field>
+    <record id="smart_module_category" model="ir.module.category">
+        <field name="name">SMART Assistance Étudiants</field>
+        <field name="sequence">35</field>
     </record>
+
+    <record id="smart_groups_privilege" model="res.groups.privilege">
+        <field name="name">SMART Assistance Étudiants</field>
+        <field name="sequence">35</field>
+        <field name="category_id" ref="smart_module_category"/>
+        <field name="description">Droits d'accès à l'application SMART d'accompagnement des étudiants.</field>
+    </record>
+
     <record id="group_smart_user" model="res.groups">
-        <field name="name">Utilisateur SMART Étudiants</field><field name="category_id" ref="smart_category"/>
+        <field name="name">Utilisateur SMART Étudiants</field>
+        <field name="sequence">10</field>
+        <field name="privilege_id" ref="smart_groups_privilege"/>
+        <field name="implied_ids" eval="[Command.link(ref('base.group_user'))]"/>
+        <field name="comment">Accès opérationnel aux étudiants, dossiers, engagements et procédures.</field>
     </record>
+
     <record id="group_smart_manager" model="res.groups">
-        <field name="name">Responsable SMART Étudiants</field><field name="category_id" ref="smart_category"/>
-        <field name="implied_ids" eval="[(4, ref('group_smart_user'))]"/>
+        <field name="name">Responsable SMART Étudiants</field>
+        <field name="sequence">20</field>
+        <field name="privilege_id" ref="smart_groups_privilege"/>
+        <field name="implied_ids" eval="[Command.link(ref('group_smart_user'))]"/>
+        <field name="comment">Accès complet au module SMART et à ses fonctions financières.</field>
     </record>
 </odoo>
