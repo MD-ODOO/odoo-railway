@@ -617,7 +617,7 @@
                 </section>
 
                 <section t-if="state.view === 'historique'">
-                    <div t-if="state.data.historical_election && state.data.historical_election.available" class="election-history">
+                    <div t-if="state.data.historical_election &amp;&amp; state.data.historical_election.available" class="election-history">
                         <div class="panel election-history__hero">
                             <div class="panel__title">
                                 <span>Historique électoral — <t t-esc="state.data.historical_election.election.name"/></span>
@@ -665,7 +665,7 @@
                                 <small>écart % = (membres Kiiraay actuels − votants historiques) / votants historiques</small>
                             </div>
                             <div class="election-gap-legend">
-                                <span><i class="election-gap-dot election-gap-dot--green"/> &ge; −5 %</span>
+                                <span><i class="election-gap-dot election-gap-dot--green"/> ≥ −5 %</span>
                                 <span><i class="election-gap-dot election-gap-dot--yellow"/> −5 % à −20 %</span>
                                 <span><i class="election-gap-dot election-gap-dot--orange"/> −20 % à −40 %</span>
                                 <span><i class="election-gap-dot election-gap-dot--red"/> &lt; −40 %</span>
