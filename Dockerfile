@@ -7,7 +7,7 @@ USER root
 
 # Python dependencies required by base_accounting_kit.
 # Keep them in the image so Odoo's external_dependencies check succeeds.
-RUN python3 -m pip install --no-cache-dir \
+RUN python3 -m pip install --break-system-packages --no-cache-dir \
     "qifparse==0.5" \
     "ofxparse==0.21" \
     "openpyxl" \
