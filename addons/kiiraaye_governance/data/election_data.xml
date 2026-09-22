@@ -16,6 +16,7 @@
         <field name="voters">4519253</field>
         <field name="null_votes">34125</field>
         <field name="valid_votes">4485128</field>
+        <field name="diomaye_president_votes">2434751</field>
         <field name="source">Conseil constitutionnel — décision n° 7/E/2024</field>
         <field name="notes">Agrégat national de l'ensemble des candidats.</field>
     </record>
