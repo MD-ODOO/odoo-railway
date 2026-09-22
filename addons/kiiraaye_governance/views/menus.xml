@@ -26,6 +26,8 @@ action = country.action_load_senegal_all_villages()
     </record>
 
     <menuitem id="menu_kiiraaye_dashboard_config" name="Configuration des tableaux de bord" parent="menu_kiiraaye_configuration" action="action_kiiraaye_dashboard_config" sequence="5"/>
+    <menuitem id="menu_kiiraaye_election" name="Historique des élections" parent="menu_kiiraaye_configuration" action="action_kiiraaye_election" sequence="7"/>
+    <menuitem id="menu_kiiraaye_election_result" name="Résultats électoraux" parent="menu_kiiraaye_configuration" action="action_kiiraaye_election_result" sequence="8"/>
     <menuitem id="menu_kiiraaye_load_senegal_localities"
               name="Charger tous les villages Sénégal"
               parent="menu_kiiraaye_configuration"
