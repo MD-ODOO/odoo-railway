@@ -774,7 +774,7 @@
                             </div>
                         </div>
 
-                        <div class="panel">                   <div class="panel">
+                        <div class="panel">
                             <p class="dashboard-note"><t t-esc="state.data.historical_election.message"/></p>
                         </div>
                     </div>
