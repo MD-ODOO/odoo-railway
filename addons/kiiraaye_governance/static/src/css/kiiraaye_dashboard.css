@@ -1421,3 +1421,28 @@
         min-width: 900px;
     }
 }
+
+/* Alignement du chevron dans les lignes hiérarchiques. */
+.election-hierarchy__region > summary,
+.election-hierarchy__department > summary {
+    position: relative;
+}
+
+.election-hierarchy__region > summary::before,
+.election-hierarchy__department > summary::before {
+    content: "▸";
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto;
+}
+
+.election-hierarchy__region[open] > summary::before,
+.election-hierarchy__department[open] > summary::before {
+    transform: translateY(-50%) rotate(90deg);
+}
+
+.election-hierarchy__name {
+    padding-left: 20px;
+}
