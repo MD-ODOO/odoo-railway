@@ -617,13 +617,175 @@
                 </section>
 
                 <section t-if="state.view === 'historique'">
-                    <div class="panel">
-                        <div class="panel__title"><span>Historique électoral</span></div>
+                    <div t-if="state.data.historical_election && state.data.historical_election.available" class="election-history">
+                        <div class="panel election-history__hero">
+                            <div class="panel__title">
+                                <span>Historique électoral — <t t-esc="state.data.historical_election.election.name"/></span>
+                                <small>
+                                    <t t-esc="state.data.historical_election.election.type"/> ·
+                                    <t t-esc="state.data.historical_election.election.date"/>
+                                </small>
+                            </div>
+                            <div class="election-source">
+                                Source : <t t-esc="state.data.historical_election.election.source"/>
+                            </div>
+                        </div>
+
+                        <div t-if="state.data.historical_election.global" class="kiiraaye-dashboard__grid kiiraaye-dashboard__grid--kpi election-history__global">
+                            <div class="kpi-card coverage-kpi--blue">
+                                <span>Nombre de votants</span>
+                                <strong><t t-esc="formatNumber(state.data.historical_election.global.voters)"/></strong>
+                                <small><t t-esc="formatNumber(state.data.historical_election.global.registered_voters)"/> électeurs inscrits</small>
+                            </div>
+                            <div class="kpi-card coverage-kpi--blue">
+                                <span>Taux de participation</span>
+                                <strong><t t-esc="formatPercent(state.data.historical_election.global.participation_pct)"/></strong>
+                                <small>votants / inscrits</small>
+                            </div>
+                            <div class="kpi-card coverage-kpi--blue">
+                                <span>Résultat global — ensemble</span>
+                                <strong><t t-esc="formatNumber(state.data.historical_election.global.all_parties_votes)"/></strong>
+                                <small>100 % des suffrages valablement exprimés</small>
+                            </div>
+                            <div class="kpi-card coverage-kpi--red">
+                                <span>Suffrages valablement exprimés</span>
+                                <strong><t t-esc="formatNumber(state.data.historical_election.global.valid_votes)"/></strong>
+                                <small><t t-esc="formatPercent(state.data.historical_election.global.valid_pct_of_voters)"/> des votants</small>
+                            </div>
+                            <div class="kpi-card coverage-kpi--red">
+                                <span>Bulletins nuls / blancs</span>
+                                <strong><t t-esc="formatNumber(state.data.historical_election.global.null_votes)"/></strong>
+                                <small>non comptés dans les suffrages valablement exprimés</small>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <div class="panel__title">
+                                <span>Codes couleurs de l'écart</span>
+                                <small>écart % = (membres Kiiraay actuels − votants historiques) / votants historiques</small>
+                            </div>
+                            <div class="election-gap-legend">
+                                <span><i class="election-gap-dot election-gap-dot--green"/> &ge; −5 %</span>
+                                <span><i class="election-gap-dot election-gap-dot--yellow"/> −5 % à −20 %</span>
+                                <span><i class="election-gap-dot election-gap-dot--orange"/> −20 % à −40 %</span>
+                                <span><i class="election-gap-dot election-gap-dot--red"/> &lt; −40 %</span>
+                                <span><i class="election-gap-dot election-gap-dot--missing"/> Donnée électorale manquante</span>
+                            </div>
+                            <p class="dashboard-note">
+                                Les membres Kiiraay affichés sont les membres actifs actuels du référentiel.
+                                Les votants proviennent du scrutin historique enregistré. Lorsque seules les
+                                communes sont renseignées, les totaux départementaux et régionaux sont agrégés
+                                automatiquement. Une valeur manquante est affichée en gris plutôt que recalculée.
+                            </p>
+                        </div>
+
+                        <div class="panel">
+                            <div class="panel__title">
+                                <span>Régions</span>
+                                <small>Votants · participation · membres Kiiraay actuels · écart</small>
+                            </div>
+                            <div class="data-table data-table--wide">
+                                <div class="data-row election-row election-row--head">
+                                    <span>Région</span>
+                                    <span>Votants</span>
+                                    <span>% participation</span>
+                                    <span>Membres Kiiraay</span>
+                                    <span>% membres / votants</span>
+                                    <span>% écart</span>
+                                </div>
+                                <t t-foreach="state.data.historical_election.regions" t-as="row" t-key="'er-' + row.id">
+                                    <div t-att-class="'data-row election-row ' + electionGapClass(row)">
+                                        <span><strong><t t-esc="row.name"/></strong></span>
+                                        <span><t t-esc="electionValue(row.voters)"/></span>
+                                        <span><t t-esc="row.participation_pct == null ? '—' : formatPercent(row.participation_pct)"/></span>
+                                        <span><strong><t t-esc="formatNumber(row.members)"/></strong></span>
+                                        <span><t t-esc="row.members_pct_of_voters == null ? '—' : formatPercent(row.members_pct_of_voters)"/></span>
+                                        <span>
+                                            <b t-att-class="'election-gap-badge ' + electionGapClass(row)">
+                                                <t t-esc="electionGapValue(row)"/>
+                                            </b>
+                                            <small><t t-esc="electionGapLabel(row)"/></small>
+                                        </span>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <div class="panel__title">
+                                <span>Départements</span>
+                                <small>Votants · participation · membres Kiiraay actuels · écart</small>
+                            </div>
+                            <div class="data-table data-table--wide">
+                                <div class="data-row election-row election-row--head">
+                                    <span>Département</span>
+                                    <span>Votants</span>
+                                    <span>% participation</span>
+                                    <span>Membres Kiiraay</span>
+                                    <span>% membres / votants</span>
+                                    <span>% écart</span>
+                                </div>
+                                <t t-foreach="state.data.historical_election.departments" t-as="row" t-key="'ed-' + row.id">
+                                    <div t-att-class="'data-row election-row ' + electionGapClass(row)">
+                                        <span><strong><t t-esc="row.name"/></strong></span>
+                                        <span><t t-esc="electionValue(row.voters)"/></span>
+                                        <span><t t-esc="row.participation_pct == null ? '—' : formatPercent(row.participation_pct)"/></span>
+                                        <span><strong><t t-esc="formatNumber(row.members)"/></strong></span>
+                                        <span><t t-esc="row.members_pct_of_voters == null ? '—' : formatPercent(row.members_pct_of_voters)"/></span>
+                                        <span>
+                                            <b t-att-class="'election-gap-badge ' + electionGapClass(row)">
+                                                <t t-esc="electionGapValue(row)"/>
+                                            </b>
+                                            <small><t t-esc="electionGapLabel(row)"/></small>
+                                        </span>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <div class="panel__title">
+                                <span>Communes</span>
+                                <small>Votants · participation · membres Kiiraay actuels · écart</small>
+                            </div>
+                            <div class="data-table data-table--wide">
+                                <div class="data-row election-row election-row--head">
+                                    <span>Commune</span>
+                                    <span>Votants</span>
+                                    <span>% participation</span>
+                                    <span>Membres Kiiraay</span>
+                                    <span>% membres / votants</span>
+                                    <span>% écart</span>
+                                </div>
+                                <t t-foreach="state.data.historical_election.communes" t-as="row" t-key="'ec-' + row.id">
+                                    <div t-att-class="'data-row election-row ' + electionGapClass(row)">
+                                        <span><strong><t t-esc="row.name"/></strong></span>
+                                        <span><t t-esc="electionValue(row.voters)"/></span>
+                                        <span><t t-esc="row.participation_pct == null ? '—' : formatPercent(row.participation_pct)"/></span>
+                                        <span><strong><t t-esc="formatNumber(row.members)"/></strong></span>
+                                        <span><t t-esc="row.members_pct_of_voters == null ? '—' : formatPercent(row.members_pct_of_voters)"/></span>
+                                        <span>
+                                            <b t-att-class="'election-gap-badge ' + electionGapClass(row)">
+                                                <t t-esc="electionGapValue(row)"/>
+                                            </b>
+                                            <small><t t-esc="electionGapLabel(row)"/></small>
+                                        </span>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <p class="dashboard-note"><t t-esc="state.data.historical_election.message"/></p>
+                        </div>
+                    </div>
+
+                    <div t-else="" class="panel">
                         <div class="empty-state">
                             <i class="fa fa-line-chart"/>
-                            <h3>Données historiques non structurées</h3>
+                            <h3>Aucune donnée électorale disponible</h3>
                             <p><t t-esc="state.data.historical_election.message"/></p>
-                            <p>Le module actuel ne contient pas encore un modèle de résultats électoraux permettant de produire des indicateurs historiques vérifiables.</p>
+                            <p>Le dernier scrutin configuré est utilisé automatiquement dans ce bloc.</p>
                         </div>
                     </div>
                 </section>
