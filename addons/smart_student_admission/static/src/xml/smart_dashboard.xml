@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="smart_student_admission.SmartStudentDashboard">
+        <div class="smart-dashboard o_action">
+            <div class="smart-dashboard__header">
+                <div>
+                    <div class="smart-dashboard__eyebrow">SMART</div>
+                    <h1>Tableau de bord</h1>
+                    <p>Suivi des dossiers étudiants, préinscriptions, visas et formules d'accompagnement.</p>
+                </div>
+                <button class="btn btn-outline-secondary" t-on-click="refresh">
+                    <i class="fa fa-refresh me-1"/> Actualiser
+                </button>
+            </div>
+
+            <div t-if="state.error" class="alert alert-danger">
+                <t t-esc="state.error"/>
+            </div>
+
+            <div t-if="state.data" class="smart-dashboard__filters">
+                <div class="smart-filter">
+                    <label>Année</label>
+                    <select t-on-change="(ev) => this.onFilterChange('year', ev)">
+                        <option value="">Toutes les années</option>
+                        <t t-foreach="state.data.filters.years" t-as="year" t-key="year">
+                            <option t-att-value="year" t-att-selected="state.filters.year === year">
+                                <t t-esc="year"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+                <div class="smart-filter">
+                    <label>Formule</label>
+                    <select t-on-change="(ev) => this.onFilterChange('package_id', ev)">
+                        <option value="">Toutes les formules</option>
+                        <t t-foreach="state.data.filters.packages" t-as="item" t-key="item.id">
+                            <option t-att-value="item.id" t-att-selected="state.filters.package_id === item.id">
+                                <t t-esc="item.name"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+            </div>
+
+            <div t-if="state.loading" class="smart-dashboard__loading">
+                <i class="fa fa-spinner fa-spin"/> Chargement...
+            </div>
+
+            <t t-elif="state.data">
+                <div class="smart-dashboard__grid">
+                    <div class="smart-kpi">
+                        <span class="smart-kpi__label">Nombre de dossiers</span>
+                        <strong><t t-esc="formatNumber(state.data.kpis.total_dossiers)"/></strong>
+                        <small>Dossiers non annulés</small>
+                    </div>
+
+                    <div class="smart-kpi smart-kpi--success">
+                        <span class="smart-kpi__label">Préinscriptions obtenues</span>
+                        <strong>
+                            <t t-esc="formatNumber(state.data.kpis.preinscription_obtained)"/>
+                            <span class="smart-kpi__fraction">/ <t t-esc="formatNumber(state.data.kpis.total_dossiers)"/></span>
+                        </strong>
+                        <small><t t-esc="formatPercent(state.data.kpis.preinscription_pct)"/> des dossiers</small>
+                    </div>
+
+                    <div class="smart-kpi smart-kpi--success">
+                        <span class="smart-kpi__label">Visas obtenus</span>
+                        <strong>
+                            <t t-esc="formatNumber(state.data.kpis.visa_obtained)"/>
+                            <span class="smart-kpi__fraction">/ <t t-esc="formatNumber(state.data.kpis.total_dossiers)"/></span>
+                        </strong>
+                        <small><t t-esc="formatPercent(state.data.kpis.visa_pct)"/> des dossiers</small>
+                    </div>
+
+                    <div class="smart-kpi smart-kpi--highlight">
+                        <span class="smart-kpi__label">Formule la plus demandée</span>
+                        <strong class="smart-kpi__formula"><t t-esc="state.data.top_package.name"/></strong>
+                        <small>
+                            <t t-esc="formatNumber(state.data.top_package.count)"/> dossier(s) —
+                            <t t-esc="formatPercent(state.data.top_package.percentage)"/>
+                        </small>
+                    </div>
+                </div>
+
+                <div class="smart-dashboard__panel">
+                    <div class="smart-dashboard__panel-title">
+                        <span>Demandes par formule</span>
+                        <small>Top 10 sur le périmètre sélectionné</small>
+                    </div>
+                    <div class="smart-formula-list">
+                        <t t-foreach="state.data.packages" t-as="item" t-key="item.id || item.name">
+                            <div class="smart-formula-row">
+                                <div class="smart-formula-row__name"><t t-esc="item.name"/></div>
+                                <div class="smart-formula-row__bar">
+                                    <span t-att-style="'width:' + barWidth(item.count, maxPackageCount) + '%'"/>
+                                </div>
+                                <div class="smart-formula-row__value">
+                                    <t t-esc="formatNumber(item.count)"/>
+                                    <small>(<t t-esc="formatPercent(item.percentage)"/>)</small>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                    <div t-if="not state.data.packages.length" class="text-muted">
+                        Aucun dossier correspondant aux filtres.
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

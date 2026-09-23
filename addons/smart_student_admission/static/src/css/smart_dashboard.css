@@ -1,0 +1,30 @@
+.smart-dashboard{padding:28px;background:#f6f7f9;min-height:100%;color:#27313a}
+.smart-dashboard__header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:22px}
+.smart-dashboard__eyebrow{font-weight:800;letter-spacing:3px;font-size:13px;opacity:.7}
+.smart-dashboard h1{margin:4px 0 6px;font-size:30px;font-weight:750}
+.smart-dashboard__header p{margin:0;color:#65707b}
+.smart-dashboard__filters{display:flex;gap:18px;flex-wrap:wrap;background:#fff;border:1px solid #e2e6ea;border-radius:12px;padding:16px 18px;margin-bottom:20px}
+.smart-filter{display:flex;flex-direction:column;gap:6px;min-width:220px}
+.smart-filter label{font-weight:650;font-size:13px;color:#59636d}
+.smart-filter select{height:38px;border:1px solid #d5dae0;border-radius:7px;padding:0 10px;background:#fff}
+.smart-dashboard__grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:20px}
+.smart-kpi{background:#fff;border:1px solid #e2e6ea;border-radius:12px;padding:20px;min-height:145px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+.smart-kpi--success{border-top:4px solid #5b8c5a}
+.smart-kpi--highlight{border-top:4px solid #d6a12e}
+.smart-kpi__label{font-size:14px;color:#68727d}
+.smart-kpi strong{font-size:29px;line-height:1.15}
+.smart-kpi small{color:#7a838c}
+.smart-kpi__fraction{font-size:16px;font-weight:500;color:#7a838c}
+.smart-kpi__formula{font-size:20px!important}
+.smart-dashboard__panel{background:#fff;border:1px solid #e2e6ea;border-radius:12px;padding:20px}
+.smart-dashboard__panel-title{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #edf0f2;padding-bottom:13px;margin-bottom:14px}
+.smart-dashboard__panel-title span{font-weight:700}
+.smart-dashboard__panel-title small{color:#7b858f}
+.smart-formula-row{display:grid;grid-template-columns:minmax(180px,1.5fr) minmax(120px,3fr) 130px;gap:12px;align-items:center;padding:10px 0}
+.smart-formula-row__bar{background:#edf0f2;height:10px;border-radius:999px;overflow:hidden}
+.smart-formula-row__bar span{display:block;height:100%;background:#7fb34d;border-radius:999px}
+.smart-formula-row__value{text-align:right;font-weight:700}
+.smart-formula-row__value small{font-weight:400;color:#7b858f}
+.smart-dashboard__loading{padding:60px;text-align:center;color:#707a84}
+@media(max-width:1100px){.smart-dashboard__grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.smart-dashboard__grid{grid-template-columns:1fr}.smart-formula-row{grid-template-columns:1fr}.smart-formula-row__value{text-align:left}}

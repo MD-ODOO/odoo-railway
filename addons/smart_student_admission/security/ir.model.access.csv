@@ -23,5 +23,7 @@ access_smart_visa_step_user,smart.visa.application.step user,model_smart_visa_ap
 access_smart_visa_step_manager,smart.visa.application.step manager,model_smart_visa_application_step,smart_student_admission.group_smart_manager,1,1,1,1
 access_smart_caq_user,smart.caq user,model_smart_caq,smart_student_admission.group_smart_user,1,1,1,0
 access_smart_caq_manager,smart.caq manager,model_smart_caq,smart_student_admission.group_smart_manager,1,1,1,1
+access_smart_dashboard_user,smart.dashboard user,model_smart_dashboard,smart_student_admission.group_smart_user,1,0,0,0
+access_smart_dashboard_manager,smart.dashboard manager,model_smart_dashboard,smart_student_admission.group_smart_manager,1,1,1,1
 access_account_move_smart_manager,account.move smart manager,account.model_account_move,smart_student_admission.group_smart_manager,1,1,1,0
 access_account_payment_smart_manager,account.payment smart manager,account.model_account_payment,smart_student_admission.group_smart_manager,1,1,1,0
