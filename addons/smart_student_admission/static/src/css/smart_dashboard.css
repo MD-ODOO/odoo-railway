@@ -24,14 +24,14 @@
     position:absolute;
     z-index:0;
     top:70px;
-    right:-55px;
-    width:460px;
-    height:460px;
-    background-image:url('/smart_student_admission/static/src/img/smart_logo.svg');
+    right:-15px;
+    width:500px;
+    height:500px;
+    background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NDAgNDQwIj48ZyBmaWxsPSIjOUI5Q0EwIiBvcGFjaXR5PSIuNjIiPjxwYXRoIGQ9Ik0yNCAzNCBIMjk2IFY4MiBINzIgVjExNiBIMjc0IFYxNjQgSDI0IFYxMTYgSDcyIFY4MiBIMjQgWiIvPjxwYXRoIGQ9Ik0yOCAxMzIgSDMwMiBWMTgwIEgyOCBaIi8+PHBhdGggZD0iTTM0IDE5OCBIMzAyIFYxNTAgSDM0NiBWMjQ2IEgzNCBaIi8+PC9nPjxnIGZpbGw9IiM5MkM2M0QiPjxwYXRoIGQ9Ik0yMCAyNCBIMjkyIFY3MiBINjggVjEwNiBIMjcwIFYxNTQgSDIwIFYxMDYgSDY4IFY3MiBIMjAgWiIvPjxwYXRoIGQ9Ik0yNCAxMjIgSDI5OCBWMTcwIEgyNCBaIi8+PHBhdGggZD0iTTMwIDE4OCBIMjk4IFYxNDAgSDM0MiBWMjM2IEgzMCBaIi8+PC9nPjx0ZXh0IHg9IjI1IiB5PSIzMjQiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjcwIiBmb250LXdlaWdodD0iMzAwIiBsZXR0ZXItc3BhY2luZz0iOSIgZmlsbD0iIzkyQzYzRCI+U01BUlQ8L3RleHQ+PGxpbmUgeDE9IjI1IiB5MT0iMzQyIiB4Mj0iNDE1IiB5Mj0iMzQyIiBzdHJva2U9IiM5MkM2M0QiIHN0cm9rZS13aWR0aD0iMiIvPjx0ZXh0IHg9IjI1IiB5PSIzNzAiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBsZXR0ZXItc3BhY2luZz0iNC4yIiBmaWxsPSIjOUI5Q0EwIj5BU1NJU1RBTkNFIC0gQ09OU1VMVElORyAtIFRSQURJTkc8L3RleHQ+PC9zdmc+");
     background-repeat:no-repeat;
     background-size:contain;
     background-position:center;
-    opacity:.075;
+    opacity:.16;
     pointer-events:none;
 }
 
