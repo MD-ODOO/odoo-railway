@@ -63,7 +63,7 @@ class SmartDashboard(models.Model):
             return round((value / total) * 100, 2) if total else 0.0
 
         cr.execute("""
-            SELECT DISTINCT y.id, y.name, y.state
+            SELECT DISTINCT y.id, y.name, y.state, y.date_start
             FROM smart_academic_year y
             JOIN smart_student_application a ON a.academic_year_id = y.id
             WHERE a.state != 'cancelled'
