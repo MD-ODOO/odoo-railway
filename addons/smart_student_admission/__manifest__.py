@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "SMART - Accompagnement Étudiants à l'étranger",
-    "version": "19.0.1.2.0",
+    "version": "19.0.1.3.0",
     "category": "Services/Education",
     "summary": "Gestion des étudiants, admissions, engagements, paiements et procédures de visa",
     "description": """Gestion du parcours étudiant SMART : inscription, candidatures, préinscription,
