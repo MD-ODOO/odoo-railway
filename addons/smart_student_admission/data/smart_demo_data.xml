@@ -30,7 +30,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-01-06</field>
+      <field name="registration_date">2026-09-06</field>
       <field name="notes">Donnée de démonstration — dossier fictif 001.</field>
     </record>
     <record id="demo_student_002" model="smart.student">
@@ -62,7 +62,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-02-11</field>
+      <field name="registration_date">2026-10-11</field>
       <field name="notes">Donnée de démonstration — dossier fictif 002.</field>
     </record>
     <record id="demo_student_003" model="smart.student">
@@ -94,7 +94,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-03-16</field>
+      <field name="registration_date">2026-11-16</field>
       <field name="notes">Donnée de démonstration — dossier fictif 003.</field>
     </record>
     <record id="demo_student_004" model="smart.student">
@@ -126,7 +126,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-04-21</field>
+      <field name="registration_date">2026-12-21</field>
       <field name="notes">Donnée de démonstration — dossier fictif 004.</field>
     </record>
     <record id="demo_student_005" model="smart.student">
@@ -158,7 +158,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-05-26</field>
+      <field name="registration_date">2027-01-26</field>
       <field name="notes">Donnée de démonstration — dossier fictif 005.</field>
     </record>
     <record id="demo_student_006" model="smart.student">
@@ -190,7 +190,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-06-05</field>
+      <field name="registration_date">2027-02-05</field>
       <field name="notes">Donnée de démonstration — dossier fictif 006.</field>
     </record>
     <record id="demo_student_007" model="smart.student">
@@ -222,7 +222,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-07-10</field>
+      <field name="registration_date">2027-03-10</field>
       <field name="notes">Donnée de démonstration — dossier fictif 007.</field>
     </record>
     <record id="demo_student_008" model="smart.student">
@@ -248,13 +248,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-08-15</field>
+      <field name="registration_date">2027-04-15</field>
       <field name="notes">Donnée de démonstration — dossier fictif 008.</field>
     </record>
     <record id="demo_student_009" model="smart.student">
@@ -280,13 +280,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-09-20</field>
+      <field name="registration_date">2027-01-20</field>
       <field name="notes">Donnée de démonstration — dossier fictif 009.</field>
     </record>
     <record id="demo_student_010" model="smart.student">
@@ -312,13 +312,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-01-25</field>
+      <field name="registration_date">2027-02-25</field>
       <field name="notes">Donnée de démonstration — dossier fictif 010.</field>
     </record>
     <record id="demo_student_011" model="smart.student">
@@ -350,7 +350,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-02-04</field>
+      <field name="registration_date">2027-03-04</field>
       <field name="notes">Donnée de démonstration — dossier fictif 011.</field>
     </record>
     <record id="demo_student_012" model="smart.student">
@@ -382,7 +382,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-03-09</field>
+      <field name="registration_date">2027-04-09</field>
       <field name="notes">Donnée de démonstration — dossier fictif 012.</field>
     </record>
     <record id="demo_student_013" model="smart.student">
@@ -414,7 +414,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-04-14</field>
+      <field name="registration_date">2026-09-14</field>
       <field name="notes">Donnée de démonstration — dossier fictif 013.</field>
     </record>
     <record id="demo_student_014" model="smart.student">
@@ -446,7 +446,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-05-19</field>
+      <field name="registration_date">2026-10-19</field>
       <field name="notes">Donnée de démonstration — dossier fictif 014.</field>
     </record>
     <record id="demo_student_015" model="smart.student">
@@ -478,7 +478,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-06-24</field>
+      <field name="registration_date">2026-11-24</field>
       <field name="notes">Donnée de démonstration — dossier fictif 015.</field>
     </record>
     <record id="demo_student_016" model="smart.student">
@@ -510,7 +510,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-07-03</field>
+      <field name="registration_date">2026-12-03</field>
       <field name="notes">Donnée de démonstration — dossier fictif 016.</field>
     </record>
     <record id="demo_student_017" model="smart.student">
@@ -542,7 +542,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-08-08</field>
+      <field name="registration_date">2027-01-08</field>
       <field name="notes">Donnée de démonstration — dossier fictif 017.</field>
     </record>
     <record id="demo_student_018" model="smart.student">
@@ -568,13 +568,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-09-13</field>
+      <field name="registration_date">2027-02-13</field>
       <field name="notes">Donnée de démonstration — dossier fictif 018.</field>
     </record>
     <record id="demo_student_019" model="smart.student">
@@ -600,13 +600,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-01-18</field>
+      <field name="registration_date">2027-03-18</field>
       <field name="notes">Donnée de démonstration — dossier fictif 019.</field>
     </record>
     <record id="demo_student_020" model="smart.student">
@@ -632,13 +632,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-02-23</field>
+      <field name="registration_date">2027-04-23</field>
       <field name="notes">Donnée de démonstration — dossier fictif 020.</field>
     </record>
     <record id="demo_student_021" model="smart.student">
@@ -670,7 +670,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-03-02</field>
+      <field name="registration_date">2027-01-02</field>
       <field name="notes">Donnée de démonstration — dossier fictif 021.</field>
     </record>
     <record id="demo_student_022" model="smart.student">
@@ -702,7 +702,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-04-07</field>
+      <field name="registration_date">2027-02-07</field>
       <field name="notes">Donnée de démonstration — dossier fictif 022.</field>
     </record>
     <record id="demo_student_023" model="smart.student">
@@ -734,7 +734,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-05-12</field>
+      <field name="registration_date">2027-03-12</field>
       <field name="notes">Donnée de démonstration — dossier fictif 023.</field>
     </record>
     <record id="demo_student_024" model="smart.student">
@@ -766,7 +766,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-06-17</field>
+      <field name="registration_date">2027-04-17</field>
       <field name="notes">Donnée de démonstration — dossier fictif 024.</field>
     </record>
     <record id="demo_student_025" model="smart.student">
@@ -798,7 +798,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-07-22</field>
+      <field name="registration_date">2026-09-22</field>
       <field name="notes">Donnée de démonstration — dossier fictif 025.</field>
     </record>
     <record id="demo_student_026" model="smart.student">
@@ -830,7 +830,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-08-01</field>
+      <field name="registration_date">2026-10-01</field>
       <field name="notes">Donnée de démonstration — dossier fictif 026.</field>
     </record>
     <record id="demo_student_027" model="smart.student">
@@ -862,7 +862,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-09-06</field>
+      <field name="registration_date">2026-11-06</field>
       <field name="notes">Donnée de démonstration — dossier fictif 027.</field>
     </record>
     <record id="demo_student_028" model="smart.student">
@@ -888,13 +888,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-01-11</field>
+      <field name="registration_date">2026-12-11</field>
       <field name="notes">Donnée de démonstration — dossier fictif 028.</field>
     </record>
     <record id="demo_student_029" model="smart.student">
@@ -920,13 +920,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-02-16</field>
+      <field name="registration_date">2027-01-16</field>
       <field name="notes">Donnée de démonstration — dossier fictif 029.</field>
     </record>
     <record id="demo_student_030" model="smart.student">
@@ -952,13 +952,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-03-21</field>
+      <field name="registration_date">2027-02-21</field>
       <field name="notes">Donnée de démonstration — dossier fictif 030.</field>
     </record>
     <record id="demo_student_031" model="smart.student">
@@ -990,7 +990,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-04-26</field>
+      <field name="registration_date">2027-03-26</field>
       <field name="notes">Donnée de démonstration — dossier fictif 031.</field>
     </record>
     <record id="demo_student_032" model="smart.student">
@@ -1022,7 +1022,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-05-05</field>
+      <field name="registration_date">2027-04-05</field>
       <field name="notes">Donnée de démonstration — dossier fictif 032.</field>
     </record>
     <record id="demo_student_033" model="smart.student">
@@ -1054,7 +1054,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-06-10</field>
+      <field name="registration_date">2027-01-10</field>
       <field name="notes">Donnée de démonstration — dossier fictif 033.</field>
     </record>
     <record id="demo_student_034" model="smart.student">
@@ -1086,7 +1086,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-07-15</field>
+      <field name="registration_date">2027-02-15</field>
       <field name="notes">Donnée de démonstration — dossier fictif 034.</field>
     </record>
     <record id="demo_student_035" model="smart.student">
@@ -1118,7 +1118,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-08-20</field>
+      <field name="registration_date">2027-03-20</field>
       <field name="notes">Donnée de démonstration — dossier fictif 035.</field>
     </record>
     <record id="demo_student_036" model="smart.student">
@@ -1150,7 +1150,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-09-25</field>
+      <field name="registration_date">2027-04-25</field>
       <field name="notes">Donnée de démonstration — dossier fictif 036.</field>
     </record>
     <record id="demo_student_037" model="smart.student">
@@ -1182,7 +1182,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-01-04</field>
+      <field name="registration_date">2026-09-04</field>
       <field name="notes">Donnée de démonstration — dossier fictif 037.</field>
     </record>
     <record id="demo_student_038" model="smart.student">
@@ -1208,13 +1208,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-02-09</field>
+      <field name="registration_date">2026-10-09</field>
       <field name="notes">Donnée de démonstration — dossier fictif 038.</field>
     </record>
     <record id="demo_student_039" model="smart.student">
@@ -1240,13 +1240,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-03-14</field>
+      <field name="registration_date">2026-11-14</field>
       <field name="notes">Donnée de démonstration — dossier fictif 039.</field>
     </record>
     <record id="demo_student_040" model="smart.student">
@@ -1272,13 +1272,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-04-19</field>
+      <field name="registration_date">2026-12-19</field>
       <field name="notes">Donnée de démonstration — dossier fictif 040.</field>
     </record>
     <record id="demo_student_041" model="smart.student">
@@ -1310,7 +1310,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-05-24</field>
+      <field name="registration_date">2027-01-24</field>
       <field name="notes">Donnée de démonstration — dossier fictif 041.</field>
     </record>
     <record id="demo_student_042" model="smart.student">
@@ -1342,7 +1342,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-06-03</field>
+      <field name="registration_date">2027-02-03</field>
       <field name="notes">Donnée de démonstration — dossier fictif 042.</field>
     </record>
     <record id="demo_student_043" model="smart.student">
@@ -1374,7 +1374,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-07-08</field>
+      <field name="registration_date">2027-03-08</field>
       <field name="notes">Donnée de démonstration — dossier fictif 043.</field>
     </record>
     <record id="demo_student_044" model="smart.student">
@@ -1406,7 +1406,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-08-13</field>
+      <field name="registration_date">2027-04-13</field>
       <field name="notes">Donnée de démonstration — dossier fictif 044.</field>
     </record>
     <record id="demo_student_045" model="smart.student">
@@ -1438,7 +1438,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-09-18</field>
+      <field name="registration_date">2027-01-18</field>
       <field name="notes">Donnée de démonstration — dossier fictif 045.</field>
     </record>
     <record id="demo_student_046" model="smart.student">
@@ -1470,7 +1470,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-01-23</field>
+      <field name="registration_date">2027-02-23</field>
       <field name="notes">Donnée de démonstration — dossier fictif 046.</field>
     </record>
     <record id="demo_student_047" model="smart.student">
@@ -1502,7 +1502,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-02-02</field>
+      <field name="registration_date">2027-03-02</field>
       <field name="notes">Donnée de démonstration — dossier fictif 047.</field>
     </record>
     <record id="demo_student_048" model="smart.student">
@@ -1528,13 +1528,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-03-07</field>
+      <field name="registration_date">2027-04-07</field>
       <field name="notes">Donnée de démonstration — dossier fictif 048.</field>
     </record>
     <record id="demo_student_049" model="smart.student">
@@ -1560,13 +1560,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-04-12</field>
+      <field name="registration_date">2026-09-12</field>
       <field name="notes">Donnée de démonstration — dossier fictif 049.</field>
     </record>
     <record id="demo_student_050" model="smart.student">
@@ -1592,13 +1592,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-05-17</field>
+      <field name="registration_date">2026-10-17</field>
       <field name="notes">Donnée de démonstration — dossier fictif 050.</field>
     </record>
     <record id="demo_student_051" model="smart.student">
@@ -1630,7 +1630,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-06-22</field>
+      <field name="registration_date">2026-11-22</field>
       <field name="notes">Donnée de démonstration — dossier fictif 051.</field>
     </record>
     <record id="demo_student_052" model="smart.student">
@@ -1662,7 +1662,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-07-01</field>
+      <field name="registration_date">2026-12-01</field>
       <field name="notes">Donnée de démonstration — dossier fictif 052.</field>
     </record>
     <record id="demo_student_053" model="smart.student">
@@ -1694,7 +1694,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-08-06</field>
+      <field name="registration_date">2027-01-06</field>
       <field name="notes">Donnée de démonstration — dossier fictif 053.</field>
     </record>
     <record id="demo_student_054" model="smart.student">
@@ -1726,7 +1726,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-09-11</field>
+      <field name="registration_date">2027-02-11</field>
       <field name="notes">Donnée de démonstration — dossier fictif 054.</field>
     </record>
     <record id="demo_student_055" model="smart.student">
@@ -1758,7 +1758,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-01-16</field>
+      <field name="registration_date">2027-03-16</field>
       <field name="notes">Donnée de démonstration — dossier fictif 055.</field>
     </record>
     <record id="demo_student_056" model="smart.student">
@@ -1790,7 +1790,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-02-21</field>
+      <field name="registration_date">2027-04-21</field>
       <field name="notes">Donnée de démonstration — dossier fictif 056.</field>
     </record>
     <record id="demo_student_057" model="smart.student">
@@ -1822,7 +1822,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-03-26</field>
+      <field name="registration_date">2027-01-26</field>
       <field name="notes">Donnée de démonstration — dossier fictif 057.</field>
     </record>
     <record id="demo_student_058" model="smart.student">
@@ -1848,13 +1848,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-04-05</field>
+      <field name="registration_date">2027-02-05</field>
       <field name="notes">Donnée de démonstration — dossier fictif 058.</field>
     </record>
     <record id="demo_student_059" model="smart.student">
@@ -1880,13 +1880,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-05-10</field>
+      <field name="registration_date">2027-03-10</field>
       <field name="notes">Donnée de démonstration — dossier fictif 059.</field>
     </record>
     <record id="demo_student_060" model="smart.student">
@@ -1912,13 +1912,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-06-15</field>
+      <field name="registration_date">2027-04-15</field>
       <field name="notes">Donnée de démonstration — dossier fictif 060.</field>
     </record>
     <record id="demo_student_061" model="smart.student">
@@ -1950,7 +1950,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-07-20</field>
+      <field name="registration_date">2026-09-20</field>
       <field name="notes">Donnée de démonstration — dossier fictif 061.</field>
     </record>
     <record id="demo_student_062" model="smart.student">
@@ -1982,7 +1982,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-08-25</field>
+      <field name="registration_date">2026-10-25</field>
       <field name="notes">Donnée de démonstration — dossier fictif 062.</field>
     </record>
     <record id="demo_student_063" model="smart.student">
@@ -2014,7 +2014,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-09-04</field>
+      <field name="registration_date">2026-11-04</field>
       <field name="notes">Donnée de démonstration — dossier fictif 063.</field>
     </record>
     <record id="demo_student_064" model="smart.student">
@@ -2046,7 +2046,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-01-09</field>
+      <field name="registration_date">2026-12-09</field>
       <field name="notes">Donnée de démonstration — dossier fictif 064.</field>
     </record>
     <record id="demo_student_065" model="smart.student">
@@ -2078,7 +2078,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-02-14</field>
+      <field name="registration_date">2027-01-14</field>
       <field name="notes">Donnée de démonstration — dossier fictif 065.</field>
     </record>
     <record id="demo_student_066" model="smart.student">
@@ -2110,7 +2110,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-03-19</field>
+      <field name="registration_date">2027-02-19</field>
       <field name="notes">Donnée de démonstration — dossier fictif 066.</field>
     </record>
     <record id="demo_student_067" model="smart.student">
@@ -2142,7 +2142,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-04-24</field>
+      <field name="registration_date">2027-03-24</field>
       <field name="notes">Donnée de démonstration — dossier fictif 067.</field>
     </record>
     <record id="demo_student_068" model="smart.student">
@@ -2168,13 +2168,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-05-03</field>
+      <field name="registration_date">2027-04-03</field>
       <field name="notes">Donnée de démonstration — dossier fictif 068.</field>
     </record>
     <record id="demo_student_069" model="smart.student">
@@ -2200,13 +2200,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-06-08</field>
+      <field name="registration_date">2027-01-08</field>
       <field name="notes">Donnée de démonstration — dossier fictif 069.</field>
     </record>
     <record id="demo_student_070" model="smart.student">
@@ -2232,13 +2232,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-07-13</field>
+      <field name="registration_date">2027-02-13</field>
       <field name="notes">Donnée de démonstration — dossier fictif 070.</field>
     </record>
     <record id="demo_student_071" model="smart.student">
@@ -2270,7 +2270,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-08-18</field>
+      <field name="registration_date">2027-03-18</field>
       <field name="notes">Donnée de démonstration — dossier fictif 071.</field>
     </record>
     <record id="demo_student_072" model="smart.student">
@@ -2302,7 +2302,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-09-23</field>
+      <field name="registration_date">2027-04-23</field>
       <field name="notes">Donnée de démonstration — dossier fictif 072.</field>
     </record>
     <record id="demo_student_073" model="smart.student">
@@ -2334,7 +2334,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-01-02</field>
+      <field name="registration_date">2026-09-02</field>
       <field name="notes">Donnée de démonstration — dossier fictif 073.</field>
     </record>
     <record id="demo_student_074" model="smart.student">
@@ -2366,7 +2366,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-02-07</field>
+      <field name="registration_date">2026-10-07</field>
       <field name="notes">Donnée de démonstration — dossier fictif 074.</field>
     </record>
     <record id="demo_student_075" model="smart.student">
@@ -2398,7 +2398,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-03-12</field>
+      <field name="registration_date">2026-11-12</field>
       <field name="notes">Donnée de démonstration — dossier fictif 075.</field>
     </record>
     <record id="demo_student_076" model="smart.student">
@@ -2430,7 +2430,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-04-17</field>
+      <field name="registration_date">2026-12-17</field>
       <field name="notes">Donnée de démonstration — dossier fictif 076.</field>
     </record>
     <record id="demo_student_077" model="smart.student">
@@ -2462,7 +2462,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-05-22</field>
+      <field name="registration_date">2027-01-22</field>
       <field name="notes">Donnée de démonstration — dossier fictif 077.</field>
     </record>
     <record id="demo_student_078" model="smart.student">
@@ -2488,13 +2488,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-06-01</field>
+      <field name="registration_date">2027-02-01</field>
       <field name="notes">Donnée de démonstration — dossier fictif 078.</field>
     </record>
     <record id="demo_student_079" model="smart.student">
@@ -2520,13 +2520,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-07-06</field>
+      <field name="registration_date">2027-03-06</field>
       <field name="notes">Donnée de démonstration — dossier fictif 079.</field>
     </record>
     <record id="demo_student_080" model="smart.student">
@@ -2552,13 +2552,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-08-11</field>
+      <field name="registration_date">2027-04-11</field>
       <field name="notes">Donnée de démonstration — dossier fictif 080.</field>
     </record>
     <record id="demo_student_081" model="smart.student">
@@ -2590,7 +2590,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-09-16</field>
+      <field name="registration_date">2027-01-16</field>
       <field name="notes">Donnée de démonstration — dossier fictif 081.</field>
     </record>
     <record id="demo_student_082" model="smart.student">
@@ -2622,7 +2622,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-01-21</field>
+      <field name="registration_date">2027-02-21</field>
       <field name="notes">Donnée de démonstration — dossier fictif 082.</field>
     </record>
     <record id="demo_student_083" model="smart.student">
@@ -2654,7 +2654,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-02-26</field>
+      <field name="registration_date">2027-03-26</field>
       <field name="notes">Donnée de démonstration — dossier fictif 083.</field>
     </record>
     <record id="demo_student_084" model="smart.student">
@@ -2686,7 +2686,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-03-05</field>
+      <field name="registration_date">2027-04-05</field>
       <field name="notes">Donnée de démonstration — dossier fictif 084.</field>
     </record>
     <record id="demo_student_085" model="smart.student">
@@ -2718,7 +2718,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-04-10</field>
+      <field name="registration_date">2026-09-10</field>
       <field name="notes">Donnée de démonstration — dossier fictif 085.</field>
     </record>
     <record id="demo_student_086" model="smart.student">
@@ -2750,7 +2750,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-05-15</field>
+      <field name="registration_date">2026-10-15</field>
       <field name="notes">Donnée de démonstration — dossier fictif 086.</field>
     </record>
     <record id="demo_student_087" model="smart.student">
@@ -2782,7 +2782,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-06-20</field>
+      <field name="registration_date">2026-11-20</field>
       <field name="notes">Donnée de démonstration — dossier fictif 087.</field>
     </record>
     <record id="demo_student_088" model="smart.student">
@@ -2808,13 +2808,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-07-25</field>
+      <field name="registration_date">2026-12-25</field>
       <field name="notes">Donnée de démonstration — dossier fictif 088.</field>
     </record>
     <record id="demo_student_089" model="smart.student">
@@ -2840,13 +2840,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-08-04</field>
+      <field name="registration_date">2027-01-04</field>
       <field name="notes">Donnée de démonstration — dossier fictif 089.</field>
     </record>
     <record id="demo_student_090" model="smart.student">
@@ -2872,13 +2872,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-09-09</field>
+      <field name="registration_date">2027-02-09</field>
       <field name="notes">Donnée de démonstration — dossier fictif 090.</field>
     </record>
     <record id="demo_student_091" model="smart.student">
@@ -2910,7 +2910,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-01-14</field>
+      <field name="registration_date">2027-03-14</field>
       <field name="notes">Donnée de démonstration — dossier fictif 091.</field>
     </record>
     <record id="demo_student_092" model="smart.student">
@@ -2942,7 +2942,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-02-19</field>
+      <field name="registration_date">2027-04-19</field>
       <field name="notes">Donnée de démonstration — dossier fictif 092.</field>
     </record>
     <record id="demo_student_093" model="smart.student">
@@ -2974,7 +2974,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-03-24</field>
+      <field name="registration_date">2027-01-24</field>
       <field name="notes">Donnée de démonstration — dossier fictif 093.</field>
     </record>
     <record id="demo_student_094" model="smart.student">
@@ -3006,7 +3006,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-04-03</field>
+      <field name="registration_date">2027-02-03</field>
       <field name="notes">Donnée de démonstration — dossier fictif 094.</field>
     </record>
     <record id="demo_student_095" model="smart.student">
@@ -3038,7 +3038,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-05-08</field>
+      <field name="registration_date">2027-03-08</field>
       <field name="notes">Donnée de démonstration — dossier fictif 095.</field>
     </record>
     <record id="demo_student_096" model="smart.student">
@@ -3070,7 +3070,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-06-13</field>
+      <field name="registration_date">2027-04-13</field>
       <field name="notes">Donnée de démonstration — dossier fictif 096.</field>
     </record>
     <record id="demo_student_097" model="smart.student">
@@ -3102,7 +3102,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-07-18</field>
+      <field name="registration_date">2026-09-18</field>
       <field name="notes">Donnée de démonstration — dossier fictif 097.</field>
     </record>
     <record id="demo_student_098" model="smart.student">
@@ -3128,13 +3128,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-08-23</field>
+      <field name="registration_date">2026-10-23</field>
       <field name="notes">Donnée de démonstration — dossier fictif 098.</field>
     </record>
     <record id="demo_student_099" model="smart.student">
@@ -3160,13 +3160,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-09-02</field>
+      <field name="registration_date">2026-11-02</field>
       <field name="notes">Donnée de démonstration — dossier fictif 099.</field>
     </record>
     <record id="demo_student_100" model="smart.student">
@@ -3192,13 +3192,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-01-07</field>
+      <field name="registration_date">2026-12-07</field>
       <field name="notes">Donnée de démonstration — dossier fictif 100.</field>
     </record>
     <record id="demo_student_101" model="smart.student">
@@ -3230,7 +3230,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-02-12</field>
+      <field name="registration_date">2027-01-12</field>
       <field name="notes">Donnée de démonstration — dossier fictif 101.</field>
     </record>
     <record id="demo_student_102" model="smart.student">
@@ -3262,7 +3262,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-03-17</field>
+      <field name="registration_date">2027-02-17</field>
       <field name="notes">Donnée de démonstration — dossier fictif 102.</field>
     </record>
     <record id="demo_student_103" model="smart.student">
@@ -3294,7 +3294,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-04-22</field>
+      <field name="registration_date">2027-03-22</field>
       <field name="notes">Donnée de démonstration — dossier fictif 103.</field>
     </record>
     <record id="demo_student_104" model="smart.student">
@@ -3326,7 +3326,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-05-01</field>
+      <field name="registration_date">2027-04-01</field>
       <field name="notes">Donnée de démonstration — dossier fictif 104.</field>
     </record>
     <record id="demo_student_105" model="smart.student">
@@ -3358,7 +3358,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-06-06</field>
+      <field name="registration_date">2027-01-06</field>
       <field name="notes">Donnée de démonstration — dossier fictif 105.</field>
     </record>
     <record id="demo_student_106" model="smart.student">
@@ -3390,7 +3390,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-07-11</field>
+      <field name="registration_date">2027-02-11</field>
       <field name="notes">Donnée de démonstration — dossier fictif 106.</field>
     </record>
     <record id="demo_student_107" model="smart.student">
@@ -3422,7 +3422,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-08-16</field>
+      <field name="registration_date">2027-03-16</field>
       <field name="notes">Donnée de démonstration — dossier fictif 107.</field>
     </record>
     <record id="demo_student_108" model="smart.student">
@@ -3448,13 +3448,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-09-21</field>
+      <field name="registration_date">2027-04-21</field>
       <field name="notes">Donnée de démonstration — dossier fictif 108.</field>
     </record>
     <record id="demo_student_109" model="smart.student">
@@ -3480,13 +3480,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-01-26</field>
+      <field name="registration_date">2026-09-26</field>
       <field name="notes">Donnée de démonstration — dossier fictif 109.</field>
     </record>
     <record id="demo_student_110" model="smart.student">
@@ -3512,13 +3512,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-02-05</field>
+      <field name="registration_date">2026-10-05</field>
       <field name="notes">Donnée de démonstration — dossier fictif 110.</field>
     </record>
     <record id="demo_student_111" model="smart.student">
@@ -3550,7 +3550,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-03-10</field>
+      <field name="registration_date">2026-11-10</field>
       <field name="notes">Donnée de démonstration — dossier fictif 111.</field>
     </record>
     <record id="demo_student_112" model="smart.student">
@@ -3582,7 +3582,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-04-15</field>
+      <field name="registration_date">2026-12-15</field>
       <field name="notes">Donnée de démonstration — dossier fictif 112.</field>
     </record>
     <record id="demo_student_113" model="smart.student">
@@ -3614,7 +3614,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-05-20</field>
+      <field name="registration_date">2027-01-20</field>
       <field name="notes">Donnée de démonstration — dossier fictif 113.</field>
     </record>
     <record id="demo_student_114" model="smart.student">
@@ -3646,7 +3646,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-06-25</field>
+      <field name="registration_date">2027-02-25</field>
       <field name="notes">Donnée de démonstration — dossier fictif 114.</field>
     </record>
     <record id="demo_student_115" model="smart.student">
@@ -3678,7 +3678,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-07-04</field>
+      <field name="registration_date">2027-03-04</field>
       <field name="notes">Donnée de démonstration — dossier fictif 115.</field>
     </record>
     <record id="demo_student_116" model="smart.student">
@@ -3710,7 +3710,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-08-09</field>
+      <field name="registration_date">2027-04-09</field>
       <field name="notes">Donnée de démonstration — dossier fictif 116.</field>
     </record>
     <record id="demo_student_117" model="smart.student">
@@ -3742,7 +3742,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-09-14</field>
+      <field name="registration_date">2027-01-14</field>
       <field name="notes">Donnée de démonstration — dossier fictif 117.</field>
     </record>
     <record id="demo_student_118" model="smart.student">
@@ -3768,13 +3768,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-01-19</field>
+      <field name="registration_date">2027-02-19</field>
       <field name="notes">Donnée de démonstration — dossier fictif 118.</field>
     </record>
     <record id="demo_student_119" model="smart.student">
@@ -3800,13 +3800,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-02-24</field>
+      <field name="registration_date">2027-03-24</field>
       <field name="notes">Donnée de démonstration — dossier fictif 119.</field>
     </record>
     <record id="demo_student_120" model="smart.student">
@@ -3832,13 +3832,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-03-03</field>
+      <field name="registration_date">2027-04-03</field>
       <field name="notes">Donnée de démonstration — dossier fictif 120.</field>
     </record>
     <record id="demo_student_121" model="smart.student">
@@ -3870,7 +3870,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-01-08</field>
+      <field name="registration_date">2026-09-08</field>
       <field name="notes">Donnée de démonstration — dossier fictif 121.</field>
     </record>
     <record id="demo_student_122" model="smart.student">
@@ -3902,7 +3902,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-02-13</field>
+      <field name="registration_date">2026-10-13</field>
       <field name="notes">Donnée de démonstration — dossier fictif 122.</field>
     </record>
     <record id="demo_student_123" model="smart.student">
@@ -3934,7 +3934,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-03-18</field>
+      <field name="registration_date">2026-11-18</field>
       <field name="notes">Donnée de démonstration — dossier fictif 123.</field>
     </record>
     <record id="demo_student_124" model="smart.student">
@@ -3966,7 +3966,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-04-23</field>
+      <field name="registration_date">2026-12-23</field>
       <field name="notes">Donnée de démonstration — dossier fictif 124.</field>
     </record>
     <record id="demo_student_125" model="smart.student">
@@ -3998,7 +3998,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-05-02</field>
+      <field name="registration_date">2027-01-02</field>
       <field name="notes">Donnée de démonstration — dossier fictif 125.</field>
     </record>
     <record id="demo_student_126" model="smart.student">
@@ -4030,7 +4030,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-06-07</field>
+      <field name="registration_date">2027-02-07</field>
       <field name="notes">Donnée de démonstration — dossier fictif 126.</field>
     </record>
     <record id="demo_student_127" model="smart.student">
@@ -4062,7 +4062,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-07-12</field>
+      <field name="registration_date">2027-03-12</field>
       <field name="notes">Donnée de démonstration — dossier fictif 127.</field>
     </record>
     <record id="demo_student_128" model="smart.student">
@@ -4088,13 +4088,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-08-17</field>
+      <field name="registration_date">2027-04-17</field>
       <field name="notes">Donnée de démonstration — dossier fictif 128.</field>
     </record>
     <record id="demo_student_129" model="smart.student">
@@ -4120,13 +4120,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-09-22</field>
+      <field name="registration_date">2027-01-22</field>
       <field name="notes">Donnée de démonstration — dossier fictif 129.</field>
     </record>
     <record id="demo_student_130" model="smart.student">
@@ -4152,13 +4152,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-10-01</field>
+      <field name="registration_date">2027-02-01</field>
       <field name="notes">Donnée de démonstration — dossier fictif 130.</field>
     </record>
     <record id="demo_student_131" model="smart.student">
@@ -4190,7 +4190,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-11-06</field>
+      <field name="registration_date">2027-03-06</field>
       <field name="notes">Donnée de démonstration — dossier fictif 131.</field>
     </record>
     <record id="demo_student_132" model="smart.student">
@@ -4222,7 +4222,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-12-11</field>
+      <field name="registration_date">2027-04-11</field>
       <field name="notes">Donnée de démonstration — dossier fictif 132.</field>
     </record>
     <record id="demo_student_133" model="smart.student">
@@ -4254,7 +4254,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-01-16</field>
+      <field name="registration_date">2026-09-16</field>
       <field name="notes">Donnée de démonstration — dossier fictif 133.</field>
     </record>
     <record id="demo_student_134" model="smart.student">
@@ -4286,7 +4286,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-02-21</field>
+      <field name="registration_date">2026-10-21</field>
       <field name="notes">Donnée de démonstration — dossier fictif 134.</field>
     </record>
     <record id="demo_student_135" model="smart.student">
@@ -4318,7 +4318,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-03-26</field>
+      <field name="registration_date">2026-11-26</field>
       <field name="notes">Donnée de démonstration — dossier fictif 135.</field>
     </record>
     <record id="demo_student_136" model="smart.student">
@@ -4350,7 +4350,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-04-05</field>
+      <field name="registration_date">2026-12-05</field>
       <field name="notes">Donnée de démonstration — dossier fictif 136.</field>
     </record>
     <record id="demo_student_137" model="smart.student">
@@ -4382,7 +4382,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-05-10</field>
+      <field name="registration_date">2027-01-10</field>
       <field name="notes">Donnée de démonstration — dossier fictif 137.</field>
     </record>
     <record id="demo_student_138" model="smart.student">
@@ -4408,13 +4408,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-06-15</field>
+      <field name="registration_date">2027-02-15</field>
       <field name="notes">Donnée de démonstration — dossier fictif 138.</field>
     </record>
     <record id="demo_student_139" model="smart.student">
@@ -4440,13 +4440,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-07-20</field>
+      <field name="registration_date">2027-03-20</field>
       <field name="notes">Donnée de démonstration — dossier fictif 139.</field>
     </record>
     <record id="demo_student_140" model="smart.student">
@@ -4472,13 +4472,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-08-25</field>
+      <field name="registration_date">2027-04-25</field>
       <field name="notes">Donnée de démonstration — dossier fictif 140.</field>
     </record>
     <record id="demo_student_141" model="smart.student">
@@ -4510,7 +4510,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-09-04</field>
+      <field name="registration_date">2027-01-04</field>
       <field name="notes">Donnée de démonstration — dossier fictif 141.</field>
     </record>
     <record id="demo_student_142" model="smart.student">
@@ -4542,7 +4542,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-10-09</field>
+      <field name="registration_date">2027-02-09</field>
       <field name="notes">Donnée de démonstration — dossier fictif 142.</field>
     </record>
     <record id="demo_student_143" model="smart.student">
@@ -4574,7 +4574,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-11-14</field>
+      <field name="registration_date">2027-03-14</field>
       <field name="notes">Donnée de démonstration — dossier fictif 143.</field>
     </record>
     <record id="demo_student_144" model="smart.student">
@@ -4606,7 +4606,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-12-19</field>
+      <field name="registration_date">2027-04-19</field>
       <field name="notes">Donnée de démonstration — dossier fictif 144.</field>
     </record>
     <record id="demo_student_145" model="smart.student">
@@ -4638,7 +4638,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-01-24</field>
+      <field name="registration_date">2026-09-24</field>
       <field name="notes">Donnée de démonstration — dossier fictif 145.</field>
     </record>
     <record id="demo_student_146" model="smart.student">
@@ -4670,7 +4670,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-02-03</field>
+      <field name="registration_date">2026-10-03</field>
       <field name="notes">Donnée de démonstration — dossier fictif 146.</field>
     </record>
     <record id="demo_student_147" model="smart.student">
@@ -4702,7 +4702,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-03-08</field>
+      <field name="registration_date">2026-11-08</field>
       <field name="notes">Donnée de démonstration — dossier fictif 147.</field>
     </record>
     <record id="demo_student_148" model="smart.student">
@@ -4728,13 +4728,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-04-13</field>
+      <field name="registration_date">2026-12-13</field>
       <field name="notes">Donnée de démonstration — dossier fictif 148.</field>
     </record>
     <record id="demo_student_149" model="smart.student">
@@ -4760,13 +4760,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-05-18</field>
+      <field name="registration_date">2027-01-18</field>
       <field name="notes">Donnée de démonstration — dossier fictif 149.</field>
     </record>
     <record id="demo_student_150" model="smart.student">
@@ -4792,13 +4792,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-06-23</field>
+      <field name="registration_date">2027-02-23</field>
       <field name="notes">Donnée de démonstration — dossier fictif 150.</field>
     </record>
     <record id="demo_student_151" model="smart.student">
@@ -4830,7 +4830,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-07-02</field>
+      <field name="registration_date">2027-03-02</field>
       <field name="notes">Donnée de démonstration — dossier fictif 151.</field>
     </record>
     <record id="demo_student_152" model="smart.student">
@@ -4862,7 +4862,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-08-07</field>
+      <field name="registration_date">2027-04-07</field>
       <field name="notes">Donnée de démonstration — dossier fictif 152.</field>
     </record>
     <record id="demo_student_153" model="smart.student">
@@ -4894,7 +4894,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-09-12</field>
+      <field name="registration_date">2027-01-12</field>
       <field name="notes">Donnée de démonstration — dossier fictif 153.</field>
     </record>
     <record id="demo_student_154" model="smart.student">
@@ -4926,7 +4926,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-10-17</field>
+      <field name="registration_date">2027-02-17</field>
       <field name="notes">Donnée de démonstration — dossier fictif 154.</field>
     </record>
     <record id="demo_student_155" model="smart.student">
@@ -4958,7 +4958,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-11-22</field>
+      <field name="registration_date">2027-03-22</field>
       <field name="notes">Donnée de démonstration — dossier fictif 155.</field>
     </record>
     <record id="demo_student_156" model="smart.student">
@@ -4990,7 +4990,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-12-01</field>
+      <field name="registration_date">2027-04-01</field>
       <field name="notes">Donnée de démonstration — dossier fictif 156.</field>
     </record>
     <record id="demo_student_157" model="smart.student">
@@ -5022,7 +5022,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-01-06</field>
+      <field name="registration_date">2026-09-06</field>
       <field name="notes">Donnée de démonstration — dossier fictif 157.</field>
     </record>
     <record id="demo_student_158" model="smart.student">
@@ -5048,13 +5048,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-02-11</field>
+      <field name="registration_date">2026-10-11</field>
       <field name="notes">Donnée de démonstration — dossier fictif 158.</field>
     </record>
     <record id="demo_student_159" model="smart.student">
@@ -5080,13 +5080,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-03-16</field>
+      <field name="registration_date">2026-11-16</field>
       <field name="notes">Donnée de démonstration — dossier fictif 159.</field>
     </record>
     <record id="demo_student_160" model="smart.student">
@@ -5112,13 +5112,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-04-21</field>
+      <field name="registration_date">2026-12-21</field>
       <field name="notes">Donnée de démonstration — dossier fictif 160.</field>
     </record>
     <record id="demo_student_161" model="smart.student">
@@ -5150,7 +5150,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-05-26</field>
+      <field name="registration_date">2027-01-26</field>
       <field name="notes">Donnée de démonstration — dossier fictif 161.</field>
     </record>
     <record id="demo_student_162" model="smart.student">
@@ -5182,7 +5182,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-06-05</field>
+      <field name="registration_date">2027-02-05</field>
       <field name="notes">Donnée de démonstration — dossier fictif 162.</field>
     </record>
     <record id="demo_student_163" model="smart.student">
@@ -5214,7 +5214,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-07-10</field>
+      <field name="registration_date">2027-03-10</field>
       <field name="notes">Donnée de démonstration — dossier fictif 163.</field>
     </record>
     <record id="demo_student_164" model="smart.student">
@@ -5246,7 +5246,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-08-15</field>
+      <field name="registration_date">2027-04-15</field>
       <field name="notes">Donnée de démonstration — dossier fictif 164.</field>
     </record>
     <record id="demo_student_165" model="smart.student">
@@ -5278,7 +5278,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-09-20</field>
+      <field name="registration_date">2027-01-20</field>
       <field name="notes">Donnée de démonstration — dossier fictif 165.</field>
     </record>
     <record id="demo_student_166" model="smart.student">
@@ -5310,7 +5310,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-10-25</field>
+      <field name="registration_date">2027-02-25</field>
       <field name="notes">Donnée de démonstration — dossier fictif 166.</field>
     </record>
     <record id="demo_student_167" model="smart.student">
@@ -5342,7 +5342,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-11-04</field>
+      <field name="registration_date">2027-03-04</field>
       <field name="notes">Donnée de démonstration — dossier fictif 167.</field>
     </record>
     <record id="demo_student_168" model="smart.student">
@@ -5368,13 +5368,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-12-09</field>
+      <field name="registration_date">2027-04-09</field>
       <field name="notes">Donnée de démonstration — dossier fictif 168.</field>
     </record>
     <record id="demo_student_169" model="smart.student">
@@ -5400,13 +5400,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-01-14</field>
+      <field name="registration_date">2026-09-14</field>
       <field name="notes">Donnée de démonstration — dossier fictif 169.</field>
     </record>
     <record id="demo_student_170" model="smart.student">
@@ -5432,13 +5432,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-02-19</field>
+      <field name="registration_date">2026-10-19</field>
       <field name="notes">Donnée de démonstration — dossier fictif 170.</field>
     </record>
     <record id="demo_student_171" model="smart.student">
@@ -5470,7 +5470,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-03-24</field>
+      <field name="registration_date">2026-11-24</field>
       <field name="notes">Donnée de démonstration — dossier fictif 171.</field>
     </record>
     <record id="demo_student_172" model="smart.student">
@@ -5502,7 +5502,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-04-03</field>
+      <field name="registration_date">2026-12-03</field>
       <field name="notes">Donnée de démonstration — dossier fictif 172.</field>
     </record>
     <record id="demo_student_173" model="smart.student">
@@ -5534,7 +5534,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-05-08</field>
+      <field name="registration_date">2027-01-08</field>
       <field name="notes">Donnée de démonstration — dossier fictif 173.</field>
     </record>
     <record id="demo_student_174" model="smart.student">
@@ -5566,7 +5566,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-06-13</field>
+      <field name="registration_date">2027-02-13</field>
       <field name="notes">Donnée de démonstration — dossier fictif 174.</field>
     </record>
     <record id="demo_student_175" model="smart.student">
@@ -5598,7 +5598,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-07-18</field>
+      <field name="registration_date">2027-03-18</field>
       <field name="notes">Donnée de démonstration — dossier fictif 175.</field>
     </record>
     <record id="demo_student_176" model="smart.student">
@@ -5630,7 +5630,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-08-23</field>
+      <field name="registration_date">2027-04-23</field>
       <field name="notes">Donnée de démonstration — dossier fictif 176.</field>
     </record>
     <record id="demo_student_177" model="smart.student">
@@ -5662,7 +5662,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-09-02</field>
+      <field name="registration_date">2027-01-02</field>
       <field name="notes">Donnée de démonstration — dossier fictif 177.</field>
     </record>
     <record id="demo_student_178" model="smart.student">
@@ -5688,13 +5688,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-10-07</field>
+      <field name="registration_date">2027-02-07</field>
       <field name="notes">Donnée de démonstration — dossier fictif 178.</field>
     </record>
     <record id="demo_student_179" model="smart.student">
@@ -5720,13 +5720,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-11-12</field>
+      <field name="registration_date">2027-03-12</field>
       <field name="notes">Donnée de démonstration — dossier fictif 179.</field>
     </record>
     <record id="demo_student_180" model="smart.student">
@@ -5752,13 +5752,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-12-17</field>
+      <field name="registration_date">2027-04-17</field>
       <field name="notes">Donnée de démonstration — dossier fictif 180.</field>
     </record>
     <record id="demo_student_181" model="smart.student">
@@ -5790,7 +5790,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-01-22</field>
+      <field name="registration_date">2026-09-22</field>
       <field name="notes">Donnée de démonstration — dossier fictif 181.</field>
     </record>
     <record id="demo_student_182" model="smart.student">
@@ -5822,7 +5822,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-02-01</field>
+      <field name="registration_date">2026-10-01</field>
       <field name="notes">Donnée de démonstration — dossier fictif 182.</field>
     </record>
     <record id="demo_student_183" model="smart.student">
@@ -5854,7 +5854,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-03-06</field>
+      <field name="registration_date">2026-11-06</field>
       <field name="notes">Donnée de démonstration — dossier fictif 183.</field>
     </record>
     <record id="demo_student_184" model="smart.student">
@@ -5886,7 +5886,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-04-11</field>
+      <field name="registration_date">2026-12-11</field>
       <field name="notes">Donnée de démonstration — dossier fictif 184.</field>
     </record>
     <record id="demo_student_185" model="smart.student">
@@ -5918,7 +5918,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-05-16</field>
+      <field name="registration_date">2027-01-16</field>
       <field name="notes">Donnée de démonstration — dossier fictif 185.</field>
     </record>
     <record id="demo_student_186" model="smart.student">
@@ -5950,7 +5950,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-06-21</field>
+      <field name="registration_date">2027-02-21</field>
       <field name="notes">Donnée de démonstration — dossier fictif 186.</field>
     </record>
     <record id="demo_student_187" model="smart.student">
@@ -5982,7 +5982,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-07-26</field>
+      <field name="registration_date">2027-03-26</field>
       <field name="notes">Donnée de démonstration — dossier fictif 187.</field>
     </record>
     <record id="demo_student_188" model="smart.student">
@@ -6008,13 +6008,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-08-05</field>
+      <field name="registration_date">2027-04-05</field>
       <field name="notes">Donnée de démonstration — dossier fictif 188.</field>
     </record>
     <record id="demo_student_189" model="smart.student">
@@ -6040,13 +6040,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-09-10</field>
+      <field name="registration_date">2027-01-10</field>
       <field name="notes">Donnée de démonstration — dossier fictif 189.</field>
     </record>
     <record id="demo_student_190" model="smart.student">
@@ -6072,13 +6072,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-10-15</field>
+      <field name="registration_date">2027-02-15</field>
       <field name="notes">Donnée de démonstration — dossier fictif 190.</field>
     </record>
     <record id="demo_student_191" model="smart.student">
@@ -6110,7 +6110,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-11-20</field>
+      <field name="registration_date">2027-03-20</field>
       <field name="notes">Donnée de démonstration — dossier fictif 191.</field>
     </record>
     <record id="demo_student_192" model="smart.student">
@@ -6142,7 +6142,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-12-25</field>
+      <field name="registration_date">2027-04-25</field>
       <field name="notes">Donnée de démonstration — dossier fictif 192.</field>
     </record>
     <record id="demo_student_193" model="smart.student">
@@ -6174,7 +6174,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">draft</field>
-      <field name="registration_date">2026-01-04</field>
+      <field name="registration_date">2026-09-04</field>
       <field name="notes">Donnée de démonstration — dossier fictif 193.</field>
     </record>
     <record id="demo_student_194" model="smart.student">
@@ -6206,7 +6206,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">registered</field>
-      <field name="registration_date">2026-02-09</field>
+      <field name="registration_date">2026-10-09</field>
       <field name="notes">Donnée de démonstration — dossier fictif 194.</field>
     </record>
     <record id="demo_student_195" model="smart.student">
@@ -6238,7 +6238,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">in_progress</field>
-      <field name="registration_date">2026-03-14</field>
+      <field name="registration_date">2026-11-14</field>
       <field name="notes">Donnée de démonstration — dossier fictif 195.</field>
     </record>
     <record id="demo_student_196" model="smart.student">
@@ -6270,7 +6270,7 @@
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">submitted</field>
-      <field name="registration_date">2026-04-19</field>
+      <field name="registration_date">2026-12-19</field>
       <field name="notes">Donnée de démonstration — dossier fictif 196.</field>
     </record>
     <record id="demo_student_197" model="smart.student">
@@ -6302,7 +6302,7 @@
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">preinscription</field>
-      <field name="registration_date">2026-05-24</field>
+      <field name="registration_date">2027-01-24</field>
       <field name="notes">Donnée de démonstration — dossier fictif 197.</field>
     </record>
     <record id="demo_student_198" model="smart.student">
@@ -6328,13 +6328,13 @@
       <field name="country_id" ref="base.ma"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Rabat</field>
-      <field name="establishment">Université de Lorraine</field>
+      <field name="establishment">École Supérieure de Gestion</field>
       <field name="requested_study">Master Ressources humaines</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_maroc"/>
       <field name="state">visa</field>
-      <field name="registration_date">2026-06-03</field>
+      <field name="registration_date">2027-02-03</field>
       <field name="notes">Donnée de démonstration — dossier fictif 198.</field>
     </record>
     <record id="demo_student_199" model="smart.student">
@@ -6360,13 +6360,13 @@
       <field name="country_id" ref="base.fr"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Marrakech</field>
-      <field name="establishment">École Supérieure de Gestion</field>
+      <field name="establishment">Institut Polytechnique</field>
       <field name="requested_study">Bachelor Commerce international</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">private</field>
       <field name="package_id" ref="pkg_smart_france"/>
       <field name="state">visa_obtained</field>
-      <field name="registration_date">2026-07-08</field>
+      <field name="registration_date">2027-03-08</field>
       <field name="notes">Donnée de démonstration — dossier fictif 199.</field>
     </record>
     <record id="demo_student_200" model="smart.student">
@@ -6392,13 +6392,13 @@
       <field name="country_id" ref="base.ca"/>
       <field name="academic_year_id" ref="academic_year_2026_2027"/>
       <field name="city">Toulouse</field>
-      <field name="establishment">Institut Polytechnique</field>
+      <field name="establishment">École Supérieure de Commerce</field>
       <field name="requested_study">Master Data Science</field>
       <field name="application_type">preinscription</field>
       <field name="school_type">public</field>
       <field name="package_id" ref="pkg_smart_canada"/>
       <field name="state">completed</field>
-      <field name="registration_date">2026-08-13</field>
+      <field name="registration_date">2027-04-13</field>
       <field name="notes">Donnée de démonstration — dossier fictif 200.</field>
     </record>
   </data>

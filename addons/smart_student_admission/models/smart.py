@@ -137,7 +137,7 @@ class SmartAcademicYear(models.Model):
     state = fields.Selection([
         ("open", "Ouverte"),
         ("closed", "Fermée"),
-    ], string="État", default="open", required=True, tracking=True)
+    ], string="État", default="open", required=True)
     company_id = fields.Many2one(
         "res.company",
         string="Société",
@@ -304,7 +304,7 @@ class SmartStudentApplication(models.Model):
     academic_year_id = fields.Many2one(
         "smart.academic.year",
         string="Année académique",
-        required=True,
+        required=False,
         default=lambda self: self.env["smart.academic.year"]._get_default_academic_year(),
         ondelete="restrict",
         tracking=True,
