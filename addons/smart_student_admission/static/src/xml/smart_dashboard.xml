@@ -19,12 +19,12 @@
 
             <div t-if="state.data" class="smart-dashboard__filters">
                 <div class="smart-filter">
-                    <label>Année</label>
-                    <select t-on-change="(ev) => this.onFilterChange('year', ev)">
-                        <option value="">Toutes les années</option>
-                        <t t-foreach="state.data.filters.years" t-as="year" t-key="year">
-                            <option t-att-value="year" t-att-selected="state.filters.year === year">
-                                <t t-esc="year"/>
+                    <label>Année académique</label>
+                    <select t-on-change="(ev) => this.onFilterChange('academic_year_id', ev)">
+                        <option value="">Toutes les années académiques</option>
+                        <t t-foreach="state.data.filters.academic_years" t-as="year" t-key="year.id">
+                            <option t-att-value="year.id" t-att-selected="state.filters.academic_year_id === year.id">
+                                <t t-esc="year.name"/> — <t t-esc="year.state === 'open' ? 'Ouverte' : 'Fermée'"/>
                             </option>
                         </t>
                     </select>

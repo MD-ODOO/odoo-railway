@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "SMART - Accompagnement Étudiants à l'étranger",
-    "version": "19.0.1.1.0",
+    "version": "19.0.1.2.0",
     "category": "Services/Education",
     "summary": "Gestion des étudiants, admissions, engagements, paiements et procédures de visa",
     "description": """Gestion du parcours étudiant SMART : inscription, candidatures, préinscription,
@@ -13,6 +13,8 @@ engagement, facturation et paiements, procédures de visa/immigration et CAQ Can
         "security/security.xml",
         "security/ir.model.access.csv",
         "data/smart_data.xml",
+        "data/smart_academic_year_data.xml",
+        "data/smart_demo_data.xml",
         "views/smart_views.xml",
         "views/smart_dashboard_views.xml",
     ],

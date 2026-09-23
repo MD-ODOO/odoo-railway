@@ -126,6 +126,74 @@ class SmartStudent(models.Model):
         }
 
 
+class SmartAcademicYear(models.Model):
+    _name = "smart.academic.year"
+    _description = "Année académique SMART"
+    _order = "date_start desc, name desc"
+
+    name = fields.Char(string="Année académique", required=True)
+    date_start = fields.Date(string="Date de début", required=True)
+    date_end = fields.Date(string="Date de fin", required=True)
+    state = fields.Selection([
+        ("open", "Ouverte"),
+        ("closed", "Fermée"),
+    ], string="État", default="open", required=True, tracking=True)
+    company_id = fields.Many2one(
+        "res.company",
+        string="Société",
+        default=lambda self: self.env.company,
+        required=True,
+        index=True,
+    )
+    note = fields.Text(string="Notes")
+
+    _sql_constraints = [
+        ("smart_academic_year_name_company_uniq",
+         "unique(name, company_id)",
+         "Cette année académique existe déjà pour cette société."),
+    ]
+
+    @api.constrains("date_start", "date_end")
+    def _check_dates(self):
+        for rec in self:
+            if rec.date_end < rec.date_start:
+                raise UserError(_("La date de fin doit être postérieure ou égale à la date de début."))
+
+    @api.model
+    def _get_default_academic_year(self):
+        today = fields.Date.context_today(self)
+        return self.search([
+            ("company_id", "=", self.env.company.id),
+            ("state", "=", "open"),
+            ("date_start", "<=", today),
+            ("date_end", ">=", today),
+        ], order="date_start desc, id desc", limit=1)
+
+    def action_open(self):
+        for rec in self:
+            rec.state = "open"
+        return True
+
+    def action_close(self):
+        for rec in self:
+            rec.state = "closed"
+        return True
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get("state") == "closed":
+                continue
+            if not vals.get("date_start") or not vals.get("date_end"):
+                raise UserError(_("Veuillez renseigner les dates de début et de fin de l'année académique."))
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if vals.get("state") == "closed":
+            return super().write(vals)
+        return super().write(vals)
+
+
 class SmartServicePackage(models.Model):
     _name = "smart.service.package"
     _description = "Formule d'accompagnement SMART"
@@ -233,7 +301,22 @@ class SmartStudentApplication(models.Model):
     requested_study = fields.Char(string="Formation demandée")
     study_level = fields.Selection(related="student_id.study_level", store=True, readonly=True)
     study_domain = fields.Char(related="student_id.study_domain", store=True, readonly=True)
-    academic_year = fields.Char(string="Année académique")
+    academic_year_id = fields.Many2one(
+        "smart.academic.year",
+        string="Année académique",
+        required=True,
+        default=lambda self: self.env["smart.academic.year"]._get_default_academic_year(),
+        ondelete="restrict",
+        tracking=True,
+        index=True,
+    )
+    # Champ texte conservé pour compatibilité avec les anciennes données.
+    academic_year = fields.Char(
+        string="Année académique (texte)",
+        related="academic_year_id.name",
+        store=True,
+        readonly=True,
+    )
     application_type = fields.Selection([
         ("preinscription", "Préinscription"), ("inscription", "Inscription"),
         ("both", "Préinscription + inscription")
@@ -269,9 +352,17 @@ class SmartStudentApplication(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        academic_year_model = self.env["smart.academic.year"]
         for vals in vals_list:
             if vals.get("name", "Nouveau") == "Nouveau":
                 vals["name"] = self.env["ir.sequence"].next_by_code("smart.student.application") or "Nouveau"
+            academic_year_id = vals.get("academic_year_id")
+            academic_year = academic_year_model.browse(academic_year_id) if academic_year_id else academic_year_model._get_default_academic_year()
+            if not academic_year:
+                raise UserError(_("Aucune année académique ouverte n'est configurée pour la société."))
+            if academic_year.state != "open":
+                raise UserError(_("Impossible de créer un dossier sur une année académique fermée."))
+            vals["academic_year_id"] = academic_year.id
         return super().create(vals_list)
 
     @api.onchange("country_id", "application_type")

@@ -14,7 +14,7 @@ export class SmartStudentDashboard extends Component {
             error: false,
             data: null,
             filters: {
-                year: false,
+                academic_year_id: false,
                 package_id: false,
             },
         });

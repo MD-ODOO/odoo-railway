@@ -27,3 +27,5 @@ access_smart_dashboard_user,smart.dashboard user,model_smart_dashboard,smart_stu
 access_smart_dashboard_manager,smart.dashboard manager,model_smart_dashboard,smart_student_admission.group_smart_manager,1,1,1,1
 access_account_move_smart_manager,account.move smart manager,account.model_account_move,smart_student_admission.group_smart_manager,1,1,1,0
 access_account_payment_smart_manager,account.payment smart manager,account.model_account_payment,smart_student_admission.group_smart_manager,1,1,1,0
+access_smart_academic_year_user,smart.academic.year user,model_smart_academic_year,smart_student_admission.group_smart_user,1,0,0,0
+access_smart_academic_year_manager,smart.academic.year manager,model_smart_academic_year,smart_student_admission.group_smart_manager,1,1,1,1

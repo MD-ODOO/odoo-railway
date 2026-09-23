@@ -27,19 +27,14 @@ class SmartDashboard(models.Model):
     def get_dashboard_data(self, filters=None):
         self._check_access()
         filters = filters or {}
-        year = filters.get("year")
+        academic_year_id = filters.get("academic_year_id")
         package_id = filters.get("package_id")
 
         domain_sql = ["state != 'cancelled'"]
         params = []
-        if year:
-            domain_sql.append(
-                "(registration_date >= %s AND registration_date < %s)"
-            )
-            params.extend([
-                f"{int(year)}-01-01",
-                f"{int(year) + 1}-01-01",
-            ])
+        if academic_year_id:
+            domain_sql.append("academic_year_id = %s")
+            params.append(int(academic_year_id))
         if package_id:
             domain_sql.append("package_id = %s")
             params.append(int(package_id))
@@ -68,15 +63,16 @@ class SmartDashboard(models.Model):
             return round((value / total) * 100, 2) if total else 0.0
 
         cr.execute("""
-            SELECT
-                EXTRACT(YEAR FROM registration_date)::int AS year
-            FROM smart_student_application
-            WHERE registration_date IS NOT NULL
-              AND state != 'cancelled'
-            GROUP BY EXTRACT(YEAR FROM registration_date)
-            ORDER BY year DESC
+            SELECT DISTINCT y.id, y.name, y.state
+            FROM smart_academic_year y
+            JOIN smart_student_application a ON a.academic_year_id = y.id
+            WHERE a.state != 'cancelled'
+            ORDER BY y.date_start DESC, y.name DESC
         """)
-        years = [int(r["year"]) for r in cr.dictfetchall() if r["year"]]
+        academic_years = [
+            {"id": int(r["id"]), "name": r["name"], "state": r["state"]}
+            for r in cr.dictfetchall()
+        ]
 
         cr.execute("""
             SELECT DISTINCT p.id, p.name
@@ -121,9 +117,9 @@ class SmartDashboard(models.Model):
 
         return {
             "filters": {
-                "years": years,
+                "academic_years": academic_years,
                 "packages": package_options,
-                "selected_year": int(year) if year else False,
+                "selected_academic_year_id": int(academic_year_id) if academic_year_id else False,
                 "selected_package_id": int(package_id) if package_id else False,
             },
             "kpis": {

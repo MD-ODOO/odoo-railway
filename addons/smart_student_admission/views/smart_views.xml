@@ -1,5 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_smart_academic_year_list" model="ir.ui.view">
+        <field name="name">smart.academic.year.list</field>
+        <field name="model">smart.academic.year</field>
+        <field name="arch" type="xml">
+            <list string="Années académiques">
+                <field name="name"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="state" widget="badge"/>
+                <field name="company_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_smart_academic_year_form" model="ir.ui.view">
+        <field name="name">smart.academic.year.form</field>
+        <field name="model">smart.academic.year</field>
+        <field name="arch" type="xml">
+            <form string="Année académique">
+                <header>
+                    <button name="action_open" type="object" string="Ouvrir" class="btn-primary" invisible="state == 'open'"/>
+                    <button name="action_close" type="object" string="Fermer" invisible="state == 'closed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="open,closed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="company_id"/>
+                    </group>
+                    <group>
+                        <field name="date_start"/>
+                        <field name="date_end"/>
+                    </group>
+                    <field name="note"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_smart_academic_years" model="ir.actions.act_window">
+        <field name="name">Années académiques</field>
+        <field name="res_model">smart.academic.year</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
     <record id="view_smart_student_list" model="ir.ui.view"><field name="name">smart.student.list</field><field name="model">smart.student</field><field name="arch" type="xml"><list string="Étudiants"><field name="name"/><field name="birthdate"/><field name="phone"/><field name="email"/><field name="study_level"/><field name="study_domain"/><field name="application_count"/></list></field></record>
     <record id="view_smart_student_form" model="ir.ui.view"><field name="name">smart.student.form</field><field name="model">smart.student</field><field name="arch" type="xml">
         <form string="Étudiant SMART"><sheet>
@@ -35,7 +80,7 @@
                 <button name="action_open_payments" type="object" class="oe_stat_button" icon="fa-money" groups="smart_student_admission.group_smart_manager"><span class="o_stat_text">Paiements</span></button>
             </div>
             <div class="oe_title"><h1><field name="name"/></h1><h2><field name="student_id"/></h2></div>
-            <group><group string="Dossier"><field name="student_id"/><field name="payer_partner_id"/><field name="academic_year"/><field name="registration_date"/><field name="package_id"/></group><group string="Destination"><field name="country_id"/><field name="city"/><field name="establishment"/><field name="requested_study"/><field name="application_type"/><field name="school_type"/></group></group>
+            <group><group string="Dossier"><field name="student_id"/><field name="payer_partner_id"/><field name="academic_year_id"/><field name="registration_date"/><field name="package_id"/></group><group string="Destination"><field name="country_id"/><field name="city"/><field name="establishment"/><field name="requested_study"/><field name="application_type"/><field name="school_type"/></group></group>
             <group string="Finances"><group><field name="total_due" widget="monetary"/><field name="total_smart" widget="monetary"/><field name="total_external" widget="monetary"/></group><group groups="smart_student_admission.group_smart_manager"><field name="total_invoiced" widget="monetary"/><field name="total_paid" widget="monetary"/><field name="balance_due" widget="monetary"/></group></group>
             <notebook>
                 <page string="Pièces"><field name="document_ids"><list editable="bottom"><field name="document_type_id"/><field name="name"/><field name="required"/><field name="state" widget="badge"/><field name="date_received"/><field name="expiry_date"/><field name="file" filename="filename"/><field name="filename" invisible="1"/></list></field></page>
@@ -80,6 +125,7 @@
     <menuitem id="menu_smart_visa" name="Visa / Immigration" parent="menu_smart_root" action="action_smart_visa" sequence="40"/>
     <menuitem id="menu_smart_caq" name="CAQ Canada" parent="menu_smart_root" action="action_smart_caq" sequence="41"/>
     <menuitem id="menu_smart_config" name="Configuration" parent="menu_smart_root" sequence="90" groups="smart_student_admission.group_smart_manager"/>
+    <menuitem id="menu_smart_academic_years" name="Années académiques" parent="menu_smart_config" action="action_smart_academic_years" sequence="5"/>
     <menuitem id="menu_smart_packages" name="Formules &amp; frais" parent="menu_smart_config" action="action_smart_packages" sequence="10"/>
     <menuitem id="menu_smart_doc_types" name="Types de pièces" parent="menu_smart_config" action="action_smart_doc_types" sequence="20"/>
     <menuitem id="menu_smart_visa_stages" name="Étapes Visa" parent="menu_smart_config" action="action_smart_visa_stages" sequence="30"/>
