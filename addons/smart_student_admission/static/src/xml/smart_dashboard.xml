@@ -101,7 +101,7 @@
                             </div>
                         </t>
                     </div>
-                    <div t-if="not state.data.packages.length" class="text-muted">
+                    <div t-if="!state.data.packages.length" class="text-muted">
                         Aucun dossier correspondant aux filtres.
                     </div>
                 </div>
