@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_paie_senegal_salary_simulation_user,paie.senegal.salary.simulation.user,model_paie_senegal_salary_simulation,base.group_user,1,1,1,1
+access_paie_senegal_salary_category_user,paie.senegal.salary.category.user,model_paie_senegal_salary_category,base.group_user,1,0,0,0
+access_paie_senegal_salary_category_admin,paie.senegal.salary.category.admin,model_paie_senegal_salary_category,base.group_system,1,1,1,1
