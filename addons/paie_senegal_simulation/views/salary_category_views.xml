@@ -9,6 +9,8 @@
                 <field name="code"/>
                 <field name="name"/>
                 <field name="base_salary" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                <field name="hourly_salary"/>
+                <field name="revaluation_rate"/>
                 <field name="active"/>
             </list>
         </field>
@@ -28,6 +30,8 @@
                         </group>
                         <group>
                             <field name="base_salary" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                            <field name="hourly_salary"/>
+                            <field name="revaluation_rate"/>
                             <field name="active"/>
                             <field name="currency_id" invisible="1"/>
                         </group>
