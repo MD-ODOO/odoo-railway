@@ -1,63 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
     <!--
-        Les codes sont fournis par défaut.
-        Les montants de base sont à compléter avec la grille de référence
-        utilisée par l'entreprise, car aucun montant universel A1-D2
-        n'a été fourni.
+        Barème des salaires des travailleurs du Commerce au Sénégal,
+        applicable à partir de juillet 2023, pour 173,33 heures mensuelles.
+        Source : Ministère du Travail et de la Sécurité Sociale.
     -->
+
     <record id="category_a1" model="paie.senegal.salary.category">
-        <field name="name">Catégorie A1</field>
-        <field name="code">A1</field>
+        <field name="name">1ère A</field>
+        <field name="code">1A</field>
         <field name="sequence">10</field>
-        <field name="base_salary">0</field>
+        <field name="base_salary">70706</field>
+        <field name="hourly_salary">407.926</field>
+        <field name="revaluation_rate">10.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
     </record>
     <record id="category_a2" model="paie.senegal.salary.category">
-        <field name="name">Catégorie A2</field>
-        <field name="code">A2</field>
+        <field name="name">1ère B</field>
+        <field name="code">1B</field>
         <field name="sequence">20</field>
-        <field name="base_salary">0</field>
+        <field name="base_salary">74870</field>
+        <field name="hourly_salary">431.953</field>
+        <field name="revaluation_rate">10.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
     </record>
     <record id="category_a3" model="paie.senegal.salary.category">
-        <field name="name">Catégorie A3</field>
-        <field name="code">A3</field>
+        <field name="name">2ème</field>
+        <field name="code">2</field>
         <field name="sequence">30</field>
-        <field name="base_salary">0</field>
+        <field name="base_salary">75361</field>
+        <field name="hourly_salary">434.783</field>
+        <field name="revaluation_rate">10.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
     </record>
     <record id="category_b1" model="paie.senegal.salary.category">
-        <field name="name">Catégorie B1</field>
-        <field name="code">B1</field>
+        <field name="name">3ème</field>
+        <field name="code">3</field>
         <field name="sequence">40</field>
-        <field name="base_salary">0</field>
+        <field name="base_salary">77840</field>
+        <field name="hourly_salary">449.088</field>
+        <field name="revaluation_rate">10.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
     </record>
     <record id="category_b2" model="paie.senegal.salary.category">
-        <field name="name">Catégorie B2</field>
-        <field name="code">B2</field>
+        <field name="name">4ème</field>
+        <field name="code">4</field>
         <field name="sequence">50</field>
-        <field name="base_salary">0</field>
+        <field name="base_salary">82272</field>
+        <field name="hourly_salary">474.657</field>
+        <field name="revaluation_rate">10.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
     </record>
     <record id="category_c1" model="paie.senegal.salary.category">
-        <field name="name">Catégorie C1</field>
-        <field name="code">C1</field>
+        <field name="name">5ème</field>
+        <field name="code">5</field>
         <field name="sequence">60</field>
-        <field name="base_salary">0</field>
+        <field name="base_salary">89244</field>
+        <field name="hourly_salary">514.877</field>
+        <field name="revaluation_rate">8.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
     </record>
     <record id="category_c2" model="paie.senegal.salary.category">
-        <field name="name">Catégorie C2</field>
-        <field name="code">C2</field>
+        <field name="name">6ème</field>
+        <field name="code">6</field>
         <field name="sequence">70</field>
-        <field name="base_salary">0</field>
+        <field name="base_salary">93790</field>
+        <field name="hourly_salary">541.109</field>
+        <field name="revaluation_rate">8.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
     </record>
     <record id="category_d1" model="paie.senegal.salary.category">
-        <field name="name">Catégorie D1</field>
-        <field name="code">D1</field>
+        <field name="name">7ème A</field>
+        <field name="code">7A</field>
         <field name="sequence">80</field>
-        <field name="base_salary">0</field>
+        <field name="base_salary">105342</field>
+        <field name="hourly_salary">607.755</field>
+        <field name="revaluation_rate">8.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
     </record>
     <record id="category_d2" model="paie.senegal.salary.category">
-        <field name="name">Catégorie D2</field>
-        <field name="code">D2</field>
+        <field name="name">7ème B</field>
+        <field name="code">7B</field>
         <field name="sequence">90</field>
-        <field name="base_salary">0</field>
+        <field name="base_salary">113984</field>
+        <field name="hourly_salary">657.614</field>
+        <field name="revaluation_rate">8.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
+    </record>
+    <record id="category_8a" model="paie.senegal.salary.category">
+        <field name="name">8ème A</field>
+        <field name="code">8A</field>
+        <field name="sequence">100</field>
+        <field name="base_salary">115718</field>
+        <field name="hourly_salary">667.615</field>
+        <field name="revaluation_rate">8.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
+    </record>
+    <record id="category_8b" model="paie.senegal.salary.category">
+        <field name="name">8ème B</field>
+        <field name="code">8B</field>
+        <field name="sequence">110</field>
+        <field name="base_salary">123484</field>
+        <field name="hourly_salary">712.421</field>
+        <field name="revaluation_rate">8.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
+    </record>
+    <record id="category_8c" model="paie.senegal.salary.category">
+        <field name="name">8ème C</field>
+        <field name="code">8C</field>
+        <field name="sequence">120</field>
+        <field name="base_salary">124255</field>
+        <field name="hourly_salary">716.870</field>
+        <field name="revaluation_rate">8.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
+    </record>
+    <record id="category_9a" model="paie.senegal.salary.category">
+        <field name="name">9ème A</field>
+        <field name="code">9A</field>
+        <field name="sequence">130</field>
+        <field name="base_salary">125543</field>
+        <field name="hourly_salary">724.302</field>
+        <field name="revaluation_rate">5.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
+    </record>
+    <record id="category_9b" model="paie.senegal.salary.category">
+        <field name="name">9ème B</field>
+        <field name="code">9B</field>
+        <field name="sequence">140</field>
+        <field name="base_salary">132498</field>
+        <field name="hourly_salary">764.429</field>
+        <field name="revaluation_rate">5.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
+    </record>
+    <record id="category_10a" model="paie.senegal.salary.category">
+        <field name="name">10ème A</field>
+        <field name="code">10A</field>
+        <field name="sequence">150</field>
+        <field name="base_salary">141024</field>
+        <field name="hourly_salary">813.618</field>
+        <field name="revaluation_rate">5.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
+    </record>
+    <record id="category_10b" model="paie.senegal.salary.category">
+        <field name="name">10ème B</field>
+        <field name="code">10B</field>
+        <field name="sequence">160</field>
+        <field name="base_salary">157097</field>
+        <field name="hourly_salary">906.345</field>
+        <field name="revaluation_rate">5.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
+    </record>
+    <record id="category_10c" model="paie.senegal.salary.category">
+        <field name="name">10ème C</field>
+        <field name="code">10C</field>
+        <field name="sequence">170</field>
+        <field name="base_salary">174049</field>
+        <field name="hourly_salary">1004.148</field>
+        <field name="revaluation_rate">5.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
+    </record>
+    <record id="category_11" model="paie.senegal.salary.category">
+        <field name="name">11ème</field>
+        <field name="code">11</field>
+        <field name="sequence">180</field>
+        <field name="base_salary">195119</field>
+        <field name="hourly_salary">1125.710</field>
+        <field name="revaluation_rate">5.0</field>
+        <field name="note">Convention collective du Commerce — juillet 2023 — 173,33 H.</field>
     </record>
 </odoo>

@@ -22,6 +22,16 @@ class SenegalSalaryCategory(models.Model):
         required=True,
         default=0.0,
     )
+    hourly_salary = fields.Float(
+        string='Salaire horaire',
+        digits=(16, 3),
+        help='Salaire horaire prévu par le barème de la Convention collective du Commerce.',
+    )
+    revaluation_rate = fields.Float(
+        string='Taux de revalorisation',
+        digits=(16, 2),
+        help='Taux de revalorisation appliqué au barème de juillet 2023.',
+    )
     sequence = fields.Integer(
         string='Séquence',
         default=10,

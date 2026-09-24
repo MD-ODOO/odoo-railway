@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Paie Sénégal Simulation',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.1.0',
     'author': 'Mansour Diop / KILIFA CONSULTING',
     'category': 'Human Resources',
     'summary': 'Simulation indépendante du salaire net au Sénégal',
