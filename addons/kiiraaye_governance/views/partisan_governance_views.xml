@@ -11,11 +11,7 @@
                         <field name="country_id"
                                string="Pays"
                                options="{'no_create': True}"/>
-                        <field name="section_ids"
-                               string="Section / Coordination"
-                               widget="many2many_tags"
-                               domain="[('country_id', '=', country_id), ('active', '=', True), ('state', '=', 'ouverte')]"
-                               options="{'no_create': True}"/>
+                        
                         <field name="region_id"
                                string="Région / État / Province"
                                domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau1'), ('active', '=', True)]"
@@ -33,6 +29,11 @@
                         <field name="quartier_id"
                                string="Quartier"
                                domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('parent_id', 'child_of', commune_id), ('active', '=', True)]"
+                               options="{'no_create': True}"/>
+                        <field name="section_ids"
+                               string="Section / Coordination"
+                               widget="many2many_tags"
+                               domain="[('country_id', '=', country_id), ('active', '=', True), ('state', '=', 'ouverte')]"
                                options="{'no_create': True}"/>
                         <field name="user_id"
                                string="Utilisateur Odoo"
