@@ -1,29 +1,28 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'GAINDE - Simulation de salaire net',
+    'name': 'Paie Sénégal Simulation',
     'version': '19.0.1.0.0',
     'author': 'Mansour Diop / KILIFA CONSULTING',
     'category': 'Human Resources',
-    'summary': 'Simulation inverse du salaire net négocié',
+    'summary': 'Simulation indépendante du salaire net au Sénégal',
     'description': """
-Simulation de salaire net pour la négociation RH.
+Paie Sénégal Simulation
 
-Le simulateur part du salaire net souhaité et calcule le brut correspondant,
-avec uniquement les éléments suivants :
+Module totalement indépendant du moteur de paie, des contrats et des employés Odoo.
+
+Le simulateur part du salaire net souhaité et détermine le brut correspondant
+à partir de :
 - Salaire de base
 - Sursalaire
 - IR
 - TRIMF
 - IPRES RG
-- IPRES RC pour les cadres
+- IPRES RC
 - Transport fixe de 26 000 FCFA
 
-Aucune CSS, CFCE ou charge patronale n'est calculée.
+Le module ne calcule pas la CSS, la CFCE ni les charges patronales.
 """,
-    'depends': [
-        'hr',
-        'hr_contract',
-    ],
+    'depends': ['base'],
     'data': [
         'security/ir.model.access.csv',
         'data/ir_sequence.xml',

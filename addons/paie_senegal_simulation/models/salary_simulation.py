@@ -2,11 +2,15 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
-from .salary_engine import TRANSPORT_AMOUNT, compute_family_parts, solve_gross_for_net
+from .salary_engine import (
+    TRANSPORT_AMOUNT,
+    compute_family_parts,
+    solve_gross_for_net,
+)
 
 
-class GaindeSalarySimulation(models.Model):
-    _name = 'gainde.salary.simulation'
+class SenegalSalarySimulation(models.Model):
+    _name = 'paie.senegal.salary.simulation'
     _description = 'Simulation de salaire net'
     _order = 'create_date desc, id desc'
 
@@ -18,14 +22,13 @@ class GaindeSalarySimulation(models.Model):
         default=lambda self: _('Nouveau'),
     )
 
-    employee_id = fields.Many2one(
-        'hr.employee',
+    candidate_name = fields.Char(
         string='Employé / Candidat',
-        ondelete='set null',
+        help='Saisie libre, sans liaison avec un employé Odoo.',
     )
 
     category_id = fields.Many2one(
-        'gainde.salary.category',
+        'paie.senegal.salary.category',
         string='Catégorie socio-professionnelle',
         required=True,
     )
@@ -48,17 +51,18 @@ class GaindeSalarySimulation(models.Model):
             ('widower', 'Veuf / Veuve'),
         ],
         string='Situation matrimoniale',
-        default='single',
         required=True,
+        default='single',
     )
 
     children_count = fields.Integer(
-        string='Enfants à charge',
+        string='Nombre d’enfants à charge',
         default=0,
     )
 
     spouse_has_income = fields.Boolean(
         string='Conjoint(e) avec revenu imposable',
+        help='Champ neutre, utilisable quel que soit le sexe du salarié ou du conjoint.',
     )
 
     part_ir = fields.Float(
@@ -68,7 +72,7 @@ class GaindeSalarySimulation(models.Model):
         digits=(16, 2),
     )
 
-    trimf_parts = fields.Float(
+    trimf_persons = fields.Float(
         string='Personnes TRIMF',
         compute='_compute_family_parts',
         store=True,
@@ -131,22 +135,8 @@ class GaindeSalarySimulation(models.Model):
         store=True,
     )
 
-    gross = fields.Monetary(
-        string='Brut simulé',
-        currency_field='currency_id',
-        compute='_compute_simulation',
-        store=True,
-    )
-
-    net_before_transport = fields.Monetary(
+    net_salary = fields.Monetary(
         string='Salaire net',
-        currency_field='currency_id',
-        compute='_compute_simulation',
-        store=True,
-    )
-
-    net_to_pay = fields.Monetary(
-        string='Net à payer simulé',
         currency_field='currency_id',
         compute='_compute_simulation',
         store=True,
@@ -160,58 +150,43 @@ class GaindeSalarySimulation(models.Model):
         readonly=True,
     )
 
-    note = fields.Text(
-        string='Observation',
-        compute='_compute_note',
-        store=True,
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get('name') or vals.get('name') == _('Nouveau'):
+                vals['name'] = (
+                    self.env['ir.sequence'].next_by_code(
+                        'paie.senegal.salary.simulation'
+                    )
+                    or _('Nouveau')
+                )
+
+        return super().create(vals_list)
+
+    @api.depends(
+        'marital',
+        'children_count',
+        'spouse_has_income',
     )
-
-    @api.model
-    def create(self, vals):
-        if not vals.get('name') or vals.get('name') == _('Nouveau'):
-            vals['name'] = (
-                self.env['ir.sequence'].next_by_code('gainde.salary.simulation')
-                or _('Nouveau')
-            )
-        return super().create(vals)
-
-    @api.depends('marital', 'children_count', 'spouse_has_income')
     def _compute_family_parts(self):
         for record in self:
-            record.part_ir, record.trimf_parts = compute_family_parts(
+            record.part_ir, record.trimf_persons = compute_family_parts(
                 record.marital,
                 record.children_count,
                 record.spouse_has_income,
             )
 
-    @api.onchange('employee_id')
-    def _onchange_employee_id(self):
-        for record in self:
-            employee = record.employee_id
-            if not employee:
-                continue
-
-            record.marital = getattr(employee, 'marital', False) or 'single'
-
-            children = getattr(employee, 'children_ids', self.env['hr.employee'])
-            record.children_count = len(
-                children.filtered(
-                    lambda child: getattr(child, 'supported', True)
-                    and not getattr(child, 'deceased', False)
-                )
-            )
-
-            record.spouse_has_income = bool(
-                getattr(employee, 'husband_revenu', False)
-            )
-
-    @api.constrains('children_count', 'net_target')
+    @api.constrains(
+        'children_count',
+        'net_target',
+    )
     def _check_inputs(self):
         for record in self:
             if record.children_count < 0:
                 raise ValidationError(
                     _('Le nombre d’enfants ne peut pas être négatif.')
                 )
+
             if record.net_target < 0:
                 raise ValidationError(
                     _('Le salaire net souhaité ne peut pas être négatif.')
@@ -223,7 +198,7 @@ class GaindeSalarySimulation(models.Model):
         'status',
         'net_target',
         'part_ir',
-        'trimf_parts',
+        'trimf_persons',
     )
     def _compute_simulation(self):
         for record in self:
@@ -237,12 +212,11 @@ class GaindeSalarySimulation(models.Model):
                 record.net_target,
                 base_salary,
                 record.part_ir,
-                record.trimf_parts,
+                record.trimf_persons,
                 record.status,
             )
 
             record.base_salary = base_salary
-            record.gross = result['gross']
             record.sursalaire = max(
                 result['gross'] - base_salary,
                 0.0,
@@ -252,37 +226,11 @@ class GaindeSalarySimulation(models.Model):
             record.ipres_rg = result['ipres_rg']
             record.ipres_rc = result['ipres_rc']
             record.transport = TRANSPORT_AMOUNT
-            record.net_before_transport = result['net_before_transport']
-            record.net_to_pay = result['net_to_pay']
-
-    @api.depends(
-        'net_target',
-        'net_to_pay',
-        'base_salary',
-        'gross',
-        'sursalaire',
-    )
-    def _compute_note(self):
-        for record in self:
-            if not record.category_id:
-                record.note = _('Sélectionnez une catégorie socio-professionnelle.')
-                continue
-
-            difference = record.net_to_pay - record.net_target
-
-            if abs(difference) < 1.0:
-                record.note = _('Simulation atteignant le salaire net souhaité.')
-            elif difference > 0:
-                record.note = _(
-                    'Le net simulé dépasse la cible de %.2f FCFA.'
-                ) % difference
-            else:
-                record.note = _(
-                    'Le net simulé est inférieur à la cible de %.2f FCFA.'
-                ) % abs(difference)
+            record.net_salary = result['net_salary']
 
     def action_recompute(self):
-        self._compute_family_parts()
-        self._compute_simulation()
-        self._compute_note()
+        for record in self:
+            record._compute_family_parts()
+            record._compute_simulation()
+
         return True

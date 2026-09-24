@@ -1,25 +1,27 @@
 # -*- coding: utf-8 -*-
-"""Moteur de calcul de la simulation de salaire net."""
+"""Moteur autonome de calcul de salaire net."""
 
 from math import floor
 
+
 TRANSPORT_AMOUNT = 26000.0
 
-# Paramètres utilisés dans les bulletins GAINDE fournis.
+# IPRES : paramètres correspondant aux bulletins fournis.
 IPRES_RG_RATE = 0.056
 IPRES_RG_CEILING = 432000.0
 IPRES_RC_RATE = 0.024
 
-# TRIMF : montants mensuels par personne imposable, paramétrables plus tard
-# selon la grille retenue par l'entreprise.
-TRIMF_MONTHLY_TARIFFS = (
-    (350000.0, 1000.0),
-    (599999.0, 1500.0),
-    (999999.0, 2000.0),
-    (1199999.0, 2500.0),
-    (float('inf'), 3000.0),
+# TRIMF : barème annuel par personne imposable.
+TRIMF_TARIFFS = (
+    (599999.0, 900.0),
+    (999999.0, 3600.0),
+    (1999999.0, 4800.0),
+    (6999999.0, 12000.0),
+    (11999999.0, 18000.0),
+    (float('inf'), 36000.0),
 )
 
+# Formule IR fournie par le demandeur.
 IR_TRANCHES = (
     (630001, 1500000, 630001, 0.20, 0),
     (1500000, 4000000, 1500000, 0.30, 174000),
@@ -47,16 +49,18 @@ def normalize_part(value):
 
 
 def compute_family_parts(marital, children_count, spouse_has_income):
-    """Calcule les parts utilisées par le simulateur à partir des informations saisies."""
+    """Calcule les parts IR et les personnes TRIMF utilisées par le simulateur."""
     children_count = max(int(children_count or 0), 0)
     spouse_has_income = bool(spouse_has_income)
 
     part_ir = 1.0
+
     if marital == 'married':
         part_ir += 0.5
         if not spouse_has_income:
             part_ir += 0.5
-    part_ir += 0.5 * children_count
+
+    part_ir += children_count * 0.5
     part_ir = min(normalize_part(part_ir), 5.0)
 
     trimf_persons = 1.0
@@ -67,18 +71,21 @@ def compute_family_parts(marital, children_count, spouse_has_income):
 
 
 def compute_ir(gross, part_ir):
-    """Formule IR fournie par l'utilisateur."""
+    """Applique exactement la formule IR fournie."""
     gross = max(float(gross or 0.0), 0.0)
-    brut = floor(gross / 1000.0) * 1000.0
 
+    brut = floor(gross / 1000.0) * 1000.0
     annual_gross = brut * 12.0
     abatement = min(0.3 * annual_gross, 900000.0)
     annual_gross_fiscal = annual_gross - abatement
 
     irrp_before_reduction = 0.0
+
     for min_c, max_c, base, rate, add in IR_TRANCHES:
-        if annual_gross_fiscal >= min_c and annual_gross_fiscal <= max_c:
-            irrp_before_reduction = (annual_gross_fiscal - base) * rate + add
+        if min_c <= annual_gross_fiscal <= max_c:
+            irrp_before_reduction = (
+                (annual_gross_fiscal - base) * rate
+            ) + add
             break
 
     part_ir = normalize_part(part_ir)
@@ -87,102 +94,124 @@ def compute_ir(gross, part_ir):
     if part_ir in IR_REDUCTIONS:
         rate_pct, min_red, max_red = IR_REDUCTIONS[part_ir]
         calc = rate_pct * irrp_before_reduction
+
         if calc < min_red:
-            irrp_reduction = min_red
+            irrp_reduction = float(min_red)
         elif calc > max_red:
-            irrp_reduction = max_red
+            irrp_reduction = float(max_red)
         else:
             irrp_reduction = calc
 
-    result = max((irrp_before_reduction - irrp_reduction) / 12.0, 0.0)
-    return result
+    return max((irrp_before_reduction - irrp_reduction) / 12.0, 0.0)
 
 
 def compute_trimf(gross, trimf_persons):
-    """
-    Calcul TRIMF à partir d'un montant mensuel par personne imposable.
-    La grille reste isolée afin de pouvoir être remplacée/configurée.
-    """
+    """Calcule la TRIMF mensuelle selon le brut annuel et les personnes imposables."""
     gross = max(float(gross or 0.0), 0.0)
     persons = max(float(trimf_persons or 1.0), 1.0)
+    annual_gross = gross * 12.0
 
-    rate = 0.0
-    for ceiling, monthly_amount in TRIMF_MONTHLY_TARIFFS:
-        if gross <= ceiling:
-            rate = monthly_amount
-            break
+    for ceiling, annual_amount_per_person in TRIMF_TARIFFS:
+        if annual_gross <= ceiling:
+            return round((annual_amount_per_person * persons) / 12.0)
 
-    return rate * persons
+    return 0.0
 
 
 def compute_ipres(gross, status):
+    """Calcule IPRES RG et, pour un cadre, IPRES RC."""
     gross = max(float(gross or 0.0), 0.0)
+
     rg_base = min(gross, IPRES_RG_CEILING)
-    ipres_rg = rg_base * IPRES_RG_RATE
-    ipres_rc = gross * IPRES_RC_RATE if status == 'cadre' else 0.0
+    ipres_rg = round(rg_base * IPRES_RG_RATE)
+    ipres_rc = round(gross * IPRES_RC_RATE) if status == 'cadre' else 0.0
+
     return ipres_rg, ipres_rc
 
 
 def compute_salary(gross, part_ir, trimf_persons, status):
+    """Retourne les éléments de salaire demandés."""
     gross = max(float(gross or 0.0), 0.0)
 
-    ir = compute_ir(gross, part_ir)
+    ir = round(compute_ir(gross, part_ir))
     trimf = compute_trimf(gross, trimf_persons)
     ipres_rg, ipres_rc = compute_ipres(gross, status)
 
-    net_before_transport = gross - ir - trimf - ipres_rg - ipres_rc
+    net_salary = round(
+        gross - ir - trimf - ipres_rg - ipres_rc
+    )
 
     return {
-        'gross': gross,
+        'gross': round(gross),
         'ir': ir,
         'trimf': trimf,
         'ipres_rg': ipres_rg,
         'ipres_rc': ipres_rc,
         'transport': TRANSPORT_AMOUNT,
-        'net_before_transport': net_before_transport,
-        'net_to_pay': net_before_transport + TRANSPORT_AMOUNT,
+        'net_salary': net_salary,
+        'net_to_pay': net_salary + TRANSPORT_AMOUNT,
     }
 
 
 def solve_gross_for_net(target_net, base_salary, part_ir, trimf_persons, status):
     """
-    Recherche par dichotomie du brut qui se rapproche le plus du net souhaité.
-    Le transport de 26 000 FCFA est intégré dans le net à payer.
+    Recherche le brut correspondant au salaire net souhaité.
+    Le net cible est hors transport ; le transport de 26 000 FCFA
+    est ajouté séparément au net à payer.
     """
     target_net = max(float(target_net or 0.0), 0.0)
     base_salary = max(float(base_salary or 0.0), 0.0)
 
-    target_without_transport = max(target_net - TRANSPORT_AMOUNT, 0.0)
-
     lower = base_salary
-    high = max(100000.0, target_without_transport, base_salary)
+    high = max(base_salary, target_net, 100000.0)
 
     for _ in range(30):
-        high_result = compute_salary(high, part_ir, trimf_persons, status)
-        if high_result['net_before_transport'] >= target_without_transport:
+        high_result = compute_salary(
+            high,
+            part_ir,
+            trimf_persons,
+            status,
+        )
+
+        if high_result['net_salary'] >= target_net:
             break
+
         high *= 2.0
 
-    for _ in range(80):
+    for _ in range(100):
         if high - lower <= 1.0:
             break
 
         middle = floor((lower + high) / 2.0)
-        middle_result = compute_salary(middle, part_ir, trimf_persons, status)
+        middle_result = compute_salary(
+            middle,
+            part_ir,
+            trimf_persons,
+            status,
+        )
 
-        if middle_result['net_before_transport'] < target_without_transport:
+        if middle_result['net_salary'] < target_net:
             lower = middle + 1.0
         else:
             high = middle
 
     center = int(round(high))
-    candidates = range(max(int(base_salary), center - 3000), center + 3001)
+    candidates = range(
+        max(int(base_salary), center - 5000),
+        center + 5001,
+    )
 
     best = None
+
     for gross in candidates:
-        result = compute_salary(gross, part_ir, trimf_persons, status)
-        diff = abs(result['net_to_pay'] - target_net)
-        key = (diff, gross)
+        result = compute_salary(
+            gross,
+            part_ir,
+            trimf_persons,
+            status,
+        )
+        difference = abs(result['net_salary'] - target_net)
+        key = (difference, gross)
 
         if best is None or key < best[0]:
             best = (key, result)
