@@ -150,17 +150,18 @@ class SenegalSalarySimulation(models.Model):
         readonly=True,
     )
 
-    @api.model
-    def create(self, vals):
-        if not vals.get('name') or vals.get('name') == _('Nouveau'):
-            vals['name'] = (
-                self.env['ir.sequence'].next_by_code(
-                    'paie.senegal.salary.simulation'
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get('name') or vals.get('name') == _('Nouveau'):
+                vals['name'] = (
+                    self.env['ir.sequence'].next_by_code(
+                        'paie.senegal.salary.simulation'
+                    )
+                    or _('Nouveau')
                 )
-                or _('Nouveau')
-            )
 
-        return super().create(vals)
+        return super().create(vals_list)
 
     @api.depends(
         'marital',
