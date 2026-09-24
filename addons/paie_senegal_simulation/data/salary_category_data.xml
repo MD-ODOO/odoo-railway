@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!--
+        Les codes sont fournis par défaut.
+        Les montants de base sont à compléter avec la grille de référence
+        utilisée par l'entreprise, car aucun montant universel A1-D2
+        n'a été fourni.
+    -->
+    <record id="category_a1" model="paie.senegal.salary.category">
+        <field name="name">Catégorie A1</field>
+        <field name="code">A1</field>
+        <field name="sequence">10</field>
+        <field name="base_salary">0</field>
+    </record>
+    <record id="category_a2" model="paie.senegal.salary.category">
+        <field name="name">Catégorie A2</field>
+        <field name="code">A2</field>
+        <field name="sequence">20</field>
+        <field name="base_salary">0</field>
+    </record>
+    <record id="category_a3" model="paie.senegal.salary.category">
+        <field name="name">Catégorie A3</field>
+        <field name="code">A3</field>
+        <field name="sequence">30</field>
+        <field name="base_salary">0</field>
+    </record>
+    <record id="category_b1" model="paie.senegal.salary.category">
+        <field name="name">Catégorie B1</field>
+        <field name="code">B1</field>
+        <field name="sequence">40</field>
+        <field name="base_salary">0</field>
+    </record>
+    <record id="category_b2" model="paie.senegal.salary.category">
+        <field name="name">Catégorie B2</field>
+        <field name="code">B2</field>
+        <field name="sequence">50</field>
+        <field name="base_salary">0</field>
+    </record>
+    <record id="category_c1" model="paie.senegal.salary.category">
+        <field name="name">Catégorie C1</field>
+        <field name="code">C1</field>
+        <field name="sequence">60</field>
+        <field name="base_salary">0</field>
+    </record>
+    <record id="category_c2" model="paie.senegal.salary.category">
+        <field name="name">Catégorie C2</field>
+        <field name="code">C2</field>
+        <field name="sequence">70</field>
+        <field name="base_salary">0</field>
+    </record>
+    <record id="category_d1" model="paie.senegal.salary.category">
+        <field name="name">Catégorie D1</field>
+        <field name="code">D1</field>
+        <field name="sequence">80</field>
+        <field name="base_salary">0</field>
+    </record>
+    <record id="category_d2" model="paie.senegal.salary.category">
+        <field name="name">Catégorie D2</field>
+        <field name="code">D2</field>
+        <field name="sequence">90</field>
+        <field name="base_salary">0</field>
+    </record>
+</odoo>
