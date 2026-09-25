@@ -176,111 +176,70 @@ export class KiiraayeDashboard extends Component {
     }
 
     async renderAdministrativeMap() {
-        const host = this.refs?.administrativeMap;
-        if (!host || !this.state.data || this.state.sectionScope !== "national") {
+        const host = this.refs.administrativeMap;
+        if (!host) {
             return;
         }
-        host.innerHTML = '<div class="kiiraaye-map-loading"><i class="fa fa-spinner fa-spin"/> Chargement du découpage administratif...</div>';
+
         try {
-            const url = "https://galsenapi.lassanasiby.com/api/v1/datasets/sen-admin-boundaries/download/?format=geojson";
-            const response = await fetch(url, { headers: { "Accept": "application/geo+json,application/json" } });
-            if (!response.ok) {
-                throw new Error("HTTP " + response.status);
-            }
-            const geojson = await response.json();
-            const features = (geojson.features || []).filter((feature) => {
-                const level = String(feature?.properties?.level || feature?.properties?.niveau || "").toLowerCase();
-                const name = feature?.properties?.nom || feature?.properties?.name;
-                return name && (!level || level.includes("depart"));
-            });
-            if (!features.length) {
-                throw new Error("Aucun polygone départemental trouvé");
-            }
-
-            const allPoints = [];
-            const collect = (geometry) => {
-                const walk = (coords) => {
-                    if (!Array.isArray(coords)) return;
-                    if (coords.length && typeof coords[0] === "number") {
-                        allPoints.push(coords);
-                    } else {
-                        coords.forEach(walk);
-                    }
-                };
-                walk(geometry?.coordinates);
-            };
-            features.forEach((feature) => collect(feature.geometry));
-            const xs = allPoints.map((p) => p[0]);
-            const ys = allPoints.map((p) => p[1]);
-            const minX = Math.min(...xs), maxX = Math.max(...xs);
-            const minY = Math.min(...ys), maxY = Math.max(...ys);
-            const width = 760, height = 610, pad = 18;
-            const scale = Math.min(
-                (width - pad * 2) / (maxX - minX),
-                (height - pad * 2) / (maxY - minY)
+            const response = await fetch(
+                "/kiiraaye_governance/static/src/img/senegal_departments.svg",
+                { headers: { "Accept": "image/svg+xml" }, cache: "force-cache" }
             );
-            const project = (lon, lat) => [
-                pad + (lon - minX) * scale,
-                height - pad - (lat - minY) * scale
-            ];
+            if (!response.ok) {
+                throw new Error("Carte SVG introuvable (" + response.status + ")");
+            }
 
-            const ns = "http://www.w3.org/2000/svg";
-            const svg = document.createElementNS(ns, "svg");
-            svg.setAttribute("viewBox", "0 0 " + width + " " + height);
-            svg.setAttribute("role", "img");
-            svg.setAttribute("aria-label", "Découpage administratif du Sénégal par départements");
+            const svgText = await response.text();
+            host.innerHTML = svgText;
+
+            const svg = host.querySelector("svg");
+            if (!svg) {
+                throw new Error("SVG administratif invalide");
+            }
+
             svg.classList.add("kiiraaye-administrative-map-svg");
 
-            features.forEach((feature) => {
-                const props = feature.properties || {};
-                const row = this.mapDepartmentRow(feature);
-                const path = document.createElementNS(ns, "path");
-                path.setAttribute("d", this.mapPathFromGeometry(feature.geometry, project));
-                path.setAttribute("fill", this.mapDepartmentFill(row));
-                path.setAttribute("class", "kiiraaye-map-department-shape");
-                path.setAttribute("data-name", props.nom || props.name || "");
-                path.setAttribute("title", (props.nom || props.name || "Département") + (row ? " — " + row.sections + " section(s)" : ""));
-                if (row) {
-                    path.addEventListener("click", () => this.openDepartmentDetail(row.region_id, row.id));
-                }
-                svg.appendChild(path);
+            const rows = (this.state.data.department_map || []).map((row) => ({
+                ...row,
+                _name: this.normalizeMapName(row.name),
+            }));
+
+            const rowByName = new Map(rows.map((row) => [row._name, row]));
+
+            host.querySelectorAll(".kiiraaye-map-department-shape").forEach((shape) => {
+                const name = this.normalizeMapName(shape.dataset.name || "");
+                const code = shape.dataset.code || "";
+                const row = rowByName.get(name);
+
+                shape.setAttribute("fill", this.mapDepartmentFill(row));
+                shape.setAttribute("tabindex", "0");
+                shape.setAttribute("role", "button");
+                shape.setAttribute("aria-label", row?.name || shape.dataset.name || code);
+
+                const open = () => {
+                    if (row) {
+                        this.openDepartmentDetail(row.region_id, row.id);
+                    }
+                };
+
+                shape.addEventListener("click", open);
+                shape.addEventListener("keydown", (event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        open();
+                    }
+                });
             });
 
-            const labels = features.map((feature) => {
-                const row = this.mapDepartmentRow(feature);
-                const props = feature.properties || {};
-                const points = [];
-                const collect = (geometry) => {
-                    const walk = (coords) => {
-                        if (!Array.isArray(coords)) return;
-                        if (coords.length && typeof coords[0] === "number") points.push(coords);
-                        else coords.forEach(walk);
-                    };
-                    walk(geometry?.coordinates);
-                };
-                collect(feature.geometry);
-                if (!points.length) return null;
-                const cx = points.reduce((sum,p)=>sum+p[0],0)/points.length;
-                const cy = points.reduce((sum,p)=>sum+p[1],0)/points.length;
-                const [x,y] = project(cx,cy);
-                const text = document.createElementNS(ns, "text");
-                text.setAttribute("x", x.toFixed(1));
-                text.setAttribute("y", y.toFixed(1));
-                text.setAttribute("class", "kiiraaye-map-department-label");
-                text.textContent = props.nom || props.name || "";
-                return text;
-            }).filter(Boolean);
-            labels.forEach((label) => svg.appendChild(label));
-
-            host.innerHTML = "";
-            host.appendChild(svg);
             const attribution = document.createElement("div");
             attribution.className = "kiiraaye-map-attribution";
-            attribution.textContent = "Limites administratives : GalsenAPI / HDX-OCHA COD-AB";
+            attribution.textContent = "Limites administratives — carte locale optimisée";
             host.appendChild(attribution);
         } catch (error) {
-            host.innerHTML = '<div class="kiiraaye-map-error">Impossible de charger le découpage administratif. ' +
-                (error?.message || "") + '</div>';
+            console.error("Kiiraaye: impossible de charger la carte administrative", error);
+            host.innerHTML =
+                '<div class="kiiraaye-map-error">Impossible de charger la carte administrative.</div>';
         }
     }
 
