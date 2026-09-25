@@ -28,6 +28,8 @@ export class KiiraayeDashboard extends Component {
             await this.loadDashboard();
         });
         this.administrativeMapRef = useRef("administrativeMap");
+        this.mapZoom = 1;
+        this.mapDragging = false;
         onMounted(() => {
             this.renderAdministrativeMap();
         });
@@ -176,6 +178,28 @@ export class KiiraayeDashboard extends Component {
         return "";
     }
 
+    mapZoomIn() {
+        this.mapZoom = Math.min(2.5, this.mapZoom + 0.2);
+        this.applyMapTransform();
+    }
+
+    mapZoomOut() {
+        this.mapZoom = Math.max(0.7, this.mapZoom - 0.2);
+        this.applyMapTransform();
+    }
+
+    mapZoomReset() {
+        this.mapZoom = 1;
+        this.applyMapTransform();
+    }
+
+    applyMapTransform() {
+        const host = this.administrativeMapRef?.el;
+        if (host) {
+            host.style.transform = "scale(" + this.mapZoom + ")";
+        }
+    }
+
     async renderAdministrativeMap() {
         const host = this.administrativeMapRef?.el;
         if (!host) {
@@ -200,6 +224,7 @@ export class KiiraayeDashboard extends Component {
             }
 
             svg.classList.add("kiiraaye-administrative-map-svg");
+            this.mapZoom = 1;
 
             const rows = (this.state.data.department_map || []).map((row) => ({
                 ...row,
@@ -214,6 +239,12 @@ export class KiiraayeDashboard extends Component {
                 const row = rowByName.get(name);
 
                 shape.setAttribute("fill", this.mapDepartmentFill(row));
+                const sections = Number(row?.sections || 0);
+                if (sections === 0) {
+                    shape.classList.add("kiiraaye-map-department-shape--blink");
+                } else {
+                    shape.classList.add("kiiraaye-map-department-shape--covered");
+                }
                 shape.setAttribute("tabindex", "0");
                 shape.setAttribute("role", "button");
                 shape.setAttribute("aria-label", row?.name || shape.dataset.name || code);
