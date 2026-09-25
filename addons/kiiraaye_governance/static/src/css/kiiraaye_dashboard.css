@@ -1463,7 +1463,7 @@
 .kiiraaye-administrative-map-svg{width:100%;height:100%;display:block}
 .kiiraaye-map-department-shape{stroke:#fff;stroke-width:.8;vector-effect:non-scaling-stroke;cursor:pointer;transition:fill .16s ease,stroke .16s ease,opacity .16s ease}
 .kiiraaye-map-department-shape:hover{stroke:#17384a;stroke-width:1.8;filter:brightness(.96)}
-.kiiraaye-map-department-label{font-size:5.6px;font-weight:800;fill:#304e5c;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:2.4px;stroke-linejoin:round;pointer-events:none}
+.kiiraaye-map-department-label{font-size:9px;font-weight:800;fill:#304e5c;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:2.4px;stroke-linejoin:round;pointer-events:none}
 .kiiraaye-map-loading,.kiiraaye-map-error{padding:18px;text-align:center;color:#607883;font-size:11px}
 .kiiraaye-map-error{color:#a13a3a}
 .kiiraaye-map-attribution{position:absolute;right:8px;bottom:6px;padding:3px 6px;background:rgba(255,255,255,.88);border-radius:4px;color:#718691;font-size:8px;pointer-events:none}
@@ -1473,10 +1473,14 @@
 .kiiraaye-administrative-map-host{transform-origin:center center;will-change:transform;transition:transform .18s ease;cursor:grab}
 .kiiraaye-administrative-map-host:active{cursor:grabbing}
 .kiiraaye-map-zoom-controls{position:absolute;top:14px;right:14px;z-index:20;display:flex;flex-direction:column;gap:5px}
-.kiiraaye-map-zoom-controls button{width:38px;height:38px;border:1px solid #cbd9de;border-radius:8px;background:rgba(255,255,255,.95);color:#17384a;font-size:18px;font-weight:900;cursor:pointer;box-shadow:0 2px 8px rgba(23,56,74,.16)}
+.kiiraaye-map-zoom-controls{pointer-events:auto}.kiiraaye-map-zoom-controls button{width:46px;height:46px;border:1px solid #cbd9de;border-radius:8px;background:rgba(255,255,255,.95);color:#17384a;font-size:24px;font-weight:900;cursor:pointer;box-shadow:0 2px 8px rgba(23,56,74,.16)}
 .kiiraaye-map-zoom-controls button:hover{background:#edf5f7}
-.kiiraaye-map-zoom-level{font-size:9px;text-align:center;font-weight:800;color:#607883}
+.kiiraaye-map-zoom-level{font-size:11px;text-align:center;font-weight:800;color:#607883}
 .kiiraaye-map-department-shape--blink{animation:kiiraaye-department-alert 1.25s ease-in-out infinite}
 .kiiraaye-map-department-shape--covered{animation:none}
 @keyframes kiiraaye-department-alert{0%,100%{opacity:1;filter:brightness(1)}50%{opacity:.48;filter:brightness(1.22)}}
 @media(max-width:900px){.kiiraaye-map{min-height:560px}}
+
+.kiiraaye-map-zoom-controls{position:absolute!important;top:16px!important;right:16px!important;z-index:100!important}
+.kiiraaye-map-zoom-controls button{display:flex;align-items:center;justify-content:center}
+.kiiraaye-map-department-label{font-size:9px!important;font-weight:900!important}
