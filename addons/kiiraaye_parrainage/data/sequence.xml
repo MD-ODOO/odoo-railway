@@ -1,0 +1,1 @@
+<odoo><record id="seq_parrainage" model="ir.sequence"><field name="name">Parrainage</field><field name="code">kiiraaye.parrainage</field><field name="prefix">PAR-</field><field name="padding">6</field></record></odoo>
