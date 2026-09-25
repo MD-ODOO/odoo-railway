@@ -1,0 +1,3 @@
+<odoo>
+<record id="rule_parrainage_scope" model="ir.rule"><field name="name">Parrainages selon périmètre du coordinateur</field><field name="model_id" ref="model_kiiraaye_parrainage"/><field name="groups" eval="[(4,ref('kiiraaye_parrainage.group_parrainage_user'))]"/><field name="domain_force">['|',('scope','=','diaspora'),('region_id','in',user.kiiraaye_coordinator_region_ids.ids),('departement_id','in',user.kiiraaye_coordinator_departement_ids.ids),('commune_id','in',user.kiiraaye_coordinator_commune_ids.ids),('quartier_id','in',user.kiiraaye_coordinator_quartier_ids.ids)]</field></record>
+</odoo>
