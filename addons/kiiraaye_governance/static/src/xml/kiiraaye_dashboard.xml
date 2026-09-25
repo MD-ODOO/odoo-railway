@@ -192,9 +192,6 @@
                                         <button type="button" title="Zoom arrière" aria-label="Zoom arrière" t-on-click="mapZoomOut">−</button>
                                         <button type="button" title="Réinitialiser le zoom" aria-label="Réinitialiser le zoom" t-on-click="mapZoomReset">⟳</button>
                                         <div class="kiiraaye-map-zoom-level"><t t-esc="Math.round(state.mapZoom * 100)"/>%</div>
-                                    </div>
-                                        <div class="kiiraaye-map-loading"><i class="fa fa-spinner fa-spin"/> Chargement du découpage administratif...</div>
-                                    </div>
                                 </div>
                                 <div class="kiiraaye-map-legend">
                                     <div class="kiiraaye-map-legend__title">Découpage administratif</div>
