@@ -184,35 +184,16 @@
                             <div class="panel__title"><span>Carte de couverture territoriale</span><small>Sénégal — régions et départements</small></div>
                             <div class="kiiraaye-map-layout">
                                 <div class="kiiraaye-map">
-                                    <img src="/kiiraaye_governance/static/src/img/senegal_map.svg" alt="Carte du Sénégal" class="kiiraaye-map__image"/>
-                                    <t t-foreach="state.data.regional_map" t-as="region" t-key="region.id">
-                                        <button type="button" class="kiiraaye-map-dot"
-                                            t-att-class="'kiiraaye-map-dot ' + regionMapDotClass(region)"
-                                            t-att-style="regionMapDotStyle(region)"
-                                            t-att-title="region.name + ' — ' + regionMapStatusLabel(region)"
-                                            t-on-click="() => this.openRegionDetail(region.id)">
-                                            <span class="kiiraaye-map-dot__pulse"/><span class="kiiraaye-map-dot__label"><t t-esc="region.name"/></span>
-                                        </button>
-                                    </t>
-                                    <t t-foreach="state.data.department_map" t-as="department" t-key="department.id">
-                                        <button type="button"
-                                            t-att-class="'kiiraaye-map-dept-dot ' + departmentMapDotClass(department)"
-                                            t-att-style="departmentMapDotStyle(department)"
-                                            t-att-title="department.name + ' — ' + department.sections + ' section(s)'">
-                                            <span class="kiiraaye-map-dept-label"><t t-esc="department.name"/></span>
-                                        </button>
-                                    </t>
+                                    <div t-ref="administrativeMap" class="kiiraaye-administrative-map-host">
+                                        <div class="kiiraaye-map-loading"><i class="fa fa-spinner fa-spin"/> Chargement du découpage administratif...</div>
+                                    </div>
                                 </div>
                                 <div class="kiiraaye-map-legend">
-                                    <div class="kiiraaye-map-legend__title">Légende</div>
-                                    <div class="kiiraaye-map-legend__item"><i class="kiiraaye-map-legend__dot kiiraaye-map-dot--none"/><span>Non couvert</span></div>
-                                    <div class="kiiraaye-map-legend__item"><i class="kiiraaye-map-legend__dot kiiraaye-map-dot--very-low"/><span>Très faible (&lt; 25 %)</span></div>
-                                    <div class="kiiraaye-map-legend__item"><i class="kiiraaye-map-legend__dot kiiraaye-map-dot--reinforce"/><span>À renforcer (25–49 %)</span></div>
-                                    <div class="kiiraaye-map-legend__item"><i class="kiiraaye-map-legend__dot kiiraaye-map-dot--covered"/><span>Couverture correcte (50–74 %)</span></div>
-                                    <div class="kiiraaye-map-legend__item"><i class="kiiraaye-map-legend__dot kiiraaye-map-dot--strong"/><span>Couverture forte (≥ 75 %)</span></div>
-                                    <div class="kiiraaye-map-legend__item"><i class="kiiraaye-map-legend__dot kiiraaye-map-dept-dot--covered"/><span>Département avec section</span></div>
+                                    <div class="kiiraaye-map-legend__title">Découpage administratif</div>
                                     <div class="kiiraaye-map-legend__item"><i class="kiiraaye-map-legend__dot kiiraaye-map-dept-dot--empty"/><span>Département sans section</span></div>
-                                    <p class="kiiraaye-map-legend__note">Taux = communes disposant d’au moins une section active / communes de la région.</p>
+                                    <div class="kiiraaye-map-legend__item"><i class="kiiraaye-map-legend__dot kiiraaye-map-dept-dot--covered"/><span>Département avec section</span></div>
+                                    <div class="kiiraaye-map-legend__item"><span>46 départements</span></div>
+                                    <p class="kiiraaye-map-legend__note">Les polygones représentent les limites départementales. Cliquez sur un département pour ouvrir son détail.</p>
                                 </div>
                             </div>
                         </div>
