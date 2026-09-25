@@ -20,6 +20,12 @@ class KiiraayeDashboard(models.Model):
     MAX_BROWSER_GEOGRAPHY_ROWS = 25
     MAX_FILTER_SECTION_ROWS = 1_000
 
+    OFFICIAL_SENEGAL_TOTALS = {
+        "regions": 14,
+        "departments": 46,
+        "communes": 557,
+    }
+
     NATIONAL_SECTION_TYPES = (
         "communale",
         "departementale",
@@ -1422,6 +1428,7 @@ class KiiraayeDashboard(models.Model):
         )
 
         regional_map = []
+        department_map = []
         for region in section_geography_overview:
             position = self.REGIONAL_MAP_POSITIONS.get(
                 self._normalize_geo_name(region["name"])
@@ -1456,27 +1463,31 @@ class KiiraayeDashboard(models.Model):
                 "territorial_coverage_pct": territorial_coverage_pct,
             })
 
+            dept_rows = region.get("departments_rows") or []
+            count = len(dept_rows)
+            for idx, department in enumerate(dept_rows):
+                col = idx % 3
+                row = idx // 3
+                dx = (col - 1) * 3.4
+                dy = (row - (max(0, count - 1) / 6.0)) * 4.2
+                department_map.append({
+                    "id": department["id"],
+                    "name": department["name"],
+                    "region_id": region["id"],
+                    "map_x": max(3, min(96, position[0] + dx)),
+                    "map_y": max(4, min(96, position[1] + dy)),
+                    "sections": department["sections"],
+                })
+
         if section_scope == "national":
             national_country = self.env["res.country"].search(
                 [("code", "=", "SN")],
                 limit=1,
             )
             if national_country:
-                region_total = Geography.search_count([
-                    ("active", "=", True),
-                    ("country_id", "=", national_country.id),
-                    ("niveau", "=", "niveau1"),
-                ])
-                department_total = Geography.search_count([
-                    ("active", "=", True),
-                    ("country_id", "=", national_country.id),
-                    ("niveau", "=", "niveau2"),
-                ])
-                commune_total = Geography.search_count([
-                    ("active", "=", True),
-                    ("country_id", "=", national_country.id),
-                    ("niveau", "=", "niveau3"),
-                ])
+                region_total = self.OFFICIAL_SENEGAL_TOTALS["regions"]
+                department_total = self.OFFICIAL_SENEGAL_TOTALS["departments"]
+                commune_total = self.OFFICIAL_SENEGAL_TOTALS["communes"]
             else:
                 region_total = department_total = commune_total = 0
             region_occupied = section_geo_region_occupied
@@ -1582,6 +1593,8 @@ class KiiraayeDashboard(models.Model):
             "ralliements": ralliement_rows,
             "section_geography_overview": section_geography_overview,
             "regional_map": regional_map,
+            "department_map": department_map,
+            "official_senegal_totals": self.OFFICIAL_SENEGAL_TOTALS,
             "top_member_geographies": top_member_geographies,
             "regional_reference_source": self.REGIONAL_REFERENCE_SOURCE,
             "geography_rows": geography_rows,
