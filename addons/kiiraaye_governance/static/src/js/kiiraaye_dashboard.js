@@ -122,6 +122,16 @@ export class KiiraayeDashboard extends Component {
         return "kiiraaye-map-dot--" + this.regionMapStatus(row);
     }
 
+    departmentMapDotClass(row) {
+        return Number(row?.sections || 0) > 0
+            ? "kiiraaye-map-dept-dot--covered"
+            : "kiiraaye-map-dept-dot--empty";
+    }
+
+    departmentMapDotStyle(row) {
+        return "left:" + Number(row?.map_x || 0) + "%;top:" + Number(row?.map_y || 0) + "%;";
+    }
+
     memberElectorGap(row) {
         return Number(row?.member_elector_ratio_pct || 0) - Number(row?.electoral_ratio_pct || 0);
     }
