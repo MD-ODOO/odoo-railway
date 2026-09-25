@@ -22,13 +22,13 @@ export class KiiraayeDashboard extends Component {
                 geographie_id: false,
             },
             error: false,
+            mapZoom: 1,
         });
 
         onWillStart(async () => {
             await this.loadDashboard();
         });
         this.administrativeMapRef = useRef("administrativeMap");
-        this.mapZoom = 1;
         this.mapDragging = false;
         onMounted(() => {
             this.renderAdministrativeMap();
@@ -179,24 +179,24 @@ export class KiiraayeDashboard extends Component {
     }
 
     mapZoomIn() {
-        this.mapZoom = Math.min(2.5, this.mapZoom + 0.2);
+        this.state.mapZoom = Math.min(2.5, this.state.mapZoom + 0.2);
         this.applyMapTransform();
     }
 
     mapZoomOut() {
-        this.mapZoom = Math.max(0.7, this.mapZoom - 0.2);
+        this.state.mapZoom = Math.max(0.7, this.state.mapZoom - 0.2);
         this.applyMapTransform();
     }
 
     mapZoomReset() {
-        this.mapZoom = 1;
+        this.state.mapZoom = 1;
         this.applyMapTransform();
     }
 
     applyMapTransform() {
         const host = this.administrativeMapRef?.el;
         if (host) {
-            host.style.transform = "scale(" + this.mapZoom + ")";
+            host.style.transform = "scale(" + this.state.mapZoom + ")";
         }
     }
 
