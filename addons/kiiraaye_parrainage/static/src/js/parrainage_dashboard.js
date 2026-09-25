@@ -21,7 +21,10 @@ export class ParrainageDashboard extends Component {
         );
         this.state.loading = false;
     }
-    async setScope(scope) { this.state.scope = scope; await this.loadData(); }
+    async setScope(scope) {
+        this.state.scope = scope;
+        await this.loadData();
+    }
     get total() { return this.state.rows.reduce((s,r)=>s+(r.parrain_count||0),0); }
     get distinctCni() { return this.state.rows.reduce((s,r)=>s+(r.cni_count||0),0); }
     get national() { return this.state.rows.filter(r=>r.scope==="national").reduce((s,r)=>s+(r.parrain_count||0),0); }
@@ -30,6 +33,7 @@ export class ParrainageDashboard extends Component {
         return [row.region_name, row.departement_name, row.commune_name].filter(Boolean).join(" · ") || "National";
     }
     openList() { this.action.doAction("kiiraaye_parrainage.action_parrainage"); }
+    openNationalList() { this.action.doAction("kiiraaye_parrainage.action_parrainage_national"); }
 }
 ParrainageDashboard.template = "kiiraayeParrainage.Dashboard";
 registry.category("actions").add("kiiraaye_parrainage.dashboard", ParrainageDashboard);
