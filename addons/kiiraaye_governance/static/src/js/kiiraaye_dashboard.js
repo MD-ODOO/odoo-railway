@@ -188,6 +188,10 @@ export class KiiraayeDashboard extends Component {
         this.applyMapTransform();
     }
 
+    get zoomPercent() {
+        return Math.round(this.state.mapZoom * 100);
+    }
+
     mapZoomReset() {
         this.state.mapZoom = 1;
         this.applyMapTransform();
