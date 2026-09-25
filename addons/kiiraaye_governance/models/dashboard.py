@@ -318,6 +318,26 @@ class KiiraayeDashboard(models.Model):
         rows.sort(key=lambda row: (-row["members"], row["name"]))
         return rows
 
+    # Position indicative des 14 régions sur la carte SVG du Sénégal.
+    # Les positions servent uniquement à placer les repères visuels; les données
+    # territoriales restent issues du référentiel Kiiraaye.
+    REGIONAL_MAP_POSITIONS = {
+        "DAKAR": (6.6, 44.6),
+        "THIES": (14.6, 43.1),
+        "DIOURBEL": (24.9, 46.1),
+        "FATICK": (22.0, 52.7),
+        "KAOLACK": (27.1, 56.7),
+        "KAFFRINE": (35.0, 57.7),
+        "LOUGA": (25.0, 25.7),
+        "SAINT-LOUIS": (21.0, 16.8),
+        "MATAM": (69.2, 24.9),
+        "TAMBACOUNDA": (61.6, 64.7),
+        "KEDOUGOU": (85.3, 90.4),
+        "KOLDA": (44.0, 83.4),
+        "SEDHIOU": (34.9, 87.2),
+        "ZIGUINCHOR": (24.3, 89.9),
+    }
+
     REGIONAL_REFERENCE_STATS = {
         "DAKAR": {"population": 4004426, "electors": 1829821},
         "ZIGUINCHOR": {"population": 617567, "electors": 308259},
@@ -1401,6 +1421,41 @@ class KiiraayeDashboard(models.Model):
             for row in section_geography_overview
         )
 
+        regional_map = []
+        for region in section_geography_overview:
+            position = self.REGIONAL_MAP_POSITIONS.get(
+                self._normalize_geo_name(region["name"])
+            )
+            if not position:
+                continue
+            communes_total = int(region.get("communes") or 0)
+            communes_occupied = int(region.get("communes_occupied") or 0)
+            departments_total = int(region.get("departments") or 0)
+            departments_occupied = int(region.get("departments_occupied") or 0)
+            if communes_total:
+                territorial_coverage_pct = round(
+                    communes_occupied / communes_total * 100, 2
+                )
+            elif departments_total:
+                territorial_coverage_pct = round(
+                    departments_occupied / departments_total * 100, 2
+                )
+            else:
+                territorial_coverage_pct = 0.0
+            regional_map.append({
+                "id": region["id"],
+                "name": region["name"],
+                "map_x": position[0],
+                "map_y": position[1],
+                "sections": region["sections"],
+                "members": region["members"],
+                "departments_total": departments_total,
+                "departments_occupied": departments_occupied,
+                "communes_total": communes_total,
+                "communes_occupied": communes_occupied,
+                "territorial_coverage_pct": territorial_coverage_pct,
+            })
+
         if section_scope == "national":
             national_country = self.env["res.country"].search(
                 [("code", "=", "SN")],
@@ -1526,6 +1581,7 @@ class KiiraayeDashboard(models.Model):
             "coordinators": coordinator_rows,
             "ralliements": ralliement_rows,
             "section_geography_overview": section_geography_overview,
+            "regional_map": regional_map,
             "top_member_geographies": top_member_geographies,
             "regional_reference_source": self.REGIONAL_REFERENCE_SOURCE,
             "geography_rows": geography_rows,
