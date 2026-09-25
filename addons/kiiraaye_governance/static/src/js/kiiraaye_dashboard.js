@@ -158,7 +158,7 @@ export class KiiraayeDashboard extends Component {
 
     mapDepartmentFill(row) {
         if (!row) return "#E9EFF2";
-        return Number(row.sections || 0) > 0 ? "#2D86A6" : "#DCE5E9";
+        return Number(row.sections || 0) > 0 ? "#2D86A6" : "#E53935";
     }
 
     mapPathFromGeometry(geometry, project) {
