@@ -1456,3 +1456,14 @@
 .kiiraaye-map-dept-dot--empty{background:#95a5a6}
 .kiiraaye-map-dept-label{position:absolute;left:8px;top:-5px;white-space:nowrap;background:rgba(255,255,255,.90);border-radius:3px;padding:2px 4px;color:#49616c;font-size:7px;font-weight:700;pointer-events:none}
 .kiiraaye-map-dept-dot:hover{transform:scale(1.4)}
+
+
+/* Carte administrative réelle : polygones départementaux */
+.kiiraaye-administrative-map-host{position:absolute;inset:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#f7fbfc,#eef4f6);border-radius:12px;overflow:hidden}
+.kiiraaye-administrative-map-svg{width:100%;height:100%;display:block}
+.kiiraaye-map-department-shape{stroke:#fff;stroke-width:.8;vector-effect:non-scaling-stroke;cursor:pointer;transition:fill .16s ease,stroke .16s ease,opacity .16s ease}
+.kiiraaye-map-department-shape:hover{stroke:#17384a;stroke-width:1.8;filter:brightness(.96)}
+.kiiraaye-map-department-label{font-size:5.6px;font-weight:800;fill:#304e5c;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:2.4px;stroke-linejoin:round;pointer-events:none}
+.kiiraaye-map-loading,.kiiraaye-map-error{padding:18px;text-align:center;color:#607883;font-size:11px}
+.kiiraaye-map-error{color:#a13a3a}
+.kiiraaye-map-attribution{position:absolute;right:8px;bottom:6px;padding:3px 6px;background:rgba(255,255,255,.88);border-radius:4px;color:#718691;font-size:8px;pointer-events:none}
