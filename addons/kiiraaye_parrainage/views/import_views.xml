@@ -1,0 +1,10 @@
+<odoo>
+<record id="view_import_parrainage_form" model="ir.ui.view">
+<field name="name">kiiraaye.parrainage.import.form</field><field name="model">kiiraaye.parrainage.import</field>
+<field name="arch" type="xml"><form string="Importer les parrainages Excel"><sheet>
+<div class="alert alert-info">Le fichier doit reprendre exactement les colonnes électroniques prévues par la DGE : N° d'ordre, Prénom(s) et nom, N° carte d'électeur, N.I.N, Date d'expiration CNI. La date de naissance est ensuite renseignée dans Odoo pour le contrôle des 18 ans.</div>
+<group><field name="election_id"/><field name="scope"/><field name="country_id" invisible="scope != 'diaspora'"/><field name="region_id" invisible="scope != 'national'" domain="[('niveau','=','niveau1')]"/><field name="departement_id" invisible="scope != 'national'" domain="[('niveau','=','niveau2'),('parent_id','=',region_id)]"/><field name="commune_id" invisible="scope != 'national'" domain="[('niveau','=','niveau3'),('parent_id','=',departement_id)]"/><field name="file" filename="filename"/><field name="filename" invisible="1"/></group>
+<footer><button name="action_import" type="object" string="Importer" class="btn-primary"/><button special="cancel" string="Annuler"/></footer>
+</sheet></form></field></record>
+<record id="action_import_wizard" model="ir.actions.act_window"><field name="name">Importer les parrainages</field><field name="res_model">kiiraaye.parrainage.import</field><field name="view_mode">form</field><field name="target">new</field></record>
+</odoo>
