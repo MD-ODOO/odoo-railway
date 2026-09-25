@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo><data noupdate="1">
+<odoo><data>
 <record id="national_region_01" model="kiiraaye.geographie"><field name="name">Diourbel</field><field name="code">DEMO-NAT-R01</field><field name="niveau">niveau1</field><field name="country_id" ref="base.sn"/><field name="parent_id" ref="demo_country_senegal"/></record>
 <record id="national_dept_01" model="kiiraaye.geographie"><field name="name">Mbacké</field><field name="code">DEMO-NAT-D01</field><field name="niveau">niveau2</field><field name="country_id" ref="base.sn"/><field name="parent_id" ref="national_region_01"/></record>
 <record id="national_commune_01" model="kiiraaye.geographie"><field name="name">Touba</field><field name="code">DEMO-NAT-C01</field><field name="niveau">niveau3</field><field name="country_id" ref="base.sn"/><field name="parent_id" ref="national_dept_01"/></record>
