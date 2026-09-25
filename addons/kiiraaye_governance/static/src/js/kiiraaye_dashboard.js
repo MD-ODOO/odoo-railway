@@ -100,6 +100,28 @@ export class KiiraayeDashboard extends Component {
         return this.formatNumber(occupied) + " / " + this.formatNumber(total);
     }
 
+    regionMapStatus(row) {
+        const pct = Number(row?.territorial_coverage_pct || 0);
+        if (!Number(row?.communes_total) && !Number(row?.departments_total)) return row?.sections ? "data" : "none";
+        if (pct <= 0) return "none";
+        if (pct < 25) return "very-low";
+        if (pct < 50) return "reinforce";
+        if (pct < 75) return "covered";
+        return "strong";
+    }
+
+    regionMapStatusLabel(row) {
+        return {none:"Non couvert", "very-low":"Très faible", reinforce:"À renforcer", covered:"Couverture correcte", strong:"Couverture forte", data:"Données partielles"}[this.regionMapStatus(row)] || "Données partielles";
+    }
+
+    regionMapDotStyle(row) {
+        return "left:" + Number(row?.map_x || 0) + "%;top:" + Number(row?.map_y || 0) + "%;";
+    }
+
+    regionMapDotClass(row) {
+        return "kiiraaye-map-dot--" + this.regionMapStatus(row);
+    }
+
     memberElectorGap(row) {
         return Number(row?.member_elector_ratio_pct || 0) - Number(row?.electoral_ratio_pct || 0);
     }
