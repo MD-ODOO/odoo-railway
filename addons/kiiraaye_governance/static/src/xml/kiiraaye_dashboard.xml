@@ -180,6 +180,32 @@
                             </div>
                         </div>
 
+                        <div class="panel kiiraaye-map-panel">
+                            <div class="panel__title"><span>Carte de couverture territoriale</span><small>Sénégal — localisation indicative par région</small></div>
+                            <div class="kiiraaye-map-layout">
+                                <div class="kiiraaye-map">
+                                    <img src="/kiiraaye_governance/static/src/img/senegal_map.svg" alt="Carte du Sénégal" class="kiiraaye-map__image"/>
+                                    <t t-foreach="state.data.regional_map" t-as="region" t-key="region.id">
+                                        <button type="button" class="kiiraaye-map-dot"
+                                            t-att-class="'kiiraaye-map-dot ' + regionMapDotClass(region)"
+                                            t-att-style="regionMapDotStyle(region)"
+                                            t-att-title="region.name + ' — ' + regionMapStatusLabel(region)"
+                                            t-on-click="() => this.openRegionDetail(region.id)">
+                                            <span class="kiiraaye-map-dot__pulse"/><span class="kiiraaye-map-dot__label"><t t-esc="region.name"/></span>
+                                        </button>
+                                    </t>
+                                </div>
+                                <div class="kiiraaye-map-legend">
+                                    <div class="kiiraaye-map-legend__title">Légende</div>
+                                    <div class="kiiraaye-map-legend__item"><i class="kiiraaye-map-legend__dot kiiraaye-map-dot--none"/><span>Non couvert</span></div>
+                                    <div class="kiiraaye-map-legend__item"><i class="kiiraaye-map-legend__dot kiiraaye-map-dot--very-low"/><span>Très faible (&lt; 25 %)</span></div>
+                                    <div class="kiiraaye-map-legend__item"><i class="kiiraaye-map-legend__dot kiiraaye-map-dot--reinforce"/><span>À renforcer (25–49 %)</span></div>
+                                    <div class="kiiraaye-map-legend__item"><i class="kiiraaye-map-legend__dot kiiraaye-map-dot--covered"/><span>Couverture correcte (50–74 %)</span></div>
+                                    <div class="kiiraaye-map-legend__item"><i class="kiiraaye-map-legend__dot kiiraaye-map-dot--strong"/><span>Couverture forte (≥ 75 %)</span></div>
+                                    <p class="kiiraaye-map-legend__note">Taux = communes disposant d’au moins une section active / communes de la région.</p>
+                                </div>
+                            </div>
+                        </div>
                         <div class="panel">
                             <div class="panel__title">
                                 <span>Sections regroupées par région</span>
