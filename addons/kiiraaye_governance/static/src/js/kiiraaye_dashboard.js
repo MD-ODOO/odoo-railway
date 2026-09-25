@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, onMounted, onWillStart, useState } from "@odoo/owl";
+import { Component, onMounted, onWillStart, useRef, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 
@@ -27,6 +27,7 @@ export class KiiraayeDashboard extends Component {
         onWillStart(async () => {
             await this.loadDashboard();
         });
+        this.administrativeMapRef = useRef("administrativeMap");
         onMounted(() => {
             this.renderAdministrativeMap();
         });
@@ -176,7 +177,7 @@ export class KiiraayeDashboard extends Component {
     }
 
     async renderAdministrativeMap() {
-        const host = this.refs.administrativeMap;
+        const host = this.administrativeMapRef?.el;
         if (!host) {
             return;
         }
