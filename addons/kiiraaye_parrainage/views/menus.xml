@@ -1,6 +1,6 @@
 <odoo>
 <menuitem id="menu_parrainage_root" name="Parrainages" sequence="40" groups="kiiraaye_parrainage.group_parrainage_user"/>
-<menuitem id="menu_parrainage_dashboard" name="Tableau de bord" parent="menu_parrainage_root" action="action_dashboard" sequence="1"/>
+<menuitem id="menu_parrainage_dashboard" name="Tableau de bord" parent="menu_parrainage_root" action="action_parrainage_dashboard" sequence="1"/>
 <menuitem id="menu_parrainage_records" name="Liste des parrainages" parent="menu_parrainage_root" action="action_parrainage" sequence="2"/>
 <menuitem id="menu_parrainage_import" name="Importer Excel" parent="menu_parrainage_root" action="action_import_wizard" sequence="3"/>
 <menuitem id="menu_parrainage_elections" name="Campagnes" parent="menu_parrainage_root" action="action_elections" sequence="4"/>
