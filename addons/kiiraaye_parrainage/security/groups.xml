@@ -1,1 +1,4 @@
-<odoo><record id="group_parrainage_user" model="res.groups"><field name="name">Parrainage / Coordinateur</field><field name="category_id" ref="base.module_category_organization"/></record><record id="group_parrainage_manager" model="res.groups"><field name="name">Parrainage / Gestionnaire</field><field name="category_id" ref="base.module_category_organization"/><field name="implied_ids" eval="[(4,ref('kiiraaye_parrainage.group_parrainage_user'))]"/></record></odoo>
+<odoo>
+<record id="group_parrainage_user" model="res.groups"><field name="name">Parrainage / Coordinateur</field><field name="category_id" ref="base.module_category_organization"/></record>
+<record id="group_parrainage_manager" model="res.groups"><field name="name">Parrainage / Gestionnaire</field><field name="category_id" ref="base.module_category_organization"/></record>
+</odoo>
