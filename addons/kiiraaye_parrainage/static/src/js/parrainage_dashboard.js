@@ -17,7 +17,7 @@ export class ParrainageDashboard extends Component {
             "kiiraaye.parrainage.dashboard",
             domain,
             ["scope","location_name","region_name","departement_name","commune_name","parrain_count","cni_count"],
-            {order:"parrain_count desc", limit:100}
+            {order:"parrain_count desc", limit:1000}
         );
         this.state.loading = false;
     }
@@ -26,6 +26,9 @@ export class ParrainageDashboard extends Component {
     get distinctCni() { return this.state.rows.reduce((s,r)=>s+(r.cni_count||0),0); }
     get national() { return this.state.rows.filter(r=>r.scope==="national").reduce((s,r)=>s+(r.parrain_count||0),0); }
     get diaspora() { return this.state.rows.filter(r=>r.scope==="diaspora").reduce((s,r)=>s+(r.parrain_count||0),0); }
+    formatLocation(row) {
+        return [row.region_name, row.departement_name, row.commune_name].filter(Boolean).join(" · ") || "National";
+    }
     openList() { this.action.doAction("kiiraaye_parrainage.action_parrainage"); }
 }
 ParrainageDashboard.template = "kiiraayeParrainage.Dashboard";
