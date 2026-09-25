@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_parrainage_user,parrainage user,model_kiiraaye_parrainage,kiiraaye_parrainage.group_parrainage_user,1,1,1,0
+access_parrainage_manager,parrainage manager,model_kiiraaye_parrainage,kiiraaye_parrainage.group_parrainage_manager,1,1,1,1
+access_election_user,election user,model_kiiraaye_parrainage_election,kiiraaye_parrainage.group_parrainage_user,1,1,1,0
+access_election_manager,election manager,model_kiiraaye_parrainage_election,kiiraaye_parrainage.group_parrainage_manager,1,1,1,1
+access_import_user,import user,model_kiiraaye_parrainage_import,kiiraaye_parrainage.group_parrainage_user,1,1,1,1
+access_dashboard_user,dashboard user,model_kiiraaye_parrainage_dashboard,kiiraaye_parrainage.group_parrainage_user,1,0,0,0
