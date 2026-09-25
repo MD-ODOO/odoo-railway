@@ -183,7 +183,7 @@ export class KiiraayeDashboard extends Component {
 
         try {
             const response = await fetch(
-                "/kiiraaye_governance/static/src/img/senegal_departments.svg",
+                "/kiiraaye_governance/static/src/img/senegal_departments.svg?v=19.0.2.22.65",
                 { headers: { "Accept": "image/svg+xml" }, cache: "force-cache" }
             );
             if (!response.ok) {
@@ -238,8 +238,20 @@ export class KiiraayeDashboard extends Component {
             host.appendChild(attribution);
         } catch (error) {
             console.error("Kiiraaye: impossible de charger la carte administrative", error);
-            host.innerHTML =
-                '<div class="kiiraaye-map-error">Impossible de charger la carte administrative.</div>';
+            // Secours : afficher directement le SVG comme image. Cela garantit
+            // que la carte reste visible même si le navigateur bloque le fetch
+            // du fichier SVG ou si les assets Odoo sont encore en cache.
+            host.innerHTML = "";
+            const image = document.createElement("img");
+            image.className = "kiiraaye-administrative-map-svg";
+            image.alt = "Carte administrative du Sénégal";
+            image.src =
+                "/kiiraaye_governance/static/src/img/senegal_departments.svg?v=19.0.2.22.65";
+            image.onerror = () => {
+                host.innerHTML =
+                    '<div class="kiiraaye-map-error">Impossible de charger la carte administrative.</div>';
+            };
+            host.appendChild(image);
         }
     }
 
