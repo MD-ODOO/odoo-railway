@@ -19,15 +19,30 @@ class KiiraayeParrainageDashboard(models.Model):
         self.env.cr.execute("DROP VIEW IF EXISTS kiiraaye_parrainage_dashboard CASCADE")
         self.env.cr.execute("""
             CREATE VIEW kiiraaye_parrainage_dashboard AS (
-                SELECT row_number() OVER () AS id, p.election_id, p.scope,
-                    COALESCE(g3.name, g2.name, g1.name, c.name, 'National') AS location_name,
-                    g1.name AS region_name, g2.name AS departement_name, g3.name AS commune_name,
-                    COUNT(p.id) AS parrain_count, COUNT(DISTINCT NULLIF(p.nin,'')) AS cni_count
+                SELECT
+                    row_number() OVER () AS id,
+                    p.election_id,
+                    p.scope,
+                    COALESCE(g3.name, g2.name, g1.name,
+                             NULLIF(c.name->>'fr_FR', ''),
+                             NULLIF(c.name->>'en_US', ''),
+                             'National') AS location_name,
+                    g1.name AS region_name,
+                    g2.name AS departement_name,
+                    g3.name AS commune_name,
+                    COUNT(p.id) AS parrain_count,
+                    COUNT(DISTINCT NULLIF(p.nin, '')) AS cni_count
                 FROM kiiraaye_parrainage p
-                LEFT JOIN kiiraaye_geographie g1 ON g1.id=p.region_id
-                LEFT JOIN kiiraaye_geographie g2 ON g2.id=p.departement_id
-                LEFT JOIN kiiraaye_geographie g3 ON g3.id=p.commune_id
-                LEFT JOIN res_country c ON c.id=p.country_id
-                GROUP BY p.election_id,p.scope,g1.name,g2.name,g3.name,c.name
+                LEFT JOIN kiiraaye_geographie g1 ON g1.id = p.region_id
+                LEFT JOIN kiiraaye_geographie g2 ON g2.id = p.departement_id
+                LEFT JOIN kiiraaye_geographie g3 ON g3.id = p.commune_id
+                LEFT JOIN res_country c ON c.id = p.country_id
+                GROUP BY
+                    p.election_id,
+                    p.scope,
+                    g1.name,
+                    g2.name,
+                    g3.name,
+                    c.name
             )
         """)
