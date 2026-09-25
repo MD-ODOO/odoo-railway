@@ -1476,9 +1476,9 @@
 .kiiraaye-map-zoom-controls{pointer-events:auto}.kiiraaye-map-zoom-controls button{width:46px;height:46px;border:1px solid #cbd9de;border-radius:8px;background:rgba(255,255,255,.95);color:#17384a;font-size:24px;font-weight:900;cursor:pointer;box-shadow:0 2px 8px rgba(23,56,74,.16)}
 .kiiraaye-map-zoom-controls button:hover{background:#edf5f7}
 .kiiraaye-map-zoom-level{font-size:11px;text-align:center;font-weight:800;color:#607883}
-.kiiraaye-map-department-shape--blink{animation:kiiraaye-department-alert 1.25s ease-in-out infinite}
+.kiiraaye-map-department-shape--blink{fill:#E53935!important;animation:kiiraaye-department-alert 1.05s ease-in-out infinite}
 .kiiraaye-map-department-shape--covered{animation:none}
-@keyframes kiiraaye-department-alert{0%,100%{opacity:1;filter:brightness(1)}50%{opacity:.48;filter:brightness(1.22)}}
+@keyframes kiiraaye-department-alert{0%,100%{opacity:1;filter:brightness(1) saturate(1.05)}50%{opacity:.58;filter:brightness(1.35) saturate(1.35)}}
 @media(max-width:900px){.kiiraaye-map{min-height:560px}}
 
 .kiiraaye-map-zoom-controls{position:absolute!important;top:16px!important;right:16px!important;z-index:100!important}
