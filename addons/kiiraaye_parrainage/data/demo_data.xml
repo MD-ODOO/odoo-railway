@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 <data noupdate="1">
-<record id="demo_region_dakar" model="kiiraaye.geographie"><field name="name">Dakar</field><field name="code">SN-DK</field><field name="niveau">niveau1</field><field name="country_id" ref="base.sn"/></record>
-<record id="demo_region_thies" model="kiiraaye.geographie"><field name="name">Thiès</field><field name="code">SN-TH</field><field name="niveau">niveau1</field><field name="country_id" ref="base.sn"/></record>
+<record id="demo_country_senegal" model="kiiraaye.geographie"><field name="name">Sénégal</field><field name="code">SN</field><field name="niveau">pays</field><field name="country_id" ref="base.sn"/></record>
+<record id="demo_region_dakar" model="kiiraaye.geographie"><field name="name">Dakar</field><field name="code">SN-DK</field><field name="niveau">niveau1</field><field name="country_id" ref="base.sn"/><field name="parent_id" ref="demo_country_senegal"/></record>
+<record id="demo_region_thies" model="kiiraaye.geographie"><field name="name">Thiès</field><field name="code">SN-TH</field><field name="niveau">niveau1</field><field name="country_id" ref="base.sn"/><field name="parent_id" ref="demo_country_senegal"/></record>
 <record id="demo_dept_dakar" model="kiiraaye.geographie"><field name="name">Dakar</field><field name="code">SN-DK-01</field><field name="niveau">niveau2</field><field name="country_id" ref="base.sn"/><field name="parent_id" ref="demo_region_dakar"/></record>
 <record id="demo_dept_thies" model="kiiraaye.geographie"><field name="name">Thiès</field><field name="code">SN-TH-01</field><field name="niveau">niveau2</field><field name="country_id" ref="base.sn"/><field name="parent_id" ref="demo_region_thies"/></record>
 <record id="demo_commune_plateau" model="kiiraaye.geographie"><field name="name">Dakar-Plateau</field><field name="code">SN-DK-01-01</field><field name="niveau">niveau3</field><field name="country_id" ref="base.sn"/><field name="parent_id" ref="demo_dept_dakar"/></record>
