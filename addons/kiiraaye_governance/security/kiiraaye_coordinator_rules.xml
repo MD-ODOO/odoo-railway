@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Référentiel géographique : périmètre du coordonnateur et toutes ses subdivisions. -->
+    <record id="rule_kiiraaye_geographie_coordinator_scope" model="ir.rule">
+        <field name="name">Géographie - périmètre du coordonnateur</field>
+        <field name="model_id" ref="model_kiiraaye_geographie"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_coordinator'))]"/>
+        <field name="domain_force">[
+            '|', '|', '|',
+            ('id', 'in', user.kiiraaye_coordinator_region_ids.ids),
+            ('id', 'in', user.kiiraaye_coordinator_departement_ids.ids),
+            ('id', 'in', user.kiiraaye_coordinator_commune_ids.ids),
+            ('id', 'in', user.kiiraaye_coordinator_quartier_ids.ids)
+        ]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
     <!-- Membres : un coordonnateur voit les membres de sa zone. -->
     <record id="rule_kiiraaye_partisan_coordinator_scope" model="ir.rule">
         <field name="name">Membres - zone du coordonnateur</field>
