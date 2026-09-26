@@ -99,8 +99,11 @@ class KiiraayeDashboard(models.Model):
         }
 
     def _check_dashboard_access(self):
-        if not self.env.user.has_group("kiiraaye_governance.group_kiiraaye_user"):
-            raise AccessError(_("Vous n'avez pas accès au tableau de bord Kiiraaye."))
+        if not (
+            self.env.user.has_group("kiiraaye_governance.group_kiiraaye_manager")
+            or self.env.user.has_group("kiiraaye_governance.group_kiiraaye_national_coordinator")
+        ):
+            raise AccessError(_("Le tableau de bord Kiiraaye est réservé au mandataire national et à l'administrateur du module."))
 
     @staticmethod
     def _selection_label(field, value):
