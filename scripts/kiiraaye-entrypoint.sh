@@ -9,7 +9,7 @@ DB_PASSWORD="${ODOO_DB_PASSWORD:-}"
 
 echo "[kiiraaye] forcing module upgrade on: ${DBS}"
 
-su -s /bin/bash odoo -c 'odoo -d "$DBS" -u kiiraaye_governance --stop-after-init --db_host="$DB_HOST" --db_port="$DB_PORT" --db_user="$DB_USER" --db_password="$DB_PASSWORD"'
+su -s /bin/bash odoo -c "odoo -d \"$DBS\" -u kiiraaye_governance --stop-after-init --db_host=\"$DB_HOST\" --db_port=\"$DB_PORT\" --db_user=\"$DB_USER\" --db_password=\"$DB_PASSWORD\""
 
 echo "[kiiraaye] upgrade finished; starting Odoo"
 
