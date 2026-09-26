@@ -1,0 +1,10 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+preDeployCommand = ["/bin/sh -c 'set -e; echo \"[kiiraaye] pre-deploy upgrade: KIIRAAY,SMART\"; exec odoo --database \\\"${ODOO_UPDATE_DATABASES:-KIIRAAY,SMART}\\\" --update kiiraaye_governance --stop-after-init --db_host=\\\"${ODOO_DB_HOST:-postgres.railway.internal}\\\" --db_port=\\\"${ODOO_DB_PORT:-5432}\\\" --db_user=\\\"${ODOO_DB_USER:-odoo}\\\" --db_password=\\\"${ODOO_DB_PASSWORD:-}\\\"'"]
+startCommand = "/bin/sh -c 'exec odoo --db_host=\\\"${ODOO_DB_HOST:-postgres.railway.internal}\\\" --db_port=\\\"${ODOO_DB_PORT:-5432}\\\" --db_user=\\\"${ODOO_DB_USER:-odoo}\\\" --db_password=\\\"${ODOO_DB_PASSWORD:-}\\\"'"
+healthcheckPath = "/web"
+healthcheckTimeout = 120
+restartPolicyType = "ON_FAILURE"
