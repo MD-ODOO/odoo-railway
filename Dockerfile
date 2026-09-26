@@ -24,4 +24,4 @@ RUN chown -R odoo:odoo /mnt/extra-addons \
 
 # IMPORTANT: Odoo requires -d/--database when using -u/--update.
 # Railway normally exposes PGDATABASE=railway; ODOO_DB_NAME can override it.
-CMD ["sh", "-c", "DB_NAME=\"${ODOO_DB_NAME:-${PGDATABASE:-railway}}\"; chown -R odoo:odoo /var/lib/odoo; exec su -s /bin/bash odoo -c \"odoo -d \\\"$DB_NAME\\\" -u kiiraaye_governance --db_host=\\\"${ODOO_DB_HOST:-postgres.railway.internal}\\\" --db_port=\\\"${ODOO_DB_PORT:-5432}\\\" --db_user=\\\"${ODOO_DB_USER:-odoo}\\\" --db_password=\\\"${ODOO_DB_PASSWORD:-}\\\"\""]
+CMD ["sh", "-c", "DB_NAMES=\"${ODOO_DB_NAME:-KIIRAAY,SMART}\"; chown -R odoo:odoo /var/lib/odoo; exec su -s /bin/bash odoo -c \"odoo -d \\\"$DB_NAMES\\\" -u kiiraaye_governance --db_host=\\\"${ODOO_DB_HOST:-postgres.railway.internal}\\\" --db_port=\\\"${ODOO_DB_PORT:-5432}\\\" --db_user=\\\"${ODOO_DB_USER:-odoo}\\\" --db_password=\\\"${ODOO_DB_PASSWORD:-}\\\"\""]
