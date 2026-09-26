@@ -271,6 +271,7 @@ class ResUsers(models.Model):
 
     def write(self, vals):
         vals = dict(vals)
+        group_changed = "group_ids" in vals
         changed = "kiiraaye_role" in vals or any(
             field in vals for field in (
                 "kiiraaye_country_id", "kiiraaye_region_id", "kiiraaye_departement_id",
@@ -280,6 +281,6 @@ class ResUsers(models.Model):
         if "kiiraaye_role" in vals:
             self._normalize_kiiraaye_scope_vals(vals)
         result = super().write(vals)
-        if changed and not self.env.context.get("kiiraaye_skip_role_sync"):
+        if (changed or group_changed) and not self.env.context.get("kiiraaye_skip_role_sync"):
             self._sync_kiiraaye_role_group()
         return result
