@@ -60,67 +60,47 @@ class KiiraayePartisanGovernance(models.Model):
 
     @api.model
     def _get_connected_coordinator_sections(self):
-        return self.env["kiiraaye.section"].sudo().search(
-            [
-                ("cordonnateur_id.user_id", "=", self.env.user.id),
-                ("active", "=", True),
-                ("state", "=", "ouverte"),
-            ],
-            order="id",
-        )
+        user = self.env.user
+        domain = [("active", "=", True), ("state", "=", "ouverte")]
+        if user.has_group("kiiraaye_governance.group_kiiraaye_manager"):
+            return self.env["kiiraaye.section"].sudo().search(domain, order="name, id")
+        if user.kiiraaye_role == "national":
+            return self.env["kiiraaye.section"].sudo().search(domain, order="name, id")
+        if user.kiiraaye_role == "regional":
+            domain.append(("region_id", "in", user.kiiraaye_coordinator_region_ids.ids))
+        elif user.kiiraaye_role == "departemental":
+            domain.append(("departement_id", "in", user.kiiraaye_coordinator_departement_ids.ids))
+        elif user.kiiraaye_role == "communal":
+            domain.append(("commune_id", "in", user.kiiraaye_coordinator_commune_ids.ids))
+        elif user.kiiraaye_role == "quartier":
+            domain.append(("quartier_id", "in", user.kiiraaye_coordinator_quartier_ids.ids))
+        else:
+            return self.env["kiiraaye.section"].browse()
+        return self.env["kiiraaye.section"].sudo().search(domain, order="name, id")
 
     @api.model
     def _get_default_coordinator_section(self):
         sections = self._get_connected_coordinator_sections()
-        if not sections:
-            return self.env["kiiraaye.section"]
-        priority = {
-            "regionale": 1,
-            "departementale": 2,
-            "communale": 3,
-            "nationale": 4,
-            "diaspora": 5,
-        }
-        return sorted(
-            sections,
-            key=lambda s: priority.get(s.type_section, 99),
-        )[0]
+        return sections[:1] if sections else self.env["kiiraaye.section"]
 
     @api.model
     def default_get(self, fields_list):
         vals = super().default_get(fields_list)
-        if self.env.user.has_group("kiiraaye_governance.group_kiiraaye_manager"):
+        user = self.env.user
+        if user.has_group("kiiraaye_governance.group_kiiraaye_manager") or not user.kiiraaye_role:
             return vals
-        section = self._get_default_coordinator_section()
-        if not section:
-            return vals
-        vals.update(
-            {
-                "country_id": section.country_id.id,
-                "section_ids": [(6, 0, [section.id])],
-                "region_id": section.region_id.id,
-                "departement_id": section.departement_id.id,
-                "commune_id": section.commune_id.id,
-                "quartier_id": section.quartier_id.id,
-            }
-        )
+        vals.update({
+            "country_id": user.kiiraaye_country_id.id,
+            "region_id": user.kiiraaye_region_id.id,
+            "departement_id": user.kiiraaye_departement_id.id,
+            "commune_id": user.kiiraaye_commune_id.id,
+            "quartier_id": user.kiiraaye_quartier_id.id,
+        })
+        sections = self._get_connected_coordinator_sections()
+        # Si le périmètre ne contient qu'une section, elle est proposée automatiquement.
+        if len(sections) == 1:
+            vals["section_ids"] = [(6, 0, sections.ids)]
         return vals
-
-    @api.onchange("section_ids")
-    def _onchange_governance_section_ids(self):
-        section = self.section_ids[:1]
-        if not section:
-            self.region_id = False
-            self.departement_id = False
-            self.commune_id = False
-            self.quartier_id = False
-            return
-
-        self.country_id = section.country_id
-        self.region_id = section.region_id
-        self.departement_id = section.departement_id
-        self.commune_id = section.commune_id
-        self.quartier_id = section.quartier_id
 
     @api.onchange("country_id")
     def _onchange_governance_country_id(self):
@@ -230,14 +210,11 @@ class KiiraayePartisanGovernance(models.Model):
         if self.env.user.has_group("kiiraaye_governance.group_kiiraaye_manager"):
             return
 
-        sections = self._get_connected_coordinator_sections()
-        if not sections:
-            raise UserError(
-                _(
-                    "Seul le coordonnateur connecté d'une section ouverte peut créer un membre."
-                )
-            )
+        user = self.env.user
+        if not user.kiiraaye_role:
+            raise UserError(_("Votre utilisateur n'a pas de fonction Kiiraaye configurée."))
 
+        sections = self._get_connected_coordinator_sections()
         allowed_ids = set(sections.ids)
         selected_ids = set()
         for command in vals.get("section_ids") or []:
@@ -247,64 +224,24 @@ class KiiraayePartisanGovernance(models.Model):
                 elif command[0] == 4:
                     selected_ids.add(command[1])
 
-        selected_ids &= allowed_ids
-        section = (
-            sections.filtered(lambda s: s.id in selected_ids)[:1]
-            if selected_ids
-            else self._get_default_coordinator_section()
-        )
-        vals["section_ids"] = [(6, 0, [section.id])]
-        vals.update(
-            {
+        if selected_ids and not selected_ids.issubset(allowed_ids):
+            raise UserError(_("Vous ne pouvez rattacher un membre qu'à une section de votre périmètre."))
+
+        if len(selected_ids) == 1:
+            section = self.env["kiiraaye.section"].browse(next(iter(selected_ids)))
+            vals.update({
                 "country_id": section.country_id.id,
                 "region_id": section.region_id.id,
                 "departement_id": section.departement_id.id,
                 "commune_id": section.commune_id.id,
                 "quartier_id": section.quartier_id.id,
-            }
-        )
-
-    def _check_coordinator_scope_on_write(self, vals):
-        if self.env.user.has_group("kiiraaye_governance.group_kiiraaye_manager"):
-            return
-
-        sections = self._get_connected_coordinator_sections()
-        if not sections:
-            raise UserError(_("Vous n'êtes pas coordonnateur d'une section ouverte."))
-
-        allowed_ids = set(sections.ids)
-        if "section_ids" in vals:
-            selected_ids = set()
-            for command in vals.get("section_ids") or []:
-                if isinstance(command, (list, tuple)) and command:
-                    if command[0] == 6:
-                        selected_ids.update(command[2] or [])
-                    elif command[0] == 4:
-                        selected_ids.add(command[1])
-            if selected_ids and not selected_ids.issubset(allowed_ids):
-                raise UserError(
-                    _("Vous ne pouvez rattacher un membre qu'à vos sections coordonnées.")
-                )
-
-        for record in self:
-            region_id = vals.get("region_id", record.region_id.id)
-            departement_id = vals.get("departement_id", record.departement_id.id)
-            commune_id = vals.get("commune_id", record.commune_id.id)
-            quartier_id = vals.get("quartier_id", record.quartier_id.id)
-
-            allowed = (
-                region_id in self.env.user.kiiraaye_coordinator_region_ids.ids
-                or departement_id in self.env.user.kiiraaye_coordinator_departement_ids.ids
-                or commune_id in self.env.user.kiiraaye_coordinator_commune_ids.ids
-                or quartier_id in self.env.user.kiiraaye_coordinator_quartier_ids.ids
-            )
-
-            if not allowed:
-                raise UserError(
-                    _(
-                        "Vous ne pouvez modifier ce membre qu'à l'intérieur de votre zone de coordination."
-                    )
-                )
+            })
+        else:
+            vals.setdefault("country_id", user.kiiraaye_country_id.id)
+            vals.setdefault("region_id", user.kiiraaye_region_id.id)
+            vals.setdefault("departement_id", user.kiiraaye_departement_id.id)
+            vals.setdefault("commune_id", user.kiiraaye_commune_id.id)
+            vals.setdefault("quartier_id", user.kiiraaye_quartier_id.id)
 
     @api.model_create_multi
     def create(self, vals_list):
