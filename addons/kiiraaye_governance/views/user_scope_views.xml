@@ -5,7 +5,7 @@
         <field name="model">res.users</field>
         <field name="inherit_id" ref="base.view_users_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='group_ids']" position="before">
+            <xpath expr="(//field[@name='group_ids'])[1]" position="before">
                 <separator string="Périmètre Kiiraaye" groups="kiiraaye_governance.group_kiiraaye_manager"/>
                 <group string="Fonction et périmètre Kiiraaye" groups="kiiraaye_governance.group_kiiraaye_manager">
                     <field name="kiiraaye_role"/>
