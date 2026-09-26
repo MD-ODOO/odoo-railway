@@ -291,27 +291,13 @@ class KiiraayePartisanGovernance(models.Model):
             departement_id = vals.get("departement_id", record.departement_id.id)
             commune_id = vals.get("commune_id", record.commune_id.id)
             quartier_id = vals.get("quartier_id", record.quartier_id.id)
-            allowed = False
 
-            for section in sections:
-                if (
-                    section.type_section == "regionale"
-                    and section.region_id.id == region_id
-                ):
-                    allowed = True
-                elif (
-                    section.type_section == "departementale"
-                    and section.departement_id.id == departement_id
-                ):
-                    allowed = True
-                elif (
-                    section.type_section == "communale"
-                    and section.quartier_id.id == quartier_id
-                ):
-                    allowed = True
-
-                if allowed:
-                    break
+            allowed = (
+                region_id in self.env.user.kiiraaye_coordinator_region_ids.ids
+                or departement_id in self.env.user.kiiraaye_coordinator_departement_ids.ids
+                or commune_id in self.env.user.kiiraaye_coordinator_commune_ids.ids
+                or quartier_id in self.env.user.kiiraaye_coordinator_quartier_ids.ids
+            )
 
             if not allowed:
                 raise UserError(
