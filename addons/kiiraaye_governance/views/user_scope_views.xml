@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_res_users_form_kiiraaye_scope" model="ir.ui.view">
+        <field name="name">res.users.form.kiiraaye.scope</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='group_ids']" position="before">
+                <separator string="Périmètre Kiiraaye" groups="kiiraaye_governance.group_kiiraaye_manager"/>
+                <group string="Fonction et périmètre Kiiraaye" groups="kiiraaye_governance.group_kiiraaye_manager">
+                    <field name="kiiraaye_role"/>
+                    <field name="kiiraaye_country_id" readonly="1"/>
+                    <field name="kiiraaye_region_id" invisible="kiiraaye_role not in ['regional', 'departemental', 'communal', 'quartier']"/>
+                    <field name="kiiraaye_departement_id" invisible="kiiraaye_role not in ['departemental', 'communal', 'quartier']"/>
+                    <field name="kiiraaye_commune_id" invisible="kiiraaye_role not in ['communal', 'quartier']"/>
+                    <field name="kiiraaye_quartier_id" invisible="kiiraaye_role != 'quartier'"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
