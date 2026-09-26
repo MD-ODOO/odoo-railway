@@ -1,4 +1,4 @@
-from odoo import api, fields, models, _, Command
+from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
 
@@ -10,7 +10,7 @@ class KiiraayeSectionCoordinator(models.Model):
         string="Coordonnateur",
         ondelete="restrict",
         index=True,
-        help="Membre unique du bureau habilité à créer des membres dans la zone de la section.",
+        help="Membre unique désigné comme coordonnateur de la section / coordination.",
     )
 
     @api.constrains("cordonnateur_id", "membre_ids", "state", "active")
@@ -19,42 +19,28 @@ class KiiraayeSectionCoordinator(models.Model):
             if not record.cordonnateur_id:
                 continue
             if record.cordonnateur_id not in record.membre_ids:
-                raise ValidationError(
-                    _("Le coordonnateur doit obligatoirement être membre de la section / coordination.")
-                )
+                raise ValidationError(_("Le coordonnateur doit obligatoirement être membre de la section / coordination."))
             if not record.cordonnateur_id.user_id:
-                raise ValidationError(
-                    _("Le coordonnateur doit être lié à un utilisateur Odoo avant d'être habilité.")
-                )
+                raise ValidationError(_("Le coordonnateur doit être lié à un utilisateur Odoo avant d'être habilité."))
+            if not record.cordonnateur_id.user_id.kiiraaye_role:
+                raise ValidationError(_("Le membre désigné comme coordonnateur doit avoir une fonction Kiiraaye configurée sur son utilisateur Odoo."))
 
     @api.model
     def _sync_coordinator_access(self):
-        group = self.env.ref(
-            "kiiraaye_governance.group_kiiraaye_coordinator",
-            raise_if_not_found=False,
+        # Le périmètre de sécurité est maintenant piloté par la fonction
+        # Kiiraaye du compte utilisateur. Ici, on synchronise uniquement
+        # la ligne COORD du bureau avec le coordonnateur de la section.
+        coord_position = self.env["kiiraaye.position"].sudo().search(
+            [("code", "=", "COORD")], limit=1
         )
-        if not group:
+        if not coord_position:
             return
-
         sections = self.env["kiiraaye.section"].sudo().search([
             ("cordonnateur_id", "!=", False),
             ("cordonnateur_id.user_id", "!=", False),
             ("active", "=", True),
             ("state", "=", "ouverte"),
         ])
-        active_coordinators = sections.mapped("cordonnateur_id.user_id")
-        current_group_users = group.user_ids
-
-        for user in active_coordinators - current_group_users:
-            user.write({"group_ids": [Command.link(group.id)]})
-        for user in current_group_users - active_coordinators:
-            user.write({"group_ids": [Command.unlink(group.id)]})
-
-        coord_position = self.env["kiiraaye.position"].sudo().search(
-            [("code", "=", "COORD")], limit=1
-        )
-        if not coord_position:
-            return
         BureauLine = self.env["kiiraaye.bureau.ligne"].sudo()
         for section in sections:
             line = BureauLine.search(
@@ -69,11 +55,7 @@ class KiiraayeSectionCoordinator(models.Model):
                 "active": True,
             }
             if line:
-                line.write({
-                    "partisan_id": section.cordonnateur_id.id,
-                    "active": True,
-                    "date_debut": section.date_creation,
-                })
+                line.write(values)
             else:
                 BureauLine.create(values)
 
