@@ -1486,12 +1486,12 @@
 .kiiraaye-map-department-label{font-size:9px!important;font-weight:900!important}
 
 
-/* Carousel des cartes de couverture territoriale */
-.kiiraaye-coverage-carousel {
+/* Cartes statiques de couverture territoriale */
+.kiiraaye-coverage-territorial {
     overflow: hidden;
 }
 
-.kiiraaye-coverage-carousel__header {
+.kiiraaye-coverage-territorial__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1506,37 +1506,15 @@
     font-weight: 600;
 }
 
-.kiiraaye-coverage-carousel__counter {
+.kiiraaye-coverage-static-stack {
     display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 0 0 auto;
-    padding: 7px 11px;
-    border: 1px solid var(--kiiraaye-border);
-    border-radius: 999px;
-    background: #F7FAFB;
-    color: #607883;
-    font-size: 10px;
-}
-
-.kiiraaye-coverage-carousel__counter strong {
-    color: var(--kiiraaye-ink);
-    font-size: 11px;
-}
-
-.kiiraaye-coverage-carousel__viewport {
-    position: relative;
-    min-height: 510px;
+    flex-direction: column;
+    gap: 18px;
     margin-top: 4px;
 }
 
 .kiiraaye-coverage-card {
-    animation: kiiraaye-coverage-slide-in .35s ease both;
-}
-
-@keyframes kiiraaye-coverage-slide-in {
-    from { opacity: 0; transform: translateX(14px); }
-    to { opacity: 1; transform: translateX(0); }
+    animation: none;
 }
 
 .kiiraaye-coverage-card__top {
@@ -1817,65 +1795,6 @@
 
 .kiiraaye-coverage-list--communes {
     max-height: 390px;
-}
-
-.kiiraaye-coverage-carousel__navigation {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    margin-top: 14px;
-}
-
-.kiiraaye-coverage-carousel__nav {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 38px;
-    height: 38px;
-    border: 1px solid #C8D6DC;
-    border-radius: 50%;
-    background: #FFFFFF;
-    color: var(--kiiraaye-ink);
-    cursor: pointer;
-    box-shadow: 0 3px 10px rgba(23,56,74,.10);
-    transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
-}
-
-.kiiraaye-coverage-carousel__nav:hover {
-    transform: translateY(-1px);
-    background: #F1F7F9;
-    box-shadow: 0 5px 14px rgba(23,56,74,.14);
-}
-
-.kiiraaye-coverage-carousel__dots {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-}
-
-.kiiraaye-coverage-carousel__dot {
-    width: 9px;
-    height: 9px;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: #C8D5DB;
-    cursor: pointer;
-    transition: transform .15s ease, background .15s ease;
-}
-
-.kiiraaye-coverage-carousel__dot.is-active {
-    transform: scale(1.35);
-    background: #2D86A6;
-}
-
-.kiiraaye-coverage-carousel__hint {
-    margin-top: 8px;
-    color: #8999A1;
-    font-size: 8px;
-    text-align: center;
 }
 
 @media (max-width: 1100px) {
