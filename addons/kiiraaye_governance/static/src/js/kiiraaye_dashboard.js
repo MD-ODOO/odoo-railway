@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, onMounted, onWillStart, useRef, useState } from "@odoo/owl";
+import { Component, onMounted, onWillStart, onWillUnmount, useRef, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 
@@ -23,6 +23,7 @@ export class KiiraayeDashboard extends Component {
             },
             error: false,
             mapZoom: 1,
+            coverageSlideIndex: 0,
         });
 
         onWillStart(async () => {
@@ -32,7 +33,128 @@ export class KiiraayeDashboard extends Component {
         this.mapDragging = false;
         onMounted(() => {
             this.renderAdministrativeMap();
+            this.startCoverageCarousel();
         });
+        onWillUnmount(() => {
+            this.stopCoverageCarousel();
+        });
+    }
+
+    startCoverageCarousel() {
+        this.stopCoverageCarousel();
+        this.coverageCarouselTimer = setInterval(() => {
+            if (!this.state.loading) {
+                this.nextCoverageCard();
+            }
+        }, 5000);
+    }
+
+    stopCoverageCarousel() {
+        if (this.coverageCarouselTimer) {
+            clearInterval(this.coverageCarouselTimer);
+            this.coverageCarouselTimer = null;
+        }
+    }
+
+    nextCoverageCard() {
+        this.state.coverageSlideIndex =
+            (this.state.coverageSlideIndex + 1) % 3;
+    }
+
+    previousCoverageCard() {
+        this.state.coverageSlideIndex =
+            (this.state.coverageSlideIndex + 2) % 3;
+    }
+
+    selectCoverageCard(index) {
+        const value = Math.max(0, Math.min(2, Number(index) || 0));
+        this.state.coverageSlideIndex = value;
+        this.startCoverageCarousel();
+    }
+
+    get coverageSlideNumber() {
+        return this.state.coverageSlideIndex + 1;
+    }
+
+    get coverageCurrentLabel() {
+        return ["Régional", "Départemental", "Communal"][this.state.coverageSlideIndex] || "Régional";
+    }
+
+    get coverageRegions() {
+        return this.state.data?.section_geography_overview || [];
+    }
+
+    get coverageDepartments() {
+        const rows = [];
+        for (const region of this.coverageRegions) {
+            for (const department of region.departments_rows || []) {
+                rows.push({
+                    ...department,
+                    region_id: region.id,
+                    region_name: region.name,
+                });
+            }
+        }
+        return rows;
+    }
+
+    get coverageCommunes() {
+        const rows = [];
+        for (const region of this.coverageRegions) {
+            for (const department of region.departments_rows || []) {
+                for (const commune of department.commune_rows || []) {
+                    rows.push({
+                        ...commune,
+                        region_id: region.id,
+                        region_name: region.name,
+                        department_id: department.id,
+                        department_name: department.name,
+                    });
+                }
+            }
+        }
+        return rows;
+    }
+
+    get coverageRegionStats() {
+        const scope = this.state.data?.geography_scope?.regions || {};
+        return {
+            occupied: Number(scope.occupied || 0),
+            total: Number(scope.total || this.coverageRegions.length || 0),
+        };
+    }
+
+    get coverageDepartmentStats() {
+        const scope = this.state.data?.geography_scope?.departments || {};
+        return {
+            occupied: Number(scope.occupied || 0),
+            total: Number(scope.total || this.coverageDepartments.length || 0),
+        };
+    }
+
+    get coverageCommuneStats() {
+        const scope = this.state.data?.geography_scope?.communes || {};
+        return {
+            occupied: Number(scope.occupied || 0),
+            total: Number(scope.total || this.coverageCommunes.length || 0),
+        };
+    }
+
+    coverageRowClass(occupied, total) {
+        return "kiiraaye-coverage-row--" + this.coverageClass(occupied, total);
+    }
+
+    coverageBarWidth(occupied, total) {
+        const ratio = this.coveragePercent(occupied, total);
+        return Math.max(0, Math.min(100, Math.round(ratio)));
+    }
+
+    coverageItemStatus(sections) {
+        return Number(sections || 0) > 0 ? "covered" : "empty";
+    }
+
+    coverageItemStatusLabel(sections) {
+        return Number(sections || 0) > 0 ? "Couvert" : "À couvrir";
     }
 
     async loadDashboard() {
