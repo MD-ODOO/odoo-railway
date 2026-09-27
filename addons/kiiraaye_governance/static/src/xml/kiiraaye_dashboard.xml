@@ -184,176 +184,75 @@
                             <div class="panel__title kiiraaye-coverage-territorial__header">
                                 <div>
                                     <span>Carte de couverture territoriale</span>
-                                    <small>Régional, départemental et communal</small>
+                                    <small>Carte du Sénégal — sections, départements et couverture régionale</small>
                                 </div>
-                            </div>
-
-                            <div class="kiiraaye-coverage-static-stack">
-                                <div class="kiiraaye-coverage-card kiiraaye-coverage-card--regional">
-                                    <div class="kiiraaye-coverage-card__top">
-                                        <div>
-                                            <span class="kiiraaye-coverage-card__eyebrow">Carte régionale</span>
-                                            <h3>Couverture des régions</h3>
-                                            <p>Carte du Sénégal et présence des sections par région.</p>
-                                        </div>
-                                        <div class="kiiraaye-coverage-card__score">
-                                            <strong><t t-esc="formatNumber(coverageRegionStats.occupied)"/> / <t t-esc="formatNumber(coverageRegionStats.total)"/></strong>
-                                            <span>régions couvertes</span>
-                                        </div>
+                                <div class="kiiraaye-map-summary">
+                                    <div>
+                                        <strong><t t-esc="formatNumber(coverageRegionStats.occupied)"/> / <t t-esc="formatNumber(coverageRegionStats.total)"/></strong>
+                                        <span>régions couvertes</span>
                                     </div>
-                                    <div class="kiiraaye-coverage-progress">
-                                        <div class="kiiraaye-coverage-progress__track">
-                                            <span t-att-style="'width:' + coverageBarWidth(coverageRegionStats.occupied, coverageRegionStats.total) + '%'"/>
-                                        </div>
-                                        <span><t t-esc="formatPercent(coveragePercent(coverageRegionStats.occupied, coverageRegionStats.total))"/></span>
+                                    <div>
+                                        <strong><t t-esc="formatNumber(coverageDepartmentStats.occupied)"/> / <t t-esc="formatNumber(coverageDepartmentStats.total)"/></strong>
+                                        <span>départements couverts</span>
                                     </div>
-
-                                    <div class="kiiraaye-coverage-regional-layout">
-                                        <div class="kiiraaye-map kiiraaye-coverage-regional-map">
-                                            <div t-ref="administrativeMap" class="kiiraaye-administrative-map-host">
-                                                <div class="kiiraaye-map-loading"><i class="fa fa-spinner fa-spin"/> Chargement de la carte du Sénégal...</div>
-                                            </div>
-                                            <div class="kiiraaye-map-zoom-controls">
-                                                <button type="button" title="Zoom avant" aria-label="Zoom avant" t-on-click="mapZoomIn">+</button>
-                                                <button type="button" title="Zoom arrière" aria-label="Zoom arrière" t-on-click="mapZoomOut">−</button>
-                                                <button type="button" title="Réinitialiser le zoom" aria-label="Réinitialiser le zoom" t-on-click="mapZoomReset">⟳</button>
-                                                <div class="kiiraaye-map-zoom-level"><t t-esc="zoomPercent"/>%</div>
-                                            </div>
-                                        </div>
-
-                                        <div class="kiiraaye-coverage-regional-list">
-                                            <div class="kiiraaye-coverage-regional-list__header">
-                                                <strong>Régions</strong>
-                                                <span>Section · Membres</span>
-                                            </div>
-                                            <div class="kiiraaye-coverage-grid kiiraaye-coverage-grid--regions">
-                                                <t t-foreach="coverageRegions" t-as="row" t-key="row.id">
-                                                    <button
-                                                        type="button"
-                                                        t-att-class="'kiiraaye-coverage-tile ' + coverageRowClass(row.sections ? 1 : 0, 1)"
-                                                        t-on-click="() => this.openRegionDetail(row.id)"
-                                                    >
-                                                        <span class="kiiraaye-coverage-tile__status">
-                                                            <i class="fa fa-circle"/>
-                                                            <t t-esc="coverageItemStatusLabel(row.sections)"/>
-                                                        </span>
-                                                        <strong><t t-esc="row.name"/></strong>
-                                                        <span class="kiiraaye-coverage-tile__meta">
-                                                            <b><t t-esc="formatNumber(row.sections)"/></b> section(s)
-                                                            <b><t t-esc="formatNumber(row.members)"/></b> membre(s)
-                                                        </span>
-                                                        <small>
-                                                            <t t-if="row.coordinator"><t t-esc="row.coordinator"/></t>
-                                                            <t t-else="">Coordonnateur non renseigné</t>
-                                                        </small>
-                                                    </button>
-                                                </t>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="kiiraaye-coverage-card kiiraaye-coverage-card--departmental">
-                                    <div class="kiiraaye-coverage-card__top">
-                                        <div>
-                                            <span class="kiiraaye-coverage-card__eyebrow">Carte départementale</span>
-                                            <h3>Couverture des départements</h3>
-                                            <p>Sections, communes couvertes et coordonnateurs départementaux.</p>
-                                        </div>
-                                        <div class="kiiraaye-coverage-card__score">
-                                            <strong><t t-esc="formatNumber(coverageDepartmentStats.occupied)"/> / <t t-esc="formatNumber(coverageDepartmentStats.total)"/></strong>
-                                            <span>départements couverts</span>
-                                        </div>
-                                    </div>
-                                    <div class="kiiraaye-coverage-progress">
-                                        <div class="kiiraaye-coverage-progress__track">
-                                            <span t-att-style="'width:' + coverageBarWidth(coverageDepartmentStats.occupied, coverageDepartmentStats.total) + '%'"/>
-                                        </div>
-                                        <span><t t-esc="formatPercent(coveragePercent(coverageDepartmentStats.occupied, coverageDepartmentStats.total))"/></span>
-                                    </div>
-                                    <div class="kiiraaye-coverage-list">
-                                        <t t-foreach="coverageDepartments" t-as="row" t-key="row.id">
-                                            <button
-                                                type="button"
-                                                t-att-class="'kiiraaye-coverage-list__row ' + coverageRowClass(row.sections ? 1 : 0, 1)"
-                                                t-on-click="() => this.openDepartmentDetail(row.region_id, row.id)"
-                                            >
-                                                <span class="kiiraaye-coverage-list__name">
-                                                    <strong><t t-esc="row.name"/></strong>
-                                                    <small><t t-esc="row.region_name"/></small>
-                                                </span>
-                                                <span class="kiiraaye-coverage-list__metric">
-                                                    <strong><t t-esc="formatNumber(row.sections)"/></strong>
-                                                    <small>sections</small>
-                                                </span>
-                                                <span class="kiiraaye-coverage-list__metric">
-                                                    <strong><t t-esc="formatNumber(row.communes_occupied)"/> / <t t-esc="formatNumber(row.communes)"/></strong>
-                                                    <small>communes couvertes</small>
-                                                </span>
-                                                <span class="kiiraaye-coverage-list__metric">
-                                                    <strong><t t-esc="formatNumber(row.members)"/></strong>
-                                                    <small>membres</small>
-                                                </span>
-                                                <span class="kiiraaye-coverage-list__coordinator">
-                                                    <t t-if="row.coordinator"><t t-esc="row.coordinator"/></t>
-                                                    <t t-else="">Coordonnateur non renseigné</t>
-                                                </span>
-                                            </button>
-                                        </t>
-                                    </div>
-                                </div>
-
-                                <div class="kiiraaye-coverage-card kiiraaye-coverage-card--communal">
-                                    <div class="kiiraaye-coverage-card__top">
-                                        <div>
-                                            <span class="kiiraaye-coverage-card__eyebrow">Carte communale</span>
-                                            <h3>Couverture des communes</h3>
-                                            <p>Sections et effectifs par commune, avec rattachement départemental et régional.</p>
-                                        </div>
-                                        <div class="kiiraaye-coverage-card__score">
-                                            <strong><t t-esc="formatNumber(coverageCommuneStats.occupied)"/> / <t t-esc="formatNumber(coverageCommuneStats.total)"/></strong>
-                                            <span>communes couvertes</span>
-                                        </div>
-                                    </div>
-                                    <div class="kiiraaye-coverage-progress">
-                                        <div class="kiiraaye-coverage-progress__track">
-                                            <span t-att-style="'width:' + coverageBarWidth(coverageCommuneStats.occupied, coverageCommuneStats.total) + '%'"/>
-                                        </div>
-                                        <span><t t-esc="formatPercent(coveragePercent(coverageCommuneStats.occupied, coverageCommuneStats.total))"/></span>
-                                    </div>
-                                    <div class="kiiraaye-coverage-list kiiraaye-coverage-list--communes">
-                                        <t t-foreach="coverageCommunes" t-as="row" t-key="row.id">
-                                            <button
-                                                type="button"
-                                                t-att-class="'kiiraaye-coverage-list__row ' + coverageRowClass(row.sections ? 1 : 0, 1)"
-                                                t-on-click="() => this.openCommuneDetail(row.region_id, row.department_id, row.id)"
-                                            >
-                                                <span class="kiiraaye-coverage-list__name">
-                                                    <strong><t t-esc="row.name"/></strong>
-                                                    <small><t t-esc="row.department_name"/> · <t t-esc="row.region_name"/></small>
-                                                </span>
-                                                <span class="kiiraaye-coverage-list__metric">
-                                                    <strong><t t-esc="formatNumber(row.sections)"/></strong>
-                                                    <small>sections</small>
-                                                </span>
-                                                <span class="kiiraaye-coverage-list__metric">
-                                                    <strong><t t-esc="formatNumber(row.sections_open)"/></strong>
-                                                    <small>ouvertes</small>
-                                                </span>
-                                                <span class="kiiraaye-coverage-list__metric">
-                                                    <strong><t t-esc="formatNumber(row.members)"/></strong>
-                                                    <small>membres</small>
-                                                </span>
-                                                <span class="kiiraaye-coverage-list__coordinator">
-                                                    <t t-if="row.coordinator"><t t-esc="row.coordinator"/></t>
-                                                    <t t-else="">Coordonnateur non renseigné</t>
-                                                </span>
-                                            </button>
-                                        </t>
+                                    <div>
+                                        <strong><t t-esc="formatNumber(coverageCommuneStats.occupied)"/> / <t t-esc="formatNumber(coverageCommuneStats.total)"/></strong>
+                                        <span>communes couvertes</span>
                                     </div>
                                 </div>
                             </div>
 
+                            <div class="kiiraaye-senegal-map-layout">
+                                <div class="kiiraaye-map kiiraaye-senegal-map">
+                                    <div t-ref="administrativeMap" class="kiiraaye-administrative-map-host">
+                                        <div class="kiiraaye-map-loading">
+                                            <i class="fa fa-spinner fa-spin"/> Chargement de la carte du Sénégal...
+                                        </div>
+                                    </div>
+                                    <div class="kiiraaye-map-zoom-controls">
+                                        <button type="button" title="Zoom avant" aria-label="Zoom avant" t-on-click="mapZoomIn">+</button>
+                                        <button type="button" title="Zoom arrière" aria-label="Zoom arrière" t-on-click="mapZoomOut">−</button>
+                                        <button type="button" title="Réinitialiser le zoom" aria-label="Réinitialiser le zoom">⟳</button>
+                                        <div class="kiiraaye-map-zoom-level"><t t-esc="zoomPercent"/>%</div>
+                                    </div>
+                                    <div class="kiiraaye-senegal-map-legend">
+                                        <span><i class="kiiraaye-senegal-map-legend__dot kiiraaye-senegal-map-legend__dot--covered"/> Section présente</span>
+                                        <span><i class="kiiraaye-senegal-map-legend__dot kiiraaye-senegal-map-legend__dot--empty"/> Aucune section</span>
+                                    </div>
+                                </div>
+
+                                <div class="kiiraaye-senegal-map-sidebar">
+                                    <div class="kiiraaye-senegal-map-sidebar__header">
+                                        <strong>Couverture par région</strong>
+                                        <span>14 régions</span>
+                                    </div>
+                                    <div class="kiiraaye-senegal-region-list">
+                                        <t t-foreach="coverageRegions" t-as="row" t-key="row.id">
+                                            <button
+                                                type="button"
+                                                class="kiiraaye-senegal-region-row"
+                                                t-on-click="() => this.openRegionDetail(row.id)"
+                                            >
+                                                <span class="kiiraaye-senegal-region-row__name">
+                                                    <i t-att-class="'fa fa-circle ' + (Number(row.sections || 0) > 0 ? 'is-covered' : 'is-empty')"/>
+                                                    <strong><t t-esc="row.name"/></strong>
+                                                </span>
+                                                <span class="kiiraaye-senegal-region-row__stats">
+                                                    <b><t t-esc="formatNumber(row.sections)"/></b>
+                                                    <small>sections</small>
+                                                </span>
+                                                <span class="kiiraaye-senegal-region-row__stats">
+                                                    <b><t t-esc="formatNumber(row.members)"/></b>
+                                                    <small>membres</small>
+                                                </span>
+                                            </button>
+                                        </t>
+                                    </div>
+                                    <div class="kiiraaye-senegal-map-sidebar__note">
+                                        Cliquez sur un département de la carte pour consulter son détail territorial.
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="panel">
                             <div class="panel__title">
