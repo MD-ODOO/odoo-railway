@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, onMounted, onWillStart, onWillUnmount, useRef, useState } from "@odoo/owl";
+import { Component, onMounted, onPatched, onWillStart, onWillUnmount, useRef, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 
@@ -34,6 +34,17 @@ export class KiiraayeDashboard extends Component {
         onMounted(() => {
             this.renderAdministrativeMap();
             this.startCoverageCarousel();
+        });
+        onPatched(() => {
+            // La carte régionale est rendue conditionnellement par le carrousel.
+            // Lorsqu'on revient sur la première carte, le noeud SVG doit être
+            // reconstruit dans le nouveau DOM.
+            if (this.state.coverageSlideIndex === 0) {
+                const host = this.administrativeMapRef?.el;
+                if (host && !host.querySelector("svg, img.kiiraaye-administrative-map-svg")) {
+                    this.renderAdministrativeMap();
+                }
+            }
         });
         onWillUnmount(() => {
             this.stopCoverageCarousel();
