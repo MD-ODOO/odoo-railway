@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, onMounted, onPatched, onWillStart, onWillUnmount, useRef, useState } from "@odoo/owl";
+import { Component, onMounted, onWillStart, useRef, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 
@@ -23,7 +23,6 @@ export class KiiraayeDashboard extends Component {
             },
             error: false,
             mapZoom: 1,
-            coverageSlideIndex: 0,
         });
 
         onWillStart(async () => {
@@ -33,62 +32,7 @@ export class KiiraayeDashboard extends Component {
         this.mapDragging = false;
         onMounted(() => {
             this.renderAdministrativeMap();
-            this.startCoverageCarousel();
         });
-        onPatched(() => {
-            // La carte régionale est rendue conditionnellement par le carrousel.
-            // Lorsqu'on revient sur la première carte, le noeud SVG doit être
-            // reconstruit dans le nouveau DOM.
-            if (this.state.coverageSlideIndex === 0) {
-                const host = this.administrativeMapRef?.el;
-                if (host && !host.querySelector("svg, img.kiiraaye-administrative-map-svg")) {
-                    this.renderAdministrativeMap();
-                }
-            }
-        });
-        onWillUnmount(() => {
-            this.stopCoverageCarousel();
-        });
-    }
-
-    startCoverageCarousel() {
-        this.stopCoverageCarousel();
-        this.coverageCarouselTimer = setInterval(() => {
-            if (!this.state.loading) {
-                this.nextCoverageCard();
-            }
-        }, 5000);
-    }
-
-    stopCoverageCarousel() {
-        if (this.coverageCarouselTimer) {
-            clearInterval(this.coverageCarouselTimer);
-            this.coverageCarouselTimer = null;
-        }
-    }
-
-    nextCoverageCard() {
-        this.state.coverageSlideIndex =
-            (this.state.coverageSlideIndex + 1) % 3;
-    }
-
-    previousCoverageCard() {
-        this.state.coverageSlideIndex =
-            (this.state.coverageSlideIndex + 2) % 3;
-    }
-
-    selectCoverageCard(index) {
-        const value = Math.max(0, Math.min(2, Number(index) || 0));
-        this.state.coverageSlideIndex = value;
-        this.startCoverageCarousel();
-    }
-
-    get coverageSlideNumber() {
-        return this.state.coverageSlideIndex + 1;
-    }
-
-    get coverageCurrentLabel() {
-        return ["Régional", "Départemental", "Communal"][this.state.coverageSlideIndex] || "Régional";
     }
 
     get coverageRegions() {
