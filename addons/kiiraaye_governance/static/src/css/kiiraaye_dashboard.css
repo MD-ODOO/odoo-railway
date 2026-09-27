@@ -1922,3 +1922,39 @@
         min-height: 430px;
     }
 }
+
+
+/* Carte du Sénégal — couverture territoriale */
+.kiiraaye-coverage-territorial{overflow:hidden}
+.kiiraaye-coverage-territorial__header{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.kiiraaye-coverage-territorial__header small{display:block;margin-top:4px;color:#7A8F98;font-size:10px;font-weight:600}
+.kiiraaye-map-summary{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap}
+.kiiraaye-map-summary>div{min-width:118px;padding:8px 11px;border:1px solid var(--kiiraaye-border);border-radius:10px;background:#F8FBFC;text-align:right}
+.kiiraaye-map-summary strong{display:block;color:var(--kiiraaye-ink);font-size:15px;line-height:1.1}
+.kiiraaye-map-summary span{display:block;margin-top:3px;color:#7A8F98;font-size:8px;font-weight:700}
+.kiiraaye-senegal-map-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(270px,.75fr);gap:16px;margin-top:14px;align-items:stretch}
+.kiiraaye-senegal-map{width:100%;min-height:640px;aspect-ratio:auto;border:1px solid var(--kiiraaye-border);border-radius:14px;overflow:hidden;background:#F5FAFB}
+.kiiraaye-senegal-map .kiiraaye-administrative-map-host{border-radius:14px;background:linear-gradient(180deg,#F8FCFD,#EDF4F6)}
+.kiiraaye-senegal-map-legend{position:absolute;left:14px;bottom:14px;z-index:15;display:flex;gap:10px;flex-wrap:wrap;padding:8px 10px;border:1px solid #D5E2E7;border-radius:9px;background:rgba(255,255,255,.95);box-shadow:0 2px 9px rgba(23,56,74,.10);color:#607883;font-size:8px;font-weight:800}
+.kiiraaye-senegal-map-legend span{display:flex;align-items:center;gap:5px}
+.kiiraaye-senegal-map-legend__dot{width:10px;height:10px;display:inline-block;border-radius:50%}
+.kiiraaye-senegal-map-legend__dot--covered{background:#2D86A6}
+.kiiraaye-senegal-map-legend__dot--empty{background:#E53935;animation:kiiraaye-department-alert 1.05s ease-in-out infinite}
+.kiiraaye-senegal-map-sidebar{display:flex;flex-direction:column;min-width:0;border:1px solid var(--kiiraaye-border);border-radius:14px;background:#F9FCFD;overflow:hidden}
+.kiiraaye-senegal-map-sidebar__header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;border-bottom:1px solid var(--kiiraaye-border);background:#fff;color:var(--kiiraaye-ink);font-size:11px}
+.kiiraaye-senegal-map-sidebar__header span{color:#82939B;font-size:8px;font-weight:800}
+.kiiraaye-senegal-region-list{overflow:auto;max-height:590px}
+.kiiraaye-senegal-region-row{display:grid;grid-template-columns:minmax(0,1fr) 58px 58px;align-items:center;gap:7px;width:100%;min-height:48px;padding:7px 10px;border:0;border-bottom:1px solid #EEF3F5;background:#fff;color:inherit;text-align:left;cursor:pointer;transition:background .15s ease}
+.kiiraaye-senegal-region-row:last-child{border-bottom:0}
+.kiiraaye-senegal-region-row:hover{background:#F3F8FA}
+.kiiraaye-senegal-region-row__name{display:flex;align-items:center;gap:7px;min-width:0}
+.kiiraaye-senegal-region-row__name i{font-size:8px;color:#E53935}
+.kiiraaye-senegal-region-row__name i.is-covered{color:#2D86A6}
+.kiiraaye-senegal-region-row__name i.is-empty{color:#E53935}
+.kiiraaye-senegal-region-row__name strong{overflow:hidden;color:var(--kiiraaye-ink);font-size:10px;text-overflow:ellipsis;white-space:nowrap}
+.kiiraaye-senegal-region-row__stats{display:flex;flex-direction:column;text-align:right}
+.kiiraaye-senegal-region-row__stats b{color:var(--kiiraaye-ink);font-size:10px}
+.kiiraaye-senegal-region-row__stats small{margin-top:1px;color:#8899A1;font-size:7px}
+.kiiraaye-senegal-map-sidebar__note{margin-top:auto;padding:10px 12px;border-top:1px solid var(--kiiraaye-border);background:#F5F9FA;color:#7A8F98;font-size:8px;line-height:1.45}
+@media(max-width:1100px){.kiiraaye-coverage-territorial__header{align-items:flex-start;flex-direction:column}.kiiraaye-map-summary{width:100%}.kiiraaye-map-summary>div{text-align:left;flex:1 1 110px}.kiiraaye-senegal-map-layout{grid-template-columns:1fr}.kiiraaye-senegal-map{min-height:560px}.kiiraaye-region-list{max-height:300px}}
+@media(max-width:620px){.kiiraaye-senegal-map{min-height:430px}.kiiraaye-map-summary>div{min-width:90px}.kiiraaye-senegal-map-legend{left:8px;right:8px;bottom:8px}.kiiraaye-senegal-region-row{grid-template-columns:minmax(0,1fr) 52px 52px}}
