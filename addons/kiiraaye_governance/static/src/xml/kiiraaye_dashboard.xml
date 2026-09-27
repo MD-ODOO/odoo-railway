@@ -180,20 +180,16 @@
                             </div>
                         </div>
 
-                        <div class="panel kiiraaye-coverage-carousel">
-                            <div class="panel__title kiiraaye-coverage-carousel__header">
+                        <div class="panel kiiraaye-coverage-territorial">
+                            <div class="panel__title kiiraaye-coverage-territorial__header">
                                 <div>
                                     <span>Carte de couverture territoriale</span>
                                     <small>Régional, départemental et communal</small>
                                 </div>
-                                <div class="kiiraaye-coverage-carousel__counter">
-                                    <strong><t t-esc="coverageSlideNumber"/> / 3</strong>
-                                    <span><t t-esc="coverageCurrentLabel"/></span>
-                                </div>
                             </div>
 
-                            <div class="kiiraaye-coverage-carousel__viewport">
-                                <div t-if="state.coverageSlideIndex === 0" class="kiiraaye-coverage-card kiiraaye-coverage-card--regional">
+                            <div class="kiiraaye-coverage-static-stack">
+                                <div class="kiiraaye-coverage-card kiiraaye-coverage-card--regional">
                                     <div class="kiiraaye-coverage-card__top">
                                         <div>
                                             <span class="kiiraaye-coverage-card__eyebrow">Carte régionale</span>
@@ -257,7 +253,7 @@
                                     </div>
                                 </div>
 
-                                <div t-elif="state.coverageSlideIndex === 1" class="kiiraaye-coverage-card kiiraaye-coverage-card--departmental">
+                                <div class="kiiraaye-coverage-card kiiraaye-coverage-card--departmental">
                                     <div class="kiiraaye-coverage-card__top">
                                         <div>
                                             <span class="kiiraaye-coverage-card__eyebrow">Carte départementale</span>
@@ -307,7 +303,7 @@
                                     </div>
                                 </div>
 
-                                <div t-else="" class="kiiraaye-coverage-card kiiraaye-coverage-card--communal">
+                                <div class="kiiraaye-coverage-card kiiraaye-coverage-card--communal">
                                     <div class="kiiraaye-coverage-card__top">
                                         <div>
                                             <span class="kiiraaye-coverage-card__eyebrow">Carte communale</span>
@@ -358,35 +354,6 @@
                                 </div>
                             </div>
 
-                            <div class="kiiraaye-coverage-carousel__navigation">
-                                <button
-                                    type="button"
-                                    class="kiiraaye-coverage-carousel__nav"
-                                    title="Carte précédente"
-                                    aria-label="Carte précédente"
-                                    t-on-click="previousCoverageCard"
-                                >
-                                    <i class="fa fa-chevron-left"/>
-                                </button>
-                                <div class="kiiraaye-coverage-carousel__dots" role="tablist" aria-label="Cartes de couverture">
-                                    <button type="button" t-att-class="'kiiraaye-coverage-carousel__dot' + (state.coverageSlideIndex === 0 ? ' is-active' : '')" title="Carte régionale" aria-label="Carte régionale" t-on-click="() => this.selectCoverageCard(0)"/>
-                                    <button type="button" t-att-class="'kiiraaye-coverage-carousel__dot' + (state.coverageSlideIndex === 1 ? ' is-active' : '')" title="Carte départementale" aria-label="Carte départementale" t-on-click="() => this.selectCoverageCard(1)"/>
-                                    <button type="button" t-att-class="'kiiraaye-coverage-carousel__dot' + (state.coverageSlideIndex === 2 ? ' is-active' : '')" title="Carte communale" aria-label="Carte communale" t-on-click="() => this.selectCoverageCard(2)"/>
-                                </div>
-                                <button
-                                    type="button"
-                                    class="kiiraaye-coverage-carousel__nav"
-                                    title="Carte suivante"
-                                    aria-label="Carte suivante"
-                                    t-on-click="nextCoverageCard"
-                                >
-                                    <i class="fa fa-chevron-right"/>
-                                </button>
-                            </div>
-
-                            <div class="kiiraaye-coverage-carousel__hint">
-                                Défilement automatique toutes les 5 secondes · cliquez sur une carte pour consulter son détail.
-                            </div>
                         </div>
                         <div class="panel">
                             <div class="panel__title">
