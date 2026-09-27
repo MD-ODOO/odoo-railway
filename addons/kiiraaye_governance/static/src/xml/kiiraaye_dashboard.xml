@@ -234,7 +234,7 @@
                                                 t-on-click="() => this.openRegionDetail(row.id)"
                                             >
                                                 <span class="kiiraaye-senegal-region-row__name">
-                                                    <i t-att-class="'fa fa-circle ' + (Number(row.sections || 0) > 0 ? 'is-covered' : 'is-empty')"/>
+                                                    <i t-att-class="'fa fa-circle ' + (row.sections > 0 ? 'is-covered' : 'is-empty')"/>
                                                     <strong><t t-esc="row.name"/></strong>
                                                 </span>
                                                 <span class="kiiraaye-senegal-region-row__stats">
