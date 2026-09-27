@@ -6,7 +6,47 @@
 <div class="kp-filters"><button t-att-class="state.scope === 'all' ? 'active' : ''" t-on-click="() => this.setScope('all')">Tous</button><button t-att-class="state.scope === 'national' ? 'active' : ''" t-on-click="() => this.setScope('national')">National</button><button t-att-class="state.scope === 'diaspora' ? 'active' : ''" t-on-click="() => this.setScope('diaspora')">Diaspora</button></div>
 <t t-if="state.loading"><div class="kp-loading">Chargement…</div></t>
 <t t-else=""><div class="kp-kpis"><div class="kp-card"><span>Parrainages</span><strong t-esc="total"/></div><div class="kp-card"><span>N.I.N distincts</span><strong t-esc="distinctCni"/></div><div class="kp-card"><span>National</span><strong t-esc="national"/></div><div class="kp-card"><span>Diaspora</span><strong t-esc="diaspora"/></div></div>
-<div class="kp-panel"><div class="kp-panel-title">Localités avec le plus de parrainages</div><t t-if="!state.rows.length"><div class="kp-empty">Aucune donnée</div></t><t t-foreach="state.rows.slice(0,15)" t-as="row" t-key="row.id"><div class="kp-row"><div class="kp-location"><strong t-esc="row.location_name || 'National'"/><small t-esc="formatLocation(row)"/></div><div class="kp-bar"><i t-att-style="'width:' + Math.min(100,(row.parrain_count/Math.max(1,state.rows[0].parrain_count))*100) + '%'"/></div><strong class="kp-value" t-esc="row.parrain_count"/></div></t></div></t>
+<div class="kp-panel kp-territorial-panel">
+<div class="kp-territorial-head">
+    <div>
+        <div class="kp-panel-title">Carte de couverture territoriale</div>
+        <div class="kp-territorial-subtitle" t-esc="territorialTitle"/>
+    </div>
+    <div class="kp-carousel-controls">
+        <button type="button" class="kp-carousel-arrow" t-on-click="previousTerritorialSlide" aria-label="Précédent">‹</button>
+        <t t-foreach="territorialSlides" t-as="slide" t-key="slide">
+            <button type="button" t-att-class="state.territorialSlide === territorialSlides.indexOf(slide) ? 'kp-carousel-dot active' : 'kp-carousel-dot'" t-on-click="() => setTerritorialSlide(territorialSlides.indexOf(slide))" t-att-aria-label="'Afficher ' + slide"/>
+        </t>
+        <button type="button" class="kp-carousel-arrow" t-on-click="nextTerritorialSlide" aria-label="Suivant">›</button>
+    </div>
+</div>
+<div class="kp-territorial-cards">
+    <t t-if="!territorialRows.length"><div class="kp-empty">Aucune donnée territoriale</div></t>
+    <t t-else="">
+        <t t-foreach="territorialRows" t-as="row" t-key="row.name">
+            <div class="kp-territorial-card">
+                <div class="kp-territorial-card-top">
+                    <div>
+                        <strong t-esc="row.name"/>
+                        <small t-if="territorialType === 'departemental'" t-esc="row.region_name"/>
+                        <small t-if="territorialType === 'communal'" t-esc="[row.region_name, row.departement_name].filter(Boolean).join(' · ')"/>
+                    </div>
+                    <span t-esc="row.parrain_count"/>
+                </div>
+                <div class="kp-bar"><i t-att-style="'width:' + territorialBarWidth(row) + '%'"/></div>
+                <div class="kp-territorial-card-bottom">
+                    <span>Parrainages</span>
+                    <span><strong t-esc="row.cni_count"/> N.I.N</span>
+                </div>
+            </div>
+        </t>
+    </t>
+</div>
+<div class="kp-carousel-caption">
+    <span>Rotation automatique toutes les 5 secondes</span>
+    <span><strong t-esc="state.territorialSlide + 1"/> / <strong t-esc="territorialSlides.length"/></span>
+</div>
+</div></t>
 </div>
 </t>
 </templates>
