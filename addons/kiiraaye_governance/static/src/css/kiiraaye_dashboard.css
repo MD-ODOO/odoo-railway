@@ -1923,3 +1923,83 @@
         grid-template-columns: 1fr;
     }
 }
+
+
+/* Carte du Sénégal réintégrée dans la carte régionale du carrousel */
+.kiiraaye-coverage-regional-layout {
+    display: grid;
+    grid-template-columns: minmax(330px, 0.95fr) minmax(0, 1.05fr);
+    gap: 14px;
+    align-items: stretch;
+}
+
+.kiiraaye-coverage-regional-map {
+    min-height: 445px;
+    aspect-ratio: auto;
+    width: 100%;
+}
+
+.kiiraaye-coverage-regional-map .kiiraaye-administrative-map-host {
+    border: 1px solid var(--kiiraaye-border);
+    border-radius: 14px;
+}
+
+.kiiraaye-coverage-regional-list {
+    min-width: 0;
+    border: 1px solid var(--kiiraaye-border);
+    border-radius: 14px;
+    background: #F9FCFD;
+    overflow: hidden;
+}
+
+.kiiraaye-coverage-regional-list__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 13px;
+    border-bottom: 1px solid var(--kiiraaye-border);
+    background: #FFFFFF;
+    color: var(--kiiraaye-ink);
+    font-size: 10px;
+}
+
+.kiiraaye-coverage-regional-list__header span {
+    color: #82939B;
+    font-size: 8px;
+    font-weight: 700;
+}
+
+.kiiraaye-coverage-regional-list .kiiraaye-coverage-grid--regions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-height: 410px;
+    padding: 9px;
+}
+
+.kiiraaye-coverage-regional-list .kiiraaye-coverage-tile {
+    min-height: 112px;
+}
+
+@media (max-width: 1050px) {
+    .kiiraaye-coverage-regional-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .kiiraaye-coverage-regional-map {
+        min-height: 520px;
+    }
+
+    .kiiraaye-coverage-regional-list .kiiraaye-coverage-grid--regions {
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 620px) {
+    .kiiraaye-coverage-regional-list .kiiraaye-coverage-grid--regions {
+        grid-template-columns: 1fr;
+    }
+
+    .kiiraaye-coverage-regional-map {
+        min-height: 430px;
+    }
+}
