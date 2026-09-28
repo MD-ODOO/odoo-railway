@@ -34,3 +34,4 @@ access_kiiraaye_election_user,kiiraaye.election user,model_kiiraaye_election,kii
 access_kiiraaye_election_manager,kiiraaye.election manager,model_kiiraaye_election,kiiraaye_governance.group_kiiraaye_manager,1,1,1,1
 access_kiiraaye_election_result_user,kiiraaye.election.result user,model_kiiraaye_election_result,kiiraaye_governance.group_kiiraaye_user,1,0,0,0
 access_kiiraaye_election_result_manager,kiiraaye.election.result manager,model_kiiraaye_election_result,kiiraaye_governance.group_kiiraaye_manager,1,1,1,1
+access_kiiraaye_zone_manager,kiiraaye.zone manager,model_kiiraaye_zone,kiiraaye_governance.group_kiiraaye_manager,1,1,1,1
