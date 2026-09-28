@@ -58,7 +58,6 @@ class ResUsers(models.Model):
         copy=False,
         ondelete="restrict",
         domain="[('commune_id', '=', kiiraaye_commune_id), ('active', '=', True)]",
-        groups="kiiraaye_governance.group_kiiraaye_manager",
     )
     kiiraaye_quartier_id = fields.Many2one(
         "kiiraaye.geographie",
