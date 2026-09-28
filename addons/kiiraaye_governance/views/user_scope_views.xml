@@ -12,7 +12,8 @@
                     <field name="kiiraaye_country_id" readonly="1"/>
                     <field name="kiiraaye_region_id" invisible="kiiraaye_role not in ['regional', 'departemental', 'communal', 'quartier']"/>
                     <field name="kiiraaye_departement_id" invisible="kiiraaye_role not in ['departemental', 'communal', 'quartier']"/>
-                    <field name="kiiraaye_commune_id" invisible="kiiraaye_role not in ['communal', 'quartier']"/>
+                    <field name="kiiraaye_commune_id" invisible="kiiraaye_role not in ['communal', 'zone', 'quartier']"/>
+                    <field name="kiiraaye_zone_id" invisible="kiiraaye_role != 'zone'"/>
                     <field name="kiiraaye_quartier_id" invisible="kiiraaye_role != 'quartier'"/>
                 </group>
             </xpath>
