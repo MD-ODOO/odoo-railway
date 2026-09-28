@@ -55,33 +55,46 @@ export class AppsBar extends Component {
             const company = user.activeCompany;
             const background = company?.appsbar_background_color || "#172033";
             const key = String(company?.id || "") + ":" + background;
-
-            if (key === this.lastCompanyTheme) {
-                return;
-            }
-            this.lastCompanyTheme = key;
-
             const root = document.documentElement;
             const colors = getBackgroundPalette(background);
 
-            root.style.setProperty("--mk-appbar-background", background);
-
-            const panel = document.querySelector(".mk_apps_sidebar_panel");
-            if (panel) {
-                panel.style.setProperty("background-color", background, "important");
-            }
+            // Toujours mettre à jour les variables globales.
+            root.style.setProperty("--mk-appbar-background", colors?.background || background);
 
             if (colors) {
-                root.style.setProperty("--mk-appbar-background", colors.background);
                 root.style.setProperty("--mk-appbar-hover-background", colors.hover);
                 root.style.setProperty("--mk-appbar-active", colors.active);
                 root.style.setProperty("--mk-appbar-accent", colors.accent);
                 root.style.setProperty("--mk-appbar-color", colors.text);
                 root.style.setProperty("--mk-appbar-hover-item", colors.item);
             }
+
+            // Le DOM de l'AppsBar n'existe qu'après le montage Owl.
+            // On applique donc aussi les variables directement au panneau.
+            const panel = document.querySelector(".mk_apps_sidebar_panel");
+            if (panel) {
+                panel.style.setProperty("--mk-appbar-background", colors?.background || background, "important");
+                if (colors) {
+                    panel.style.setProperty("--mk-appbar-hover-background", colors.hover, "important");
+                    panel.style.setProperty("--mk-appbar-active", colors.active, "important");
+                    panel.style.setProperty("--mk-appbar-accent", colors.accent, "important");
+                    panel.style.setProperty("--mk-appbar-color", colors.text, "important");
+                    panel.style.setProperty("--mk-appbar-hover-item", colors.item, "important");
+                }
+            }
+
+            if (key === this.lastCompanyTheme) {
+                return;
+            }
+            this.lastCompanyTheme = key;
         };
 
         this.applyCompanyTheme();
+
+        onMounted(() => {
+            // Rejoue l'application après insertion réelle du panneau dans le DOM.
+            this.applyCompanyTheme();
+        });
 
         if (user.activeCompany.has_appsbar_image) {
             this.sidebarImageUrl = url("/web/image", {
