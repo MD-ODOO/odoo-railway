@@ -36,6 +36,7 @@ action = country.action_load_senegal_all_villages()
               groups="kiiraaye_governance.group_kiiraaye_manager"/>
     <menuitem id="menu_kiiraaye_countries" name="Pays" parent="menu_kiiraaye_configuration" action="action_kiiraaye_country" sequence="10"/>
     <menuitem id="menu_kiiraaye_geographie" name="Référentiel géographique" parent="menu_kiiraaye_configuration" action="action_kiiraaye_geographie" sequence="20"/>
+    <menuitem id="menu_kiiraaye_zones" name="Zones" parent="menu_kiiraaye_configuration" action="action_kiiraaye_zone" sequence="25"/>
     <menuitem id="menu_kiiraaye_positions" name="Postes du bureau" parent="menu_kiiraaye_configuration" action="action_kiiraaye_position" sequence="30"/>
     <menuitem id="menu_kiiraaye_professions" name="Professions" parent="menu_kiiraaye_configuration" action="action_kiiraaye_profession" sequence="40"/>
     <menuitem id="menu_kiiraaye_effectif_status" name="Statuts d'effectif" parent="menu_kiiraaye_configuration" action="action_kiiraaye_effectif_status" sequence="60"/>
