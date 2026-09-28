@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_kiiraaye_zone_list" model="ir.ui.view">
+        <field name="name">kiiraaye.zone.list</field>
+        <field name="model">kiiraaye.zone</field>
+        <field name="arch" type="xml">
+            <list string="Zones">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="country_id"/>
+                <field name="commune_id"/>
+                <field name="responsable_user_id"/>
+                <field name="quartier_ids" widget="many2many_tags"/>
+                <field name="section_ids" widget="many2many_tags"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_kiiraaye_zone_form" model="ir.ui.view">
+        <field name="name">kiiraaye.zone.form</field>
+        <field name="model">kiiraaye.zone</field>
+        <field name="arch" type="xml">
+            <form string="Zone">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Identification">
+                            <field name="reference" readonly="1"/>
+                            <field name="country_id"/>
+                            <field name="commune_id"/>
+                            <field name="responsable_user_id"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Périmètre de la zone">
+                            <field name="quartier_ids"
+                                   widget="many2many_tags"
+                                   domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('active', '=', True)]"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Quartiers">
+                            <field name="quartier_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="parent_id"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Sections dont le coordonnateur a droit">
+                            <field name="section_ids" readonly="1">
+                                <list>
+                                    <field name="reference"/>
+                                    <field name="name"/>
+                                    <field name="type_section"/>
+                                    <field name="commune_id"/>
+                                    <field name="zone_id"/>
+                                    <field name="quartier_id"/>
+                                    <field name="cordonnateur_id"/>
+                                    <field name="state"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_kiiraaye_zone_search" model="ir.ui.view">
+        <field name="name">kiiraaye.zone.search</field>
+        <field name="model">kiiraaye.zone</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="reference"/>
+                <field name="commune_id"/>
+                <field name="responsable_user_id"/>
+                <field name="quartier_ids"/>
+                <filter name="active" string="Actives" domain="[('active', '=', True)]"/>
+                <group>
+                    <filter name="groupby_commune" string="Commune" context="{'group_by': 'commune_id'}"/>
+                    <filter name="groupby_responsable" string="Responsable" context="{'group_by': 'responsable_user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_kiiraaye_zone" model="ir.actions.act_window">
+        <field name="name">Zones</field>
+        <field name="res_model">kiiraaye.zone</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_kiiraaye_zone_search"/>
+    </record>
+</odoo>
