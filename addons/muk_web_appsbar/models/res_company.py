@@ -17,24 +17,11 @@ class ResCompany(models.Model):
     )
 
     def get_appsbar_background_color(self):
-        """Return the AppsBar color derived from the company's standard Odoo color."""
+        """Return the color explicitly configured for the AppsBar in Settings."""
         self.ensure_one()
-        # Même palette que le sélecteur de couleur Odoo 19.
-        palette = {
-            0: "#A2A2A2",
-            1: "#EE2D2D",
-            2: "#DC8534",
-            3: "#E8BB1D",
-            4: "#5794DD",
-            5: "#9F628F",
-            6: "#DB8865",
-            7: "#41A9A2",
-            8: "#304BE0",
-            9: "#EE2F8A",
-            10: "#61C36E",
-            11: "#9872E6",
-        }
-        return palette.get(self.color, self.appbar_background_color or "#172033")
+        # La configuration AppsBar est la source de vérité.
+        # On conserve une couleur de secours pour les anciennes sociétés.
+        return self.appbar_background_color or "#172033"
 
     def _ensure_appbar_background_column(self):
         if not column_exists(self.env.cr, "res_company", "appbar_background_color"):
