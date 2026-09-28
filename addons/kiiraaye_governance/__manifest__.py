@@ -15,6 +15,7 @@
         "data/dashboard_data.xml",
         "data/election_data.xml",
         "data/sequence.xml",
+        "views/zone_views.xml",
         "data/position_data.xml",
         "data/organisation_type_data.xml",
         "data/effectif_status_data.xml",
