@@ -30,11 +30,16 @@
                            string="Commune / Municipalité / Ville"
                            invisible="type_section != 'communale' or not geo_commune_level"
                            domain="[('country_id', '=', country_id), ('niveau', '=', geo_commune_level), ('id', 'child_of', departement_id if departement_id else region_id), ('active', '=', True)]"/>
+                    <field name="zone_id"
+                           string="Zone"
+                           invisible="type_section != 'communale'"
+                           required="type_section == 'communale'"
+                           domain="[('commune_id', '=', commune_id), ('active', '=', True)]"/>
                     <field name="quartier_id"
                            string="Quartier"
                            invisible="type_section != 'communale'"
                            required="type_section == 'communale'"
-                           domain="[('country_id', '=', country_id), ('niveau', '=', geo_quartier_level or 'niveau5'), ('parent_id', '=', commune_id), ('active', '=', True)]"/>
+                           domain="[('id', 'in', zone_id.quartier_ids.ids)]"/>
                 </group>
             </xpath>
         </field>
