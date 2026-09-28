@@ -16,6 +16,13 @@ class KiiraayeSection(models.Model):
     region_id = fields.Many2one("kiiraaye.geographie", string="Région", ondelete="restrict")
     departement_id = fields.Many2one("kiiraaye.geographie", string="Département", ondelete="restrict")
     commune_id = fields.Many2one("kiiraaye.geographie", string="Commune", ondelete="restrict")
+    zone_id = fields.Many2one(
+        "kiiraaye.zone",
+        string="Zone",
+        ondelete="restrict",
+        domain="[('commune_id', '=', commune_id), ('active', '=', True)]",
+        help="Zone de la commune. Visible uniquement pour une section communale.",
+    )
     quartier_id = fields.Many2one("kiiraaye.geographie", string="Quartier", ondelete="restrict")
     siege_partner_id = fields.Many2one("res.partner", string="Siège / Adresse", ondelete="restrict", copy=False, help="Adresse du siège gérée avec le formulaire d'adresse natif d'Odoo.")
     date_creation = fields.Date(string="Date de création", default=fields.Date.context_today)
@@ -54,7 +61,7 @@ class KiiraayeSection(models.Model):
         type_labels = dict(self._fields["type_section"].selection)
         for record in self:
             parts = [type_labels.get(record.type_section, record.type_section or _("Section / Coordination Kiiraaye"))]
-            for field_name in ("region_id", "departement_id", "commune_id", "quartier_id"):
+            for field_name in ("region_id", "departement_id", "commune_id", "zone_id", "quartier_id"):
                 value = getattr(record, field_name)
                 if value:
                     parts.append(value.display_name)
@@ -80,11 +87,12 @@ class KiiraayeSection(models.Model):
         mapping = self._geography_visibility()
         visible = mapping.get(self.type_section, {})
         if not self.country_id:
-            self.region_id = False; self.departement_id = False; self.commune_id = False; self.quartier_id = False
+            self.region_id = False; self.departement_id = False; self.commune_id = False; self.zone_id = False; self.quartier_id = False
             return {"domain": {"region_id": [("id", "=", False)], "departement_id": [("id", "=", False)], "commune_id": [("id", "=", False)], "quartier_id": [("id", "=", False)]}}
         if not visible.get("region"): self.region_id = False
         if not visible.get("departement"): self.departement_id = False
         if not visible.get("commune"): self.commune_id = False
+        if self.type_section != "communale": self.zone_id = False
         if not visible.get("quartier"): self.quartier_id = False
         if self.region_id and self.region_id.country_id != self.country_id: self.region_id = False
         if self.departement_id and self.departement_id.country_id != self.country_id: self.departement_id = False
@@ -94,6 +102,7 @@ class KiiraayeSection(models.Model):
             "region_id": [("country_id", "=", self.country_id.id), ("niveau", "=", "niveau1"), ("active", "=", True)],
             "departement_id": [("country_id", "=", self.country_id.id), ("niveau", "=", "niveau2"), ("parent_id", "=", self.region_id.id or False), ("active", "=", True)],
             "commune_id": [("country_id", "=", self.country_id.id), ("niveau", "=", "niveau3"), ("parent_id", "=", self.departement_id.id or False), ("active", "=", True)],
+            "zone_id": [("commune_id", "=", self.commune_id.id), ("active", "=", True)] if self.commune_id and self.type_section == "communale" else [("id", "=", False)],
             "quartier_id": [("country_id", "=", self.country_id.id), ("niveau", "=", "niveau5"), ("parent_id", "child_of", self.commune_id.id) if self.commune_id else ("id", "=", False), ("active", "=", True)],
         }}
 
@@ -109,8 +118,25 @@ class KiiraayeSection(models.Model):
         elif not self.departement_id: self.commune_id = False; self.quartier_id = False
         return {"domain": {"commune_id": [("country_id", "=", self.country_id.id), ("niveau", "=", "niveau3"), ("parent_id", "=", self.departement_id.id or False), ("active", "=", True)]}}
 
+    @api.onchange("zone_id")
+    def _onchange_zone_id(self):
+        if self.zone_id:
+            self.commune_id = self.zone_id.commune_id
+            if self.quartier_id and self.quartier_id not in self.zone_id.quartier_ids:
+                self.quartier_id = False
+        return {"domain": {
+            "quartier_id": (
+                [("id", "in", self.zone_id.quartier_ids.ids), ("active", "=", True)]
+                if self.zone_id else
+                [("country_id", "=", self.country_id.id), ("niveau", "=", "niveau5"), ("parent_id", "child_of", self.commune_id.id), ("active", "=", True)]
+                if self.commune_id else [("id", "=", False)]
+            )
+        }}
+
     @api.onchange("commune_id")
     def _onchange_commune_id(self):
+        if self.zone_id and self.zone_id.commune_id != self.commune_id:
+            self.zone_id = False
         if self.quartier_id and self.quartier_id.parent_id and self.commune_id:
             current = self.quartier_id; ancestors = current; valid = False
             while ancestors:
@@ -129,6 +155,13 @@ class KiiraayeSection(models.Model):
                 raise ValidationError(_("Le département doit appartenir à la région et au pays sélectionnés."))
             if record.commune_id and (record.commune_id.country_id != record.country_id or record.commune_id.niveau != "niveau3" or (record.departement_id and record.commune_id.parent_id != record.departement_id)):
                 raise ValidationError(_("La commune doit appartenir au département et au pays sélectionnés."))
+            if record.zone_id:
+                if record.type_section != "communale":
+                    raise ValidationError(_("Une zone ne peut être définie que pour une section communale."))
+                if not record.commune_id or record.zone_id.commune_id != record.commune_id:
+                    raise ValidationError(_("La zone doit appartenir à la commune sélectionnée."))
+                if record.quartier_id and record.quartier_id not in record.zone_id.quartier_ids:
+                    raise ValidationError(_("Le quartier de la section doit appartenir à la zone sélectionnée."))
             if record.quartier_id:
                 if record.quartier_id.country_id != record.country_id or record.quartier_id.niveau != "niveau5": raise ValidationError(_("Le quartier doit appartenir au pays sélectionné et être de niveau Quartier."))
                 if record.commune_id:
@@ -139,7 +172,7 @@ class KiiraayeSection(models.Model):
                     if not valid: raise ValidationError(_("Le quartier doit appartenir à la commune sélectionnée."))
             if record.type_section == "regionale" and not record.region_id: raise ValidationError(_("Une coordination régionale doit avoir une région."))
             if record.type_section == "departementale" and (not record.region_id or not record.departement_id): raise ValidationError(_("Une coordination départementale doit avoir une région et un département."))
-            if record.type_section == "communale" and (not record.region_id or not record.departement_id or not record.commune_id or not record.quartier_id): raise ValidationError(_("Une section communale doit avoir une région, un département, une commune et un quartier."))
+            if record.type_section == "communale" and (not record.region_id or not record.departement_id or not record.commune_id or not record.zone_id or not record.quartier_id): raise ValidationError(_("Une section communale doit avoir une région, un département, une commune et un quartier."))
 
     @api.constrains("type_section", "country_id", "region_id", "departement_id", "commune_id", "quartier_id")
     def _check_unique_geography_scope(self):
@@ -148,7 +181,7 @@ class KiiraayeSection(models.Model):
             domain = [("id", "!=", record.id), ("type_section", "=", record.type_section), ("country_id", "=", record.country_id.id)]
             if record.type_section == "regionale": domain += [("region_id", "=", record.region_id.id)]
             elif record.type_section == "departementale": domain += [("region_id", "=", record.region_id.id), ("departement_id", "=", record.departement_id.id)]
-            elif record.type_section == "communale": domain += [("region_id", "=", record.region_id.id), ("departement_id", "=", record.departement_id.id), ("commune_id", "=", record.commune_id.id), ("quartier_id", "=", record.quartier_id.id)]
+            elif record.type_section == "communale": domain += [("region_id", "=", record.region_id.id), ("departement_id", "=", record.departement_id.id), ("commune_id", "=", record.commune_id.id), ("zone_id", "=", record.zone_id.id), ("quartier_id", "=", record.quartier_id.id)]
             elif record.type_section in ("nationale", "diaspora"): domain += [("region_id", "=", False), ("departement_id", "=", False), ("commune_id", "=", False), ("quartier_id", "=", False)]
             duplicate = self.env["kiiraaye.section"].search(domain, limit=1)
             if duplicate: raise ValidationError(_("Une section/coordination de ce type existe déjà pour cette localisation géographique."))
