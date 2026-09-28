@@ -38,7 +38,7 @@
                         <group string="Périmètre de la zone">
                             <field name="quartier_ids"
                                    widget="many2many_tags"
-                                   domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('active', '=', True)]"/>
+                                   domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('id', 'child_of', commune_id), ('active', '=', True)]"/>
                         </group>
                     </group>
 
