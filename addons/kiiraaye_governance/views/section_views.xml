@@ -12,6 +12,7 @@
                 <field name="region_id"/>
                 <field name="departement_id"/>
                 <field name="commune_id"/>
+                <field name="zone_id"/>
                 <field name="quartier_id"/>
                 <field name="date_creation"/>
                 <field name="member_count" string="Membres"/>
@@ -100,11 +101,16 @@
                             <field name="commune_id"
                                    invisible="type_section != 'communale'"
                                    domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau3'), ('parent_id', '=', departement_id), ('active', '=', True)]"/>
+                            <field name="zone_id"
+                                   string="Zone"
+                                   invisible="type_section != 'communale'"
+                                   required="type_section == 'communale'"
+                                   domain="[('commune_id', '=', commune_id), ('active', '=', True)]"/>
                             <field name="quartier_id"
                                    string="Quartier"
                                    invisible="type_section != 'communale'"
                                    required="type_section == 'communale'"
-                                   domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('parent_id', '=', commune_id), ('active', '=', True)]"
+                                   domain="[(('id', 'in', zone_id.quartier_ids.ids) if zone_id else ('parent_id', 'child_of', commune_id)), ('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('active', '=', True)]"
                                    context="{'default_country_id': country_id, 'default_parent_id': commune_id, 'default_niveau': 'niveau5'}"/>
                         </group>
                     </group>
@@ -179,6 +185,7 @@
                             <field name="region_id" readonly="1"/>
                             <field name="departement_id" readonly="1"/>
                             <field name="commune_id" readonly="1"/>
+                            <field name="zone_id" readonly="1"/>
                             <field name="quartier_id" readonly="1"/>
                         </group>
                     </group>
