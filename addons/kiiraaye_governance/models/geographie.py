@@ -80,6 +80,56 @@ class KiiraayeGeographie(models.Model):
         "Une zone de niveau Pays doit être une racine et une racine doit être un Pays.",
     )
 
+    def init(self):
+        """Nettoie uniquement les doublons exacts de Dakar sans aucune donnée."""
+        super().init()
+        Geo = self.env["kiiraaye.geographie"]
+        Section = self.env["kiiraaye.section"]
+
+        records = Geo.search([
+            ("country_id.code", "=", "SN"),
+            ("name", "=", "Dakar"),
+        ])
+        groups = {}
+        for record in records:
+            key = (record.country_id.id, record.name.strip().casefold(), record.niveau)
+            groups.setdefault(key, []).append(record)
+
+        section_fields = ("region_id", "departement_id", "commune_id", "quartier_id")
+        deleted_ids = []
+
+        for _, group in groups.items():
+            if len(group) < 2:
+                continue
+
+            scored = []
+            for record in group:
+                child_count = Geo.search_count([("parent_id", "=", record.id)])
+                section_count = sum(
+                    Section.search_count([(field_name, "=", record.id)])
+                    for field_name in section_fields
+                )
+                scored.append((child_count, section_count, -record.id, record))
+
+            scored.sort(reverse=True, key=lambda item: (item[0], item[1], item[2]))
+
+            for child_count, section_count, _, record in scored[1:]:
+                if child_count == 0 and section_count == 0:
+                    deleted_ids.append(record.id)
+                    record.unlink()
+
+        if deleted_ids:
+            _logger = self.env["ir.logging"]
+            _logger.create({
+                "name": "Kiiraaye",
+                "type": "server",
+                "level": "INFO",
+                "message": "Doublon(s) Dakar supprimé(s): %s" % deleted_ids,
+                "path": "kiiraaye_governance.models.geographie",
+                "line": "init",
+                "func": "_cleanup_dakar_duplicates",
+            })
+
     @api.constrains("parent_id", "country_id")
     def _check_parent_country(self):
         for record in self:
