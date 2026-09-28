@@ -6,7 +6,7 @@
     bottom: 0;
     z-index: 1040;
     width: 230px;
-    background: var(--mk-appbar-background, #172033);
+    background: var(--mk-appbar-background, #172033) !important;
     overflow: hidden;
     transform: translateX(calc(-100% + 10px));
     transition: transform 220ms ease, background-color 180ms ease;
@@ -30,7 +30,7 @@
 .mk_apps_sidebar_panel:hover,
 .mk_apps_sidebar_panel:focus-within {
     transform: translateX(0);
-    background: var(--mk-appbar-hover-background, #24385f);
+    background: var(--mk-appbar-hover-background, #24385f) !important;
 }
 
 .mk_apps_sidebar {
