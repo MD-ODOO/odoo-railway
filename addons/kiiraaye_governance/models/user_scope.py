@@ -288,15 +288,34 @@ class ResUsers(models.Model):
     def _sync_kiiraaye_role_group(self):
         coordinator = self.env.ref("kiiraaye_governance.group_kiiraaye_coordinator", raise_if_not_found=False)
         national = self.env.ref("kiiraaye_governance.group_kiiraaye_national_coordinator", raise_if_not_found=False)
-        if not coordinator or not national:
+        zone_group = self.env.ref("kiiraaye_governance.group_kiiraaye_zone_responsible", raise_if_not_found=False)
+        if not coordinator or not national or not zone_group:
             return
         for user in self:
             if user.kiiraaye_role == "national":
-                commands = [Command.link(national.id), Command.unlink(coordinator.id)]
-            elif user.kiiraaye_role in ("regional", "departemental", "communal", "zone", "quartier"):
-                commands = [Command.link(coordinator.id), Command.unlink(national.id)]
+                commands = [
+                    Command.link(national.id),
+                    Command.unlink(coordinator.id),
+                    Command.unlink(zone_group.id),
+                ]
+            elif user.kiiraaye_role == "zone":
+                commands = [
+                    Command.link(zone_group.id),
+                    Command.unlink(coordinator.id),
+                    Command.unlink(national.id),
+                ]
+            elif user.kiiraaye_role in ("regional", "departemental", "communal", "quartier"):
+                commands = [
+                    Command.link(coordinator.id),
+                    Command.unlink(national.id),
+                    Command.unlink(zone_group.id),
+                ]
             else:
-                commands = [Command.unlink(coordinator.id), Command.unlink(national.id)]
+                commands = [
+                    Command.unlink(coordinator.id),
+                    Command.unlink(national.id),
+                    Command.unlink(zone_group.id),
+                ]
             user.with_context(kiiraaye_skip_role_sync=True).write({"group_ids": commands})
 
     @api.model_create_multi
@@ -313,7 +332,7 @@ class ResUsers(models.Model):
         changed = "kiiraaye_role" in vals or any(
             field in vals for field in (
                 "kiiraaye_country_id", "kiiraaye_region_id", "kiiraaye_departement_id",
-                "kiiraaye_commune_id", "kiiraaye_quartier_id"
+                "kiiraaye_commune_id", "kiiraaye_zone_id", "kiiraaye_quartier_id"
             )
         )
         if "kiiraaye_role" in vals:
