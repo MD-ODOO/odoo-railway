@@ -108,14 +108,14 @@ class KiiraayeSection(models.Model):
 
     @api.onchange("region_id")
     def _onchange_region_id(self):
-        if self.departement_id and self.departement_id.parent_id != self.region_id: self.departement_id = False; self.commune_id = False; self.quartier_id = False
-        elif not self.region_id: self.departement_id = False; self.commune_id = False; self.quartier_id = False
+        if self.departement_id and self.departement_id.parent_id != self.region_id: self.departement_id = False; self.commune_id = False; self.zone_id = False; self.quartier_id = False
+        elif not self.region_id: self.departement_id = False; self.commune_id = False; self.zone_id = False; self.quartier_id = False
         return {"domain": {"departement_id": [("country_id", "=", self.country_id.id), ("niveau", "=", "niveau2"), ("parent_id", "=", self.region_id.id or False), ("active", "=", True)]}}
 
     @api.onchange("departement_id")
     def _onchange_departement_id(self):
-        if self.commune_id and self.commune_id.parent_id != self.departement_id: self.commune_id = False; self.quartier_id = False
-        elif not self.departement_id: self.commune_id = False; self.quartier_id = False
+        if self.commune_id and self.commune_id.parent_id != self.departement_id: self.commune_id = False; self.zone_id = False; self.quartier_id = False
+        elif not self.departement_id: self.commune_id = False; self.zone_id = False; self.quartier_id = False
         return {"domain": {"commune_id": [("country_id", "=", self.country_id.id), ("niveau", "=", "niveau3"), ("parent_id", "=", self.departement_id.id or False), ("active", "=", True)]}}
 
     @api.onchange("zone_id")
@@ -174,7 +174,7 @@ class KiiraayeSection(models.Model):
             if record.type_section == "departementale" and (not record.region_id or not record.departement_id): raise ValidationError(_("Une coordination départementale doit avoir une région et un département."))
             if record.type_section == "communale" and (not record.region_id or not record.departement_id or not record.commune_id or not record.zone_id or not record.quartier_id): raise ValidationError(_("Une section communale doit avoir une région, un département, une commune et un quartier."))
 
-    @api.constrains("type_section", "country_id", "region_id", "departement_id", "commune_id", "quartier_id")
+    @api.constrains("type_section", "country_id", "region_id", "departement_id", "commune_id", "zone_id", "quartier_id")
     def _check_unique_geography_scope(self):
         for record in self:
             if not record.id: continue
@@ -190,7 +190,7 @@ class KiiraayeSection(models.Model):
     def create(self, vals_list):
         for vals in vals_list:
             if vals.get("type_section") in ("nationale", "diaspora"):
-                vals.update({"region_id": False, "departement_id": False, "commune_id": False, "quartier_id": False})
+                vals.update({"region_id": False, "departement_id": False, "commune_id": False, "zone_id": False, "quartier_id": False})
         return super().create(vals_list)
 
     def action_view_hierarchy(self):
