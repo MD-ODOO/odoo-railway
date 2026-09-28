@@ -102,10 +102,12 @@ class ResUsers(models.Model):
             self.kiiraaye_region_id = False
             self.kiiraaye_departement_id = False
             self.kiiraaye_commune_id = False
+            self.kiiraaye_zone_id = False
             self.kiiraaye_quartier_id = False
         elif self.kiiraaye_role == "regional":
             self.kiiraaye_departement_id = False
             self.kiiraaye_commune_id = False
+            self.kiiraaye_zone_id = False
             self.kiiraaye_quartier_id = False
         elif self.kiiraaye_role == "departemental":
             self.kiiraaye_commune_id = False
@@ -115,6 +117,8 @@ class ResUsers(models.Model):
             self.kiiraaye_quartier_id = False
         elif self.kiiraaye_role == "zone":
             self.kiiraaye_quartier_id = False
+        elif self.kiiraaye_role == "quartier":
+            self.kiiraaye_zone_id = False
         else:
             self.kiiraaye_region_id = False
             self.kiiraaye_departement_id = False
@@ -130,6 +134,7 @@ class ResUsers(models.Model):
         elif not self.kiiraaye_region_id:
             self.kiiraaye_departement_id = False
             self.kiiraaye_commune_id = False
+            self.kiiraaye_zone_id = False
             self.kiiraaye_quartier_id = False
 
     @api.onchange("kiiraaye_departement_id")
@@ -139,10 +144,13 @@ class ResUsers(models.Model):
             self.kiiraaye_quartier_id = False
         elif not self.kiiraaye_departement_id:
             self.kiiraaye_commune_id = False
+            self.kiiraaye_zone_id = False
             self.kiiraaye_quartier_id = False
 
     @api.onchange("kiiraaye_commune_id")
     def _onchange_kiiraaye_commune_id(self):
+        if self.kiiraaye_zone_id and self.kiiraaye_zone_id.commune_id != self.kiiraaye_commune_id:
+            self.kiiraaye_zone_id = False
         if self.kiiraaye_quartier_id and self.kiiraaye_commune_id:
             current = self.kiiraaye_quartier_id
             valid = False
@@ -191,7 +199,7 @@ class ResUsers(models.Model):
                 raise ValidationError(_("Le responsable de zone doit avoir une région, un département, une commune et une zone."))
             if role == "quartier" and (not user.kiiraaye_region_id or not user.kiiraaye_departement_id or not user.kiiraaye_commune_id or not user.kiiraaye_quartier_id):
                 raise ValidationError(_("Le coordonnateur de quartier doit avoir une région, un département, une commune et un quartier."))
-            if role == "national" and any((user.kiiraaye_region_id, user.kiiraaye_departement_id, user.kiiraaye_commune_id, user.kiiraaye_quartier_id)):
+            if role == "national" and any((user.kiiraaye_region_id, user.kiiraaye_departement_id, user.kiiraaye_commune_id, user.kiiraaye_zone_id, user.kiiraaye_quartier_id)):
                 raise ValidationError(_("Le coordonnateur national ne doit pas avoir de niveau territorial inférieur au pays."))
             if user.kiiraaye_region_id and (user.kiiraaye_region_id.country_id != user.kiiraaye_country_id or user.kiiraaye_region_id.niveau != "niveau1"):
                 raise ValidationError(_("La région du coordonnateur est invalide."))
