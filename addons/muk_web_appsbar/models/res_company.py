@@ -16,6 +16,25 @@ class ResCompany(models.Model):
         help="Couleur libre utilisée comme couleur de fond principale de la barre des applications.",
     )
 
+    def get_appsbar_background_color(self):
+        """Return the AppsBar color derived from the company's standard Odoo color."""
+        self.ensure_one()
+        palette = {
+            0: "#875A7B",
+            1: "#E74C3C",
+            2: "#F39C12",
+            3: "#F1C40F",
+            4: "#3498DB",
+            5: "#D35400",
+            6: "#C0392B",
+            7: "#1ABC9C",
+            8: "#34495E",
+            9: "#E91E63",
+            10: "#2ECC71",
+            11: "#9B59B6",
+        }
+        return palette.get(self.color, self.appbar_background_color or "#172033")
+
     def _ensure_appbar_background_column(self):
         if not column_exists(self.env.cr, "res_company", "appbar_background_color"):
             create_column(
