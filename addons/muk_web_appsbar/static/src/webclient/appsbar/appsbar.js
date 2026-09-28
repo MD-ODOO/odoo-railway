@@ -49,21 +49,34 @@ export class AppsBar extends Component {
     setup() {
         this.appMenuService = useService("app_menu");
         this.sidebarImageUrl = null;
+        this.lastCompanyTheme = null;
 
-        const background = user.activeCompany.appsbar_background_color || "#172033";
-        const root = document.documentElement;
-        const colors = getBackgroundPalette(background);
+        this.applyCompanyTheme = () => {
+            const company = user.activeCompany;
+            const background = company?.appsbar_background_color || "#172033";
+            const key = String(company?.id || "") + ":" + background;
 
-        root.style.setProperty("--mk-appbar-background", background);
+            if (key === this.lastCompanyTheme) {
+                return;
+            }
+            this.lastCompanyTheme = key;
 
-        if (colors) {
-            root.style.setProperty("--mk-appbar-background", colors.background);
-            root.style.setProperty("--mk-appbar-hover-background", colors.hover);
-            root.style.setProperty("--mk-appbar-active", colors.active);
-            root.style.setProperty("--mk-appbar-accent", colors.accent);
-            root.style.setProperty("--mk-appbar-color", colors.text);
-            root.style.setProperty("--mk-appbar-hover-item", colors.item);
-        }
+            const root = document.documentElement;
+            const colors = getBackgroundPalette(background);
+
+            root.style.setProperty("--mk-appbar-background", background);
+
+            if (colors) {
+                root.style.setProperty("--mk-appbar-background", colors.background);
+                root.style.setProperty("--mk-appbar-hover-background", colors.hover);
+                root.style.setProperty("--mk-appbar-active", colors.active);
+                root.style.setProperty("--mk-appbar-accent", colors.accent);
+                root.style.setProperty("--mk-appbar-color", colors.text);
+                root.style.setProperty("--mk-appbar-hover-item", colors.item);
+            }
+        };
+
+        this.applyCompanyTheme();
 
         if (user.activeCompany.has_appsbar_image) {
             this.sidebarImageUrl = url("/web/image", {
@@ -73,11 +86,19 @@ export class AppsBar extends Component {
             });
         }
 
-        const render = () => this.render();
+        const render = () => {
+            this.applyCompanyTheme();
+            this.render();
+        };
         this.env.bus.addEventListener("MENUS:APP-CHANGED", render);
+
+        this.companyThemeTimer = setInterval(() => {
+            this.applyCompanyTheme();
+        }, 1000);
 
         onWillUnmount(() => {
             this.env.bus.removeEventListener("MENUS:APP-CHANGED", render);
+            clearInterval(this.companyThemeTimer);
         });
     }
 
