@@ -11,6 +11,7 @@ class ResUsers(models.Model):
             ("regional", "Coordonnateur régional"),
             ("departemental", "Coordonnateur départemental"),
             ("communal", "Coordonnateur communal"),
+            ("zone", "Responsable de zone"),
             ("quartier", "Coordonnateur de quartier"),
         ],
         string="Fonction Kiiraaye",
@@ -49,6 +50,14 @@ class ResUsers(models.Model):
         copy=False,
         ondelete="restrict",
         domain="[('country_id', '=', kiiraaye_country_id), ('niveau', '=', 'niveau3'), ('parent_id', '=', kiiraaye_departement_id), ('active', '=', True)]",
+        groups="kiiraaye_governance.group_kiiraaye_manager",
+    )
+    kiiraaye_zone_id = fields.Many2one(
+        "kiiraaye.zone",
+        string="Zone",
+        copy=False,
+        ondelete="restrict",
+        domain="[('commune_id', '=', kiiraaye_commune_id), ('active', '=', True)]",
         groups="kiiraaye_governance.group_kiiraaye_manager",
     )
     kiiraaye_quartier_id = fields.Many2one(
@@ -102,6 +111,9 @@ class ResUsers(models.Model):
             self.kiiraaye_commune_id = False
             self.kiiraaye_quartier_id = False
         elif self.kiiraaye_role == "communal":
+            self.kiiraaye_zone_id = False
+            self.kiiraaye_quartier_id = False
+        elif self.kiiraaye_role == "zone":
             self.kiiraaye_quartier_id = False
         else:
             self.kiiraaye_region_id = False
@@ -155,11 +167,13 @@ class ResUsers(models.Model):
         elif role == "regional":
             vals.update({"kiiraaye_departement_id": False, "kiiraaye_commune_id": False, "kiiraaye_quartier_id": False})
         elif role == "departemental":
-            vals.update({"kiiraaye_commune_id": False, "kiiraaye_quartier_id": False})
+            vals.update({"kiiraaye_commune_id": False, "kiiraaye_zone_id": False, "kiiraaye_quartier_id": False})
         elif role == "communal":
+            vals.update({"kiiraaye_zone_id": False, "kiiraaye_quartier_id": False})
+        elif role == "zone":
             vals.update({"kiiraaye_quartier_id": False})
 
-    @api.constrains("kiiraaye_role", "kiiraaye_country_id", "kiiraaye_region_id", "kiiraaye_departement_id", "kiiraaye_commune_id", "kiiraaye_quartier_id")
+    @api.constrains("kiiraaye_role", "kiiraaye_country_id", "kiiraaye_region_id", "kiiraaye_departement_id", "kiiraaye_commune_id", "kiiraaye_zone_id", "kiiraaye_quartier_id")
     def _check_kiiraaye_scope(self):
         for user in self:
             if not user.kiiraaye_role:
@@ -173,6 +187,8 @@ class ResUsers(models.Model):
                 raise ValidationError(_("Le coordonnateur départemental doit avoir une région et un département."))
             if role == "communal" and (not user.kiiraaye_region_id or not user.kiiraaye_departement_id or not user.kiiraaye_commune_id):
                 raise ValidationError(_("Le coordonnateur communal doit avoir une région, un département et une commune."))
+            if role == "zone" and (not user.kiiraaye_region_id or not user.kiiraaye_departement_id or not user.kiiraaye_commune_id or not user.kiiraaye_zone_id):
+                raise ValidationError(_("Le responsable de zone doit avoir une région, un département, une commune et une zone."))
             if role == "quartier" and (not user.kiiraaye_region_id or not user.kiiraaye_departement_id or not user.kiiraaye_commune_id or not user.kiiraaye_quartier_id):
                 raise ValidationError(_("Le coordonnateur de quartier doit avoir une région, un département, une commune et un quartier."))
             if role == "national" and any((user.kiiraaye_region_id, user.kiiraaye_departement_id, user.kiiraaye_commune_id, user.kiiraaye_quartier_id)):
@@ -183,6 +199,9 @@ class ResUsers(models.Model):
                 raise ValidationError(_("Le département doit appartenir à la région sélectionnée."))
             if user.kiiraaye_commune_id and (user.kiiraaye_commune_id.country_id != user.kiiraaye_country_id or user.kiiraaye_commune_id.niveau != "niveau3" or user.kiiraaye_commune_id.parent_id != user.kiiraaye_departement_id):
                 raise ValidationError(_("La commune doit appartenir au département sélectionné."))
+            if user.kiiraaye_zone_id:
+                if user.kiiraaye_zone_id.country_id != user.kiiraaye_country_id or user.kiiraaye_zone_id.commune_id != user.kiiraaye_commune_id:
+                    raise ValidationError(_("La zone doit appartenir à la commune sélectionnée."))
             if user.kiiraaye_quartier_id:
                 if user.kiiraaye_quartier_id.country_id != user.kiiraaye_country_id or user.kiiraaye_quartier_id.niveau != "niveau5":
                     raise ValidationError(_("Le quartier sélectionné est invalide."))
@@ -232,6 +251,17 @@ class ResUsers(models.Model):
                 communes = user.kiiraaye_commune_id
                 quartiers = Geography.search([("id", "child_of", communes.ids), ("niveau", "=", "niveau5"), ("active", "=", True)])
                 sections = Section.search([("active", "=", True), ("state", "=", "ouverte"), "|", ("commune_id", "in", communes.ids), ("quartier_id", "in", quartiers.ids)])
+            elif role == "zone" and user.kiiraaye_zone_id:
+                regions = user.kiiraaye_region_id
+                departments = user.kiiraaye_departement_id
+                communes = user.kiiraaye_commune_id
+                quartiers = user.kiiraaye_zone_id.quartier_ids
+                sections = Section.search([
+                    ("active", "=", True),
+                    ("state", "=", "ouverte"),
+                    ("type_section", "=", "communale"),
+                    ("zone_id", "=", user.kiiraaye_zone_id.id),
+                ])
             elif role == "quartier" and user.kiiraaye_quartier_id:
                 regions = user.kiiraaye_region_id
                 departments = user.kiiraaye_departement_id
@@ -255,7 +285,7 @@ class ResUsers(models.Model):
         for user in self:
             if user.kiiraaye_role == "national":
                 commands = [Command.link(national.id), Command.unlink(coordinator.id)]
-            elif user.kiiraaye_role in ("regional", "departemental", "communal", "quartier"):
+            elif user.kiiraaye_role in ("regional", "departemental", "communal", "zone", "quartier"):
                 commands = [Command.link(coordinator.id), Command.unlink(national.id)]
             else:
                 commands = [Command.unlink(coordinator.id), Command.unlink(national.id)]
