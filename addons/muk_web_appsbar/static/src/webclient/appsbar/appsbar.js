@@ -53,7 +53,10 @@ export class AppsBar extends Component {
 
         this.applyCompanyTheme = () => {
             const company = user.activeCompany;
-            const background = company?.appsbar_background_color || "#172033";
+            // Demande actuelle : AppsBar transparente.
+            // La configuration de couleur reste disponible dans les paramètres
+            // pour pouvoir être réactivée ultérieurement.
+            const background = "transparent";
             const key = String(company?.id || "") + ":" + background;
             const root = document.documentElement;
             const colors = getBackgroundPalette(background);
