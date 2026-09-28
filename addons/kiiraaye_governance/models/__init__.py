@@ -5,6 +5,7 @@ from . import country_geography_validation
 from . import geography_mapping
 from . import senegal_geography_source
 from . import section
+from . import zone
 from . import section_geography_config
 from . import senegal_geography
 from . import organisation_type
