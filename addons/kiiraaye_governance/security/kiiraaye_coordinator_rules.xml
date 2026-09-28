@@ -62,6 +62,17 @@
         <field name="perm_unlink" eval="False"/>
     </record>
 
+    <record id="rule_kiiraaye_zone_responsible_own_zone" model="ir.rule">
+        <field name="name">Zones - propre zone du responsable</field>
+        <field name="model_id" ref="model_kiiraaye_zone"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_zone_responsible'))]"/>
+        <field name="domain_force">[('id', '=', user.kiiraaye_zone_id.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
     <!-- Responsable de zone : uniquement les sections communales de sa zone. -->
     <record id="rule_kiiraaye_section_zone_responsible_scope" model="ir.rule">
         <field name="name">Sections - zone du responsable de zone</field>
