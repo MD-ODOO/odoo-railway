@@ -110,7 +110,7 @@
                                    string="Quartier"
                                    invisible="type_section != 'communale'"
                                    required="type_section == 'communale'"
-                                   domain="[(('id', 'in', zone_id.quartier_ids.ids) if zone_id else ('parent_id', 'child_of', commune_id)), ('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('active', '=', True)]"
+                                   domain="[('id', 'in', zone_id.quartier_ids.ids)]"
                                    context="{'default_country_id': country_id, 'default_parent_id': commune_id, 'default_niveau': 'niveau5'}"/>
                         </group>
                     </group>
