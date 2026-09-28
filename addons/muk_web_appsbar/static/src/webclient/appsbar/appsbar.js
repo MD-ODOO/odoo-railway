@@ -1,6 +1,6 @@
 import { url } from "@web/core/utils/urls";
 import { useService } from "@web/core/utils/hooks";
-import { user } from "@web/core/user";
+import { user, userBus } from "@web/core/user";
 import { Component, onMounted, onWillUnmount } from "@odoo/owl";
 
 function parseColor(value) {
@@ -66,6 +66,11 @@ export class AppsBar extends Component {
 
             root.style.setProperty("--mk-appbar-background", background);
 
+            const panel = document.querySelector(".mk_apps_sidebar_panel");
+            if (panel) {
+                panel.style.setProperty("background-color", background, "important");
+            }
+
             if (colors) {
                 root.style.setProperty("--mk-appbar-background", colors.background);
                 root.style.setProperty("--mk-appbar-hover-background", colors.hover);
@@ -91,14 +96,11 @@ export class AppsBar extends Component {
             this.render();
         };
         this.env.bus.addEventListener("MENUS:APP-CHANGED", render);
-
-        this.companyThemeTimer = setInterval(() => {
-            this.applyCompanyTheme();
-        }, 1000);
+        userBus.addEventListener("ACTIVE_COMPANIES_CHANGED", this.applyCompanyTheme);
 
         onWillUnmount(() => {
             this.env.bus.removeEventListener("MENUS:APP-CHANGED", render);
-            clearInterval(this.companyThemeTimer);
+            userBus.removeEventListener("ACTIVE_COMPANIES_CHANGED", this.applyCompanyTheme);
         });
     }
 
