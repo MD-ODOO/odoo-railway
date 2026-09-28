@@ -20,7 +20,7 @@ class KiiraayeZone(models.Model):
     )
     quartier_ids = fields.Many2many(
         "kiiraaye.geographie", "kiiraaye_zone_quartier_rel", "zone_id", "quartier_id",
-        string="Quartiers", domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('active', '=', True)]",
+        string="Quartiers", domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('id', 'child_of', commune_id), ('active', '=', True)]",
     )
     section_ids = fields.Many2many(
         "kiiraaye.section", string="Sections de la zone", compute="_compute_section_ids",
