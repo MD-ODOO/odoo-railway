@@ -23,4 +23,4 @@ RUN chmod +x /usr/local/bin/kiiraaye-upgrade.sh \
     && test -f /mnt/extra-addons/paie_senegal_simulation/views/salary_simulation_views.xml \
     && test -f /mnt/extra-addons/paie_senegal_simulation/__manifest__.py
 
-CMD ["odoo"]
+CMD ["/bin/bash", "-c", "/usr/local/bin/kiiraaye-upgrade.sh && exec odoo"]
