@@ -106,11 +106,12 @@
                                    invisible="type_section != 'communale'"
                                    required="type_section == 'communale'"
                                    domain="[('commune_id', '=', commune_id), ('active', '=', True)]"/>
+                            <field name="zone_quartier_ids" invisible="1"/>
                             <field name="quartier_id"
                                    string="Quartier"
                                    invisible="type_section != 'communale'"
                                    required="type_section == 'communale'"
-                                   domain="[('id', 'in', zone_id.quartier_ids.ids)]"
+                                   domain="[('id', 'in', zone_quartier_ids)]"
                                    context="{'default_country_id': country_id, 'default_parent_id': commune_id, 'default_niveau': 'niveau5'}"/>
                         </group>
                     </group>
