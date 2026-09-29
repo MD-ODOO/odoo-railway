@@ -24,6 +24,12 @@ class KiiraayeSection(models.Model):
         help="Zone de la commune. Visible uniquement pour une section communale.",
     )
     quartier_id = fields.Many2one("kiiraaye.geographie", string="Quartier", ondelete="restrict")
+    zone_quartier_ids = fields.Many2many(
+        "kiiraaye.geographie",
+        string="Quartiers de la zone",
+        compute="_compute_zone_quartier_ids",
+        compute_sudo=True,
+    )
     siege_partner_id = fields.Many2one("res.partner", string="Siège / Adresse", ondelete="restrict", copy=False, help="Adresse du siège gérée avec le formulaire d'adresse natif d'Odoo.")
     date_creation = fields.Date(string="Date de création", default=fields.Date.context_today)
     state = fields.Selection([("ouverte", "Ouverte"), ("fermee", "Fermée")], string="État", required=True, default="ouverte")
@@ -31,6 +37,11 @@ class KiiraayeSection(models.Model):
     is_demo_data = fields.Boolean(string="Donnée de démonstration", default=False, copy=False, index=True)
     member_count = fields.Integer(string="Nombre de membres", compute="_compute_member_count")
     member_status_id = fields.Many2one("kiiraaye.effectif.status", string="Statut d'effectif", compute="_compute_member_status")
+
+    @api.depends("zone_id", "zone_id.quartier_ids")
+    def _compute_zone_quartier_ids(self):
+        for record in self:
+            record.zone_quartier_ids = record.zone_id.quartier_ids if record.zone_id else False
 
     @api.depends("membre_ids")
     def _compute_member_count(self):
