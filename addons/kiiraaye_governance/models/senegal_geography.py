@@ -36,6 +36,11 @@ class ResCountrySenegalGeography(models.Model):
         copy=False,
     )
 
+    kiiraaye_touba_import_page = fields.Integer(string="Page import Touba", default=1, readonly=True, copy=False)
+    kiiraaye_touba_import_running = fields.Boolean(string="Import Touba en cours", default=False, readonly=True, copy=False)
+    kiiraaye_touba_setup_done = fields.Boolean(string="Initialisation Touba terminée", default=False, readonly=True, copy=False)
+    kiiraaye_touba_import_message = fields.Text(string="État de l'import Touba", readonly=True, copy=False)
+
     @staticmethod
     def _galsen_get(url, params=None):
         import json
@@ -334,6 +339,213 @@ class ResCountrySenegalGeography(models.Model):
             start_page=start_page,
             max_pages=max_pages,
         )
+
+    @staticmethod
+    def _touba_normalize(value):
+        import unicodedata
+        return "".join(
+            char for char in unicodedata.normalize("NFKD", str(value or ""))
+            if not unicodedata.combining(char)
+        ).strip().casefold()
+
+    def _find_touba_api_commune(self):
+        for item in self._galsen_get_all("communes"):
+            if self._touba_normalize(item.get("nom")) == "touba mosquee":
+                return item
+        return False
+
+    def _get_touba_commune_record(self, api_commune):
+        self.ensure_one()
+        Geo = self.env["kiiraaye.geographie"].sudo()
+        api_id = api_commune.get("id")
+        region_pcode = api_commune.get("region")
+        departement_pcode = api_commune.get("departement")
+
+        region = Geo.search([
+            ("country_id", "=", self.id),
+            ("niveau", "=", "niveau1"),
+            ("source_uid", "=", f"GALSEN-REGION-{region_pcode}"),
+        ], limit=1) if region_pcode else False
+        if not region:
+            regions = self._load_senegal_regions(self._ensure_senegal_root())
+            region = regions.get(region_pcode)
+
+        department = Geo.search([
+            ("country_id", "=", self.id),
+            ("niveau", "=", "niveau2"),
+            ("source_uid", "=", f"GALSEN-DEPT-{departement_pcode}"),
+        ], limit=1) if departement_pcode else False
+        if not department:
+            departments = self._load_senegal_departments(
+                {region_pcode: region} if region_pcode and region else {}
+            )
+            department = departments.get(departement_pcode)
+
+        if not department:
+            raise UserError(_("Impossible de rattacher Touba Mosquée à son département GalsenAPI."))
+
+        return self._upsert_senegal_geo(
+            f"GALSEN-COMMUNE-{api_id}",
+            {
+                "name": api_commune.get("nom") or "TOUBA MOSQUEE",
+                "code": str(api_id),
+                "country_id": self.id,
+                "parent_id": department.id,
+                "niveau": "niveau3",
+                "source_admin_level": "MANUAL",
+                "designation_locale": api_commune.get("type") or "Commune",
+                "source": "GalsenAPI (HDX/OCHA, ANSD)",
+                "source_url": f"{_GALSEN_API_BASE}/communes/{api_id}/",
+                "active": True,
+            },
+        )
+
+    def _create_touba_zones_and_coordinators(self, commune):
+        Geo = self.env["kiiraaye.geographie"].sudo()
+        Zone = self.env["kiiraaye.zone"].sudo()
+        Users = self.env["res.users"].sudo()
+
+        quartiers = Geo.search([
+            ("country_id", "=", self.id),
+            ("niveau", "=", "niveau5"),
+            ("parent_path", "like", commune.parent_path + "%"),
+            ("active", "=", True),
+            ("source", "=", "GalsenAPI"),
+        ], order="name,id")
+
+        created_zones = 0
+        created_users = 0
+        region = commune.parent_id.parent_id if commune.parent_id else False
+
+        for quartier in quartiers:
+            zone = Zone.search([
+                ("commune_id", "=", commune.id),
+                ("quartier_ids", "in", quartier.id),
+                ("active", "=", True),
+            ], limit=1)
+            if not zone:
+                zone = Zone.create({
+                    "name": f"Zone - {quartier.name}",
+                    "country_id": self.id,
+                    "commune_id": commune.id,
+                    "quartier_ids": [(6, 0, [quartier.id])],
+                })
+                created_zones += 1
+
+            if not zone.responsable_user_id:
+                login = f"zone.touba.{zone.id}"
+                user = Users.search([("login", "=", login)], limit=1)
+                if not user:
+                    user = Users.create({
+                        "name": f"Coordinateur - {quartier.name}",
+                        "login": login,
+                        "active": True,
+                        "share": False,
+                        "kiiraaye_role": "zone",
+                        "kiiraaye_country_id": self.id,
+                        "kiiraaye_region_id": region.id if region else False,
+                        "kiiraaye_departement_id": commune.parent_id.id if commune.parent_id else False,
+                        "kiiraaye_commune_id": commune.id,
+                        "kiiraaye_zone_id": zone.id,
+                    })
+                    created_users += 1
+                zone.write({"responsable_user_id": user.id})
+
+        return created_zones, created_users, len(quartiers)
+
+    def action_process_touba_setup(self):
+        self.ensure_one()
+        if self.code != "SN":
+            return True
+
+        if self.kiiraaye_touba_setup_done:
+            cron = self.env.ref("kiiraaye_governance.ir_cron_kiiraaye_touba_setup", raise_if_not_found=False)
+            if cron:
+                cron.sudo().write({"active": False})
+            return True
+
+        api_commune = self._find_touba_api_commune()
+        if not api_commune:
+            self.sudo().write({
+                "kiiraaye_touba_import_message": "Commune Touba Mosquée introuvable dans GalsenAPI.",
+                "kiiraaye_touba_import_running": False,
+            })
+            return True
+
+        commune = self._get_touba_commune_record(api_commune)
+        page = max(1, int(self.kiiraaye_touba_import_page or 1))
+        payload = self._galsen_get(
+            f"{_GALSEN_API_BASE}/villages/",
+            {"page": page, "page_size": 200, "commune": api_commune.get("id")},
+        )
+        rows = payload.get("results", []) if isinstance(payload, dict) else []
+        target_id = api_commune.get("id")
+        Geo = self.env["kiiraaye.geographie"].sudo()
+        loaded = updated = 0
+
+        for item in rows:
+            village_id = item.get("id")
+            village_name = (item.get("nom") or "").strip()
+            item_commune = item.get("commune")
+            if isinstance(item_commune, dict):
+                item_commune = item_commune.get("id")
+            try:
+                matches_touba = int(item_commune) == int(target_id)
+            except (TypeError, ValueError):
+                matches_touba = False
+            if not village_id or not village_name or not matches_touba:
+                continue
+
+            values = {
+                "name": village_name,
+                "code": str(village_id),
+                "country_id": self.id,
+                "parent_id": commune.id,
+                "niveau": "niveau5",
+                "source_admin_level": "MANUAL",
+                "designation_locale": "Village / quartier / unité locale",
+                "source": "GalsenAPI",
+                "source_url": f"{_GALSEN_API_BASE}/villages/{village_id}/",
+                "active": True,
+            }
+            source_uid = f"GALSEN-VILLAGE-{village_id}"
+            record = Geo.search([
+                ("country_id", "=", self.id),
+                ("source_uid", "=", source_uid),
+            ], limit=1)
+            if record:
+                record.write(values)
+                updated += 1
+            else:
+                values["source_uid"] = source_uid
+                Geo.create(values)
+                loaded += 1
+
+        finished = (not rows) or len(rows) < 200
+        if finished:
+            created_zones, created_users, quartiers_count = self._create_touba_zones_and_coordinators(commune)
+            self.sudo().write({
+                "kiiraaye_touba_import_page": page,
+                "kiiraaye_touba_import_running": False,
+                "kiiraaye_touba_setup_done": True,
+                "kiiraaye_touba_import_message": _(
+                    "Touba Mosquée terminé : %s quartiers, %s zones créées, %s coordinateurs créés. "
+                ) % (quartiers_count, created_zones, created_users),
+            })
+            cron = self.env.ref("kiiraaye_governance.ir_cron_kiiraaye_touba_setup", raise_if_not_found=False)
+            if cron:
+                cron.sudo().write({"active": False})
+        else:
+            self.sudo().write({
+                "kiiraaye_touba_import_page": page + 1,
+                "kiiraaye_touba_import_running": True,
+                "kiiraaye_touba_import_message": _(
+                    "Import Touba en cours : page %s, %s quartiers créés et %s mis à jour dans cette page."
+                ) % (page, loaded, updated),
+            })
+
+        self.env.cr.commit()
+        return True
 
     def _set_senegal_geography_status(self, message):
         self.sudo().write({
