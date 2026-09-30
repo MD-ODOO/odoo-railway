@@ -24,7 +24,6 @@
                         <label for="name"/>
                         <h1><field name="name"/></h1>
                     </div>
-
                     <group>
                         <group string="Identification">
                             <field name="reference" readonly="1"/>
@@ -33,11 +32,10 @@
                             <field name="active"/>
                         </group>
                     </group>
-
                     <notebook>
                         <page string="Quartiers / villages">
                             <field name="quartier_ids" readonly="1">
-                                <list create="0" delete="0" edit="0">
+                                <list create="0" edit="0" delete="0">
                                     <field name="name"/>
                                     <field name="code"/>
                                     <field name="niveau"/>
@@ -46,24 +44,23 @@
                                 </list>
                             </field>
                         </page>
-
                         <page string="Sections">
                             <field name="section_ids" readonly="1">
-                                <list create="0" delete="0" edit="0">
+                                <list create="0" edit="0" delete="0">
                                     <field name="reference"/>
                                     <field name="name"/>
                                     <field name="type_section"/>
                                     <field name="commune_id"/>
+                                    <field name="zone_id"/>
                                     <field name="quartier_id"/>
                                     <field name="state"/>
                                     <field name="active"/>
                                 </list>
                             </field>
                         </page>
-
                         <page string="Responsables de zone">
                             <field name="responsable_user_ids" readonly="1">
-                                <list create="0" delete="0" edit="0">
+                                <list create="0" edit="0" delete="0">
                                     <field name="name"/>
                                     <field name="login"/>
                                     <field name="kiiraaye_role"/>
