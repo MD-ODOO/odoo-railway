@@ -16,11 +16,12 @@ RUN mkdir -p /mnt/extra-addons /usr/local/bin \
 COPY addons/ /mnt/extra-addons/
 COPY scripts/kiiraaye-upgrade.sh /usr/local/bin/kiiraaye-upgrade.sh
 COPY scripts/start-odoo.sh /usr/local/bin/start-odoo.sh
+COPY scripts/kiiraaye_schema_patch.py /usr/local/bin/kiiraaye_schema_patch.py
 COPY scripts/cleanup_kiiraaye_dakar.py /usr/local/bin/cleanup_kiiraaye_dakar.py
 
-RUN chmod +x /usr/local/bin/kiiraaye-upgrade.sh /usr/local/bin/start-odoo.sh \
+RUN chmod +x /usr/local/bin/kiiraaye-upgrade.sh /usr/local/bin/start-odoo.sh /usr/local/bin/kiiraaye_schema_patch.py \
     && chown -R odoo:odoo /mnt/extra-addons \
-    && chown root:root /usr/local/bin/kiiraaye-upgrade.sh /usr/local/bin/start-odoo.sh /usr/local/bin/cleanup_kiiraaye_dakar.py \
+    && chown root:root /usr/local/bin/kiiraaye-upgrade.sh /usr/local/bin/start-odoo.sh /usr/local/bin/kiiraaye_schema_patch.py /usr/local/bin/cleanup_kiiraaye_dakar.py \
     && test -f /mnt/extra-addons/paie_senegal_simulation/views/salary_simulation_views.xml \
     && test -f /mnt/extra-addons/paie_senegal_simulation/__manifest__.py
 
