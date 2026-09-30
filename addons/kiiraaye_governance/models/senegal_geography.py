@@ -460,12 +460,8 @@ class ResCountrySenegalGeography(models.Model):
         if self.code != "SN":
             return True
 
-        if self.kiiraaye_touba_setup_done:
-            cron = self.env.ref("kiiraaye_governance.ir_cron_kiiraaye_touba_setup", raise_if_not_found=False)
-            if cron:
-                cron.sudo().write({"active": False})
-            return True
-
+        # Le traitement reste idempotent : après une première installation,
+        # on peut le relancer pour réconcilier les quartiers, zones et responsables.
         api_commune = self._find_touba_api_commune()
         if not api_commune:
             self.sudo().write({
