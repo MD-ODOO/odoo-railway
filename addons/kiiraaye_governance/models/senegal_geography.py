@@ -418,21 +418,20 @@ class ResCountrySenegalGeography(models.Model):
         region = commune.parent_id.parent_id if commune.parent_id else False
 
         for quartier in quartiers:
-            zone = Zone.search([
-                ("commune_id", "=", commune.id),
-                ("quartier_ids", "in", quartier.id),
-                ("active", "=", True),
-            ], limit=1)
+            zone = quartier.zone_id.filtered(
+                lambda z: z.commune_id == commune and z.active
+            )[:1]
+
             if not zone:
                 zone = Zone.create({
                     "name": f"Zone - {quartier.name}",
                     "country_id": self.id,
                     "commune_id": commune.id,
-                    "quartier_ids": [(6, 0, [quartier.id])],
                 })
+                quartier.write({"zone_id": zone.id})
                 created_zones += 1
 
-            if not zone.responsable_user_id:
+            if not zone.responsable_user_ids:
                 login = f"zone.touba.{zone.id}"
                 user = Users.search([("login", "=", login)], limit=1)
                 if not user:
@@ -449,7 +448,10 @@ class ResCountrySenegalGeography(models.Model):
                         "kiiraaye_zone_id": zone.id,
                     })
                     created_users += 1
-                zone.write({"responsable_user_id": user.id})
+                else:
+                    user.with_context(kiiraaye_skip_zone_sync=True).write({
+                        "kiiraaye_zone_id": zone.id
+                    })
 
         return created_zones, created_users, len(quartiers)
 
