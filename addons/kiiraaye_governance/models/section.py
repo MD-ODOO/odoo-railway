@@ -175,18 +175,13 @@ class KiiraayeSection(models.Model):
 
     @api.onchange("region_id")
     def _onchange_region_id(self):
+        # Une nouvelle région invalide toujours le département, la commune,
+        # la zone et le quartier précédemment sélectionnés.
         region = self.region_id.sudo() if self.region_id else False
-        department = self.departement_id.sudo() if self.departement_id else False
-        if department and (not region or department.parent_id.id != region.id):
-            self.departement_id = False
-            self.commune_id = False
-            self.zone_id = False
-            self.quartier_id = False
-        elif not region:
-            self.departement_id = False
-            self.commune_id = False
-            self.zone_id = False
-            self.quartier_id = False
+        self.departement_id = False
+        self.commune_id = False
+        self.zone_id = False
+        self.quartier_id = False
 
         country_id = self.country_id.id if self.country_id else False
         return {
@@ -202,16 +197,12 @@ class KiiraayeSection(models.Model):
 
     @api.onchange("departement_id")
     def _onchange_departement_id(self):
+        # Une nouvelle sélection de département invalide toujours la commune,
+        # la zone et le quartier précédemment sélectionnés.
         department = self.departement_id.sudo() if self.departement_id else False
-        commune = self.commune_id.sudo() if self.commune_id else False
-        if commune and (not department or commune.parent_id.id != department.id):
-            self.commune_id = False
-            self.zone_id = False
-            self.quartier_id = False
-        elif not department:
-            self.commune_id = False
-            self.zone_id = False
-            self.quartier_id = False
+        self.commune_id = False
+        self.zone_id = False
+        self.quartier_id = False
 
         country_id = self.country_id.id if self.country_id else False
         return {
@@ -255,23 +246,10 @@ class KiiraayeSection(models.Model):
 
     @api.onchange("commune_id")
     def _onchange_commune_id(self):
+        # Une nouvelle commune invalide toujours la zone et le quartier.
         commune = self.commune_id.sudo() if self.commune_id else False
-        zone = self.zone_id.sudo() if self.zone_id else False
-
-        if zone and zone.commune_id.id != (commune.id if commune else False):
-            self.zone_id = False
-        if self.quartier_id and commune:
-            current = self.quartier_id.sudo()
-            valid = False
-            while current:
-                if current.parent_id.id == commune.id:
-                    valid = True
-                    break
-                current = current.parent_id
-            if not valid:
-                self.quartier_id = False
-        elif not commune:
-            self.quartier_id = False
+        self.zone_id = False
+        self.quartier_id = False
 
         country_id = self.country_id.id if self.country_id else False
         return {
