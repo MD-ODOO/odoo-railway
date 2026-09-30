@@ -9,9 +9,6 @@
                 <field name="name"/>
                 <field name="country_id"/>
                 <field name="commune_id"/>
-                <field name="responsable_user_id"/>
-                <field name="quartier_ids" widget="many2many_tags"/>
-                <field name="section_ids" widget="many2many_tags"/>
                 <field name="active"/>
             </list>
         </field>
@@ -27,43 +24,53 @@
                         <label for="name"/>
                         <h1><field name="name"/></h1>
                     </div>
+
                     <group>
                         <group string="Identification">
                             <field name="reference" readonly="1"/>
                             <field name="country_id"/>
                             <field name="commune_id"/>
-                            <field name="responsable_user_id"/>
                             <field name="active"/>
-                        </group>
-                        <group string="Périmètre de la zone">
-                            <field name="quartier_ids"
-                                   widget="many2many_tags"
-                                   domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('id', 'child_of', commune_id), ('active', '=', True)]"/>
                         </group>
                     </group>
 
                     <notebook>
-                        <page string="Quartiers">
-                            <field name="quartier_ids">
-                                <list>
+                        <page string="Quartiers / villages">
+                            <field name="quartier_ids" readonly="1">
+                                <list create="0" delete="0" edit="0">
                                     <field name="name"/>
                                     <field name="code"/>
+                                    <field name="niveau"/>
                                     <field name="parent_id"/>
                                     <field name="active"/>
                                 </list>
                             </field>
                         </page>
-                        <page string="Sections dont le coordonnateur a droit">
+
+                        <page string="Sections">
                             <field name="section_ids" readonly="1">
-                                <list>
+                                <list create="0" delete="0" edit="0">
                                     <field name="reference"/>
                                     <field name="name"/>
                                     <field name="type_section"/>
                                     <field name="commune_id"/>
-                                    <field name="zone_id"/>
                                     <field name="quartier_id"/>
-                                    <field name="cordonnateur_id"/>
                                     <field name="state"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Responsables de zone">
+                            <field name="responsable_user_ids" readonly="1">
+                                <list create="0" delete="0" edit="0">
+                                    <field name="name"/>
+                                    <field name="login"/>
+                                    <field name="kiiraaye_role"/>
+                                    <field name="kiiraaye_region_id"/>
+                                    <field name="kiiraaye_departement_id"/>
+                                    <field name="kiiraaye_commune_id"/>
+                                    <field name="kiiraaye_zone_id"/>
                                     <field name="active"/>
                                 </list>
                             </field>
@@ -82,12 +89,9 @@
                 <field name="name"/>
                 <field name="reference"/>
                 <field name="commune_id"/>
-                <field name="responsable_user_id"/>
-                <field name="quartier_ids"/>
                 <filter name="active" string="Actives" domain="[('active', '=', True)]"/>
                 <group>
                     <filter name="groupby_commune" string="Commune" context="{'group_by': 'commune_id'}"/>
-                    <filter name="groupby_responsable" string="Responsable" context="{'group_by': 'responsable_user_id'}"/>
                 </group>
             </search>
         </field>
