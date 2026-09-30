@@ -9,59 +9,78 @@ class KiiraayeZone(models.Model):
     _order = "name, id"
 
     name = fields.Char(string="Nom de la zone", required=True, index=True)
-    reference = fields.Char(string="Référence", required=True, copy=False, readonly=True,
-                            default=lambda self: self.env["ir.sequence"].next_by_code("kiiraaye.zone") or "Nouveau")
-    country_id = fields.Many2one("res.country", string="Pays", required=True,
-                                 default=lambda self: self.env["res.country"].search([("code", "=", "SN")], limit=1),
-                                 ondelete="restrict")
+    reference = fields.Char(
+        string="Référence",
+        required=True,
+        copy=False,
+        readonly=True,
+        default=lambda self: self.env["ir.sequence"].next_by_code("kiiraaye.zone") or "Nouveau",
+    )
+    country_id = fields.Many2one(
+        "res.country",
+        string="Pays",
+        required=True,
+        default=lambda self: self.env["res.country"].search([("code", "=", "SN")], limit=1),
+        ondelete="restrict",
+    )
     commune_id = fields.Many2one(
-        "kiiraaye.geographie", string="Commune", required=True, ondelete="restrict",
+        "kiiraaye.geographie",
+        string="Commune",
+        required=True,
+        ondelete="restrict",
         domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau3'), ('active', '=', True)]",
     )
-    quartier_ids = fields.Many2many(
-        "kiiraaye.geographie", "kiiraaye_zone_quartier_rel", "zone_id", "quartier_id",
-        string="Quartiers", domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('id', 'child_of', commune_id), ('active', '=', True)]",
+
+    # Relations inverses : la zone ne sélectionne plus les quartiers.
+    quartier_ids = fields.One2many(
+        "kiiraaye.geographie",
+        "zone_id",
+        string="Quartiers / villages",
+        domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('active', '=', True)]",
     )
-    section_ids = fields.Many2many(
-        "kiiraaye.section", string="Sections de la zone", compute="_compute_section_ids",
+    section_ids = fields.One2many(
+        "kiiraaye.section",
+        "zone_id",
+        string="Sections",
     )
-    responsable_user_id = fields.Many2one(
-        "res.users", string="Responsable de zone", ondelete="restrict",
-        domain="[('kiiraaye_role', '=', 'zone')]",
+    responsable_user_ids = fields.One2many(
+        "res.users",
+        "kiiraaye_zone_id",
+        string="Responsables de zone",
     )
     active = fields.Boolean(string="Actif", default=True)
 
-    _unique_reference = models.Constraint("UNIQUE(reference)", "La référence de la zone doit être unique.")
+    _unique_reference = models.Constraint(
+        "UNIQUE(reference)",
+        "La référence de la zone doit être unique.",
+    )
     _unique_name_commune = models.Constraint(
-        "UNIQUE(name, commune_id)", "Une zone portant ce nom existe déjà dans cette commune."
+        "UNIQUE(name, commune_id)",
+        "Une zone portant ce nom existe déjà dans cette commune.",
     )
 
-    @api.depends("commune_id", "quartier_ids")
-    def _compute_section_ids(self):
-        Section = self.env["kiiraaye.section"].sudo()
-        for zone in self:
-            domain = [
-                ("active", "=", True),
-                ("type_section", "=", "communale"),
-                ("commune_id", "=", zone.commune_id.id),
-            ]
-            if zone.quartier_ids:
-                domain.append(("quartier_id", "in", zone.quartier_ids.ids))
-            else:
-                domain.append(("id", "=", False))
-            zone.section_ids = Section.search(domain)
+    def init(self):
+        """Migre les anciennes affectations M2M vers le nouveau rattachement O2M."""
+        super().init()
+        self.env.cr.execute("SELECT to_regclass('kiiraaye_zone_quartier_rel')")
+        relation_table = self.env.cr.fetchone()[0]
+        if relation_table:
+            self.env.cr.execute(
+                """
+                UPDATE kiiraaye_geographie AS g
+                   SET zone_id = rel.zone_id
+                  FROM kiiraaye_zone_quartier_rel AS rel
+                 WHERE g.id = rel.quartier_id
+                   AND g.zone_id IS NULL
+                   AND g.niveau = 'niveau5'
+                """
+            )
 
     @api.onchange("commune_id")
     def _onchange_commune_id(self):
-        if self.quartier_ids:
-            self.quartier_ids = self.quartier_ids.filtered(lambda q: self._quartier_belongs_to_commune(q, self.commune_id))
-
-    @api.onchange("quartier_ids")
-    def _onchange_quartier_ids(self):
-        if self.commune_id:
-            invalid = self.quartier_ids.filtered(lambda q: not self._quartier_belongs_to_commune(q, self.commune_id))
-            if invalid:
-                self.quartier_ids -= invalid
+        for quartier in self.quartier_ids:
+            if not self._quartier_belongs_to_commune(quartier, self.commune_id):
+                quartier.zone_id = False
 
     @staticmethod
     def _quartier_belongs_to_commune(quartier, commune):
@@ -74,30 +93,45 @@ class KiiraayeZone(models.Model):
             current = current.parent_id
         return False
 
-    @api.constrains("country_id", "commune_id", "quartier_ids", "responsable_user_id")
+    @api.constrains("country_id", "commune_id", "quartier_ids", "responsable_user_ids")
     def _check_zone(self):
         for zone in self:
-            if zone.commune_id and (zone.commune_id.country_id != zone.country_id or zone.commune_id.niveau != "niveau3"):
+            if zone.commune_id and (
+                zone.commune_id.country_id != zone.country_id
+                or zone.commune_id.niveau != "niveau3"
+            ):
                 raise ValidationError(_("La commune de la zone est invalide."))
-            invalid = zone.quartier_ids.filtered(lambda q: not self._quartier_belongs_to_commune(q, zone.commune_id))
+
+            invalid = zone.quartier_ids.filtered(
+                lambda q: not self._quartier_belongs_to_commune(q, zone.commune_id)
+            )
             if invalid:
-                raise ValidationError(_("Tous les quartiers d'une zone doivent appartenir à sa commune."))
-            if zone.responsable_user_id and zone.responsable_user_id.kiiraaye_role != "zone":
-                raise ValidationError(_("Le responsable de zone doit avoir le rôle Responsable de zone."))
+                raise ValidationError(
+                    _("Tous les quartiers d'une zone doivent appartenir à sa commune.")
+                )
+
+            invalid_users = zone.responsable_user_ids.filtered(
+                lambda u: u.kiiraaye_role != "zone"
+            )
+            if invalid_users:
+                raise ValidationError(
+                    _("Tous les responsables d'une zone doivent avoir le rôle Responsable de zone.")
+                )
+
+    @api.constrains("quartier_ids")
+    def _check_quartier_unique_zone(self):
+        for zone in self:
+            duplicates = self.env["kiiraaye.geographie"].sudo().search(
+                [
+                    ("id", "in", zone.quartier_ids.ids),
+                    ("zone_id", "!=", zone.id),
+                ]
+            )
+            if duplicates:
+                raise ValidationError(
+                    _("Un quartier ne peut être rattaché qu'à une seule zone.")
+                )
 
     @api.model_create_multi
     def create(self, vals_list):
-        records = super().create(vals_list)
-        records._sync_responsable_users()
-        return records
-
-    def write(self, vals):
-        result = super().write(vals)
-        if "responsable_user_id" in vals:
-            self._sync_responsable_users()
-        return result
-
-    def _sync_responsable_users(self):
-        for zone in self:
-            if zone.responsable_user_id and zone.responsable_user_id.kiiraaye_zone_id != zone:
-                zone.responsable_user_id.with_context(kiiraaye_skip_zone_sync=True).write({"kiiraaye_zone_id": zone.id})
+        return super().create(vals_list)
