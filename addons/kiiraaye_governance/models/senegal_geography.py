@@ -461,7 +461,9 @@ class ResCountrySenegalGeography(models.Model):
             return True
 
         # Le traitement reste idempotent : après une première installation,
-        # on peut le relancer pour réconcilier les quartiers, zones et responsables.
+        # le cron peut rester actif et sort immédiatement.
+        if self.kiiraaye_touba_setup_done:
+            return True
         api_commune = self._find_touba_api_commune()
         if not api_commune:
             self.sudo().write({
@@ -530,9 +532,6 @@ class ResCountrySenegalGeography(models.Model):
                     "Touba Mosquée terminé : %s quartiers, %s zones créées, %s coordinateurs créés. "
                 ) % (quartiers_count, created_zones, created_users),
             })
-            cron = self.env.ref("kiiraaye_governance.ir_cron_kiiraaye_touba_setup", raise_if_not_found=False)
-            if cron:
-                cron.sudo().write({"active": False})
         else:
             self.sudo().write({
                 "kiiraaye_touba_import_page": page + 1,
