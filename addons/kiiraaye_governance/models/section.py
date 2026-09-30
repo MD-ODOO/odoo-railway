@@ -97,65 +97,197 @@ class KiiraayeSection(models.Model):
     def _onchange_country_and_type(self):
         mapping = self._geography_visibility()
         visible = mapping.get(self.type_section, {})
+        country = self.country_id.sudo() if self.country_id else self.env["res.country"].sudo()
         if not self.country_id:
-            self.region_id = False; self.departement_id = False; self.commune_id = False; self.zone_id = False; self.quartier_id = False
-            return {"domain": {"region_id": [("id", "=", False)], "departement_id": [("id", "=", False)], "commune_id": [("id", "=", False)], "quartier_id": [("id", "=", False)]}}
-        if not visible.get("region"): self.region_id = False
-        if not visible.get("departement"): self.departement_id = False
-        if not visible.get("commune"): self.commune_id = False
-        if self.type_section != "communale": self.zone_id = False
-        if not visible.get("quartier"): self.quartier_id = False
-        if self.region_id and self.region_id.country_id != self.country_id: self.region_id = False
-        if self.departement_id and self.departement_id.country_id != self.country_id: self.departement_id = False
-        if self.commune_id and self.commune_id.country_id != self.country_id: self.commune_id = False
-        if self.quartier_id and self.quartier_id.country_id != self.country_id: self.quartier_id = False
-        return {"domain": {
-            "region_id": [("country_id", "=", self.country_id.id), ("niveau", "=", "niveau1"), ("active", "=", True)],
-            "departement_id": [("country_id", "=", self.country_id.id), ("niveau", "=", "niveau2"), ("parent_id", "=", self.region_id.id or False), ("active", "=", True)],
-            "commune_id": [("country_id", "=", self.country_id.id), ("niveau", "=", "niveau3"), ("parent_id", "=", self.departement_id.id or False), ("active", "=", True)],
-            "zone_id": [("commune_id", "=", self.commune_id.id), ("active", "=", True)] if self.commune_id and self.type_section == "communale" else [("id", "=", False)],
-            "quartier_id": [("country_id", "=", self.country_id.id), ("niveau", "=", "niveau5"), ("parent_id", "child_of", self.commune_id.id) if self.commune_id else ("id", "=", False), ("active", "=", True)],
-        }}
+            self.region_id = False
+            self.departement_id = False
+            self.commune_id = False
+            self.zone_id = False
+            self.quartier_id = False
+            return {
+                "domain": {
+                    "region_id": [("id", "=", False)],
+                    "departement_id": [("id", "=", False)],
+                    "commune_id": [("id", "=", False)],
+                    "zone_id": [("id", "=", False)],
+                    "quartier_id": [("id", "=", False)],
+                }
+            }
+
+        if not visible.get("region"):
+            self.region_id = False
+        if not visible.get("departement"):
+            self.departement_id = False
+        if not visible.get("commune"):
+            self.commune_id = False
+        if self.type_section != "communale":
+            self.zone_id = False
+        if not visible.get("quartier"):
+            self.quartier_id = False
+
+        # Les comparaisons se font en sudo afin qu'un ancien enregistrement
+        # géographique hors périmètre ne bloque pas l'onchange.
+        if self.region_id and self.region_id.sudo().country_id.id != country.id:
+            self.region_id = False
+        if self.departement_id and self.departement_id.sudo().country_id.id != country.id:
+            self.departement_id = False
+        if self.commune_id and self.commune_id.sudo().country_id.id != country.id:
+            self.commune_id = False
+        if self.quartier_id and self.quartier_id.sudo().country_id.id != country.id:
+            self.quartier_id = False
+
+        return {
+            "domain": {
+                "region_id": [
+                    ("country_id", "=", country.id),
+                    ("niveau", "=", "niveau1"),
+                    ("active", "=", True),
+                ],
+                "departement_id": [
+                    ("country_id", "=", country.id),
+                    ("niveau", "=", "niveau2"),
+                    ("parent_id", "=", self.region_id.id or False),
+                    ("active", "=", True),
+                ],
+                "commune_id": [
+                    ("country_id", "=", country.id),
+                    ("niveau", "=", "niveau3"),
+                    ("parent_id", "=", self.departement_id.id or False),
+                    ("active", "=", True),
+                ],
+                "zone_id": (
+                    [("commune_id", "=", self.commune_id.id), ("active", "=", True)]
+                    if self.commune_id and self.type_section == "communale"
+                    else [("id", "=", False)]
+                ),
+                "quartier_id": (
+                    [
+                        ("country_id", "=", country.id),
+                        ("niveau", "=", "niveau5"),
+                        ("parent_id", "child_of", self.commune_id.id),
+                        ("active", "=", True),
+                    ]
+                    if self.commune_id
+                    else [("id", "=", False)]
+                ),
+            }
+        }
 
     @api.onchange("region_id")
     def _onchange_region_id(self):
-        if self.departement_id and self.departement_id.parent_id != self.region_id: self.departement_id = False; self.commune_id = False; self.zone_id = False; self.quartier_id = False
-        elif not self.region_id: self.departement_id = False; self.commune_id = False; self.zone_id = False; self.quartier_id = False
-        return {"domain": {"departement_id": [("country_id", "=", self.country_id.id), ("niveau", "=", "niveau2"), ("parent_id", "=", self.region_id.id or False), ("active", "=", True)]}}
+        region = self.region_id.sudo() if self.region_id else False
+        department = self.departement_id.sudo() if self.departement_id else False
+        if department and (not region or department.parent_id.id != region.id):
+            self.departement_id = False
+            self.commune_id = False
+            self.zone_id = False
+            self.quartier_id = False
+        elif not region:
+            self.departement_id = False
+            self.commune_id = False
+            self.zone_id = False
+            self.quartier_id = False
+
+        country_id = self.country_id.id if self.country_id else False
+        return {
+            "domain": {
+                "departement_id": [
+                    ("country_id", "=", country_id),
+                    ("niveau", "=", "niveau2"),
+                    ("parent_id", "=", region.id if region else False),
+                    ("active", "=", True),
+                ]
+            }
+        }
 
     @api.onchange("departement_id")
     def _onchange_departement_id(self):
-        if self.commune_id and self.commune_id.parent_id != self.departement_id: self.commune_id = False; self.zone_id = False; self.quartier_id = False
-        elif not self.departement_id: self.commune_id = False; self.zone_id = False; self.quartier_id = False
-        return {"domain": {"commune_id": [("country_id", "=", self.country_id.id), ("niveau", "=", "niveau3"), ("parent_id", "=", self.departement_id.id or False), ("active", "=", True)]}}
+        department = self.departement_id.sudo() if self.departement_id else False
+        commune = self.commune_id.sudo() if self.commune_id else False
+        if commune and (not department or commune.parent_id.id != department.id):
+            self.commune_id = False
+            self.zone_id = False
+            self.quartier_id = False
+        elif not department:
+            self.commune_id = False
+            self.zone_id = False
+            self.quartier_id = False
+
+        country_id = self.country_id.id if self.country_id else False
+        return {
+            "domain": {
+                "commune_id": [
+                    ("country_id", "=", country_id),
+                    ("niveau", "=", "niveau3"),
+                    ("parent_id", "=", department.id if department else False),
+                    ("active", "=", True),
+                ]
+            }
+        }
 
     @api.onchange("zone_id")
     def _onchange_zone_id(self):
-        if self.zone_id:
-            self.commune_id = self.zone_id.commune_id
-            if self.quartier_id and self.quartier_id not in self.zone_id.quartier_ids:
+        zone = self.zone_id.sudo() if self.zone_id else False
+        if zone:
+            self.commune_id = zone.commune_id
+            if self.quartier_id and self.quartier_id.id not in zone.quartier_ids.ids:
                 self.quartier_id = False
-        return {"domain": {
-            "quartier_id": (
-                [("id", "in", self.zone_id.quartier_ids.ids), ("active", "=", True)]
-                if self.zone_id else
-                [("country_id", "=", self.country_id.id), ("niveau", "=", "niveau5"), ("parent_id", "child_of", self.commune_id.id), ("active", "=", True)]
-                if self.commune_id else [("id", "=", False)]
-            )
-        }}
+
+        country_id = self.country_id.id if self.country_id else False
+        return {
+            "domain": {
+                "quartier_id": (
+                    [("id", "in", zone.quartier_ids.ids), ("active", "=", True)]
+                    if zone
+                    else (
+                        [
+                            ("country_id", "=", country_id),
+                            ("niveau", "=", "niveau5"),
+                            ("parent_id", "child_of", self.commune_id.id),
+                            ("active", "=", True),
+                        ]
+                        if self.commune_id
+                        else [("id", "=", False)]
+                    )
+                )
+            }
+        }
 
     @api.onchange("commune_id")
     def _onchange_commune_id(self):
-        if self.zone_id and self.zone_id.commune_id != self.commune_id:
+        commune = self.commune_id.sudo() if self.commune_id else False
+        zone = self.zone_id.sudo() if self.zone_id else False
+
+        if zone and zone.commune_id.id != (commune.id if commune else False):
             self.zone_id = False
-        if self.quartier_id and self.quartier_id.parent_id and self.commune_id:
-            current = self.quartier_id; ancestors = current; valid = False
-            while ancestors:
-                if ancestors.parent_id == self.commune_id: valid = True; break
-                ancestors = ancestors.parent_id
-            if not valid: self.quartier_id = False
-        elif not self.commune_id: self.quartier_id = False
-        return {"domain": {"quartier_id": ([("country_id", "=", self.country_id.id), ("niveau", "=", "niveau5"), ("parent_id", "child_of", self.commune_id.id), ("active", "=", True)] if self.commune_id else [("id", "=", False)])}}
+        if self.quartier_id and commune:
+            current = self.quartier_id.sudo()
+            valid = False
+            while current:
+                if current.parent_id.id == commune.id:
+                    valid = True
+                    break
+                current = current.parent_id
+            if not valid:
+                self.quartier_id = False
+        elif not commune:
+            self.quartier_id = False
+
+        country_id = self.country_id.id if self.country_id else False
+        return {
+            "domain": {
+                "quartier_id": (
+                    [
+                        ("country_id", "=", country_id),
+                        ("niveau", "=", "niveau5"),
+                        ("parent_id", "child_of", commune.id),
+                        ("active", "=", True),
+                    ]
+                    if commune
+                    else [("id", "=", False)]
+                )
+            }
+        }
 
     @api.constrains("country_id", "type_section", "region_id", "departement_id", "commune_id", "quartier_id")
     def _check_geography(self):
