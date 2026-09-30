@@ -9,6 +9,13 @@ DB_PASSWORD="${ODOO_DB_PASSWORD:-}"
 
 echo "[kiiraaye] pre-deploy upgrade: ${DBS}"
 
-su -s /bin/bash odoo -c "odoo --database \"${DBS}\" --update kiiraaye_governance --stop-after-init --db_host=\"${DB_HOST}\" --db_port=\"${DB_PORT}\" --db_user=\"${DB_USER}\" --db_password=\"${DB_PASSWORD}\""
+IFS=',' read -ra DATABASES <<< "${DBS}"
+for DB in "${DATABASES[@]}"; do
+    DB="$(echo "${DB}" | xargs)"
+    [ -z "${DB}" ] && continue
+
+    echo "[kiiraaye] upgrading database: ${DB}"
+    su -s /bin/bash odoo -c "odoo --database "${DB}" --update kiiraaye_governance --stop-after-init --db_host="${DB_HOST}" --db_port="${DB_PORT}" --db_user="${DB_USER}" --db_password="${DB_PASSWORD}""
+done
 
 echo "[kiiraaye] pre-deploy upgrade finished"
