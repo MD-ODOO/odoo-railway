@@ -1,21 +1,5 @@
 #!/bin/bash
 set -euo pipefail
 
-DBS="${ODOO_UPDATE_DATABASES:-KIIRAAY,SMART}"
-DB_HOST="${ODOO_DB_HOST:-postgres.railway.internal}"
-DB_PORT="${ODOO_DB_PORT:-5432}"
-DB_USER="${ODOO_DB_USER:-odoo}"
-DB_PASSWORD="${ODOO_DB_PASSWORD:-}"
-
-echo "[kiiraaye] pre-deploy upgrade: ${DBS}"
-
-IFS=',' read -ra DATABASES <<< "${DBS}"
-for DB in "${DATABASES[@]}"; do
-    DB="$(echo "${DB}" | xargs)"
-    [ -z "${DB}" ] && continue
-
-    echo "[kiiraaye] upgrading database: ${DB}"
-    su -s /bin/bash odoo -c "odoo --database "${DB}" --update kiiraaye_governance --stop-after-init --db_host="${DB_HOST}" --db_port="${DB_PORT}" --db_user="${DB_USER}" --db_password="${DB_PASSWORD}""
-done
-
-echo "[kiiraaye] pre-deploy upgrade finished"
+echo "[kiiraaye] schema patch + module upgrades"
+python3 /usr/local/bin/kiiraaye_schema_patch.py
