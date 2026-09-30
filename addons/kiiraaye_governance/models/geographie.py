@@ -70,6 +70,14 @@ class KiiraayeGeographie(models.Model):
         "parent_id",
         string="Sous-zones",
     )
+    zone_id = fields.Many2one(
+        "kiiraaye.zone",
+        string="Zone Kiiraaye",
+        index=True,
+        ondelete="set null",
+        copy=False,
+        help="Zone Kiiraaye à laquelle ce quartier/unité locale est rattaché.",
+    )
 
     _unique_source_uid = models.Constraint(
         "UNIQUE(country_id, source_uid)",
