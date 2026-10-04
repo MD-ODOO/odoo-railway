@@ -23,7 +23,7 @@ RUN set -eux; \
     git fetch --depth 1 origin b25ad74c137d748b09e14c5bdd2c8b8186273412; \
     git checkout b25ad74c137d748b09e14c5bdd2c8b8186273412; \
     rm -rf __pycache__ */__pycache__; \
-    cp -a . /mnt/extra-addons/sa_property_management; \
+    cp -a . /mnt/extra-addons/sa_property_management/; \
     rm -rf /mnt/extra-addons/sa_property_management/.git /tmp/sa_property_management; \
     chown -R odoo:odoo /mnt/extra-addons/sa_property_management
 
@@ -37,7 +37,8 @@ RUN chmod +x /usr/local/bin/kiiraaye-upgrade.sh /usr/local/bin/start-odoo.sh /us
     && chown root:root /usr/local/bin/kiiraaye-upgrade.sh /usr/local/bin/start-odoo.sh /usr/local/bin/kiiraaye_schema_patch.py /usr/local/bin/cleanup_kiiraaye_dakar.py \
     && test -f /mnt/extra-addons/paie_senegal_simulation/views/salary_simulation_views.xml \
     && test -f /mnt/extra-addons/paie_senegal_simulation/__manifest__.py \
-    && test -f /mnt/extra-addons/sa_property_management/__manifest__.py
+    && test -f /mnt/extra-addons/sa_property_management/__manifest__.py \
+    && test -f /mnt/extra-addons/sa_property_management/i18n/fr.po
 
 ENTRYPOINT ["/usr/local/bin/start-odoo.sh"]
 CMD ["odoo"]
