@@ -1,0 +1,766 @@
+# Translation of SA Property Management
+# French translation - Odoo 18/19
+msgid ""
+msgstr ""
+"Project-Id-Version: SA Property Management\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Property Management"
+msgstr "Gestion immobilière"
+
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+msgid "Projects"
+msgstr "Projets"
+
+msgid "Properties"
+msgstr "Biens immobiliers"
+
+msgid "Bookings"
+msgstr "Réservations"
+
+msgid "Leads"
+msgstr "Pistes"
+
+msgid "Opportunities"
+msgstr "Opportunités"
+
+msgid "Receivables"
+msgstr "Créances"
+
+msgid "Transfers"
+msgstr "Transferts"
+
+msgid "Documents"
+msgstr "Documents"
+
+msgid "Dealers"
+msgstr "Agents immobiliers"
+
+msgid "Allocations"
+msgstr "Attributions"
+
+msgid "Commissions"
+msgstr "Commissions"
+
+msgid "Investor Deals"
+msgstr "Opérations investisseurs"
+
+msgid "Service Billing"
+msgstr "Facturation des services"
+
+msgid "Construction"
+msgstr "Construction"
+
+msgid "Construction Projects"
+msgstr "Projets de construction"
+
+msgid "Subcontracts"
+msgstr "Sous-traitances"
+
+msgid "Payment Certificates"
+msgstr "Certificats de paiement"
+
+msgid "Material Requisitions"
+msgstr "Demandes de matériel"
+
+msgid "Material Issues"
+msgstr "Sorties de matériel"
+
+msgid "Configuration"
+msgstr "Configuration"
+
+msgid "Settings"
+msgstr "Paramètres"
+
+msgid "Payment Plans"
+msgstr "Plans de paiement"
+
+msgid "KIBOR Rates"
+msgstr "Taux KIBOR"
+
+msgid "Transfer Taxes"
+msgstr "Taxes de transfert"
+
+msgid "Misc Charges"
+msgstr "Frais divers"
+
+msgid "Property Features"
+msgstr "Caractéristiques des biens"
+
+msgid "Services & Charges"
+msgstr "Services et frais"
+
+msgid "Lead Sources"
+msgstr "Sources des pistes"
+
+msgid "Property"
+msgstr "Bien immobilier"
+
+msgid "Project"
+msgstr "Projet"
+
+msgid "Property title"
+msgstr "Titre du bien"
+
+msgid "Location"
+msgstr "Localisation"
+
+msgid "Specs"
+msgstr "Caractéristiques"
+
+msgid "Pricing"
+msgstr "Tarification"
+
+msgid "Ownership"
+msgstr "Propriété"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Gallery"
+msgstr "Galerie"
+
+msgid "Marketing Collateral"
+msgstr "Supports marketing"
+
+msgid "Title"
+msgstr "Titre"
+
+msgid "Available"
+msgstr "Disponible"
+
+msgid "Reserved"
+msgstr "Réservé"
+
+msgid "Booked"
+msgstr "Réservé"
+
+msgid "Sold"
+msgstr "Vendu"
+
+msgid "Transferred"
+msgstr "Transféré"
+
+msgid "Plot"
+msgstr "Terrain"
+
+msgid "House"
+msgstr "Maison"
+
+msgid "Apartment"
+msgstr "Appartement"
+
+msgid "Commercial"
+msgstr "Commercial"
+
+msgid "Mark Available"
+msgstr "Marquer comme disponible"
+
+msgid "Block"
+msgstr "Bloquer"
+
+msgid "Unblock"
+msgstr "Débloquer"
+
+msgid "Buy Back"
+msgstr "Rachat"
+
+msgid "Surrender"
+msgstr "Abandonner"
+
+msgid "Archived"
+msgstr "Archivé"
+
+msgid "On Hand"
+msgstr "En stock"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Invoices"
+msgstr "Factures"
+
+msgid "Installments"
+msgstr "Échéances"
+
+msgid "Booking"
+msgstr "Réservation"
+
+msgid "Confirm"
+msgstr "Confirmer"
+
+msgid "Mark Completed"
+msgstr "Marquer comme terminé"
+
+msgid "Cancel"
+msgstr "Annuler"
+
+msgid "Reset to Draft"
+msgstr "Remettre en brouillon"
+
+msgid "Print Schedule"
+msgstr "Imprimer l'échéancier"
+
+msgid "Pay"
+msgstr "Payer"
+
+msgid "Notes"
+msgstr "Notes"
+
+msgid "Draft"
+msgstr "Brouillon"
+
+msgid "In Payment"
+msgstr "En paiement"
+
+msgid "Completed"
+msgstr "Terminé"
+
+msgid "Cancelled"
+msgstr "Annulé"
+
+msgid "Installment Schedule"
+msgstr "Échéancier des paiements"
+
+msgid "Pending"
+msgstr "En attente"
+
+msgid "Overdue"
+msgstr "En retard"
+
+msgid "Partially Paid"
+msgstr "Partiellement payé"
+
+msgid "Due This Month"
+msgstr "Échéance ce mois-ci"
+
+msgid "Due Today"
+msgstr "Échéance aujourd'hui"
+
+msgid "Customer"
+msgstr "Client"
+
+msgid "Dealer"
+msgstr "Agent immobilier"
+
+msgid "Salesperson"
+msgstr "Commercial"
+
+msgid "State"
+msgstr "État"
+
+msgid "Status"
+msgstr "Statut"
+
+msgid "Payment Plan"
+msgstr "Plan de paiement"
+
+msgid "Payment Terms"
+msgstr "Conditions de paiement"
+
+msgid "Invoice"
+msgstr "Facture"
+
+msgid "Generate Invoice"
+msgstr "Générer la facture"
+
+msgid "Register Payment"
+msgstr "Enregistrer le paiement"
+
+msgid "Open Invoice"
+msgstr "Ouvrir la facture"
+
+msgid "Penalty"
+msgstr "Pénalité"
+
+msgid "Bill Penalty"
+msgstr "Facturer la pénalité"
+
+msgid "Investor"
+msgstr "Investisseur"
+
+msgid "Investor Earnings"
+msgstr "Gains investisseur"
+
+msgid "Advance"
+msgstr "Avance"
+
+msgid "Investor Earning"
+msgstr "Gain investisseur"
+
+msgid "Allocated Units"
+msgstr "Unités attribuées"
+
+msgid "Activate"
+msgstr "Activer"
+
+msgid "Register Advance"
+msgstr "Enregistrer l'avance"
+
+msgid "Close Deal"
+msgstr "Clôturer l'opération"
+
+msgid "Closed"
+msgstr "Clôturé"
+
+msgid "Transfer"
+msgstr "Transfert"
+
+msgid "Apply Default Taxes & Charges"
+msgstr "Appliquer les taxes et frais par défaut"
+
+msgid "Submit for Review"
+msgstr "Soumettre pour validation"
+
+msgid "Approve"
+msgstr "Approuver"
+
+msgid "Complete Transfer"
+msgstr "Finaliser le transfert"
+
+msgid "Print Deed"
+msgstr "Imprimer l'acte"
+
+msgid "Buyer Total"
+msgstr "Total acheteur"
+
+msgid "Net to Seller"
+msgstr "Net vendeur"
+
+msgid "Taxes"
+msgstr "Taxes"
+
+msgid "Summary"
+msgstr "Résumé"
+
+msgid "Buyer Side"
+msgstr "Part acheteur"
+
+msgid "Seller Side"
+msgstr "Part vendeur"
+
+msgid "Documentation"
+msgstr "Documentation"
+
+msgid "Load Standard Checklist"
+msgstr "Charger la checklist standard"
+
+msgid "Requirement"
+msgstr "Exigence"
+
+msgid "Provided By"
+msgstr "Fourni par"
+
+msgid "Received"
+msgstr "Reçu"
+
+msgid "Property Document"
+msgstr "Document immobilier"
+
+msgid "Request"
+msgstr "Demander"
+
+msgid "Start Processing"
+msgstr "Commencer le traitement"
+
+msgid "Mark Issued"
+msgstr "Marquer comme délivré"
+
+msgid "Mark Expired"
+msgstr "Marquer comme expiré"
+
+msgid "Expired"
+msgstr "Expiré"
+
+msgid "My Documents"
+msgstr "Mes documents"
+
+msgid "Document Type"
+msgstr "Type de document"
+
+msgid "Service"
+msgstr "Service"
+
+msgid "Service Type"
+msgstr "Type de service"
+
+msgid "Invoice Product"
+msgstr "Produit de facturation"
+
+msgid "Default Price"
+msgstr "Prix par défaut"
+
+msgid "Generate Invoice Now"
+msgstr "Générer la facture maintenant"
+
+msgid "Stop"
+msgstr "Arrêter"
+
+msgid "Resume"
+msgstr "Reprendre"
+
+msgid "Running"
+msgstr "En cours"
+
+msgid "Due Now"
+msgstr "À échéance"
+
+msgid "Electricity"
+msgstr "Électricité"
+
+msgid "Maintenance"
+msgstr "Maintenance"
+
+msgid "Beneficiary Type"
+msgstr "Type de bénéficiaire"
+
+msgid "Beneficiary"
+msgstr "Bénéficiaire"
+
+msgid "Rate (%)"
+msgstr "Taux (%)"
+
+msgid "Vendor Bill"
+msgstr "Facture fournisseur"
+
+msgid "Bill Payment Status"
+msgstr "État du paiement fournisseur"
+
+msgid "Create Vendor Bill"
+msgstr "Créer une facture fournisseur"
+
+msgid "Mark Paid"
+msgstr "Marquer comme payé"
+
+msgid "Confirmed"
+msgstr "Confirmé"
+
+msgid "Billed"
+msgstr "Facturé"
+
+msgid "Paid"
+msgstr "Payé"
+
+msgid "Country"
+msgstr "Pays"
+
+msgid "Fixed amount"
+msgstr "Montant fixe"
+
+msgid "Optional note"
+msgstr "Note facultative"
+
+msgid "Tenor"
+msgstr "Échéance"
+
+msgid "Real Estate"
+msgstr "Immobilier"
+
+msgid "Interest"
+msgstr "Intérêt"
+
+msgid "Create Booking"
+msgstr "Créer une réservation"
+
+msgid "Budget & Source"
+msgstr "Budget et source"
+
+msgid "Integration"
+msgstr "Intégration"
+
+msgid "Quick Import"
+msgstr "Import rapide"
+
+msgid "Rotate Token"
+msgstr "Renouveler le jeton"
+
+msgid "Lead Routing"
+msgstr "Routage des pistes"
+
+msgid "Webhook"
+msgstr "Webhook"
+
+msgid "Allocate"
+msgstr "Attribuer"
+
+msgid "Mark Returned"
+msgstr "Marquer comme retourné"
+
+msgid "Construction Project"
+msgstr "Projet de construction"
+
+msgid "Plan"
+msgstr "Planifier"
+
+msgid "Start"
+msgstr "Démarrer"
+
+msgid "Put on Hold"
+msgstr "Mettre en attente"
+
+msgid "Generate Tasks"
+msgstr "Générer les tâches"
+
+msgid "Tasks"
+msgstr "Tâches"
+
+msgid "Requisitions"
+msgstr "Demandes"
+
+msgid "Issues"
+msgstr "Sorties"
+
+msgid "Scope"
+msgstr "Périmètre"
+
+msgid "Schedule & Budget"
+msgstr "Planning et budget"
+
+msgid "Cost Summary"
+msgstr "Résumé des coûts"
+
+msgid "Phases"
+msgstr "Phases"
+
+msgid "Create Task"
+msgstr "Créer une tâche"
+
+msgid "Scope of Work"
+msgstr "Périmètre des travaux"
+
+msgid "My Projects"
+msgstr "Mes projets"
+
+msgid "In Progress"
+msgstr "En cours"
+
+msgid "Planning"
+msgstr "Planification"
+
+msgid "Subcontract"
+msgstr "Sous-traitance"
+
+msgid "Start Work"
+msgstr "Démarrer les travaux"
+
+msgid "New Certificate"
+msgstr "Nouveau certificat"
+
+msgid "Close"
+msgstr "Clôturer"
+
+msgid "Open"
+msgstr "Ouvert"
+
+msgid "Subcontractor"
+msgstr "Sous-traitant"
+
+msgid "Certified"
+msgstr "Certifié"
+
+msgid "Gross"
+msgstr "Brut"
+
+msgid "Retention"
+msgstr "Retenue"
+
+msgid "Net"
+msgstr "Net"
+
+msgid "Payment Certificate"
+msgstr "Certificat de paiement"
+
+msgid "To Approve"
+msgstr "À approuver"
+
+msgid "To Bill"
+msgstr "À facturer"
+
+msgid "Estimated"
+msgstr "Estimé"
+
+msgid "Create Purchase Order"
+msgstr "Créer le bon de commande"
+
+msgid "Purchase Orders"
+msgstr "Bons de commande"
+
+msgid "Approved"
+msgstr "Approuvé"
+
+msgid "Total Cost"
+msgstr "Coût total"
+
+msgid "Issue to Site"
+msgstr "Sortir vers le chantier"
+
+msgid "Issued"
+msgstr "Sorti"
+
+msgid "Materials"
+msgstr "Matériaux"
+
+msgid "Account Manager"
+msgstr "Responsable de compte"
+
+msgid "Reference"
+msgstr "Référence"
+
+msgid "Currency"
+msgstr "Devise"
+
+msgid "Province"
+msgstr "Région / province"
+
+msgid "Total Land Area"
+msgstr "Superficie totale du terrain"
+
+msgid "Assigned Dealers"
+msgstr "Agents affectés"
+
+msgid "Booking Reference"
+msgstr "Référence de réservation"
+
+msgid "Source Opportunity"
+msgstr "Opportunité source"
+
+msgid "Down Payment (%)"
+msgstr "Acompte (%)"
+
+msgid "Number of Installments"
+msgstr "Nombre d'échéances"
+
+msgid "% Per Installment"
+msgstr "% par échéance"
+
+msgid "On Possession (%)"
+msgstr "À la prise de possession (%)"
+
+msgid "Extra / Balloon Charges"
+msgstr "Frais supplémentaires / ballon"
+
+msgid "Total %"
+msgstr "Total %"
+
+msgid "Penalty Method"
+msgstr "Méthode de pénalité"
+
+msgid "Penalty Value"
+msgstr "Valeur de la pénalité"
+
+msgid "KIBOR Tenor"
+msgstr "Échéance KIBOR"
+
+msgid "KIBOR Spread (%)"
+msgstr "Marge KIBOR (%)"
+
+msgid "Grace Days"
+msgstr "Jours de grâce"
+
+msgid "% of Sale Price"
+msgstr "% du prix de vente"
+
+msgid "Commission (%)"
+msgstr "Commission (%)"
+
+msgid "Advance Payment"
+msgstr "Paiement anticipé"
+
+msgid "Investor Earning Basis"
+msgstr "Base du gain investisseur"
+
+msgid "Investor Rate (%)"
+msgstr "Taux investisseur (%)"
+
+msgid "Fixed per Unit"
+msgstr "Fixe par unité"
+
+msgid "Investor Commissions"
+msgstr "Commissions investisseurs"
+
+msgid "New Owner"
+msgstr "Nouveau propriétaire"
+
+msgid "Accounting Entry"
+msgstr "Écriture comptable"
+
+msgid "Documentation Checklist"
+msgstr "Checklist documentaire"
+
+msgid "Checklist Progress"
+msgstr "Progression de la checklist"
+
+msgid "File Count"
+msgstr "Nombre de fichiers"
+
+msgid "End Date"
+msgstr "Date de fin"
+
+msgid "Next Invoice Date"
+msgstr "Prochaine date de facturation"
+
+msgid "Auto-Post Invoices"
+msgstr "Comptabiliser automatiquement les factures"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Base"
+msgstr "Base"
+
+msgid "Commission"
+msgstr "Commission"
+
+msgid "Budget"
+msgstr "Budget"
+
+msgid "Actual"
+msgstr "Réel"
+
+msgid "Variance"
+msgstr "Écart"
+
+msgid "Value"
+msgstr "Valeur"
+
+msgid "Certified Work"
+msgstr "Travaux certifiés"
+
+msgid "Items"
+msgstr "Articles"
+
+msgid "Current Owner"
+msgstr "Propriétaire actuel"
+
+msgid "Project name"
+msgstr "Nom du projet"
+
+msgid "Code"
+msgstr "Code"
+
+msgid "City"
+msgstr "Ville"
+
+msgid "Contact"
+msgstr "Contact"
+
+msgid "Document No."
+msgstr "N° du document"
+
+msgid "Issue Date"
+msgstr "Date d'émission"
+
+msgid "Expiry Date"
+msgstr "Date d'expiration"
+
+msgid "Related Party"
+msgstr "Partie concernée"
+
+msgid "Responsible"
+msgstr "Responsable"
+
