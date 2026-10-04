@@ -18,6 +18,9 @@ COPY addons/ /mnt/extra-addons/
 # SA Property Management — free/open-source LGPL-3 Odoo 18/19 module.
 # Pin the source commit for reproducible Railway builds.
 RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends git ca-certificates; \
+    rm -rf /var/lib/apt/lists/*; \
     git clone --depth 1 https://github.com/otomatercom-cloud/sa_property_management.git /tmp/sa_property_management; \
     cd /tmp/sa_property_management; \
     git fetch --depth 1 origin b25ad74c137d748b09e14c5bdd2c8b8186273412; \
