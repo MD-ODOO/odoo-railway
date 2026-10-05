@@ -97,7 +97,7 @@ export class ImobilierSNDashboard extends Component {
         return this.orm.call(
             "imobilier.sn.contract.payment",
             "action_current_month_payments",
-            [paid],
+            [paid, this.state.filters.location],
         ).then((action) => this.action.doAction(action));
     }
 

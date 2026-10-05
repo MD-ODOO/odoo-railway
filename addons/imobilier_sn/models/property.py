@@ -177,7 +177,8 @@ class ImobilierSNProperty(models.Model):
             property_name = rec._slug(rec.name or "BIEN")
             if rec.property_type == "apartment":
                 kind = rec._slug(rec.apartment_type or "APP")
-                rec.reference = f"APP-{kind}-{property_name}-{location}-{number}"
+                apartment_number = rec._slug(rec.apartment_number) if rec.apartment_number else number
+                rec.reference = f"APP-{kind}-{property_name}-{location}-{apartment_number}"
             elif rec.property_type == "house":
                 kind = rec._slug(rec.house_type or "R1")
                 rec.reference = f"MAISON-{kind}-{owner}-{location}-{number}"

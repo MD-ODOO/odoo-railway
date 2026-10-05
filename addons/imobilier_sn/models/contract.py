@@ -169,6 +169,7 @@ class ImobilierSNContract(models.Model):
                 "contract_id": self.id,
                 "due_date": start,
                 "description": _("Caution"),
+                "payment_kind": "deposit",
                 "amount": self.security_deposit,
             })
         # Avance de loyers
@@ -178,6 +179,7 @@ class ImobilierSNContract(models.Model):
                 "contract_id": self.id,
                 "due_date": start,
                 "description": _("Avance de loyer (%s mois)") % self.advance_months,
+                "payment_kind": "advance",
                 "amount": advance_amount,
             })
         months = 3 if self.payment_mode_rent == "quarterly" else 1
@@ -188,6 +190,7 @@ class ImobilierSNContract(models.Model):
                 "contract_id": self.id,
                 "due_date": due,
                 "description": _("Loyer"),
+                "payment_kind": "rent",
                 "amount": amount,
             })
             due += relativedelta(months=months)
@@ -200,6 +203,7 @@ class ImobilierSNContract(models.Model):
                 "contract_id": self.id,
                 "due_date": self.date_start,
                 "description": _("Acompte"),
+                "payment_kind": "down_payment",
                 "amount": self.down_payment,
             })
         installment = remaining / self.number_of_installments
@@ -210,6 +214,7 @@ class ImobilierSNContract(models.Model):
                 "contract_id": self.id,
                 "due_date": due,
                 "description": _("Échéance %s/%s") % (index + 1, self.number_of_installments),
+                "payment_kind": "sale_installment",
                 "amount": installment,
             })
 
@@ -226,6 +231,7 @@ class ImobilierSNContract(models.Model):
         contracts = self.search([
             ("contract_type", "=", "rent"),
             ("state", "in", ["confirmed", "active"]),
+            ("payment_mode_rent", "=", "monthly"),
             ("date_start", "<", next_month),
             "|",
             ("date_end", "=", False),
@@ -236,7 +242,7 @@ class ImobilierSNContract(models.Model):
         for contract in contracts:
             existing = Payment.search_count([
                 ("contract_id", "=", contract.id),
-                ("description", "=", "Loyer"),
+                ("payment_kind", "=", "rent"),
                 ("due_date", ">=", month_start),
                 ("due_date", "<", next_month),
             ])
@@ -298,6 +304,32 @@ class ImobilierSNContractPayment(models.Model):
         "imobilier.sn.contract",
         required=True,
         ondelete="cascade",
+    )
+    property_id = fields.Many2one(
+        "imobilier.sn.property",
+        related="contract_id.property_id",
+        string="Bien immobilier",
+        store=True,
+        readonly=True,
+    )
+    customer_id = fields.Many2one(
+        "res.partner",
+        related="contract_id.customer_id",
+        string="Client",
+        store=True,
+        readonly=True,
+    )
+    payment_kind = fields.Selection(
+        [
+            ("rent", "Loyer"),
+            ("deposit", "Caution"),
+            ("advance", "Avance"),
+            ("down_payment", "Acompte"),
+            ("sale_installment", "Échéance de vente"),
+        ],
+        string="Type d'échéance",
+        required=True,
+        default="rent",
     )
     due_date = fields.Date(string="Échéance", required=True)
     description = fields.Char(string="Libellé", required=True)
@@ -393,7 +425,7 @@ class ImobilierSNContractPayment(models.Model):
         }
 
     @api.model
-    def action_current_month_payments(self, paid=False):
+    def action_current_month_payments(self, paid=False, location=False):
         today = fields.Date.context_today(self)
         start = today.replace(day=1)
         if today.month == 12:
@@ -403,9 +435,12 @@ class ImobilierSNContractPayment(models.Model):
 
         domain = [
             ("contract_id.contract_type", "=", "rent"),
+            ("payment_kind", "=", "rent"),
             ("due_date", ">=", start),
             ("due_date", "<", end),
         ]
+        if location:
+            domain.append(("property_id.location", "=", location))
         if paid:
             domain.append(("state", "=", "paid"))
             name = _("Locations payées du mois")

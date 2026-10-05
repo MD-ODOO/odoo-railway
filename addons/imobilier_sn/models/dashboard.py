@@ -71,6 +71,7 @@ class ImobilierSNDashboard(models.Model):
 
         rent_domain = [
             ("contract_id.contract_type", "=", "rent"),
+            ("payment_kind", "=", "rent"),
             ("due_date", ">=", month_start),
             ("due_date", "<", month_end),
             ("contract_id.state", "not in", ["cancelled"]),
