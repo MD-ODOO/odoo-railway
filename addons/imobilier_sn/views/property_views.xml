@@ -4,7 +4,7 @@
         <field name="name">imobilier.sn.property.list</field>
         <field name="model">imobilier.sn.property</field>
         <field name="arch" type="xml">
-            <list string="Biens immobiliers">
+            <list string="Produits">
                 <field name="reference"/>
                 <field name="name"/>
                 <field name="property_type"/>
@@ -41,7 +41,7 @@
         <field name="name">imobilier.sn.property.form</field>
         <field name="model">imobilier.sn.property</field>
         <field name="arch" type="xml">
-            <form string="Bien immobilier">
+            <form string="Produit">
                 <header>
                     <button name="action_mark_available" type="object" string="Disponible" class="btn-primary" invisible="status == 'available'"/>
                     <button name="action_mark_reserved" type="object" string="Réserver" invisible="status != 'available'"/>
@@ -57,7 +57,7 @@
                         </button>
                     </div>
                     <div class="oe_title">
-                        <label for="name" class="oe_edit_only"/>
+                        <label for="name" class="oe_edit_only" string="Nom du produit"/>
                         <h1><field name="name"/></h1>
                         <h2><field name="reference" class="oe_inline"/></h2>
                     </div>
@@ -162,6 +162,45 @@
                 </sheet>
             </form>
         </field>
+    </record>
+
+    <record id="action_imobilier_sn_products" model="ir.actions.act_window">
+        <field name="name">Produits</field>
+        <field name="res_model">imobilier.sn.property</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_imobilier_sn_property_search"/>
+    </record>
+
+    <record id="action_imobilier_sn_product_apartment" model="ir.actions.act_window">
+        <field name="name">Appartements</field>
+        <field name="res_model">imobilier.sn.property</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('property_type','=','apartment')]</field>
+        <field name="search_view_id" ref="view_imobilier_sn_property_search"/>
+    </record>
+
+    <record id="action_imobilier_sn_product_house" model="ir.actions.act_window">
+        <field name="name">Maisons entières</field>
+        <field name="res_model">imobilier.sn.property</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('property_type','=','house')]</field>
+        <field name="search_view_id" ref="view_imobilier_sn_property_search"/>
+    </record>
+
+    <record id="action_imobilier_sn_product_shop" model="ir.actions.act_window">
+        <field name="name">Magasins</field>
+        <field name="res_model">imobilier.sn.property</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('property_type','=','shop')]</field>
+        <field name="search_view_id" ref="view_imobilier_sn_property_search"/>
+    </record>
+
+    <record id="action_imobilier_sn_product_land" model="ir.actions.act_window">
+        <field name="name">Terrains</field>
+        <field name="res_model">imobilier.sn.property</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('property_type','=','land')]</field>
+        <field name="search_view_id" ref="view_imobilier_sn_property_search"/>
     </record>
 
     <record id="action_imobilier_sn_property" model="ir.actions.act_window">
