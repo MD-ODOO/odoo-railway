@@ -111,7 +111,7 @@ export class ImobilierSNDashboard extends Component {
         }
         return this.action.doAction({
             type: "ir.actions.act_window",
-            name: "Biens immobiliers",
+            name: "Produits",
             res_model: "imobilier.sn.property",
             view_mode: "list,form",
             domain,
