@@ -33,6 +33,11 @@ class ImobilierSNDashboard(models.Model):
         }
 
     @api.model
+    def action_generate_current_month_rents(self):
+        """Génère immédiatement les loyers mensuels manquants."""
+        return self.env["imobilier.sn.contract"]._cron_generate_current_month_rents()
+
+    @api.model
     def get_dashboard_data(self, year=None, location=None):
         date_from, date_to, year = self._year_dates(year)
         location = (location or "").strip()
