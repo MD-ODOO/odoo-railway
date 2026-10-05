@@ -21,14 +21,14 @@
         <field name="name">imobilier.sn.property.search</field>
         <field name="model">imobilier.sn.property</field>
         <field name="arch" type="xml">
-            <search string="Rechercher un bien">
+            <search>
                 <field name="reference"/>
                 <field name="name"/>
                 <field name="owner_id"/>
                 <field name="location"/>
                 <field name="property_type"/>
                 <filter name="available" string="Disponibles" domain="[('status','=','available')]"/>
-                <group string="Grouper par">
+                <group>
                     <filter name="group_type" string="Type" context="{'group_by':'property_type'}"/>
                     <filter name="group_owner" string="Propriétaire" context="{'group_by':'owner_id'}"/>
                     <filter name="group_status" string="État" context="{'group_by':'status'}"/>
