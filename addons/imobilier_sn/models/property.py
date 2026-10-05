@@ -7,11 +7,11 @@ from odoo.exceptions import ValidationError
 
 class ImobilierSNProperty(models.Model):
     _name = "imobilier.sn.property"
-    _description = "Bien immobilier"
+    _description = "Produit immobilier"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "id desc"
 
-    name = fields.Char(string="Nom du bien", required=True, tracking=True)
+    name = fields.Char(string="Nom du produit", required=True, tracking=True)
     reference = fields.Char(
         string="Référence",
         compute="_compute_reference",
