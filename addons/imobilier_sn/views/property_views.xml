@@ -18,10 +18,10 @@
     </record>
 
     <record id="view_imobilier_sn_property_search" model="ir.ui.view">
-        <field name="name">imobilier.sn.property.search</field>
+        <field name="name">imobilier.sn.product.search</field>
         <field name="model">imobilier.sn.property</field>
         <field name="arch" type="xml">
-            <search>
+            <search string="Rechercher un produit">
                 <field name="reference"/>
                 <field name="name"/>
                 <field name="owner_id"/>
@@ -204,7 +204,7 @@
     </record>
 
     <record id="action_imobilier_sn_property" model="ir.actions.act_window">
-        <field name="name">Biens immobiliers</field>
+        <field name="name">Produits</field>
         <field name="res_model">imobilier.sn.property</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_imobilier_sn_property_search"/>
