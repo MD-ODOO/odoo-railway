@@ -54,7 +54,7 @@
                 <div class="o_immo_kpis">
                     <button class="o_immo_kpi" t-on-click="() => this.openProperties()">
                         <span class="icon"><i class="fa fa-building"/></span>
-                        <span class="label">Biens total</span>
+                        <span class="label">Produits total</span>
                         <strong><t t-esc="fmtInt(state.data.kpi.properties)"/></strong>
                     </button>
                     <button class="o_immo_kpi" t-on-click="() => this.openProperties('apartment')">
