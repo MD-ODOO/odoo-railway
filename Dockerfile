@@ -1,7 +1,5 @@
 FROM odoo:19.0
 
-ENTRYPOINT []
-
 USER root
 
 RUN python3 -m pip install --break-system-packages --no-cache-dir     "qifparse==0.5"     "ofxparse==0.21"     "openpyxl"     "xlsxwriter"
