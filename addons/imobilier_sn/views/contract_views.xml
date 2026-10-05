@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_imobilier_sn_contract_list" model="ir.ui.view">
+        <field name="name">imobilier.sn.contract.list</field>
+        <field name="model">imobilier.sn.contract</field>
+        <field name="arch" type="xml">
+            <list string="Contrats immobiliers">
+                <field name="name"/>
+                <field name="contract_type"/>
+                <field name="property_id"/>
+                <field name="customer_id"/>
+                <field name="broker_id"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_imobilier_sn_contract_search" model="ir.ui.view">
+        <field name="name">imobilier.sn.contract.search</field>
+        <field name="model">imobilier.sn.contract</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un contrat">
+                <field name="name"/>
+                <field name="property_id"/>
+                <field name="customer_id"/>
+                <field name="contract_type"/>
+                <filter name="rent" string="Locations" domain="[('contract_type','=','rent')]"/>
+                <filter name="sale" string="Ventes" domain="[('contract_type','=','sale')]"/>
+                <filter name="active" string="Actifs" domain="[('state','=','active')]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_imobilier_sn_contract_form" model="ir.ui.view">
+        <field name="name">imobilier.sn.contract.form</field>
+        <field name="model">imobilier.sn.contract</field>
+        <field name="arch" type="xml">
+            <form string="Contrat immobilier">
+                <header>
+                    <button name="action_generate_schedule" type="object" string="Générer l'échéancier"/>
+                    <button name="action_create_all_invoices" type="object" string="Créer les factures"/>
+                    <button name="action_confirm" type="object" string="Confirmer" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_activate" type="object" string="Activer" invisible="state != 'confirmed'"/>
+                    <button name="action_close" type="object" string="Clôturer" invisible="state not in ['confirmed','active']"/>
+                    <button name="action_cancel" type="object" string="Annuler" invisible="state == 'cancelled'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,active,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="contract_type"/>
+                            <field name="property_id" domain="[('status','in',['available','reserved'])]"/>
+                            <field name="customer_id"/>
+                            <field name="broker_id"/>
+                        </group>
+                        <group>
+                            <field name="date_start"/>
+                            <field name="date_end" invisible="contract_type != 'rent'"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Location" invisible="contract_type != 'rent'">
+                            <group>
+                                <field name="monthly_rent"/>
+                                <field name="security_deposit"/>
+                                <field name="advance_months"/>
+                                <field name="payment_mode_rent"/>
+                            </group>
+                        </page>
+
+                        <page string="Achat / Vente" invisible="contract_type != 'sale'">
+                            <group>
+                                <field name="sale_price"/>
+                                <field name="down_payment"/>
+                                <field name="number_of_installments"/>
+                                <field name="payment_frequency_months"/>
+                                <field name="payment_mode_sale"/>
+                            </group>
+                        </page>
+
+                        <page string="Informations locataire" invisible="contract_type != 'rent'">
+                            <group>
+                                <field name="customer_id"/>
+                            </group>
+                            <div class="alert alert-info" role="alert">
+                                Le dossier locataire se complète depuis la fiche du client.
+                            </div>
+                        </page>
+
+                        <page string="Échéancier">
+                            <field name="payment_line_ids">
+                                <list>
+                                    <field name="due_date"/>
+                                    <field name="description"/>
+                                    <field name="amount"/>
+                                    <field name="invoice_id"/>
+                                    <field name="state"/>
+                                    <button name="action_create_invoice" type="object" string="Facturer" invisible="invoice_id"/>
+                                    <button name="action_open_invoice" type="object" string="Facture" invisible="not invoice_id"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="États des lieux" invisible="contract_type != 'rent'">
+                            <field name="inspection_ids">
+                                <list editable="bottom">
+                                    <field name="inspection_type"/>
+                                    <field name="inspection_date"/>
+                                    <field name="condition"/>
+                                    <field name="description"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Contrat signé">
+                            <group>
+                                <field name="contract_file" filename="contract_filename"/>
+                                <field name="contract_filename" invisible="1"/>
+                                <field name="notes"/>
+                            </group>
+                        </page>
+                    </notebook>
+                    <chatter/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_imobilier_sn_contract" model="ir.actions.act_window">
+        <field name="name">Contrats immobiliers</field>
+        <field name="res_model">imobilier.sn.contract</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_imobilier_sn_contract_search"/>
+    </record>
+
+    <record id="action_imobilier_sn_contract_payment" model="ir.actions.act_window">
+        <field name="name">Échéances</field>
+        <field name="res_model">imobilier.sn.contract.payment</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

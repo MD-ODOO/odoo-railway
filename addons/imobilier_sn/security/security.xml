@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_imobilier_sn" model="ir.module.category">
+        <field name="name">Immobilier SN</field>
+        <field name="description">Gestion immobilière</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <record id="group_imobilier_sn_user" model="res.groups">
+        <field name="name">Utilisateur Immobilier SN</field>
+        <field name="category_id" ref="module_category_imobilier_sn"/>
+    </record>
+
+    <record id="group_imobilier_sn_manager" model="res.groups">
+        <field name="name">Responsable Immobilier SN</field>
+        <field name="category_id" ref="module_category_imobilier_sn"/>
+        <field name="implied_ids" eval="[(4, ref('group_imobilier_sn_user'))]"/>
+    </record>
+</odoo>

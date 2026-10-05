@@ -1,0 +1,88 @@
+# Translation of Imobilier SN
+msgid ""
+msgstr ""
+"Project-Id-Version: Imobilier SN\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. module: imobilier_sn
+msgid "Imobilier SN"
+msgstr "Imobilier SN"
+
+#. module: imobilier_sn
+msgid "Property"
+msgstr "Bien immobilier"
+
+#. module: imobilier_sn
+msgid "Apartment"
+msgstr "Appartement"
+
+#. module: imobilier_sn
+msgid "House"
+msgstr "Maison entière"
+
+#. module: imobilier_sn
+msgid "Shop"
+msgstr "Magasin"
+
+#. module: imobilier_sn
+msgid "Land"
+msgstr "Terrain"
+
+#. module: imobilier_sn
+msgid "Owner"
+msgstr "Propriétaire"
+
+#. module: imobilier_sn
+msgid "Broker"
+msgstr "Courtier"
+
+#. module: imobilier_sn
+msgid "Tenant"
+msgstr "Locataire"
+
+#. module: imobilier_sn
+msgid "Contract"
+msgstr "Contrat"
+
+#. module: imobilier_sn
+msgid "Rent"
+msgstr "Location"
+
+#. module: imobilier_sn
+msgid "Sale"
+msgstr "Achat / Vente"
+
+#. module: imobilier_sn
+msgid "Payment schedule"
+msgstr "Échéancier"
+
+#. module: imobilier_sn
+msgid "Inspection"
+msgstr "État des lieux"
+
+#. module: imobilier_sn
+msgid "Security deposit"
+msgstr "Caution"
+
+#. module: imobilier_sn
+msgid "Monthly rent"
+msgstr "Loyer mensuel"
+
+#. module: imobilier_sn
+msgid "Social situation"
+msgstr "Situation sociale"
+
+#. module: imobilier_sn
+msgid "Profession"
+msgstr "Profession"
+
+#. module: imobilier_sn
+msgid "Source of income"
+msgstr "Source de revenu"
+
+#. module: imobilier_sn
+msgid "Salary bulletin"
+msgstr "Bulletin de salaire"

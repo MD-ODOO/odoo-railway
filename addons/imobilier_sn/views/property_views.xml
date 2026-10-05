@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_imobilier_sn_property_list" model="ir.ui.view">
+        <field name="name">imobilier.sn.property.list</field>
+        <field name="model">imobilier.sn.property</field>
+        <field name="arch" type="xml">
+            <list string="Biens immobiliers">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="property_type"/>
+                <field name="owner_id"/>
+                <field name="location"/>
+                <field name="price"/>
+                <field name="rental_price"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_imobilier_sn_property_search" model="ir.ui.view">
+        <field name="name">imobilier.sn.property.search</field>
+        <field name="model">imobilier.sn.property</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un bien">
+                <field name="reference"/>
+                <field name="name"/>
+                <field name="owner_id"/>
+                <field name="location"/>
+                <field name="property_type"/>
+                <filter name="available" string="Disponibles" domain="[('status','=','available')]"/>
+                <group string="Grouper par">
+                    <filter name="group_type" string="Type" context="{'group_by':'property_type'}"/>
+                    <filter name="group_owner" string="Propriétaire" context="{'group_by':'owner_id'}"/>
+                    <filter name="group_status" string="État" context="{'group_by':'status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_imobilier_sn_property_form" model="ir.ui.view">
+        <field name="name">imobilier.sn.property.form</field>
+        <field name="model">imobilier.sn.property</field>
+        <field name="arch" type="xml">
+            <form string="Bien immobilier">
+                <header>
+                    <button name="action_mark_available" type="object" string="Disponible" class="btn-primary" invisible="status == 'available'"/>
+                    <button name="action_mark_reserved" type="object" string="Réserver" invisible="status != 'available'"/>
+                    <field name="status" widget="statusbar" statusbar_visible="available,reserved,rented,sold"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_open_contracts" class="oe_stat_button" icon="fa-file-text-o">
+                            <field name="contract_count" string="Contrats" widget="statinfo"/>
+                        </button>
+                        <button type="object" name="action_open_assignments" class="oe_stat_button" icon="fa-handshake-o">
+                            <field name="assignment_count" string="Courtiers" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name"/></h1>
+                        <h2><field name="reference" class="oe_inline"/></h2>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="property_type"/>
+                            <field name="owner_id"/>
+                            <field name="location"/>
+                            <field name="description"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="price" invisible="property_type == 'apartment'"/>
+                            <field name="rental_price" invisible="property_type != 'apartment'"/>
+                            <field name="security_deposit" invisible="property_type not in ['apartment','house']"/>
+                            <field name="rental_advance_count" invisible="property_type != 'apartment'"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Appartement" invisible="property_type != 'apartment'">
+                            <group>
+                                <field name="apartment_type"/>
+                                <field name="apartment_number"/>
+                                <field name="rental_price"/>
+                                <field name="security_deposit"/>
+                                <field name="rental_advance_count"/>
+                            </group>
+                        </page>
+
+                        <page string="Maison entière" invisible="property_type != 'house'">
+                            <group>
+                                <group>
+                                    <field name="house_type"/>
+                                    <field name="paper_type"/>
+                                    <field name="payment_mode"/>
+                                    <field name="price"/>
+                                </group>
+                                <group>
+                                    <field name="location"/>
+                                    <field name="owner_id"/>
+                                </group>
+                            </group>
+                            <separator string="Répartition des appartements"/>
+                            <field name="house_unit_ids">
+                                <list editable="bottom">
+                                    <field name="apartment_type"/>
+                                    <field name="quantity"/>
+                                    <field name="note"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Magasin" invisible="property_type != 'shop'">
+                            <group>
+                                <field name="location"/>
+                                <field name="owner_id"/>
+                                <field name="price"/>
+                                <field name="shop_deposit"/>
+                                <field name="desired_activity"/>
+                            </group>
+                        </page>
+
+                        <page string="Terrain" invisible="property_type != 'land'">
+                            <group>
+                                <field name="land_area"/>
+                                <field name="land_area_unit"/>
+                                <field name="location"/>
+                                <field name="paper_type"/>
+                                <field name="owner_id"/>
+                                <field name="price"/>
+                                <field name="payment_mode"/>
+                            </group>
+                        </page>
+
+                        <page string="Courtier">
+                            <field name="assignment_ids">
+                                <list editable="bottom">
+                                    <field name="broker_id"/>
+                                    <field name="commission_percent"/>
+                                    <field name="commission_amount"/>
+                                    <field name="date_assigned"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Contrats">
+                            <field name="contract_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="contract_type"/>
+                                    <field name="customer_id"/>
+                                    <field name="date_start"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                    <chatter/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_imobilier_sn_property" model="ir.actions.act_window">
+        <field name="name">Biens immobiliers</field>
+        <field name="res_model">imobilier.sn.property</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_imobilier_sn_property_search"/>
+    </record>
+</odoo>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="seq_imobilier_sn_property" model="ir.sequence">
+        <field name="name">Bien immobilier SN</field>
+        <field name="code">imobilier.sn.property</field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <record id="seq_imobilier_sn_assignment" model="ir.sequence">
+        <field name="name">Affectation courtier SN</field>
+        <field name="code">imobilier.sn.assignment</field>
+        <field name="prefix">COURT-</field>
+        <field name="padding">5</field>
+    </record>
+
+    <record id="seq_imobilier_sn_contract" model="ir.sequence">
+        <field name="name">Contrat immobilier SN</field>
+        <field name="code">imobilier.sn.contract</field>
+        <field name="prefix">CTR-</field>
+        <field name="padding">5</field>
+    </record>
+
+    <record id="seq_imobilier_sn_inspection" model="ir.sequence">
+        <field name="name">État des lieux SN</field>
+        <field name="code">imobilier.sn.inspection</field>
+        <field name="prefix">EDL-</field>
+        <field name="padding">5</field>
+    </record>
+</odoo>

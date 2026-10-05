@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_imobilier_sn" model="ir.ui.view">
+        <field name="name">res.partner.form.imobilier.sn</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button type="object" name="action_imobilier_all_properties" class="oe_stat_button" icon="fa-building">
+                    <field name="imobilier_total_count" string="Biens" widget="statinfo"/>
+                </button>
+                <button type="object" name="action_imobilier_apartments" class="oe_stat_button" icon="fa-home">
+                    <field name="imobilier_apartment_count" string="Appartements" widget="statinfo"/>
+                </button>
+                <button type="object" name="action_imobilier_houses" class="oe_stat_button" icon="fa-building-o">
+                    <field name="imobilier_house_count" string="Maisons" widget="statinfo"/>
+                </button>
+                <button type="object" name="action_imobilier_shops" class="oe_stat_button" icon="fa-shopping-bag">
+                    <field name="imobilier_shop_count" string="Magasins" widget="statinfo"/>
+                </button>
+                <button type="object" name="action_imobilier_lands" class="oe_stat_button" icon="fa-map-o">
+                    <field name="imobilier_land_count" string="Terrains" widget="statinfo"/>
+                </button>
+                <button type="object" name="action_imobilier_broker_assignments" class="oe_stat_button" icon="fa-handshake-o" invisible="not is_imobilier_broker">
+                    <field name="imobilier_broker_assignment_count" string="Courtage" widget="statinfo"/>
+                </button>
+            </xpath>
+
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="Immobilier SN">
+                    <group>
+                        <group>
+                            <field name="is_imobilier_broker"/>
+                            <field name="broker_commission_percent" invisible="not is_imobilier_broker"/>
+                            <field name="is_imobilier_tenant"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_imobilier_sn_tenant_profile_list" model="ir.ui.view">
+        <field name="name">imobilier.sn.tenant.profile.list</field>
+        <field name="model">imobilier.sn.tenant.profile</field>
+        <field name="arch" type="xml">
+            <list string="Dossiers locataires">
+                <field name="partner_id"/>
+                <field name="social_situation"/>
+                <field name="profession"/>
+                <field name="source_income"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_imobilier_sn_tenant_profile_form" model="ir.ui.view">
+        <field name="name">imobilier.sn.tenant.profile.form</field>
+        <field name="model">imobilier.sn.tenant.profile</field>
+        <field name="arch" type="xml">
+            <form string="Dossier locataire">
+                <sheet>
+                    <group>
+                        <field name="partner_id"/>
+                        <field name="social_situation"/>
+                        <field name="profession"/>
+                        <field name="source_income"/>
+                    </group>
+                    <group>
+                        <field name="salary_bulletin" filename="salary_bulletin_filename"/>
+                        <field name="salary_bulletin_filename" invisible="1"/>
+                        <field name="other_income_document" filename="other_income_document_filename"/>
+                        <field name="other_income_document_filename" invisible="1"/>
+                    </group>
+                    <field name="notes"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_imobilier_sn_tenant" model="ir.actions.act_window">
+        <field name="name">Dossiers locataires</field>
+        <field name="res_model">imobilier.sn.tenant.profile</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

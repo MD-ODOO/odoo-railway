@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_imobilier_sn_root" name="Imobilier SN" sequence="40"/>
+
+    <menuitem
+        id="menu_imobilier_sn_properties"
+        name="Biens immobiliers"
+        parent="menu_imobilier_sn_root"
+        action="action_imobilier_sn_property"
+        sequence="10"
+    />
+    <menuitem
+        id="menu_imobilier_sn_contracts"
+        name="Contrats"
+        parent="menu_imobilier_sn_root"
+        action="action_imobilier_sn_contract"
+        sequence="20"
+    />
+    <menuitem
+        id="menu_imobilier_sn_assignments"
+        name="Courtiers / Affectations"
+        parent="menu_imobilier_sn_root"
+        action="action_imobilier_sn_assignment"
+        sequence="30"
+    />
+    <menuitem
+        id="menu_imobilier_sn_inspections"
+        name="États des lieux"
+        parent="menu_imobilier_sn_root"
+        action="action_imobilier_sn_inspection"
+        sequence="40"
+    />
+    <menuitem
+        id="menu_imobilier_sn_tenants"
+        name="Dossiers locataires"
+        parent="menu_imobilier_sn_root"
+        action="action_imobilier_sn_tenant"
+        sequence="50"
+    />
+</odoo>
