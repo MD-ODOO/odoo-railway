@@ -44,11 +44,17 @@ export class ImobilierSNDashboard extends Component {
         this.state.loading = true;
         this.state.error = false;
         try {
-            await this.orm.call(
-                "imobilier.sn.dashboard",
-                "action_generate_current_month_rents",
-                [],
-            );
+            try {
+                await this.orm.call(
+                    "imobilier.sn.dashboard",
+                    "action_generate_current_month_rents",
+                    [],
+                );
+            } catch (generationError) {
+                // La génération est un complément : elle ne doit pas bloquer l'affichage.
+                console.warn("Immobilier SN: génération des loyers impossible", generationError);
+            }
+
             this.state.data = await this.orm.call(
                 "imobilier.sn.dashboard",
                 "get_dashboard_data",
