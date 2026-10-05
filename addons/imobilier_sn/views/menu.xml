@@ -10,53 +10,92 @@
         sequence="1"
     />
 
+    <!-- Produits -->
     <menuitem
-        id="menu_imobilier_sn_properties"
-        name="Biens immobiliers"
+        id="menu_imobilier_sn_products"
+        name="Produit"
         parent="menu_imobilier_sn_root"
-        action="action_imobilier_sn_property"
         sequence="10"
     />
+
     <menuitem
-        id="menu_imobilier_sn_contracts"
-        name="Contrats"
-        parent="menu_imobilier_sn_root"
-        action="action_imobilier_sn_contract"
-        sequence="20"
+        id="menu_imobilier_sn_product_apartment"
+        name="Appartement"
+        parent="menu_imobilier_sn_products"
+        action="action_imobilier_sn_product_apartment"
+        sequence="11"
     />
     <menuitem
-        id="menu_imobilier_sn_rents_due"
-        name="Locations à payer"
+        id="menu_imobilier_sn_product_house"
+        name="Maison entière"
+        parent="menu_imobilier_sn_products"
+        action="action_imobilier_sn_product_house"
+        sequence="12"
+    />
+    <menuitem
+        id="menu_imobilier_sn_product_shop"
+        name="Magasin"
+        parent="menu_imobilier_sn_products"
+        action="action_imobilier_sn_product_shop"
+        sequence="13"
+    />
+    <menuitem
+        id="menu_imobilier_sn_product_land"
+        name="Terrain"
+        parent="menu_imobilier_sn_products"
+        action="action_imobilier_sn_product_land"
+        sequence="14"
+    />
+
+    <!-- Locations -->
+    <menuitem
+        id="menu_imobilier_sn_location"
+        name="LOCATION"
         parent="menu_imobilier_sn_root"
+        sequence="20"
+    />
+
+    <menuitem
+        id="menu_imobilier_sn_rents_due"
+        name="À payer"
+        parent="menu_imobilier_sn_location"
         action="action_imobilier_sn_rents_due"
         sequence="21"
     />
     <menuitem
         id="menu_imobilier_sn_rents_paid"
-        name="Locations payées"
-        parent="menu_imobilier_sn_root"
+        name="Payées"
+        parent="menu_imobilier_sn_location"
         action="action_imobilier_sn_rents_paid"
         sequence="22"
+    />
+
+    <menuitem
+        id="menu_imobilier_sn_contracts"
+        name="Contrats"
+        parent="menu_imobilier_sn_root"
+        action="action_imobilier_sn_contract"
+        sequence="30"
     />
     <menuitem
         id="menu_imobilier_sn_assignments"
         name="Courtiers / Affectations"
         parent="menu_imobilier_sn_root"
         action="action_imobilier_sn_assignment"
-        sequence="30"
+        sequence="40"
     />
     <menuitem
         id="menu_imobilier_sn_inspections"
         name="États des lieux"
         parent="menu_imobilier_sn_root"
         action="action_imobilier_sn_inspection"
-        sequence="40"
+        sequence="50"
     />
     <menuitem
         id="menu_imobilier_sn_tenants"
         name="Dossiers locataires"
         parent="menu_imobilier_sn_root"
         action="action_imobilier_sn_tenant"
-        sequence="50"
+        sequence="60"
     />
 </odoo>
