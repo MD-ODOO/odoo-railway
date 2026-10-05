@@ -25,7 +25,7 @@ class ImobilierSNContract(models.Model):
     )
     property_id = fields.Many2one(
         "imobilier.sn.property",
-        string="Bien immobilier",
+        string="Produit",
         required=True,
         tracking=True,
         ondelete="restrict",
@@ -308,7 +308,7 @@ class ImobilierSNContractPayment(models.Model):
     property_id = fields.Many2one(
         "imobilier.sn.property",
         related="contract_id.property_id",
-        string="Bien immobilier",
+        string="Produit",
         store=True,
         readonly=True,
     )
