@@ -213,6 +213,43 @@ class ImobilierSNContract(models.Model):
                 "amount": installment,
             })
 
+
+    @api.model
+    def _cron_generate_current_month_rents(self):
+        today = fields.Date.context_today(self)
+        month_start = today.replace(day=1)
+        if today.month == 12:
+            next_month = today.replace(year=today.year + 1, month=1, day=1)
+        else:
+            next_month = today.replace(month=today.month + 1, day=1)
+
+        contracts = self.search([
+            ("contract_type", "=", "rent"),
+            ("state", "in", ["confirmed", "active"]),
+            ("date_start", "<", next_month),
+            "|",
+            ("date_end", "=", False),
+            ("date_end", ">=", month_start),
+        ])
+        Payment = self.env["imobilier.sn.contract.payment"]
+        created = 0
+        for contract in contracts:
+            existing = Payment.search_count([
+                ("contract_id", "=", contract.id),
+                ("description", "=", "Loyer"),
+                ("due_date", ">=", month_start),
+                ("due_date", "<", next_month),
+            ])
+            if not existing and contract.monthly_rent > 0:
+                Payment.create({
+                    "contract_id": contract.id,
+                    "due_date": month_start,
+                    "description": _("Loyer"),
+                    "amount": contract.monthly_rent,
+                })
+                created += 1
+        return created
+
     def action_confirm(self):
         for rec in self:
             if not rec.payment_line_ids:
@@ -352,5 +389,45 @@ class ImobilierSNContractPayment(models.Model):
             "res_model": "account.move",
             "view_mode": "form",
             "res_id": self.invoice_id.id,
+            "target": "current",
+        }
+
+    @api.model
+    def action_current_month_payments(self, paid=False):
+        today = fields.Date.context_today(self)
+        start = today.replace(day=1)
+        if today.month == 12:
+            end = today.replace(year=today.year + 1, month=1, day=1)
+        else:
+            end = today.replace(month=today.month + 1, day=1)
+
+        domain = [
+            ("contract_id.contract_type", "=", "rent"),
+            ("due_date", ">=", start),
+            ("due_date", "<", end),
+        ]
+        if paid:
+            domain.append(("state", "=", "paid"))
+            name = _("Locations payées du mois")
+        else:
+            domain.append(("state", "!=", "paid"))
+            name = _("Locations à payer du mois")
+
+        return {
+            "type": "ir.actions.act_window",
+            "name": name,
+            "res_model": "imobilier.sn.contract.payment",
+            "view_mode": "list,form",
+            "domain": domain,
+        }
+
+    def action_open_contract(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Contrat"),
+            "res_model": "imobilier.sn.contract",
+            "view_mode": "form",
+            "res_id": self.contract_id.id,
             "target": "current",
         }

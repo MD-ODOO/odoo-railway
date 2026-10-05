@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="imobilier_sn.Dashboard">
+        <div class="o_immo_dashboard">
+            <div class="o_immo_header">
+                <div>
+                    <h1>Tableau de bord Immobilier SN</h1>
+                    <div class="o_immo_subtitle" t-if="state.data">
+                        <t t-esc="state.data.location_label"/> · Année <t t-esc="state.data.year"/>
+                        · Loyers du mois <t t-esc="state.data.month_label"/>
+                    </div>
+                </div>
+                <button class="btn btn-outline-primary" t-on-click="refresh">
+                    <i class="fa fa-refresh me-1"/> Actualiser
+                </button>
+            </div>
+
+            <div class="o_immo_filters">
+                <div>
+                    <label>Lieu</label>
+                    <select class="form-select" t-on-change="onLocationChange">
+                        <option value="">Tous les lieux</option>
+                        <t t-foreach="state.options.locations" t-as="location" t-key="location">
+                            <option t-att-value="location" t-att-selected="state.filters.location === location">
+                                <t t-esc="location"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+                <div>
+                    <label>Année</label>
+                    <select class="form-select" t-on-change="onYearChange">
+                        <t t-foreach="state.options.years" t-as="year" t-key="year">
+                            <option t-att-value="year" t-att-selected="state.filters.year === year">
+                                <t t-esc="year"/>
+                            </option>
+                        </t>
+                    </select>
+                </div>
+            </div>
+
+            <t t-if="state.error">
+                <div class="alert alert-danger"><t t-esc="state.error"/></div>
+            </t>
+
+            <t t-if="state.loading and !state.data">
+                <div class="o_immo_loading">
+                    <i class="fa fa-spinner fa-spin fa-2x"/>
+                    <span>Chargement...</span>
+                </div>
+            </t>
+
+            <t t-if="!state.loading and state.data">
+                <div class="o_immo_kpis">
+                    <button class="o_immo_kpi" t-on-click="() => this.openProperties()">
+                        <span class="icon"><i class="fa fa-building"/></span>
+                        <span class="label">Biens total</span>
+                        <strong><t t-esc="fmtInt(state.data.kpi.properties)"/></strong>
+                    </button>
+                    <button class="o_immo_kpi" t-on-click="() => this.openProperties('apartment')">
+                        <span class="icon"><i class="fa fa-home"/></span>
+                        <span class="label">Appartements</span>
+                        <strong><t t-esc="fmtInt(state.data.kpi.apartments)"/></strong>
+                    </button>
+                    <button class="o_immo_kpi" t-on-click="() => this.openProperties('house')">
+                        <span class="icon"><i class="fa fa-building-o"/></span>
+                        <span class="label">Maisons</span>
+                        <strong><t t-esc="fmtInt(state.data.kpi.houses)"/></strong>
+                    </button>
+                    <button class="o_immo_kpi" t-on-click="() => this.openProperties('land')">
+                        <span class="icon"><i class="fa fa-map-marker"/></span>
+                        <span class="label">Terrains</span>
+                        <strong><t t-esc="fmtInt(state.data.kpi.lands)"/></strong>
+                    </button>
+                    <button class="o_immo_kpi" t-on-click="() => this.openProperties('shop')">
+                        <span class="icon"><i class="fa fa-shopping-bag"/></span>
+                        <span class="label">Magasins</span>
+                        <strong><t t-esc="fmtInt(state.data.kpi.shops)"/></strong>
+                    </button>
+                    <div class="o_immo_kpi o_immo_kpi_rent">
+                        <span class="icon"><i class="fa fa-money"/></span>
+                        <span class="label">Locations payées / locations du mois</span>
+                        <strong>
+                            <t t-esc="fmtInt(state.data.kpi.rentals_paid_month)"/>
+                            /
+                            <t t-esc="fmtInt(state.data.kpi.rentals_due_month)"/>
+                        </strong>
+                        <small><t t-esc="state.data.kpi.rent_collection_rate.toFixed(1)"/> % encaissé</small>
+                    </div>
+                </div>
+
+                <div class="o_immo_panels">
+                    <section class="o_immo_panel">
+                        <div class="panel_head">
+                            <h3>Loyers à encaisser — <t t-esc="state.data.month_label"/></h3>
+                            <div>
+                                <button class="btn btn-sm btn-outline-warning me-1" t-on-click="() => this.openPayments(false)">
+                                    À payer
+                                    <span class="badge bg-warning text-dark ms-1">
+                                        <t t-esc="fmtInt(state.data.kpi.rentals_unpaid_month)"/>
+                                    </span>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success" t-on-click="() => this.openPayments(true)">
+                                    Payées
+                                    <span class="badge bg-success ms-1">
+                                        <t t-esc="fmtInt(state.data.kpi.rentals_paid_month)"/>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="o_immo_summary">
+                            <div>
+                                <span>Total à encaisser</span>
+                                <strong><t t-esc="fmtMoney(state.data.kpi.rent_due_amount_month)"/></strong>
+                            </div>
+                            <div>
+                                <span>Total encaissé</span>
+                                <strong><t t-esc="fmtMoney(state.data.kpi.rent_paid_amount_month)"/></strong>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Échéance</th>
+                                        <th>Locataire</th>
+                                        <th>Bien</th>
+                                        <th>Lieu</th>
+                                        <th>Montant</th>
+                                        <th>État</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-if="!state.data.current_rents.length">
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted py-4">
+                                                Aucun loyer pour le mois en cours.
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <t t-foreach="state.data.current_rents" t-as="rent" t-key="rent.id">
+                                        <tr>
+                                            <td><t t-esc="rent.due_date"/></td>
+                                            <td><t t-esc="rent.tenant"/></td>
+                                            <td>
+                                                <strong><t t-esc="rent.reference"/></strong>
+                                                <div class="text-muted small"><t t-esc="rent.property"/></div>
+                                            </td>
+                                            <td><t t-esc="rent.location"/></td>
+                                            <td><t t-esc="fmtMoney(rent.amount)"/></td>
+                                            <td>
+                                                <span class="o_immo_badge" t-att-class="badgeClass(rent.state)">
+                                                    <t t-esc="rent.state === 'paid' ? 'Payé' : 'À payer'"/>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section class="o_immo_panel o_immo_panel_small">
+                        <h3>Résumé des locations</h3>
+                        <div class="o_immo_ratio">
+                            <div class="o_immo_ratio_value">
+                                <strong><t t-esc="fmtInt(state.data.kpi.rentals_paid_month)"/></strong>
+                                <span>payées</span>
+                            </div>
+                            <div class="o_immo_ratio_line">
+                                <div class="o_immo_ratio_bar">
+                                    <span t-att-style="'width:' + collectionWidth() + '%'"/>
+                                </div>
+                            </div>
+                            <div class="o_immo_ratio_value">
+                                <strong><t t-esc="fmtInt(state.data.kpi.rentals_unpaid_month)"/></strong>
+                                <span>à payer</span>
+                            </div>
+                        </div>
+
+                        <div class="o_immo_info_grid">
+                            <div>
+                                <span>Locations créées en <t t-esc="state.data.year"/></span>
+                                <strong><t t-esc="fmtInt(state.data.kpi.rentals)"/></strong>
+                            </div>
+                            <div>
+                                <span>Échéances du mois</span>
+                                <strong><t t-esc="fmtInt(state.data.kpi.rentals_due_month)"/></strong>
+                            </div>
+                            <div>
+                                <span>Montant encaissé</span>
+                                <strong><t t-esc="fmtMoney(state.data.kpi.rent_paid_amount_month)"/></strong>
+                            </div>
+                            <div>
+                                <span>Reste à encaisser</span>
+                                <strong>
+                                    <t t-esc="fmtMoney(state.data.kpi.rent_due_amount_month - state.data.kpi.rent_paid_amount_month)"/>
+                                </strong>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

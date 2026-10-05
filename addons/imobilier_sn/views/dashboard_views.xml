@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_imobilier_sn_dashboard" model="ir.actions.client">
+        <field name="name">Tableau de bord Immobilier SN</field>
+        <field name="tag">imobilier_sn.dashboard</field>
+    </record>
+
+    <record id="action_imobilier_sn_rents_due" model="ir.actions.server">
+        <field name="name">Locations à payer du mois</field>
+        <field name="model_id" ref="model_imobilier_sn_contract_payment"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_current_month_payments(False)</field>
+    </record>
+
+    <record id="action_imobilier_sn_rents_paid" model="ir.actions.server">
+        <field name="name">Locations payées du mois</field>
+        <field name="model_id" ref="model_imobilier_sn_contract_payment"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_current_month_payments(True)</field>
+    </record>
+
+    <record id="view_imobilier_sn_payment_list" model="ir.ui.view">
+        <field name="name">imobilier.sn.contract.payment.list</field>
+        <field name="model">imobilier.sn.contract.payment</field>
+        <field name="arch" type="xml">
+            <list string="Échéances de location">
+                <field name="due_date"/>
+                <field name="contract_id"/>
+                <field name="amount"/>
+                <field name="invoice_id"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_imobilier_sn_payment_form" model="ir.ui.view">
+        <field name="name">imobilier.sn.contract.payment.form</field>
+        <field name="model">imobilier.sn.contract.payment</field>
+        <field name="arch" type="xml">
+            <form string="Échéance">
+                <sheet>
+                    <group>
+                        <field name="contract_id"/>
+                        <field name="due_date"/>
+                        <field name="description"/>
+                        <field name="amount"/>
+                        <field name="invoice_id"/>
+                        <field name="state" readonly="1"/>
+                    </group>
+                    <footer>
+                        <button name="action_create_invoice" type="object" string="Générer la facture" invisible="invoice_id" class="btn-primary"/>
+                        <button name="action_open_invoice" type="object" string="Ouvrir la facture" invisible="not invoice_id"/>
+                        <button name="action_open_contract" type="object" string="Ouvrir le contrat"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

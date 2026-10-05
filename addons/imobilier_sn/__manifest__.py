@@ -26,6 +26,8 @@ Fonctionnalités :
         "security/security.xml",
         "security/ir.model.access.csv",
         "data/sequence.xml",
+        "data/cron.xml",
+        "views/dashboard_views.xml",
         "views/menu.xml",
         "views/property_views.xml",
         "views/contract_views.xml",
@@ -34,5 +36,12 @@ Fonctionnalités :
         "views/inspection_views.xml",
     ],
     "application": True,
+    "assets": {
+        "web.assets_backend": [
+            "imobilier_sn/static/src/js/dashboard.js",
+            "imobilier_sn/static/src/xml/dashboard.xml",
+            "imobilier_sn/static/src/scss/dashboard.scss",
+        ],
+    },
     "installable": True,
 }
