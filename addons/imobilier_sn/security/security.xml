@@ -7,6 +7,11 @@
     <record id="group_imobilier_sn_manager" model="res.groups">
         <field name="name">Responsable Immobilier SN</field>
         <field name="implied_ids" eval="[(4, ref('group_imobilier_sn_user'))]"/>
-        <field name="users" eval="[(4, ref('base.user_admin'))]"/>
     </record>
 </odoo>
+
+    
+    <!-- L'administrateur Odoo doit pouvoir utiliser le module Immobilier SN. -->
+    <record id="base.user_admin" model="res.users">
+        <field name="groups_id" eval="[(4, ref('group_imobilier_sn_manager'))]"/>
+    </record>
