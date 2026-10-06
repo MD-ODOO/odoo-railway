@@ -11,7 +11,14 @@ class ImobilierSNProperty(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "id desc"
 
-    name = fields.Char(string="Nom du produit", required=True, tracking=True)
+    name = fields.Char(
+        string="Nom technique",
+        compute="_compute_name",
+        store=True,
+        readonly=True,
+        copy=False,
+        tracking=True,
+    )
     reference = fields.Char(
         string="Référence",
         compute="_compute_reference",
@@ -174,11 +181,14 @@ class ImobilierSNProperty(models.Model):
             number = str(rec.sequence_number or 0).zfill(4)
             location = rec._slug(rec.location or "LOCALISATION")
             owner = rec._slug(rec.owner_id.name or "PROPRIETAIRE")
-            property_name = rec._slug(rec.name or "BIEN")
             if rec.property_type == "apartment":
                 kind = rec._slug(rec.apartment_type or "APP")
-                apartment_number = rec._slug(rec.apartment_number) if rec.apartment_number else number
-                rec.reference = f"APP-{kind}-{property_name}-{location}-{apartment_number}"
+                apartment_number = (
+                    rec._slug(rec.apartment_number)
+                    if rec.apartment_number
+                    else number
+                )
+                rec.reference = f"APP-{kind}-{owner}-{location}-{apartment_number}"
             elif rec.property_type == "house":
                 kind = rec._slug(rec.house_type or "R1")
                 rec.reference = f"MAISON-{kind}-{owner}-{location}-{number}"
@@ -188,6 +198,11 @@ class ImobilierSNProperty(models.Model):
                 rec.reference = f"TERRAIN-{owner}-{location}-{number}"
             else:
                 rec.reference = f"IMMO-{number}"
+
+    @api.depends("reference")
+    def _compute_name(self):
+        for rec in self:
+            rec.name = rec.reference or "PRODUIT"
 
     @api.depends("contract_ids", "assignment_ids")
     def _compute_counts(self):
