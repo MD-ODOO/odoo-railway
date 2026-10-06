@@ -54,8 +54,8 @@ class ImobilierSNAssignment(models.Model):
     )
     note = fields.Text(string="Note")
 
-    @api.depends("property_id.price", "property_id.rental_price", "commission_percent")
+    @api.depends("property_id.price", "commission_percent")
     def _compute_commission_amount(self):
         for rec in self:
-            base = rec.property_id.price or rec.property_id.rental_price or 0
+            base = rec.property_id.price or 0
             rec.commission_amount = base * (rec.commission_percent or 0) / 100
