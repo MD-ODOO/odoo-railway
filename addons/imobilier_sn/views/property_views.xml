@@ -9,13 +9,12 @@
                 <field name="reference"/>
                 <field name="property_type"/>
                 <field name="owner_id"/>
-                <field name="region_id"/>
-                <field name="departement_id"/>
-                <field name="commune_id"/>
-                <field name="quartier_id"/>
                 <field name="location"/>
+                <field name="region_name"/>
+                <field name="department_name"/>
                 <field name="price"/>
-                <field name="rental_price"/>
+                <field name="security_deposit"/>
+                <field name="payment_term_id"/>
                 <field name="status"/>
             </list>
         </field>
@@ -29,17 +28,17 @@
             <search>
                 <field name="reference"/>
                 <field name="owner_id"/>
-                <field name="region_id"/>
-                <field name="departement_id"/>
-                <field name="commune_id"/>
-                <field name="quartier_id"/>
+                <field name="location"/>
+                <field name="region_name"/>
+                <field name="department_name"/>
                 <field name="property_type"/>
                 <filter name="available" string="Disponibles" domain="[('status','=','available')]"/>
                 <group>
                     <filter name="group_type" string="Type" context="{'group_by':'property_type'}"/>
                     <filter name="group_owner" string="Propriétaire" context="{'group_by':'owner_id'}"/>
                     <filter name="group_status" string="État" context="{'group_by':'status'}"/>
-                    <filter name="group_location" string="Localisation" context="{'group_by':'location'}"/>
+                    <filter name="group_region" string="Région" context="{'group_by':'region_name'}"/>
+                    <filter name="group_department" string="Département" context="{'group_by':'department_name'}"/>
                 </group>
             </search>
         </field>
@@ -100,44 +99,56 @@
                         </group>
                         <group string="Informations financières">
                             <field name="currency_id" invisible="1"/>
-                            <field name="price"
-                                   invisible="property_type == 'apartment'"/>
-                            <field name="rental_price"
-                                   invisible="property_type != 'apartment'"/>
+                            <field name="price"/>
+                            <field name="security_deposit_months"
+                                   invisible="property_type == 'land'"/>
                             <field name="security_deposit"
-                                   invisible="property_type not in ['apartment','house']"/>
+                                   invisible="property_type == 'land'"/>
                             <field name="rental_advance_count"
-                                   invisible="property_type != 'apartment'"/>
+                                   invisible="property_type == 'land'"/>
+                            <field name="payment_term_id"/>
                         </group>
                     </group>
 
-                    <group string="Adresse formelle du Sénégal">
+                    <group string="Localisation">
                         <group>
-                            <field name="country_id" options="{'no_open': True, 'no_create': True}"/>
-                            <field name="region_id"
-                                   required="1"
-                                   options="{'no_create': True}"/>
-                            <field name="departement_id"
-                                   required="1"
-                                   options="{'no_create': True}"/>
-                            <field name="arrondissement_id"
-                                   options="{'no_create': True}"/>
+                            <field name="location"
+                                   placeholder="Adresse complète du produit : rue, quartier, immeuble, villa..."/>
+                            <button name="action_geocode_address"
+                                    type="object"
+                                    string="Localiser et déterminer la région / le département"
+                                    icon="fa-map-marker"
+                                    class="btn-primary"/>
                         </group>
                         <group>
-                            <field name="commune_id"
-                                   required="1"
-                                   options="{'no_create': True}"/>
-                            <field name="quartier_id"
-                                   required="1"
-                                   options="{'no_create': True}"/>
-                            <field name="address_line"
-                                   required="1"
-                                   placeholder="Rue, numéro, lot, villa, immeuble..."/>
+                            <field name="region_name"/>
+                            <field name="department_name"/>
+                            <field name="geocoded_address"
+                                   invisible="not geocoded_address"/>
                         </group>
                     </group>
 
-                    <group string="Adresse générée">
-                        <field name="location" readonly="1" nolabel="1"/>
+                    <group string="Coordonnées GPS"
+                           invisible="not latitude or not longitude">
+                        <group>
+                            <field name="latitude"/>
+                            <field name="longitude"/>
+                        </group>
+                        <group>
+                            <button name="action_open_google_maps"
+                                    type="object"
+                                    string="Ouvrir dans Google Maps"
+                                    icon="fa-external-link"
+                                    class="btn-secondary"/>
+                        </group>
+                    </group>
+
+                    <group string="Carte"
+                           invisible="not latitude or not longitude">
+                        <field name="map_embed_html"
+                               widget="html"
+                               nolabel="1"
+                               readonly="1"/>
                     </group>
 
                     <notebook>
@@ -145,13 +156,8 @@
                               invisible="property_type != 'apartment'">
                             <group>
                                 <group>
-                                    <field name="apartment_type"/>
+                                    <field name="apartment_type_id"/>
                                     <field name="apartment_number"/>
-                                </group>
-                                <group>
-                                    <field name="rental_price"/>
-                                    <field name="security_deposit"/>
-                                    <field name="rental_advance_count"/>
                                 </group>
                             </group>
                         </page>
@@ -160,10 +166,8 @@
                               invisible="property_type != 'house'">
                             <group>
                                 <group string="Caractéristiques">
-                                    <field name="house_type"/>
-                                    <field name="paper_type"/>
-                                    <field name="payment_mode"/>
-                                    <field name="price"/>
+                                    <field name="house_type_id"/>
+                                    <field name="paper_type_id"/>
                                 </group>
                             </group>
 
@@ -171,7 +175,7 @@
 
                             <field name="house_unit_ids">
                                 <list editable="bottom">
-                                    <field name="apartment_type"/>
+                                    <field name="apartment_type_id"/>
                                     <field name="quantity"/>
                                     <field name="note"/>
                                 </list>
@@ -181,11 +185,7 @@
                         <page string="Magasin"
                               invisible="property_type != 'shop'">
                             <group>
-                                <group string="Informations commerciales">
-                                    <field name="price"/>
-                                    <field name="shop_deposit"/>
-                                    <field name="desired_activity"/>
-                                </group>
+                                <field name="desired_activity"/>
                             </group>
                         </page>
 
@@ -195,9 +195,7 @@
                                 <group string="Caractéristiques du terrain">
                                     <field name="land_area"/>
                                     <field name="land_area_unit"/>
-                                    <field name="paper_type"/>
-                                    <field name="price"/>
-                                    <field name="payment_mode"/>
+                                    <field name="paper_type_id"/>
                                 </group>
                             </group>
                         </page>
