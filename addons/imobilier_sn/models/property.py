@@ -1,8 +1,20 @@
+# -*- coding: utf-8 -*-
+import html
+import json
+import logging
 import re
 import unicodedata
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 
 from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
+
+
+_logger = logging.getLogger(__name__)
+
+NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
 
 
 class ImobilierSNProperty(models.Model):
@@ -61,62 +73,50 @@ class ImobilierSNProperty(models.Model):
         ondelete="restrict",
     )
 
-    # Adresse formelle du Sénégal
-    country_id = fields.Many2one(
-        "res.country",
-        string="Pays",
-        default=lambda self: self.env["res.country"].search([("code", "=", "SN")], limit=1),
-        readonly=True,
-        ondelete="restrict",
-    )
-    region_id = fields.Many2one(
-        "imobilier.sn.address",
-        string="Région",
-        domain="[('country_id', '=', country_id), (('level', '=', 'region'))]",
-        ondelete="restrict",
-        tracking=True,
-    )
-    departement_id = fields.Many2one(
-        "imobilier.sn.address",
-        string="Département",
-        domain="[('country_id', '=', country_id), (('level', '=', 'department')), ('parent_id', '=', region_id)]",
-        ondelete="restrict",
-        tracking=True,
-    )
-    arrondissement_id = fields.Many2one(
-        "imobilier.sn.address",
-        string="Arrondissement",
-        domain="[('country_id', '=', country_id), ('level', '=', 'arrondissement'), ('parent_id', '=', departement_id)]",
-        ondelete="restrict",
-        tracking=True,
-    )
-    commune_id = fields.Many2one(
-        "imobilier.sn.address",
-        string="Commune",
-        domain="[('country_id', '=', country_id), ('level', '=', 'commune'), ('parent_id', '=', departement_id)]",
-        ondelete="restrict",
-        tracking=True,
-    )
-    quartier_id = fields.Many2one(
-        "imobilier.sn.address",
-        string="Quartier / Village",
-        domain="[('country_id', '=', country_id), ('level', '=', 'locality'), ('parent_id', '=', commune_id)]",
-        ondelete="restrict",
-        tracking=True,
-    )
-    address_line = fields.Char(
-        string="Adresse / Rue / Numéro",
-        tracking=True,
-        help="Rue, numéro, lot, villa, immeuble ou autre précision physique.",
-    )
+    # Adresse libre : aucune hiérarchie Odoo n'est imposée.
     location = fields.Char(
-        string="Adresse complète",
+        string="Adresse de localisation",
+        required=True,
+        tracking=True,
+        help=(
+            "Saisissez directement l'adresse du produit : rue, quartier, "
+            "immeuble, villa, lieu-dit, commune, etc."
+        ),
+    )
+    region_name = fields.Char(
+        string="Région",
+        readonly=True,
+        tracking=True,
+        help="Région déterminée automatiquement par la géolocalisation.",
+    )
+    department_name = fields.Char(
+        string="Département",
+        readonly=True,
+        tracking=True,
+        help="Département déterminé automatiquement par la géolocalisation.",
+    )
+    geocoded_address = fields.Char(
+        string="Adresse géocodée",
         readonly=True,
         copy=False,
-        tracking=True,
-        help="Adresse générée automatiquement depuis le référentiel géographique du Sénégal.",
     )
-    description = fields.Text(string="Description")
+    latitude = fields.Float(
+        string="Latitude",
+        digits=(10, 7),
+        readonly=True,
+        copy=False,
+    )
+    longitude = fields.Float(
+        string="Longitude",
+        digits=(10, 7),
+        readonly=True,
+        copy=False,
+    )
+    map_embed_html = fields.Html(
+        string="Carte",
+        compute="_compute_map_embed",
+        sanitize=False,
+    )
 
     currency_id = fields.Many2one(
         "res.currency",
@@ -124,26 +124,47 @@ class ImobilierSNProperty(models.Model):
         default=lambda self: self.env.company.currency_id,
         required=True,
     )
-    price = fields.Monetary(string="Prix", currency_field="currency_id")
-    rental_price = fields.Monetary(
-        string="Prix de location",
+    price = fields.Monetary(
+        string="Prix / Loyer mensuel",
         currency_field="currency_id",
+        help=(
+            "Prix du produit. Pour un produit destiné à la location, "
+            "ce montant correspond au loyer mensuel."
+        ),
+    )
+    security_deposit_months = fields.Float(
+        string="Nombre de mois de caution",
+        default=0,
+        help="La caution est calculée automatiquement : Prix × nombre de mois.",
     )
     security_deposit = fields.Monetary(
         string="Caution",
         currency_field="currency_id",
-        help="Montant de la caution demandé pour une location.",
+        compute="_compute_security_deposit",
+        store=True,
+        readonly=True,
+        help="Calcul automatique : Prix × nombre de mois de caution.",
     )
     rental_advance_count = fields.Float(
         string="Nombre de mois d'avance",
         default=0,
-        help="Nombre de mois de loyer à payer avant l'entrée dans le bien.",
+        help="Nombre de mois de loyer à payer avant l'entrée dans le produit.",
+    )
+    payment_term_id = fields.Many2one(
+        "account.payment.term",
+        string="Modalité de paiement",
+        domain="[('active', '=', True)]",
+        tracking=True,
+        help="Terme de paiement provenant directement du module Facturation.",
     )
 
     # Appartement
-    apartment_type = fields.Char(
+    apartment_type_id = fields.Many2one(
+        "imobilier.sn.property.type",
         string="Type d'appartement",
-        help="Exemples : Studio, Studio américain, 2CS, 3CS, 4CS, 5CS. Champ volontairement libre.",
+        domain="[('category', '=', 'apartment'), ('active', '=', True)]",
+        ondelete="restrict",
+        tracking=True,
     )
     apartment_number = fields.Char(
         string="Numéro d'appartement",
@@ -151,17 +172,19 @@ class ImobilierSNProperty(models.Model):
     )
 
     # Maison entière
-    house_type = fields.Char(
+    house_type_id = fields.Many2one(
+        "imobilier.sn.property.type",
         string="Type de maison",
-        help="Exemples : R1, R2, R3, R5. Champ volontairement libre.",
+        domain="[('category', '=', 'house'), ('active', '=', True)]",
+        ondelete="restrict",
+        tracking=True,
     )
-    paper_type = fields.Char(
+    paper_type_id = fields.Many2one(
+        "imobilier.sn.property.type",
         string="Type de papier",
-        help="Exemples : Bail, Titre foncier, etc. Champ libre pour s'adapter au dossier.",
-    )
-    payment_mode = fields.Char(
-        string="Modalité de paiement",
-        help="Champ libre pour préciser la modalité convenue.",
+        domain="[('category', '=', 'paper'), ('active', '=', True)]",
+        ondelete="restrict",
+        tracking=True,
     )
     house_unit_ids = fields.One2many(
         "imobilier.sn.house.unit",
@@ -170,10 +193,6 @@ class ImobilierSNProperty(models.Model):
     )
 
     # Magasin
-    shop_deposit = fields.Monetary(
-        string="Montant caution magasin",
-        currency_field="currency_id",
-    )
     desired_activity = fields.Char(string="Activité souhaitée")
 
     # Terrain
@@ -214,143 +233,195 @@ class ImobilierSNProperty(models.Model):
 
     active = fields.Boolean(default=True)
 
-    def _format_formal_location(self):
+    @api.depends("price", "security_deposit_months", "property_type")
+    def _compute_security_deposit(self):
+        for rec in self:
+            if rec.property_type in ("apartment", "house", "shop"):
+                rec.security_deposit = max(rec.price or 0, 0) * max(
+                    rec.security_deposit_months or 0, 0
+                )
+            else:
+                rec.security_deposit = 0
+
+    @api.depends("latitude", "longitude")
+    def _compute_map_embed(self):
+        for rec in self:
+            if not rec.latitude or not rec.longitude:
+                rec.map_embed_html = False
+                continue
+
+            lat = rec.latitude
+            lon = rec.longitude
+            delta = 0.015
+            bbox = ",".join([
+                f"{lon - delta:.7f}",
+                f"{lat - delta:.7f}",
+                f"{lon + delta:.7f}",
+                f"{lat + delta:.7f}",
+            ])
+            src = (
+                "https://www.openstreetmap.org/export/embed.html?"
+                + urlencode({
+                    "bbox": bbox,
+                    "layer": "mapnik",
+                    "marker": f"{lat:.7f},{lon:.7f}",
+                })
+            )
+            safe_src = html.escape(src, quote=True)
+            rec.map_embed_html = (
+                '<div style="width:100%; min-height:420px;">'
+                f'<iframe src="{safe_src}" '
+                'style="width:100%; height:420px; border:1px solid #ddd; border-radius:8px;" '
+                'loading="lazy" title="Carte de localisation" referrerpolicy="no-referrer-when-downgrade">'
+                '</iframe>'
+                '</div>'
+            )
+
+    @staticmethod
+    def _first_address_value(address, keys):
+        for key in keys:
+            value = address.get(key)
+            if value:
+                return value.strip()
+        return False
+
+    def action_geocode_address(self):
+        for rec in self:
+            rec._geocode_address()
+        return True
+
+    def _geocode_address(self):
         self.ensure_one()
-        parts = [
-            self.address_line,
-            self.quartier_id.name,
-            self.commune_id.name,
-            self.arrondissement_id.name,
-            self.departement_id.name,
-            self.region_id.name,
-            self.country_id.name,
-        ]
-        return ", ".join(dict.fromkeys(
-            part.strip()
-            for part in parts
-            if part and part.strip()
-        ))
+        if not self.location or not self.location.strip():
+            raise UserError(_("Veuillez renseigner l'adresse de localisation."))
 
-    def _sync_formal_location(self):
-        for rec in self:
-            if any((
-                rec.region_id,
-                rec.departement_id,
-                rec.arrondissement_id,
-                rec.commune_id,
-                rec.quartier_id,
-                rec.address_line,
-            )):
-                formatted = rec._format_formal_location()
-                if rec.location != formatted:
-                    rec.with_context(skip_formal_location_sync=True).write({
-                        "location": formatted,
-                    })
+        query = self.location.strip()
+        if "senegal" not in query.lower() and "sénégal" not in query.lower():
+            query = f"{query}, Sénégal"
 
-    @api.onchange("region_id")
-    def _onchange_region_id(self):
-        for rec in self:
-            rec.departement_id = False
-            rec.arrondissement_id = False
-            rec.commune_id = False
-            rec.quartier_id = False
-            rec.location = rec._format_formal_location()
+        params = {
+            "q": query,
+            "format": "jsonv2",
+            "addressdetails": 1,
+            "limit": 1,
+            "accept-language": "fr",
+        }
+        url = f"{NOMINATIM_URL}?{urlencode(params)}"
 
-    @api.onchange("departement_id")
-    def _onchange_departement_id(self):
-        for rec in self:
-            rec.arrondissement_id = False
-            rec.commune_id = False
-            rec.quartier_id = False
-            rec.location = rec._format_formal_location()
+        try:
+            request = Request(
+                url,
+                headers={
+                    "User-Agent": "Imobilier-SN/19.0 (geocoding)",
+                    "Accept": "application/json",
+                },
+            )
+            with urlopen(request, timeout=20) as response:
+                results = json.loads(response.read().decode("utf-8"))
+        except (HTTPError, URLError, TimeoutError, ValueError) as exc:
+            _logger.exception("Erreur de géocodage de l'adresse %s", self.location)
+            raise UserError(
+                _("La localisation n'a pas pu être déterminée. Vérifiez l'adresse puis réessayez.\n\n%s")
+                % exc
+            ) from exc
 
-    @api.onchange("commune_id")
-    def _onchange_commune_id(self):
-        for rec in self:
-            rec.quartier_id = False
-            rec.location = rec._format_formal_location()
+        if not results:
+            raise UserError(
+                _("Aucune localisation n'a été trouvée pour : %s") % self.location
+            )
 
-    @api.onchange("arrondissement_id", "quartier_id", "address_line")
-    def _onchange_formal_address(self):
-        for rec in self:
-            rec.location = rec._format_formal_location()
+        result = results[0]
+        address = result.get("address") or {}
+
+        region = self._first_address_value(
+            address,
+            ("state", "region", "province", "state_district"),
+        )
+        department = self._first_address_value(
+            address,
+            ("county", "department", "state_district", "district", "city_district"),
+        )
+
+        try:
+            latitude = float(result.get("lat"))
+            longitude = float(result.get("lon"))
+        except (TypeError, ValueError) as exc:
+            raise UserError(_("Le service de cartographie n'a pas fourni de coordonnées valides.")) from exc
+
+        self.write({
+            "latitude": latitude,
+            "longitude": longitude,
+            "region_name": region or False,
+            "department_name": department or False,
+            "geocoded_address": result.get("display_name") or self.location,
+        })
+
+        message_parts = [_("Adresse géolocalisée.")]
+        if region:
+            message_parts.append(_("Région : %s") % region)
+        if department:
+            message_parts.append(_("Département : %s") % department)
+
+        self.env["bus.bus"]._sendone(
+            self.env.user.partner_id,
+            "simple_notification",
+            {
+                "title": _("Géolocalisation"),
+                "message": " — ".join(message_parts),
+                "type": "success",
+                "sticky": False,
+            },
+        )
+        return True
+
+    def action_open_google_maps(self):
+        self.ensure_one()
+        if not self.latitude or not self.longitude:
+            self._geocode_address()
+        return {
+            "type": "ir.actions.act_url",
+            "url": (
+                "https://www.google.com/maps/search/?api=1&query=%s,%s"
+                % (self.latitude, self.longitude)
+            ),
+            "target": "new",
+        }
 
     @api.model_create_multi
     def create(self, vals_list):
-        country = self.env["res.country"].search([("code", "=", "SN")], limit=1)
-        for vals in vals_list:
-            if not vals.get("country_id") and country:
-                vals["country_id"] = country.id
-        records = super().create(vals_list)
-        records._sync_formal_location()
-        return records
-
-    def write(self, vals):
-        address_fields = {
-            "country_id",
-            "region_id",
-            "departement_id",
-            "arrondissement_id",
-            "commune_id",
-            "quartier_id",
-            "address_line",
-        }
-        res = super().write(vals)
-        if not self.env.context.get("skip_formal_location_sync") and address_fields.intersection(vals):
-            self._sync_formal_location()
-        return res
-
-    @api.constrains(
-        "country_id",
-        "region_id",
-        "departement_id",
-        "arrondissement_id",
-        "commune_id",
-        "quartier_id",
-    )
-    def _check_formal_senegal_address(self):
-        for rec in self:
-            if not any((rec.region_id, rec.departement_id, rec.commune_id)):
-                # Tolérance pour les anciens produits créés avant la mise en place
-                # du référentiel formel.
-                continue
-            if rec.country_id and rec.country_id.code != "SN":
-                raise ValidationError(_("L'adresse formelle d'un produit doit être rattachée au Sénégal."))
-            if rec.region_id and rec.region_id.level != "region":
-                raise ValidationError(_("La région sélectionnée est invalide."))
-            if rec.departement_id and (
-                rec.departement_id.level != "department"
-                or rec.departement_id.parent_id != rec.region_id
-            ):
-                raise ValidationError(_("Le département doit appartenir à la région sélectionnée."))
-            if rec.arrondissement_id and (
-                rec.arrondissement_id.level != "arrondissement"
-                or rec.arrondissement_id.parent_id != rec.departement_id
-            ):
-                raise ValidationError(_("L'arrondissement doit appartenir au département sélectionné."))
-            if rec.commune_id and (
-                rec.commune_id.level != "commune"
-                or rec.commune_id.parent_id != rec.departement_id
-            ):
-                raise ValidationError(_("La commune doit appartenir au département sélectionné."))
-            if rec.quartier_id and (
-                rec.quartier_id.level != "locality"
-                or rec.quartier_id.parent_id != rec.commune_id
-            ):
-                raise ValidationError(_("Le quartier / village doit appartenir à la commune sélectionnée."))
-
         for vals in vals_list:
             if not vals.get("sequence_number"):
                 seq = self.env["ir.sequence"].next_by_code("imobilier.sn.property")
                 vals["sequence_number"] = int(seq or "0")
         return super().create(vals_list)
 
+    def write(self, vals):
+        res = super().write(vals)
+        if "property_type" in vals and vals["property_type"] == "land":
+            self.filtered(lambda r: r.property_type == "land").with_context(
+                skip_land_cleanup=True
+            ).write({
+                "security_deposit_months": 0,
+                "rental_advance_count": 0,
+            })
+        return res
+
+    @api.constrains("price", "security_deposit_months", "rental_advance_count")
+    def _check_financial_values(self):
+        for rec in self:
+            if rec.price < 0:
+                raise ValidationError(_("Le prix ne peut pas être négatif."))
+            if rec.security_deposit_months < 0:
+                raise ValidationError(_("Le nombre de mois de caution ne peut pas être négatif."))
+            if rec.rental_advance_count < 0:
+                raise ValidationError(_("Le nombre de mois d'avance ne peut pas être négatif."))
+
     @api.depends(
         "property_type",
         "owner_id.name",
         "location",
-        "apartment_type",
-        "house_type",
+        "apartment_type_id.name",
+        "house_type_id.name",
         "sequence_number",
     )
     def _compute_reference(self):
@@ -359,7 +430,7 @@ class ImobilierSNProperty(models.Model):
             location = rec._slug(rec.location or "LOCALISATION")
             owner = rec._slug(rec.owner_id.name or "PROPRIETAIRE")
             if rec.property_type == "apartment":
-                kind = rec._slug(rec.apartment_type or "APP")
+                kind = rec._slug(rec.apartment_type_id.name or "APP")
                 apartment_number = (
                     rec._slug(rec.apartment_number)
                     if rec.apartment_number
@@ -367,7 +438,7 @@ class ImobilierSNProperty(models.Model):
                 )
                 rec.reference = f"APP-{kind}-{owner}-{location}-{apartment_number}"
             elif rec.property_type == "house":
-                kind = rec._slug(rec.house_type or "R1")
+                kind = rec._slug(rec.house_type_id.name or "R1")
                 rec.reference = f"MAISON-{kind}-{owner}-{location}-{number}"
             elif rec.property_type == "shop":
                 rec.reference = f"MAG-{owner}-{location}-{number}"
@@ -396,19 +467,19 @@ class ImobilierSNProperty(models.Model):
     @api.onchange("property_type")
     def _onchange_property_type(self):
         if self.property_type != "apartment":
-            self.apartment_type = False
+            self.apartment_type_id = False
             self.apartment_number = False
         if self.property_type != "house":
-            self.house_type = False
-            self.paper_type = False
-            self.payment_mode = False
+            self.house_type_id = False
+            self.paper_type_id = False
             self.house_unit_ids = [(5, 0, 0)]
         if self.property_type != "shop":
-            self.shop_deposit = 0
             self.desired_activity = False
-        if self.property_type != "land":
-            self.land_area = 0
-            self.land_area_unit = "m2"
+        if self.property_type == "land":
+            self.security_deposit_months = 0
+            self.rental_advance_count = 0
+        if self.property_type not in ("apartment", "house", "shop"):
+            self.security_deposit_months = 0
 
     def action_open_contracts(self):
         self.ensure_one()
@@ -452,10 +523,12 @@ class ImobilierSNHouseUnit(models.Model):
         required=True,
         ondelete="cascade",
     )
-    apartment_type = fields.Char(
+    apartment_type_id = fields.Many2one(
+        "imobilier.sn.property.type",
         string="Type appartement",
         required=True,
-        help="Exemples : Studio américain, 2CS, 3CS, 4CS, 5CS.",
+        domain="[('category', '=', 'apartment'), ('active', '=', True)]",
+        ondelete="restrict",
     )
     quantity = fields.Integer(string="Nombre", required=True, default=1)
     note = fields.Char(string="Note")
