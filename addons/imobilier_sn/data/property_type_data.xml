@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Types d'appartement -->
+    <record id="property_type_apartment_studio" model="imobilier.sn.property.type">
+        <field name="name">Studio</field>
+        <field name="code">STUDIO</field>
+        <field name="category">apartment</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="property_type_apartment_2cs" model="imobilier.sn.property.type">
+        <field name="name">2CS</field>
+        <field name="code">2CS</field>
+        <field name="category">apartment</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="property_type_apartment_3cs" model="imobilier.sn.property.type">
+        <field name="name">3CS</field>
+        <field name="code">3CS</field>
+        <field name="category">apartment</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="property_type_apartment_4cs" model="imobilier.sn.property.type">
+        <field name="name">4CS</field>
+        <field name="code">4CS</field>
+        <field name="category">apartment</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="property_type_apartment_5cs" model="imobilier.sn.property.type">
+        <field name="name">5CS</field>
+        <field name="code">5CS</field>
+        <field name="category">apartment</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <!-- Types de maison -->
+    <record id="property_type_house_r1" model="imobilier.sn.property.type">
+        <field name="name">R1</field>
+        <field name="code">R1</field>
+        <field name="category">house</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="property_type_house_r2" model="imobilier.sn.property.type">
+        <field name="name">R2</field>
+        <field name="code">R2</field>
+        <field name="category">house</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="property_type_house_r3" model="imobilier.sn.property.type">
+        <field name="name">R3</field>
+        <field name="code">R3</field>
+        <field name="category">house</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="property_type_house_r5" model="imobilier.sn.property.type">
+        <field name="name">R5</field>
+        <field name="code">R5</field>
+        <field name="category">house</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <!-- Types de papier -->
+    <record id="property_type_paper_bail" model="imobilier.sn.property.type">
+        <field name="name">Bail</field>
+        <field name="code">BAIL</field>
+        <field name="category">paper</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="property_type_paper_titre_foncier" model="imobilier.sn.property.type">
+        <field name="name">Titre foncier</field>
+        <field name="code">TF</field>
+        <field name="category">paper</field>
+        <field name="sequence">20</field>
+    </record>
+</odoo>
