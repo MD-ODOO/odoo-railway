@@ -10,7 +10,6 @@
         sequence="1"
     />
 
-    <!-- Produits -->
     <menuitem
         id="menu_imobilier_sn_products"
         name="Produit"
@@ -47,7 +46,6 @@
         sequence="14"
     />
 
-    <!-- Locations -->
     <menuitem
         id="menu_imobilier_sn_location"
         name="LOCATION"
@@ -70,13 +68,10 @@
         sequence="22"
     />
 
-    <menuitem
-        id="menu_imobilier_sn_addresses"
-        name="Référentiel des adresses"
-        parent="menu_imobilier_sn_root"
-        action="action_imobilier_sn_address"
-        sequence="70"
-    />
+    <!-- L'ancien référentiel hiérarchique n'est plus utilisé par les produits. -->
+    <record id="menu_imobilier_sn_addresses" model="ir.ui.menu">
+        <field name="active" eval="False"/>
+    </record>
 
     <menuitem
         id="menu_imobilier_sn_contracts"
@@ -105,5 +100,34 @@
         parent="menu_imobilier_sn_root"
         action="action_imobilier_sn_tenant"
         sequence="60"
+    />
+
+    <!-- Configuration -->
+    <menuitem
+        id="menu_imobilier_sn_configuration"
+        name="Configuration"
+        parent="menu_imobilier_sn_root"
+        sequence="90"
+    />
+    <menuitem
+        id="menu_imobilier_sn_apartment_types"
+        name="Types d'appartement"
+        parent="menu_imobilier_sn_configuration"
+        action="action_imobilier_sn_apartment_types"
+        sequence="10"
+    />
+    <menuitem
+        id="menu_imobilier_sn_house_types"
+        name="Types de maison"
+        parent="menu_imobilier_sn_configuration"
+        action="action_imobilier_sn_house_types"
+        sequence="20"
+    />
+    <menuitem
+        id="menu_imobilier_sn_paper_types"
+        name="Types de papier"
+        parent="menu_imobilier_sn_configuration"
+        action="action_imobilier_sn_paper_types"
+        sequence="30"
     />
 </odoo>
