@@ -21,7 +21,7 @@ Fonctionnalités :
     "author": "MD-ODOO",
     "license": "LGPL-3",
     "category": "Real Estate",
-    "depends": ["base", "mail", "contacts", "account"],
+    "depends": ["base", "mail", "contacts", "account", "kiiraaye_governance"],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
