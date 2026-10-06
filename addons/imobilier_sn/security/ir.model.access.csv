@@ -15,3 +15,5 @@ access_imobilier_sn_inspection_user,imobilier.sn.inspection user,model_imobilier
 access_imobilier_sn_inspection_manager,imobilier.sn.inspection manager,model_imobilier_sn_inspection,imobilier_sn.group_imobilier_sn_manager,1,1,1,1
 access_imobilier_sn_dashboard_user,imobilier.sn.dashboard user,model_imobilier_sn_dashboard,imobilier_sn.group_imobilier_sn_user,1,0,0,0
 access_imobilier_sn_dashboard_manager,imobilier.sn.dashboard manager,model_imobilier_sn_dashboard,imobilier_sn.group_imobilier_sn_manager,1,0,0,0
+access_imobilier_sn_address_user,imobilier.sn.address user,model_imobilier_sn_address,imobilier_sn.group_imobilier_sn_user,1,0,0,0
+access_imobilier_sn_address_manager,imobilier.sn.address manager,model_imobilier_sn_address,imobilier_sn.group_imobilier_sn_manager,1,1,1,1
