@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Liste des produits -->
     <record id="view_imobilier_sn_property_list" model="ir.ui.view">
-        <field name="name">imobilier.sn.property.list</field>
+        <field name="name">imobilier.sn.product.list</field>
         <field name="model">imobilier.sn.property</field>
         <field name="arch" type="xml">
             <list string="Produits">
                 <field name="reference"/>
-                <field name="name"/>
                 <field name="property_type"/>
                 <field name="owner_id"/>
                 <field name="location"/>
@@ -17,13 +17,13 @@
         </field>
     </record>
 
+    <!-- Recherche des produits -->
     <record id="view_imobilier_sn_property_search" model="ir.ui.view">
         <field name="name">imobilier.sn.product.search</field>
         <field name="model">imobilier.sn.property</field>
         <field name="arch" type="xml">
-            <search string="Rechercher un produit">
+            <search>
                 <field name="reference"/>
-                <field name="name"/>
                 <field name="owner_id"/>
                 <field name="location"/>
                 <field name="property_type"/>
@@ -32,34 +32,57 @@
                     <filter name="group_type" string="Type" context="{'group_by':'property_type'}"/>
                     <filter name="group_owner" string="Propriétaire" context="{'group_by':'owner_id'}"/>
                     <filter name="group_status" string="État" context="{'group_by':'status'}"/>
+                    <filter name="group_location" string="Localisation" context="{'group_by':'location'}"/>
                 </group>
             </search>
         </field>
     </record>
 
+    <!-- Formulaire Produit -->
     <record id="view_imobilier_sn_property_form" model="ir.ui.view">
-        <field name="name">imobilier.sn.property.form</field>
+        <field name="name">imobilier.sn.product.form</field>
         <field name="model">imobilier.sn.property</field>
         <field name="arch" type="xml">
             <form string="Produit">
                 <header>
-                    <button name="action_mark_available" type="object" string="Disponible" class="btn-primary" invisible="status == 'available'"/>
-                    <button name="action_mark_reserved" type="object" string="Réserver" invisible="status != 'available'"/>
-                    <field name="status" widget="statusbar" statusbar_visible="available,reserved,rented,sold"/>
+                    <button name="action_mark_available"
+                            type="object"
+                            string="Disponible"
+                            class="btn-primary"
+                            invisible="status == 'available'"/>
+                    <button name="action_mark_reserved"
+                            type="object"
+                            string="Réserver"
+                            invisible="status != 'available'"/>
+                    <field name="status"
+                           widget="statusbar"
+                           statusbar_visible="available,reserved,rented,sold"/>
                 </header>
+
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button type="object" name="action_open_contracts" class="oe_stat_button" icon="fa-file-text-o">
-                            <field name="contract_count" string="Contrats" widget="statinfo"/>
+                        <button type="object"
+                                name="action_open_contracts"
+                                class="oe_stat_button"
+                                icon="fa-file-text-o">
+                            <field name="contract_count"
+                                   string="Contrats"
+                                   widget="statinfo"/>
                         </button>
-                        <button type="object" name="action_open_assignments" class="oe_stat_button" icon="fa-handshake-o">
-                            <field name="assignment_count" string="Courtiers" widget="statinfo"/>
+                        <button type="object"
+                                name="action_open_assignments"
+                                class="oe_stat_button"
+                                icon="fa-handshake-o">
+                            <field name="assignment_count"
+                                   string="Courtiers"
+                                   widget="statinfo"/>
                         </button>
                     </div>
+
                     <div class="oe_title">
-                        <label for="name" class="oe_edit_only" string="Nom du produit"/>
-                        <h1><field name="name"/></h1>
-                        <h2><field name="reference" class="oe_inline"/></h2>
+                        <h1>
+                            <field name="reference"/>
+                        </h1>
                     </div>
 
                     <group>
@@ -77,7 +100,9 @@
                             <field name="rental_advance_count" invisible="property_type != 'apartment'"/>
                         </group>
                     </group>
-                     <page string="Appartement" invisible="property_type != 'apartment'">
+
+                    <notebook>
+                        <page string="Appartement" invisible="property_type != 'apartment'">
                             <group>
                                 <field name="apartment_type"/>
                                 <field name="apartment_number"/>
@@ -100,6 +125,7 @@
                                     <field name="owner_id"/>
                                 </group>
                             </group>
+
                             <separator string="Répartition des appartements"/>
                             <field name="house_unit_ids">
                                 <list editable="bottom">
@@ -108,14 +134,17 @@
                                     <field name="note"/>
                                 </list>
                             </field>
+                        </page>
 
-                            <group string="Magasin" invisible="property_type != 'shop'">
+                        <page string="Magasin" invisible="property_type != 'shop'">
+                            <group>
                                 <field name="location"/>
                                 <field name="owner_id"/>
                                 <field name="price"/>
                                 <field name="shop_deposit"/>
                                 <field name="desired_activity"/>
                             </group>
+                        </page>
 
                         <page string="Terrain" invisible="property_type != 'land'">
                             <group>
@@ -128,9 +157,6 @@
                                 <field name="payment_mode"/>
                             </group>
                         </page>
-
-                    <notebook>
-                       
 
                         <page string="Courtier">
                             <field name="assignment_ids">
@@ -156,12 +182,14 @@
                             </field>
                         </page>
                     </notebook>
+
                     <chatter/>
                 </sheet>
             </form>
         </field>
     </record>
 
+    <!-- Action globale Produit -->
     <record id="action_imobilier_sn_products" model="ir.actions.act_window">
         <field name="name">Produits</field>
         <field name="res_model">imobilier.sn.property</field>
@@ -169,11 +197,13 @@
         <field name="search_view_id" ref="view_imobilier_sn_property_search"/>
     </record>
 
+    <!-- Actions par type : le contexte initialise le type à l'ouverture du formulaire -->
     <record id="action_imobilier_sn_product_apartment" model="ir.actions.act_window">
         <field name="name">Appartements</field>
         <field name="res_model">imobilier.sn.property</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('property_type','=','apartment')]</field>
+        <field name="context">{'default_property_type': 'apartment'}</field>
         <field name="search_view_id" ref="view_imobilier_sn_property_search"/>
     </record>
 
@@ -182,6 +212,7 @@
         <field name="res_model">imobilier.sn.property</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('property_type','=','house')]</field>
+        <field name="context">{'default_property_type': 'house'}</field>
         <field name="search_view_id" ref="view_imobilier_sn_property_search"/>
     </record>
 
@@ -190,6 +221,7 @@
         <field name="res_model">imobilier.sn.property</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('property_type','=','shop')]</field>
+        <field name="context">{'default_property_type': 'shop'}</field>
         <field name="search_view_id" ref="view_imobilier_sn_property_search"/>
     </record>
 
@@ -198,9 +230,11 @@
         <field name="res_model">imobilier.sn.property</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('property_type','=','land')]</field>
+        <field name="context">{'default_property_type': 'land'}</field>
         <field name="search_view_id" ref="view_imobilier_sn_property_search"/>
     </record>
 
+    <!-- Compatibilité avec l'ancien identifiant d'action -->
     <record id="action_imobilier_sn_property" model="ir.actions.act_window">
         <field name="name">Produits</field>
         <field name="res_model">imobilier.sn.property</field>
