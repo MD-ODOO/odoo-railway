@@ -108,9 +108,11 @@
         name="Configuration"
         parent="menu_imobilier_sn_root"
         sequence="90"
+        groups="imobilier_sn.group_imobilier_sn_manager"
     />
     <menuitem
         id="menu_imobilier_sn_apartment_types"
+        groups="imobilier_sn.group_imobilier_sn_manager"
         name="Types d'appartement"
         parent="menu_imobilier_sn_configuration"
         action="action_imobilier_sn_apartment_types"
@@ -118,6 +120,7 @@
     />
     <menuitem
         id="menu_imobilier_sn_house_types"
+        groups="imobilier_sn.group_imobilier_sn_manager"
         name="Types de maison"
         parent="menu_imobilier_sn_configuration"
         action="action_imobilier_sn_house_types"
@@ -125,6 +128,7 @@
     />
     <menuitem
         id="menu_imobilier_sn_paper_types"
+        groups="imobilier_sn.group_imobilier_sn_manager"
         name="Types de papier"
         parent="menu_imobilier_sn_configuration"
         action="action_imobilier_sn_paper_types"
