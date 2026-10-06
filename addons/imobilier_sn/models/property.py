@@ -214,8 +214,132 @@ class ImobilierSNProperty(models.Model):
 
     active = fields.Boolean(default=True)
 
+    def _format_formal_location(self):
+        self.ensure_one()
+        parts = [
+            self.address_line,
+            self.quartier_id.name,
+            self.commune_id.name,
+            self.arrondissement_id.name,
+            self.departement_id.name,
+            self.region_id.name,
+            self.country_id.name,
+        ]
+        return ", ".join(dict.fromkeys(
+            part.strip()
+            for part in parts
+            if part and part.strip()
+        ))
+
+    def _sync_formal_location(self):
+        for rec in self:
+            if any((
+                rec.region_id,
+                rec.departement_id,
+                rec.arrondissement_id,
+                rec.commune_id,
+                rec.quartier_id,
+                rec.address_line,
+            )):
+                formatted = rec._format_formal_location()
+                if rec.location != formatted:
+                    rec.with_context(skip_formal_location_sync=True).write({
+                        "location": formatted,
+                    })
+
+    @api.onchange("region_id")
+    def _onchange_region_id(self):
+        for rec in self:
+            rec.departement_id = False
+            rec.arrondissement_id = False
+            rec.commune_id = False
+            rec.quartier_id = False
+            rec.location = rec._format_formal_location()
+
+    @api.onchange("departement_id")
+    def _onchange_departement_id(self):
+        for rec in self:
+            rec.arrondissement_id = False
+            rec.commune_id = False
+            rec.quartier_id = False
+            rec.location = rec._format_formal_location()
+
+    @api.onchange("commune_id")
+    def _onchange_commune_id(self):
+        for rec in self:
+            rec.quartier_id = False
+            rec.location = rec._format_formal_location()
+
+    @api.onchange("arrondissement_id", "quartier_id", "address_line")
+    def _onchange_formal_address(self):
+        for rec in self:
+            rec.location = rec._format_formal_location()
+
     @api.model_create_multi
     def create(self, vals_list):
+        country = self.env["res.country"].search([("code", "=", "SN")], limit=1)
+        for vals in vals_list:
+            if not vals.get("country_id") and country:
+                vals["country_id"] = country.id
+        records = super().create(vals_list)
+        records._sync_formal_location()
+        return records
+
+    def write(self, vals):
+        address_fields = {
+            "country_id",
+            "region_id",
+            "departement_id",
+            "arrondissement_id",
+            "commune_id",
+            "quartier_id",
+            "address_line",
+        }
+        res = super().write(vals)
+        if not self.env.context.get("skip_formal_location_sync") and address_fields.intersection(vals):
+            self._sync_formal_location()
+        return res
+
+    @api.constrains(
+        "country_id",
+        "region_id",
+        "departement_id",
+        "arrondissement_id",
+        "commune_id",
+        "quartier_id",
+    )
+    def _check_formal_senegal_address(self):
+        for rec in self:
+            if not any((rec.region_id, rec.departement_id, rec.commune_id)):
+                # Tolérance pour les anciens produits créés avant la mise en place
+                # du référentiel formel.
+                continue
+            if rec.country_id and rec.country_id.code != "SN":
+                raise ValidationError(_("L'adresse formelle d'un produit doit être rattachée au Sénégal."))
+            if rec.region_id and rec.region_id.niveau != "niveau1":
+                raise ValidationError(_("La région sélectionnée est invalide."))
+            if rec.departement_id and (
+                rec.departement_id.niveau != "niveau2"
+                or rec.departement_id.parent_id != rec.region_id
+            ):
+                raise ValidationError(_("Le département doit appartenir à la région sélectionnée."))
+            if rec.arrondissement_id and (
+                rec.arrondissement_id.niveau != "localite"
+                or rec.arrondissement_id.designation_locale != "Arrondissement"
+                or rec.arrondissement_id.parent_id != rec.departement_id
+            ):
+                raise ValidationError(_("L'arrondissement doit appartenir au département sélectionné."))
+            if rec.commune_id and (
+                rec.commune_id.niveau != "niveau3"
+                or rec.commune_id.parent_id != rec.departement_id
+            ):
+                raise ValidationError(_("La commune doit appartenir au département sélectionné."))
+            if rec.quartier_id and (
+                rec.quartier_id.niveau != "niveau5"
+                or rec.quartier_id.parent_id != rec.commune_id
+            ):
+                raise ValidationError(_("Le quartier / village doit appartenir à la commune sélectionnée."))
+
         for vals in vals_list:
             if not vals.get("sequence_number"):
                 seq = self.env["ir.sequence"].next_by_code("imobilier.sn.property")
