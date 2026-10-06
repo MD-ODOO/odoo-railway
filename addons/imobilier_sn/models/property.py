@@ -60,7 +60,62 @@ class ImobilierSNProperty(models.Model):
         tracking=True,
         ondelete="restrict",
     )
-    location = fields.Char(string="Localisation", required=True, tracking=True)
+
+    # Adresse formelle du Sénégal
+    country_id = fields.Many2one(
+        "res.country",
+        string="Pays",
+        default=lambda self: self.env["res.country"].search([("code", "=", "SN")], limit=1),
+        readonly=True,
+        ondelete="restrict",
+    )
+    region_id = fields.Many2one(
+        "kiiraaye.geographie",
+        string="Région",
+        domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau1')]",
+        ondelete="restrict",
+        tracking=True,
+    )
+    departement_id = fields.Many2one(
+        "kiiraaye.geographie",
+        string="Département",
+        domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau2'), ('parent_id', '=', region_id)]",
+        ondelete="restrict",
+        tracking=True,
+    )
+    arrondissement_id = fields.Many2one(
+        "kiiraaye.geographie",
+        string="Arrondissement",
+        domain="[('country_id', '=', country_id), ('niveau', '=', 'localite'), ('designation_locale', '=', 'Arrondissement'), ('parent_id', '=', departement_id)]",
+        ondelete="restrict",
+        tracking=True,
+    )
+    commune_id = fields.Many2one(
+        "kiiraaye.geographie",
+        string="Commune",
+        domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau3'), ('parent_id', '=', departement_id)]",
+        ondelete="restrict",
+        tracking=True,
+    )
+    quartier_id = fields.Many2one(
+        "kiiraaye.geographie",
+        string="Quartier / Village",
+        domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('parent_id', '=', commune_id)]",
+        ondelete="restrict",
+        tracking=True,
+    )
+    address_line = fields.Char(
+        string="Adresse / Rue / Numéro",
+        tracking=True,
+        help="Rue, numéro, lot, villa, immeuble ou autre précision physique.",
+    )
+    location = fields.Char(
+        string="Adresse complète",
+        readonly=True,
+        copy=False,
+        tracking=True,
+        help="Adresse générée automatiquement depuis le référentiel géographique du Sénégal.",
+    )
     description = fields.Text(string="Description")
 
     currency_id = fields.Many2one(
