@@ -71,6 +71,14 @@
     />
 
     <menuitem
+        id="menu_imobilier_sn_addresses"
+        name="Référentiel des adresses"
+        parent="menu_imobilier_sn_root"
+        action="action_imobilier_sn_address"
+        sequence="70"
+    />
+
+    <menuitem
         id="menu_imobilier_sn_contracts"
         name="Contrats"
         parent="menu_imobilier_sn_root"
