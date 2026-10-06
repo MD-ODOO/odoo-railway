@@ -56,7 +56,7 @@
                             invisible="status != 'available'"/>
                     <field name="status"
                            widget="statusbar"
-                           statusbar_visible="available,reserved,rented,sold"/>
+                           statusbar_visible="available,reserved,rented,sold,unavailable"/>
                 </header>
 
                 <sheet>
@@ -81,52 +81,59 @@
 
                     <div class="oe_title">
                         <h1>
-                            <field name="reference"/>
+                            <field name="reference"
+                                   placeholder="Référence du produit"/>
                         </h1>
                     </div>
 
                     <group>
-                        <group>
+                        <group string="Identification">
                             <field name="property_type"/>
                             <field name="owner_id"/>
                             <field name="location"/>
-                            <field name="description"/>
                         </group>
-                        <group>
+                        <group string="Informations financières">
                             <field name="currency_id" invisible="1"/>
-                            <field name="price" invisible="property_type == 'apartment'"/>
-                            <field name="rental_price" invisible="property_type != 'apartment'"/>
-                            <field name="security_deposit" invisible="property_type not in ['apartment','house']"/>
-                            <field name="rental_advance_count" invisible="property_type != 'apartment'"/>
+                            <field name="price"
+                                   invisible="property_type == 'apartment'"/>
+                            <field name="rental_price"
+                                   invisible="property_type != 'apartment'"/>
+                            <field name="security_deposit"
+                                   invisible="property_type not in ['apartment','house']"/>
+                            <field name="rental_advance_count"
+                                   invisible="property_type != 'apartment'"/>
                         </group>
                     </group>
 
                     <notebook>
-                        <page string="Appartement" invisible="property_type != 'apartment'">
+                        <page string="Appartement"
+                              invisible="property_type != 'apartment'">
                             <group>
-                                <field name="apartment_type"/>
-                                <field name="apartment_number"/>
-                                <field name="rental_price"/>
-                                <field name="security_deposit"/>
-                                <field name="rental_advance_count"/>
+                                <group>
+                                    <field name="apartment_type"/>
+                                    <field name="apartment_number"/>
+                                </group>
+                                <group>
+                                    <field name="rental_price"/>
+                                    <field name="security_deposit"/>
+                                    <field name="rental_advance_count"/>
+                                </group>
                             </group>
                         </page>
 
-                        <page string="Maison entière" invisible="property_type != 'house'">
+                        <page string="Maison entière"
+                              invisible="property_type != 'house'">
                             <group>
-                                <group>
+                                <group string="Caractéristiques">
                                     <field name="house_type"/>
                                     <field name="paper_type"/>
                                     <field name="payment_mode"/>
                                     <field name="price"/>
                                 </group>
-                                <group>
-                                    <field name="location"/>
-                                    <field name="owner_id"/>
-                                </group>
                             </group>
 
                             <separator string="Répartition des appartements"/>
+
                             <field name="house_unit_ids">
                                 <list editable="bottom">
                                     <field name="apartment_type"/>
@@ -136,25 +143,27 @@
                             </field>
                         </page>
 
-                        <page string="Magasin" invisible="property_type != 'shop'">
+                        <page string="Magasin"
+                              invisible="property_type != 'shop'">
                             <group>
-                                <field name="location"/>
-                                <field name="owner_id"/>
-                                <field name="price"/>
-                                <field name="shop_deposit"/>
-                                <field name="desired_activity"/>
+                                <group string="Informations commerciales">
+                                    <field name="price"/>
+                                    <field name="shop_deposit"/>
+                                    <field name="desired_activity"/>
+                                </group>
                             </group>
                         </page>
 
-                        <page string="Terrain" invisible="property_type != 'land'">
+                        <page string="Terrain"
+                              invisible="property_type != 'land'">
                             <group>
-                                <field name="land_area"/>
-                                <field name="land_area_unit"/>
-                                <field name="location"/>
-                                <field name="paper_type"/>
-                                <field name="owner_id"/>
-                                <field name="price"/>
-                                <field name="payment_mode"/>
+                                <group string="Caractéristiques du terrain">
+                                    <field name="land_area"/>
+                                    <field name="land_area_unit"/>
+                                    <field name="paper_type"/>
+                                    <field name="price"/>
+                                    <field name="payment_mode"/>
+                                </group>
                             </group>
                         </page>
 
@@ -180,6 +189,12 @@
                                     <field name="state"/>
                                 </list>
                             </field>
+                        </page>
+
+                        <page string="Description">
+                            <field name="description"
+                                   nolabel="1"
+                                   placeholder="Description du produit..."/>
                         </page>
                     </notebook>
 
