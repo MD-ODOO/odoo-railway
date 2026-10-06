@@ -86,21 +86,21 @@ class ImobilierSNProperty(models.Model):
     arrondissement_id = fields.Many2one(
         "imobilier.sn.address",
         string="Arrondissement",
-        domain="[('country_id', '=', country_id), ('niveau', '=', 'localite'), ('designation_locale', '=', 'Arrondissement'), ('parent_id', '=', departement_id)]",
+        domain="[('country_id', '=', country_id), ('level', '=', 'arrondissement'), ('parent_id', '=', departement_id)]",
         ondelete="restrict",
         tracking=True,
     )
     commune_id = fields.Many2one(
         "imobilier.sn.address",
         string="Commune",
-        domain="[('country_id', '=', country_id), (('level', '=', 'commune')), ('parent_id', '=', departement_id)]",
+        domain="[('country_id', '=', country_id), ('level', '=', 'commune'), ('parent_id', '=', departement_id)]",
         ondelete="restrict",
         tracking=True,
     )
     quartier_id = fields.Many2one(
         "imobilier.sn.address",
         string="Quartier / Village",
-        domain="[('country_id', '=', country_id), (('level', '=', 'locality')), ('parent_id', '=', commune_id)]",
+        domain="[('country_id', '=', country_id), ('level', '=', 'locality'), ('parent_id', '=', commune_id)]",
         ondelete="restrict",
         tracking=True,
     )
