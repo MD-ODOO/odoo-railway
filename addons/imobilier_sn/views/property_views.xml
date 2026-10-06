@@ -77,9 +77,7 @@
                             <field name="rental_advance_count" invisible="property_type != 'apartment'"/>
                         </group>
                     </group>
-
-                    <notebook>
-                        <page string="Appartement" invisible="property_type != 'apartment'">
+                     <page string="Appartement" invisible="property_type != 'apartment'">
                             <group>
                                 <field name="apartment_type"/>
                                 <field name="apartment_number"/>
@@ -110,17 +108,14 @@
                                     <field name="note"/>
                                 </list>
                             </field>
-                        </page>
 
-                        <page string="Magasin" invisible="property_type != 'shop'">
-                            <group>
+                            <group string="Magasin" invisible="property_type != 'shop'">
                                 <field name="location"/>
                                 <field name="owner_id"/>
                                 <field name="price"/>
                                 <field name="shop_deposit"/>
                                 <field name="desired_activity"/>
                             </group>
-                        </page>
 
                         <page string="Terrain" invisible="property_type != 'land'">
                             <group>
@@ -133,6 +128,9 @@
                                 <field name="payment_mode"/>
                             </group>
                         </page>
+
+                    <notebook>
+                       
 
                         <page string="Courtier">
                             <field name="assignment_ids">
