@@ -58,15 +58,32 @@ class ImobilierSNContract(models.Model):
 
     # Location
     monthly_rent = fields.Monetary(string="Loyer mensuel", currency_field="currency_id")
-    security_deposit = fields.Monetary(string="Caution", currency_field="currency_id")
+    security_deposit_months = fields.Float(
+        related="property_id.security_deposit_months",
+        string="Nombre de mois de caution",
+        readonly=True,
+    )
+    security_deposit = fields.Monetary(
+        string="Caution",
+        currency_field="currency_id",
+        compute="_compute_security_deposit",
+        store=True,
+        readonly=True,
+    )
     advance_months = fields.Float(string="Nombre de mois d'avance")
+    payment_term_id = fields.Many2one(
+        "account.payment.term",
+        string="Modalité de paiement",
+        tracking=True,
+        domain="[('active', '=', True)]",
+    )
     payment_mode_rent = fields.Selection(
         [
             ("monthly", "Mensuel"),
             ("quarterly", "Trimestriel"),
             ("custom", "Autre"),
         ],
-        string="Paiement du loyer",
+        string="Périodicité du loyer",
         default="monthly",
     )
 
@@ -83,10 +100,6 @@ class ImobilierSNContract(models.Model):
         ],
         string="Périodicité des échéances",
         default="1",
-    )
-    payment_mode_sale = fields.Char(
-        string="Modalité de paiement",
-        help="Permet de préciser une modalité particulière convenue avec l'acheteur.",
     )
 
     payment_line_ids = fields.One2many(
@@ -119,18 +132,21 @@ class ImobilierSNContract(models.Model):
         tracking=True,
     )
 
+    @api.depends("monthly_rent", "security_deposit_months")
+    def _compute_security_deposit(self):
+        for rec in self:
+            rec.security_deposit = max(rec.monthly_rent or 0, 0) * max(
+                rec.security_deposit_months or 0, 0
+            )
+
     @api.onchange("property_id", "contract_type")
     def _onchange_property(self):
         for rec in self:
             if not rec.property_id:
                 continue
+            rec.payment_term_id = rec.property_id.payment_term_id
             if rec.contract_type == "rent":
-                rec.monthly_rent = rec.property_id.rental_price or rec.property_id.price
-                rec.security_deposit = (
-                    rec.property_id.security_deposit
-                    or rec.property_id.shop_deposit
-                    or 0
-                )
+                rec.monthly_rent = rec.property_id.price
                 rec.advance_months = rec.property_id.rental_advance_count or 0
             elif rec.contract_type == "sale":
                 rec.sale_price = rec.property_id.price
@@ -401,6 +417,7 @@ class ImobilierSNContractPayment(models.Model):
             "partner_id": self.contract_id.customer_id.id,
             "journal_id": journal.id,
             "invoice_date": fields.Date.context_today(self),
+            "invoice_payment_term_id": self.contract_id.payment_term_id.id or False,
             "invoice_line_ids": [(0, 0, {
                 "name": self.description or self.contract_id.name,
                 "quantity": 1,
