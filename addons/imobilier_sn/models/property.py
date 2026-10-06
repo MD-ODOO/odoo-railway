@@ -169,7 +169,6 @@ class ImobilierSNProperty(models.Model):
 
     @api.depends(
         "property_type",
-        "name",
         "owner_id.name",
         "location",
         "apartment_type",
