@@ -70,37 +70,37 @@ class ImobilierSNProperty(models.Model):
         ondelete="restrict",
     )
     region_id = fields.Many2one(
-        "kiiraaye.geographie",
+        "imobilier.sn.address",
         string="Région",
-        domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau1')]",
+        domain="[('country_id', '=', country_id), (('level', '=', 'region'))]",
         ondelete="restrict",
         tracking=True,
     )
     departement_id = fields.Many2one(
-        "kiiraaye.geographie",
+        "imobilier.sn.address",
         string="Département",
-        domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau2'), ('parent_id', '=', region_id)]",
+        domain="[('country_id', '=', country_id), (('level', '=', 'department')), ('parent_id', '=', region_id)]",
         ondelete="restrict",
         tracking=True,
     )
     arrondissement_id = fields.Many2one(
-        "kiiraaye.geographie",
+        "imobilier.sn.address",
         string="Arrondissement",
         domain="[('country_id', '=', country_id), ('niveau', '=', 'localite'), ('designation_locale', '=', 'Arrondissement'), ('parent_id', '=', departement_id)]",
         ondelete="restrict",
         tracking=True,
     )
     commune_id = fields.Many2one(
-        "kiiraaye.geographie",
+        "imobilier.sn.address",
         string="Commune",
-        domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau3'), ('parent_id', '=', departement_id)]",
+        domain="[('country_id', '=', country_id), (('level', '=', 'commune')), ('parent_id', '=', departement_id)]",
         ondelete="restrict",
         tracking=True,
     )
     quartier_id = fields.Many2one(
-        "kiiraaye.geographie",
+        "imobilier.sn.address",
         string="Quartier / Village",
-        domain="[('country_id', '=', country_id), ('niveau', '=', 'niveau5'), ('parent_id', '=', commune_id)]",
+        domain="[('country_id', '=', country_id), (('level', '=', 'locality')), ('parent_id', '=', commune_id)]",
         ondelete="restrict",
         tracking=True,
     )
@@ -316,26 +316,25 @@ class ImobilierSNProperty(models.Model):
                 continue
             if rec.country_id and rec.country_id.code != "SN":
                 raise ValidationError(_("L'adresse formelle d'un produit doit être rattachée au Sénégal."))
-            if rec.region_id and rec.region_id.niveau != "niveau1":
+            if rec.region_id and rec.region_id.level != "region":
                 raise ValidationError(_("La région sélectionnée est invalide."))
             if rec.departement_id and (
-                rec.departement_id.niveau != "niveau2"
+                rec.departement_id.level != "department"
                 or rec.departement_id.parent_id != rec.region_id
             ):
                 raise ValidationError(_("Le département doit appartenir à la région sélectionnée."))
             if rec.arrondissement_id and (
-                rec.arrondissement_id.niveau != "localite"
-                or rec.arrondissement_id.designation_locale != "Arrondissement"
+                rec.arrondissement_id.level != "arrondissement"
                 or rec.arrondissement_id.parent_id != rec.departement_id
             ):
                 raise ValidationError(_("L'arrondissement doit appartenir au département sélectionné."))
             if rec.commune_id and (
-                rec.commune_id.niveau != "niveau3"
+                rec.commune_id.level != "commune"
                 or rec.commune_id.parent_id != rec.departement_id
             ):
                 raise ValidationError(_("La commune doit appartenir au département sélectionné."))
             if rec.quartier_id and (
-                rec.quartier_id.niveau != "niveau5"
+                rec.quartier_id.level != "locality"
                 or rec.quartier_id.parent_id != rec.commune_id
             ):
                 raise ValidationError(_("Le quartier / village doit appartenir à la commune sélectionnée."))
