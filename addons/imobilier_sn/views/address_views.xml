@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_imobilier_sn_address_list" model="ir.ui.view">
+        <field name="name">imobilier.sn.address.list</field>
+        <field name="model">imobilier.sn.address</field>
+        <field name="arch" type="xml">
+            <list string="Référentiel des adresses du Sénégal">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="level"/>
+                <field name="parent_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_imobilier_sn_address_search" model="ir.ui.view">
+        <field name="name">imobilier.sn.address.search</field>
+        <field name="model">imobilier.sn.address</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="level"/>
+                <filter name="active" string="Actifs" domain="[('active','=',True)]"/>
+                <group>
+                    <filter name="group_level" string="Niveau" context="{'group_by':'level'}"/>
+                    <filter name="group_parent" string="Parent" context="{'group_by':'parent_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_imobilier_sn_address_form" model="ir.ui.view">
+        <field name="name">imobilier.sn.address.form</field>
+        <field name="model">imobilier.sn.address</field>
+        <field name="arch" type="xml">
+            <form string="Adresse du Sénégal">
+                <header>
+                    <button name="action_sync_administrative_reference"
+                            type="object"
+                            string="Synchroniser l'administration"
+                            class="btn-primary"/>
+                    <button name="action_sync_localities"
+                            type="object"
+                            string="Synchroniser les localités"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="code"/>
+                        <field name="level"/>
+                        <field name="parent_id"
+                               domain="[('country_id','=',country_id),('active','=',True)]"/>
+                        <field name="country_id"
+                               options="{'no_open': True, 'no_create': True}"/>
+                        <field name="source"/>
+                        <field name="source_uid"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_imobilier_sn_address" model="ir.actions.act_window">
+        <field name="name">Référentiel des adresses</field>
+        <field name="res_model">imobilier.sn.address</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_imobilier_sn_address_search"/>
+    </record>
+</odoo>
