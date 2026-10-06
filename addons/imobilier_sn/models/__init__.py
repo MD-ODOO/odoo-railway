@@ -6,3 +6,4 @@ from . import inspection
 from . import res_partner
 from . import dashboard
 from . import address
+from . import property_type\n
