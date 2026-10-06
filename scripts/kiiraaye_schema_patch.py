@@ -83,49 +83,18 @@ def patch_schema(dbname):
         conn.close()
 
 
-def get_installed_modules(dbname):
-    conn = psycopg2.connect(
-        host=HOST,
-        port=PORT,
-        user=USER,
-        password=PASSWORD,
-        dbname=dbname,
-    )
-    conn.autocommit = True
-    try:
-        with conn.cursor() as cr:
-            cr.execute(
-                """
-                SELECT name
-                  FROM ir_module_module
-                 WHERE name = ANY(%s)
-                   AND state = 'installed'
-                ORDER BY name
-                """,
-                [["kiiraaye_governance", "imobilier_sn"]],
-            )
-            return [row[0] for row in cr.fetchall()]
-    finally:
-        conn.close()
-
-
 def upgrade(dbname):
     patch_schema(dbname)
-    modules = get_installed_modules(dbname)
-    if not modules:
-        print(f"[kiiraaye] aucun module cible installé dans {dbname}", flush=True)
-        return
-
-    update_arg = ",".join(modules)
     command = (
-        "odoo --database %s --update %s --stop-after-init "
+        "odoo --database %s --update kiiraaye_governance --stop-after-init "
         "--db_host=%s --db_port=%s --db_user=%s --db_password=%s"
         % tuple(
             shlex.quote(str(value))
-            for value in (dbname, update_arg, HOST, PORT, USER, PASSWORD)
+            for value in (dbname, HOST, PORT, USER, PASSWORD)
         )
     )
-    print(f"[kiiraaye] module upgrade ({update_arg}): {dbname}", flush=True)
+    print(f"[kiiraaye] module upgrade (kiiraaye_governance): {dbname}", flush=True)
+
     result = subprocess.run(
         ["su", "-s", "/bin/bash", "odoo", "-c", command],
         text=True,
