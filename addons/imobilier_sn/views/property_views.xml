@@ -90,7 +90,6 @@
                         <group string="Identification">
                             <field name="property_type"/>
                             <field name="owner_id"/>
-                            <field name="location"/>
                         </group>
                         <group string="Informations financières">
                             <field name="currency_id" invisible="1"/>
@@ -103,6 +102,35 @@
                             <field name="rental_advance_count"
                                    invisible="property_type != 'apartment'"/>
                         </group>
+                    </group>
+
+                    <group string="Adresse formelle du Sénégal">
+                        <group>
+                            <field name="country_id" options="{'no_open': True, 'no_create': True}"/>
+                            <field name="region_id"
+                                   required="1"
+                                   options="{'no_create': True}"/>
+                            <field name="departement_id"
+                                   required="1"
+                                   options="{'no_create': True}"/>
+                            <field name="arrondissement_id"
+                                   options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="commune_id"
+                                   required="1"
+                                   options="{'no_create': True}"/>
+                            <field name="quartier_id"
+                                   required="1"
+                                   options="{'no_create': True}"/>
+                            <field name="address_line"
+                                   required="1"
+                                   placeholder="Rue, numéro, lot, villa, immeuble..."/>
+                        </group>
+                    </group>
+
+                    <group string="Adresse générée">
+                        <field name="location" readonly="1" nolabel="1"/>
                     </group>
 
                     <notebook>
