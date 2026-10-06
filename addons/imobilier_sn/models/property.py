@@ -286,9 +286,23 @@ class ImobilierSNProperty(models.Model):
         return False
 
     def action_geocode_address(self):
-        for rec in self:
-            rec._geocode_address()
-        return True
+        self.ensure_one()
+        result = self._geocode_address()
+        details = [_("Adresse géolocalisée.")]
+        if result.get("region"):
+            details.append(_("Région : %s") % result["region"])
+        if result.get("department"):
+            details.append(_("Département : %s") % result["department"])
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("Géolocalisation"),
+                "message": " — ".join(details),
+                "type": "success",
+                "sticky": False,
+            },
+        }
 
     def _geocode_address(self):
         self.ensure_one()
@@ -356,23 +370,12 @@ class ImobilierSNProperty(models.Model):
             "geocoded_address": result.get("display_name") or self.location,
         })
 
-        message_parts = [_("Adresse géolocalisée.")]
-        if region:
-            message_parts.append(_("Région : %s") % region)
-        if department:
-            message_parts.append(_("Département : %s") % department)
-
-        self.env["bus.bus"]._sendone(
-            self.env.user.partner_id,
-            "simple_notification",
-            {
-                "title": _("Géolocalisation"),
-                "message": " — ".join(message_parts),
-                "type": "success",
-                "sticky": False,
-            },
-        )
-        return True
+        return {
+            "region": region,
+            "department": department,
+            "latitude": latitude,
+            "longitude": longitude,
+        }
 
     def action_open_google_maps(self):
         self.ensure_one()
