@@ -9,6 +9,10 @@
                 <field name="reference"/>
                 <field name="property_type"/>
                 <field name="owner_id"/>
+                <field name="region_id"/>
+                <field name="departement_id"/>
+                <field name="commune_id"/>
+                <field name="quartier_id"/>
                 <field name="location"/>
                 <field name="price"/>
                 <field name="rental_price"/>
@@ -25,7 +29,10 @@
             <search>
                 <field name="reference"/>
                 <field name="owner_id"/>
-                <field name="location"/>
+                <field name="region_id"/>
+                <field name="departement_id"/>
+                <field name="commune_id"/>
+                <field name="quartier_id"/>
                 <field name="property_type"/>
                 <filter name="available" string="Disponibles" domain="[('status','=','available')]"/>
                 <group>
