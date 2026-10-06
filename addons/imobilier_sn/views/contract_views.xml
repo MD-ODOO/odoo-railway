@@ -69,9 +69,11 @@
                         <page string="Location" invisible="contract_type != 'rent'">
                             <group>
                                 <field name="monthly_rent"/>
+                                <field name="security_deposit_months"/>
                                 <field name="security_deposit"/>
                                 <field name="advance_months"/>
                                 <field name="payment_mode_rent"/>
+                                <field name="payment_term_id"/>
                             </group>
                         </page>
 
@@ -81,7 +83,7 @@
                                 <field name="down_payment"/>
                                 <field name="number_of_installments"/>
                                 <field name="payment_frequency_months"/>
-                                <field name="payment_mode_sale"/>
+                                <field name="payment_term_id"/>
                             </group>
                         </page>
 
