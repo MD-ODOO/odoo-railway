@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="website_property_list" name="Immobilier SN - Liste">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="container py-5">
+                    <div class="mb-4">
+                        <h1>Nos produits immobiliers</h1>
+                        <p class="text-muted">Appartement, maison entière, magasin et terrain.</p>
+                    </div>
+
+                    <div class="row g-4">
+                        <t t-if="not properties">
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    Aucun produit immobilier n'est actuellement publié.
+                                </div>
+                            </div>
+                        </t>
+
+                        <t t-foreach="properties" t-as="property">
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="card h-100 shadow-sm">
+                                    <div style="height:220px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                        <t t-if="property.image_1920">
+                                            <img t-att-src="'/web/image/imobilier.sn.property/%s/image_1920' % property.id"
+                                                 style="width:100%;height:100%;object-fit:cover;"
+                                                 loading="lazy"/>
+                                        </t>
+                                        <t t-else="">
+                                            <span class="text-muted">Pas de photo</span>
+                                        </t>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="text-muted small mb-1">
+                                            <t t-esc="dict(property._fields['property_type'].selection).get(property.property_type, '')"/>
+                                        </div>
+                                        <h3 class="h5">
+                                            <a t-att-href="'/immobilier/%s' % property.id">
+                                                <t t-esc="property.reference"/>
+                                            </a>
+                                        </h3>
+                                        <div class="small mb-2">
+                                            <strong>Localisation :</strong>
+                                            <t t-esc="property.location"/>
+                                        </div>
+                                        <div class="fw-bold mb-3">
+                                            <t t-esc="format_amount(property.price, property.currency_id)"/>
+                                        </div>
+
+                                        <t t-set="contact" t-value="contact_data[property.id]"/>
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <a t-if="contact['phone']"
+                                               t-att-href="'tel:%s' % contact['phone']"
+                                               class="btn btn-outline-primary btn-sm">
+                                                Téléphone
+                                            </a>
+                                            <a t-if="contact['email']"
+                                               t-att-href="'mailto:%s' % contact['email']"
+                                               class="btn btn-outline-secondary btn-sm">
+                                                E-mail
+                                            </a>
+                                            <a t-if="contact['whatsapp']"
+                                               t-att-href="'https://wa.me/%s' % contact['whatsapp']"
+                                               target="_blank"
+                                               class="btn btn-success btn-sm">
+                                                WhatsApp
+                                            </a>
+                                            <a t-att-href="'/immobilier/%s' % property.id"
+                                               class="btn btn-primary btn-sm">
+                                                Voir le produit
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <template id="website_property_detail" name="Immobilier SN - Fiche">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure">
+                <section class="container py-5">
+                    <div class="row g-4">
+                        <div class="col-lg-7">
+                            <div class="card shadow-sm">
+                                <div style="min-height:400px;background:#f5f5f5;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                    <t t-if="property.image_1920">
+                                        <img t-att-src="'/web/image/imobilier.sn.property/%s/image_1920' % property.id"
+                                             style="width:100%;height:100%;min-height:400px;object-fit:cover;"
+                                             loading="lazy"/>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="text-muted">Pas de photo</span>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-5">
+                            <div class="mb-2 text-muted">
+                                <t t-esc="dict(property._fields['property_type'].selection).get(property.property_type, '')"/>
+                            </div>
+                            <h1 class="mb-3"><t t-esc="property.reference"/></h1>
+
+                            <div class="mb-3">
+                                <strong>Adresse</strong>
+                                <div><t t-esc="property.location"/></div>
+                            </div>
+
+                            <t t-if="property.region_name">
+                                <div class="mb-2">
+                                    <strong>Région :</strong>
+                                    <t t-esc="property.region_name"/>
+                                </div>
+                            </t>
+                            <t t-if="property.department_name">
+                                <div class="mb-3">
+                                    <strong>Département :</strong>
+                                    <t t-esc="property.department_name"/>
+                                </div>
+                            </t>
+
+                            <div class="h4 mb-4">
+                                <t t-esc="format_amount(property.price, property.currency_id)"/>
+                                <t t-if="property.property_type in ('apartment', 'shop')">
+                                    <span class="fs-6 fw-normal text-muted"> / mois</span>
+                                </t>
+                            </div>
+
+                            <t t-if="property.description">
+                                <div class="mb-4">
+                                    <h3 class="h5">Description</h3>
+                                    <p style="white-space:pre-line;"><t t-esc="property.description"/></p>
+                                </div>
+                            </t>
+
+                            <div class="d-grid gap-2">
+                                <a t-if="contact['phone']"
+                                   t-att-href="'tel:%s' % contact['phone']"
+                                   class="btn btn-primary">
+                                    Appeler
+                                </a>
+                                <a t-if="contact['whatsapp']"
+                                   t-att-href="'https://wa.me/%s?text=%s' % (contact['whatsapp'], 'Bonjour, je suis intéressé par le produit ' + property.reference)"
+                                   target="_blank"
+                                   class="btn btn-success">
+                                    Contacter sur WhatsApp
+                                </a>
+                                <a t-if="contact['email']"
+                                   t-att-href="'mailto:%s?subject=%s' % (contact['email'], 'Demande concernant ' + property.reference)"
+                                   class="btn btn-outline-secondary">
+                                    Envoyer un e-mail
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <t t-if="property.latitude and property.longitude">
+                        <div class="mt-5">
+                            <h2 class="h4 mb-3">Localisation</h2>
+                            <iframe t-att-src="'https://www.openstreetmap.org/export/embed.html?layer=mapnik&amp;marker=%s,%s' % (property.latitude, property.longitude)"
+                                    style="width:100%;height:450px;border:1px solid #ddd;border-radius:8px;"
+                                    loading="lazy"
+                                    title="Carte de localisation"/>
+                        </div>
+                    </t>
+                </section>
+            </div>
+        </t>
+    </template>
+</odoo>
