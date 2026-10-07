@@ -541,6 +541,20 @@ class ImobilierSNProperty(models.Model):
         records._sync_catalog_product()
         return len(records)
 
+    def action_sync_catalog_product(self):
+        self.ensure_one()
+        self._sync_catalog_product()
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("Catalogue produit"),
+                "message": _("Le produit immobilier a été synchronisé avec product.product."),
+                "type": "success",
+                "sticky": False,
+            },
+        }
+
     def action_open_website(self):
         self.ensure_one()
         if not self.website_published:
