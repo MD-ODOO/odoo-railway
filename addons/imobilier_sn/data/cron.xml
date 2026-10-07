@@ -9,4 +9,14 @@
         <field name="interval_type">days</field>
         <field name="active">True</field>
     </record>
+
+    <record id="ir_cron_imobilier_sn_sync_products" model="ir.cron">
+        <field name="name">Immobilier SN - Synchroniser les produits catalogue</field>
+        <field name="model_id" ref="model_imobilier_sn_property"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_sync_catalog_products()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active">True</field>
+    </record>
 </odoo>
