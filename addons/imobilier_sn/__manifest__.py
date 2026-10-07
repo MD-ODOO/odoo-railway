@@ -24,7 +24,7 @@ Fonctionnalités :
     "author": "MD-ODOO",
     "license": "LGPL-3",
     "category": "Real Estate",
-    "depends": ["base", "mail", "contacts", "account"],
+    "depends": ["base", "mail", "contacts", "account", "product", "website"],
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
@@ -32,6 +32,7 @@ Fonctionnalités :
         "data/cron.xml",
         "data/property_type_data.xml",
         "views/property_type_views.xml",
+        "views/website_templates.xml",
         "views/property_views.xml",
         "views/contract_views.xml",
         "views/partner_views.xml",
@@ -42,6 +43,9 @@ Fonctionnalités :
         "views/menu.xml",
     ],
     "application": True,
+    "controllers": [
+        "controllers",
+    ],
     "assets": {
         "web.assets_backend": [
             "imobilier_sn/static/src/js/dashboard.js",
