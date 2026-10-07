@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+from urllib.parse import quote_plus
 
 from odoo import http
 from odoo.http import request
@@ -20,11 +21,19 @@ class ImobilierSNWebsite(http.Controller):
     def _contact_data(property_rec):
         partner = property_rec.owner_id
         phone = partner.phone or partner.mobile or False
+        labels = dict(property_rec._fields["property_type"].selection)
         return {
             "phone": phone,
             "email": partner.email or False,
             "whatsapp": ImobilierSNWebsite._whatsapp_number(phone),
             "name": partner.display_name,
+            "type_label": labels.get(property_rec.property_type, ""),
+            "whatsapp_message": quote_plus(
+                "Bonjour, je suis intéressé par le produit %s" % property_rec.reference
+            ),
+            "email_subject": quote_plus(
+                "Demande concernant %s" % property_rec.reference
+            ),
         }
 
     @http.route(
