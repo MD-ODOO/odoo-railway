@@ -255,7 +255,6 @@ class ImobilierSNProperty(models.Model):
             else:
                 rec.security_deposit = 0
 
-    @api.depends("id")
     def _compute_website_url(self):
         for rec in self:
             rec.website_url = "/immobilier/%s" % rec.id if rec.id else False
