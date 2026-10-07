@@ -33,7 +33,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="text-muted small mb-1">
-                                            <t t-esc="dict(property._fields['property_type'].selection).get(property.property_type, '')"/>
+                                            <t t-esc="contact_data[property.id]['type_label']"/>
                                         </div>
                                         <h3 class="h5">
                                             <a t-att-href="'/immobilier/%s' % property.id">
@@ -103,7 +103,7 @@
 
                         <div class="col-lg-5">
                             <div class="mb-2 text-muted">
-                                <t t-esc="dict(property._fields['property_type'].selection).get(property.property_type, '')"/>
+                                <t t-esc="contact['type_label']"/>
                             </div>
                             <h1 class="mb-3"><t t-esc="property.reference"/></h1>
 
@@ -146,13 +146,13 @@
                                     Appeler
                                 </a>
                                 <a t-if="contact['whatsapp']"
-                                   t-att-href="'https://wa.me/%s?text=%s' % (contact['whatsapp'], 'Bonjour, je suis intéressé par le produit ' + property.reference)"
+                                   t-att-href="'https://wa.me/%s?text=%s' % (contact['whatsapp'], contact['whatsapp_message'])"
                                    target="_blank"
                                    class="btn btn-success">
                                     Contacter sur WhatsApp
                                 </a>
                                 <a t-if="contact['email']"
-                                   t-att-href="'mailto:%s?subject=%s' % (contact['email'], 'Demande concernant ' + property.reference)"
+                                   t-att-href="'mailto:%s?subject=%s' % (contact['email'], contact['email_subject'])"
                                    class="btn btn-outline-secondary">
                                     Envoyer un e-mail
                                 </a>
