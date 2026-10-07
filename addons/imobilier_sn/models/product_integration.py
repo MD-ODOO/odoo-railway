@@ -19,11 +19,6 @@ class ProductTemplate(models.Model):
         "Un produit catalogue ne peut être lié qu'à un seul produit immobilier.",
     )
 
-    @api.depends("imobilier_property_id")
-    def _compute_display_name(self):
-        # Ne rien imposer : le nom catalogue reste celui d'Odoo.
-        return super()._compute_display_name()
-
 
 class ProductProduct(models.Model):
     _inherit = "product.product"
