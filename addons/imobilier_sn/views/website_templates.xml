@@ -173,4 +173,11 @@
             </div>
         </t>
     </template>
+
+
+    <record id="website_menu_imobilier_sn" model="website.menu">
+        <field name="name">Immobilier</field>
+        <field name="url">/immobilier</field>
+        <field name="sequence">50</field>
+    </record>
 </odoo>
