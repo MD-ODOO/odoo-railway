@@ -504,6 +504,46 @@ class ImobilierSNProperty(models.Model):
         if self.property_type not in ("apartment", "shop"):
             self.security_deposit_months = 0
 
+    def _sync_catalog_product(self):
+        ProductTemplate = self.env["product.template"]
+        for rec in self:
+            values = {
+                "name": rec.reference or _("Produit immobilier"),
+                "default_code": rec.reference or False,
+                "list_price": rec.price or 0,
+                "description_sale": rec.description or False,
+                "image_1920": rec.image_1920 or False,
+                "active": rec.active,
+                "sale_ok": True,
+                "purchase_ok": False,
+                "imobilier_property_id": rec.id,
+            }
+            if rec.product_id:
+                rec.product_id.product_tmpl_id.with_context(
+                    skip_catalog_sync=True
+                ).write(values)
+            else:
+                template = ProductTemplate.create(values)
+                variant = template.product_variant_id
+                if not variant:
+                    variant = self.env["product.product"].search(
+                        [("product_tmpl_id", "=", template.id)],
+                        limit=1,
+                    )
+                rec.with_context(skip_catalog_sync=True).write({
+                    "product_id": variant.id if variant else False,
+                })
+
+    def action_open_website(self):
+        self.ensure_one()
+        if not self.website_published:
+            raise UserError(_("Ce produit n'est pas publié sur le site."))
+        return {
+            "type": "ir.actions.act_url",
+            "url": self.website_url,
+            "target": "new",
+        }
+
     def action_open_contracts(self):
         self.ensure_one()
         return {
