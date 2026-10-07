@@ -43,9 +43,6 @@ Fonctionnalités :
         "views/menu.xml",
     ],
     "application": True,
-    "controllers": [
-        "controllers",
-    ],
     "assets": {
         "web.assets_backend": [
             "imobilier_sn/static/src/js/dashboard.js",
