@@ -505,7 +505,7 @@ class ImobilierSNProperty(models.Model):
             self.security_deposit_months = 0
 
     def _sync_catalog_product(self):
-        ProductTemplate = self.env["product.template"]
+        ProductTemplate = self.env["product.template"].sudo()
         for rec in self:
             values = {
                 "name": rec.reference or _("Produit immobilier"),
