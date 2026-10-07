@@ -96,17 +96,25 @@
                         <group string="Identification">
                             <field name="property_type"/>
                             <field name="owner_id"/>
+                            <field name="website_published"/>
+                            <field name="product_id"
+                                   readonly="1"
+                                   options="{'no_open': True}"/>
+                            <button name="action_open_website"
+                                    type="object"
+                                    string="Voir sur le site"
+                                    icon="fa-globe"
+                                    invisible="not website_published"/>
                         </group>
                         <group string="Informations financières">
                             <field name="currency_id" invisible="1"/>
                             <field name="price"/>
                             <field name="security_deposit_months"
-                                   invisible="property_type == 'land'"/>
+                                   invisible="property_type not in ['apartment','shop']"/>
                             <field name="security_deposit"
-                                   invisible="property_type == 'land'"/>
-                            <field name="rental_advance_count"
-                                   invisible="property_type == 'land'"/>
-                            <field name="payment_term_id"/>
+                                   invisible="property_type not in ['apartment','shop']"/>
+                            <field name="payment_term_id"
+                                   invisible="property_type not in ['house','land']"/>
                         </group>
                     </group>
 
@@ -128,28 +136,69 @@
                         </group>
                     </group>
 
-                    <group string="Coordonnées GPS"
-                           invisible="not latitude or not longitude">
-                        <group>
-                            <field name="latitude"/>
-                            <field name="longitude"/>
-                        </group>
-                        <group>
-                            <button name="action_open_google_maps"
-                                    type="object"
-                                    string="Ouvrir dans Google Maps"
-                                    icon="fa-external-link"
-                                    class="btn-secondary"/>
-                        </group>
-                    </group>
+                    <notebook>
+                        <page string="Courtier">
+                            <field name="assignment_ids">
+                                <list editable="bottom">
+                                    <field name="broker_id"/>
+                                    <field name="commission_percent"/>
+                                    <field name="commission_amount"/>
+                                    <field name="date_assigned"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
 
-                    <group string="Carte"
-                           invisible="not latitude or not longitude">
-                        <field name="map_embed_html"
-                               widget="html"
-                               nolabel="1"
-                               readonly="1"/>
-                    </group>
+                        <page string="Contrats">
+                            <field name="contract_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="contract_type"/>
+                                    <field name="customer_id"/>
+                                    <field name="date_start"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <page string="Description">
+                            <field name="description"
+                                   nolabel="1"
+                                   placeholder="Description du produit..."/>
+                        </page>
+
+                        <page string="Localisation et carte">
+                            <group string="Coordonnées GPS"
+                                   invisible="not latitude or not longitude">
+                                <group>
+                                    <field name="latitude"/>
+                                    <field name="longitude"/>
+                                    <field name="geocoded_address"
+                                           invisible="not geocoded_address"/>
+                                </group>
+                                <group>
+                                    <button name="action_geocode_address"
+                                            type="object"
+                                            string="Actualiser la géolocalisation"
+                                            icon="fa-map-marker"
+                                            class="btn-primary"/>
+                                    <button name="action_open_google_maps"
+                                            type="object"
+                                            string="Ouvrir dans Google Maps"
+                                            icon="fa-external-link"
+                                            class="btn-secondary"/>
+                                </group>
+                            </group>
+
+                            <group string="Carte"
+                                   invisible="not latitude or not longitude">
+                                <field name="map_embed_html"
+                                       widget="html"
+                                       nolabel="1"
+                                       readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
 
                     <!-- Informations spécifiques au type de produit -->
                     <group string="Appartement"
@@ -192,37 +241,7 @@
                         </group>
                     </group>
 
-                    <notebook>
-                        <page string="Courtier">
-                            <field name="assignment_ids">
-                                <list editable="bottom">
-                                    <field name="broker_id"/>
-                                    <field name="commission_percent"/>
-                                    <field name="commission_amount"/>
-                                    <field name="date_assigned"/>
-                                    <field name="state"/>
-                                </list>
-                            </field>
-                        </page>
 
-                        <page string="Contrats">
-                            <field name="contract_ids">
-                                <list>
-                                    <field name="name"/>
-                                    <field name="contract_type"/>
-                                    <field name="customer_id"/>
-                                    <field name="date_start"/>
-                                    <field name="state"/>
-                                </list>
-                            </field>
-                        </page>
-
-                        <page string="Description">
-                            <field name="description"
-                                   nolabel="1"
-                                   placeholder="Description du produit..."/>
-                        </page>
-                    </notebook>
 
                     <chatter/>
                 </sheet>
