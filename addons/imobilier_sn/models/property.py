@@ -145,11 +145,6 @@ class ImobilierSNProperty(models.Model):
         readonly=True,
         help="Calcul automatique : Prix × nombre de mois de caution.",
     )
-    rental_advance_count = fields.Float(
-        string="Nombre de mois d'avance",
-        default=0,
-        help="Nombre de mois de loyer à payer avant l'entrée dans le produit.",
-    )
     payment_term_id = fields.Many2one(
         "account.payment.term",
         string="Modalité de paiement",
@@ -232,18 +227,38 @@ class ImobilierSNProperty(models.Model):
     )
 
     description = fields.Text(string="Description")
+    image_1920 = fields.Image(string="Photo principale", max_width=1920, max_height=1920)
+    website_published = fields.Boolean(
+        string="Publié sur le site",
+        default=False,
+        tracking=True,
+    )
+    website_url = fields.Char(string="URL du site", compute="_compute_website_url")
+    product_id = fields.Many2one(
+        "product.product",
+        string="Produit catalogue",
+        readonly=True,
+        copy=False,
+        ondelete="restrict",
+        index=True,
+    )
 
     active = fields.Boolean(default=True)
 
     @api.depends("price", "security_deposit_months", "property_type")
     def _compute_security_deposit(self):
         for rec in self:
-            if rec.property_type in ("apartment", "house", "shop"):
+            if rec.property_type in ("apartment", "shop"):
                 rec.security_deposit = max(rec.price or 0, 0) * max(
                     rec.security_deposit_months or 0, 0
                 )
             else:
                 rec.security_deposit = 0
+
+    @api.depends("id")
+    def _compute_website_url(self):
+        for rec in self:
+            rec.website_url = "/immobilier/%s" % rec.id if rec.id else False
 
     @api.depends("latitude", "longitude")
     def _compute_map_embed(self):
@@ -398,7 +413,9 @@ class ImobilierSNProperty(models.Model):
             if not vals.get("sequence_number"):
                 seq = self.env["ir.sequence"].next_by_code("imobilier.sn.property")
                 vals["sequence_number"] = int(seq or "0")
-        return super().create(vals_list)
+        records = super().create(vals_list)
+        records._sync_catalog_product()
+        return records
 
     def write(self, vals):
         res = super().write(vals)
@@ -407,19 +424,23 @@ class ImobilierSNProperty(models.Model):
                 skip_land_cleanup=True
             ).write({
                 "security_deposit_months": 0,
-                "rental_advance_count": 0,
             })
+        sync_fields = {
+            "reference", "price", "description", "image_1920", "active",
+            "website_published", "property_type",
+            "apartment_type_id", "house_type_id", "location",
+        }
+        if sync_fields.intersection(vals) and not self.env.context.get("skip_catalog_sync"):
+            self._sync_catalog_product()
         return res
 
-    @api.constrains("price", "security_deposit_months", "rental_advance_count")
+    @api.constrains("price", "security_deposit_months")
     def _check_financial_values(self):
         for rec in self:
             if rec.price < 0:
                 raise ValidationError(_("Le prix ne peut pas être négatif."))
             if rec.security_deposit_months < 0:
                 raise ValidationError(_("Le nombre de mois de caution ne peut pas être négatif."))
-            if rec.rental_advance_count < 0:
-                raise ValidationError(_("Le nombre de mois d'avance ne peut pas être négatif."))
 
     @api.depends(
         "property_type",
@@ -480,10 +501,7 @@ class ImobilierSNProperty(models.Model):
             self.house_unit_ids = [(5, 0, 0)]
         if self.property_type != "shop":
             self.desired_activity = False
-        if self.property_type == "land":
-            self.security_deposit_months = 0
-            self.rental_advance_count = 0
-        if self.property_type not in ("apartment", "house", "shop"):
+        if self.property_type not in ("apartment", "shop"):
             self.security_deposit_months = 0
 
     def action_open_contracts(self):
