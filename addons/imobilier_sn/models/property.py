@@ -427,8 +427,9 @@ class ImobilierSNProperty(models.Model):
             })
         sync_fields = {
             "reference", "price", "description", "image_1920", "active",
-            "website_published", "property_type",
-            "apartment_type_id", "house_type_id", "location",
+            "website_published", "property_type", "owner_id",
+            "apartment_type_id", "apartment_number", "house_type_id",
+            "paper_type_id", "location",
         }
         if sync_fields.intersection(vals) and not self.env.context.get("skip_catalog_sync"):
             self._sync_catalog_product()
@@ -533,6 +534,12 @@ class ImobilierSNProperty(models.Model):
                 rec.with_context(skip_catalog_sync=True).write({
                     "product_id": variant.id if variant else False,
                 })
+
+    @api.model
+    def _cron_sync_catalog_products(self):
+        records = self.search([("active", "=", True), ("product_id", "=", False)])
+        records._sync_catalog_product()
+        return len(records)
 
     def action_open_website(self):
         self.ensure_one()
