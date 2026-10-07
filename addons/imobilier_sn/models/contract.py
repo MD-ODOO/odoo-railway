@@ -147,7 +147,6 @@ class ImobilierSNContract(models.Model):
             rec.payment_term_id = rec.property_id.payment_term_id
             if rec.contract_type == "rent":
                 rec.monthly_rent = rec.property_id.price
-                rec.advance_months = rec.property_id.rental_advance_count or 0
             elif rec.contract_type == "sale":
                 rec.sale_price = rec.property_id.price
 
