@@ -231,6 +231,8 @@ class ImobilierSNProperty(models.Model):
         compute="_compute_counts",
     )
 
+    description = fields.Text(string="Description")
+
     active = fields.Boolean(default=True)
 
     @api.depends("price", "security_deposit_months", "property_type")
