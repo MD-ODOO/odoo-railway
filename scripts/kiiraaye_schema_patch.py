@@ -29,6 +29,15 @@ def patch_schema(dbname):
                 "ADD COLUMN IF NOT EXISTS kiiraaye_zone_id integer"
             )
             cr.execute(
+                "ALTER TABLE res_partner "
+                "ADD COLUMN IF NOT EXISTS is_imobilier_owner boolean DEFAULT false"
+            )
+            cr.execute(
+                "UPDATE res_partner "
+                "SET is_imobilier_owner = false "
+                "WHERE is_imobilier_owner IS NULL"
+            )
+            cr.execute(
                 "CREATE INDEX IF NOT EXISTS res_users_kiiraaye_zone_id_idx "
                 "ON res_users (kiiraaye_zone_id)"
             )
@@ -85,15 +94,20 @@ def patch_schema(dbname):
 
 def upgrade(dbname):
     patch_schema(dbname)
+    modules = ["kiiraaye_governance"]
+    if dbname.upper() == "SMART":
+        modules.append("imobilier_sn")
+
+    module_list = ",".join(modules)
     command = (
-        "odoo --database %s --update kiiraaye_governance --stop-after-init "
+        "odoo --database %s --update %s --stop-after-init "
         "--db_host=%s --db_port=%s --db_user=%s --db_password=%s"
         % tuple(
             shlex.quote(str(value))
-            for value in (dbname, HOST, PORT, USER, PASSWORD)
+            for value in (dbname, module_list, HOST, PORT, USER, PASSWORD)
         )
     )
-    print(f"[kiiraaye] module upgrade (kiiraaye_governance): {dbname}", flush=True)
+    print(f"[kiiraaye] module upgrade ({module_list}): {dbname}", flush=True)
 
     result = subprocess.run(
         ["su", "-s", "/bin/bash", "odoo", "-c", command],
