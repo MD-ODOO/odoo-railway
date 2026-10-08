@@ -33,6 +33,7 @@
                             <field name="is_imobilier_broker"/>
                             <field name="broker_commission_percent" invisible="not is_imobilier_broker"/>
                             <field name="is_imobilier_tenant"/>
+                            <field name="is_imobilier_owner"/>
                         </group>
                     </group>
                 </page>
@@ -40,46 +41,20 @@
         </field>
     </record>
 
-    <record id="view_imobilier_sn_tenant_profile_list" model="ir.ui.view">
-        <field name="name">imobilier.sn.tenant.profile.list</field>
-        <field name="model">imobilier.sn.tenant.profile</field>
-        <field name="arch" type="xml">
-            <list string="Dossiers locataires">
-                <field name="partner_id"/>
-                <field name="social_situation"/>
-                <field name="profession"/>
-                <field name="source_income"/>
-            </list>
-        </field>
-    </record>
-
-    <record id="view_imobilier_sn_tenant_profile_form" model="ir.ui.view">
-        <field name="name">imobilier.sn.tenant.profile.form</field>
-        <field name="model">imobilier.sn.tenant.profile</field>
-        <field name="arch" type="xml">
-            <form string="Dossier locataire">
-                <sheet>
-                    <group>
-                        <field name="partner_id"/>
-                        <field name="social_situation"/>
-                        <field name="profession"/>
-                        <field name="source_income"/>
-                    </group>
-                    <group>
-                        <field name="salary_bulletin" filename="salary_bulletin_filename"/>
-                        <field name="salary_bulletin_filename" invisible="1"/>
-                        <field name="other_income_document" filename="other_income_document_filename"/>
-                        <field name="other_income_document_filename" invisible="1"/>
-                    </group>
-                    <field name="notes"/>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-    <record id="action_imobilier_sn_tenant" model="ir.actions.act_window">
-        <field name="name">Dossiers locataires</field>
-        <field name="res_model">imobilier.sn.tenant.profile</field>
+    
+    <record id="action_imobilier_sn_tenant_partners" model="ir.actions.act_window">
+        <field name="name">Clients</field>
+        <field name="res_model">res.partner</field>
         <field name="view_mode">list,form</field>
+        <field name="domain">[('is_imobilier_tenant', '=', True)]</field>
+        <field name="context">{'default_is_imobilier_tenant': True, 'default_customer_rank': 1}</field>
+    </record>
+
+    <record id="action_imobilier_sn_owner_partners" model="ir.actions.act_window">
+        <field name="name">Fournisseurs</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_imobilier_owner', '=', True)]</field>
+        <field name="context">{'default_is_imobilier_owner': True, 'default_supplier_rank': 1}</field>
     </record>
 </odoo>
