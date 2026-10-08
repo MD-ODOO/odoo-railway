@@ -43,6 +43,27 @@ class ImobilierSNContract(models.Model):
         domain=[("is_imobilier_broker", "=", True)],
         ondelete="restrict",
     )
+
+    # Informations du client / locataire intégrées au contrat
+    marital_situation = fields.Selection(
+        [
+            ("married", "Marié"),
+            ("single", "Célibataire"),
+        ],
+        string="Situation matrimoniale",
+    )
+    profession = fields.Char(string="Profession")
+    source_income = fields.Char(string="Source de revenu")
+    salary_bulletin = fields.Binary(string="Bulletin de salaire")
+    salary_bulletin_filename = fields.Char(string="Nom du fichier")
+    other_income_document = fields.Binary(string="Justificatif autre revenu")
+    other_income_document_filename = fields.Char(string="Nom du justificatif")
+    planned_persons = fields.Integer(
+        string="Nombre de personnes prévues",
+        default=1,
+        help="Nombre de personnes prévues pour occuper le produit en location.",
+    )
+    client_notes = fields.Text(string="Observations client")
     currency_id = fields.Many2one(
         related="property_id.currency_id",
         string="Devise",
@@ -149,6 +170,55 @@ class ImobilierSNContract(models.Model):
                 rec.monthly_rent = rec.property_id.price
             elif rec.contract_type == "sale":
                 rec.sale_price = rec.property_id.price
+
+    @api.onchange("contract_type", "customer_id")
+    def _onchange_rental_customer(self):
+        for rec in self:
+            if rec.contract_type != "rent":
+                continue
+            if rec.customer_id and not rec.customer_id.is_imobilier_tenant:
+                rec.customer_id = False
+                return {
+                    "warning": {
+                        "title": _("Client non autorisé"),
+                        "message": _(
+                            "Un contrat de location doit obligatoirement être établi "
+                            "au nom d'un locataire immobilier."
+                        ),
+                    },
+                    "domain": {
+                        "customer_id": [("is_imobilier_tenant", "=", True)],
+                    },
+                }
+            return {
+                "domain": {
+                    "customer_id": [("is_imobilier_tenant", "=", True)],
+                }
+            }
+        return True
+
+    @api.constrains("contract_type", "customer_id")
+    def _check_rental_customer(self):
+        for rec in self:
+            if (
+                rec.contract_type == "rent"
+                and rec.customer_id
+                and not rec.customer_id.is_imobilier_tenant
+            ):
+                raise ValidationError(
+                    _(
+                        "Pour un contrat de location, le client doit être enregistré "
+                        "comme locataire immobilier."
+                    )
+                )
+
+    @api.constrains("contract_type", "planned_persons")
+    def _check_planned_persons(self):
+        for rec in self:
+            if rec.contract_type == "rent" and rec.planned_persons < 1:
+                raise ValidationError(
+                    _("Le nombre de personnes prévues doit être supérieur ou égal à 1.")
+                )
 
     @api.constrains("contract_type", "number_of_installments", "down_payment", "sale_price")
     def _check_sale_values(self):
@@ -276,13 +346,14 @@ class ImobilierSNContract(models.Model):
             if not rec.payment_line_ids:
                 rec.action_generate_schedule()
             if rec.contract_type == "rent":
+                if not rec.customer_id.is_imobilier_tenant:
+                    raise ValidationError(
+                        _(
+                            "Impossible de confirmer ce contrat : le client doit "
+                            "être enregistré comme locataire immobilier."
+                        )
+                    )
                 rec.property_id.status = "rented"
-                rec.customer_id.is_imobilier_tenant = True
-                profile = self.env["imobilier.sn.tenant.profile"].search(
-                    [("partner_id", "=", rec.customer_id.id)], limit=1
-                )
-                if not profile:
-                    self.env["imobilier.sn.tenant.profile"].create({"partner_id": rec.customer_id.id})
             else:
                 rec.property_id.status = "reserved"
             rec.state = "confirmed"
