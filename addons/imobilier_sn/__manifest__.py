@@ -1,6 +1,6 @@
 {
     "name": "Imobilier SN",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.1.0",
     "summary": "Gestion immobilière au Sénégal : produits, locations, ventes, courtiers et encaissements",
     "description": """
 Imobilier SN
@@ -19,7 +19,7 @@ Fonctionnalités :
 - Gestion des courtiers et commissions
 - Contrats de location et de vente
 - Échéanciers selon la périodicité de paiement
-- Dossier locataire et états des lieux
+- Informations client/locataire intégrées aux contrats et états des lieux
 """,
     "author": "MD-ODOO",
     "license": "LGPL-3",

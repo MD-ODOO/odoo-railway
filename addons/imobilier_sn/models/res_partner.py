@@ -7,6 +7,7 @@ class ResPartner(models.Model):
     is_imobilier_broker = fields.Boolean(string="Est un courtier immobilier")
     broker_commission_percent = fields.Float(string="Commission courtier (%)", default=0)
     is_imobilier_tenant = fields.Boolean(string="Locataire immobilier")
+    is_imobilier_owner = fields.Boolean(string="Propriétaire immobilier")
 
     imobilier_property_ids = fields.One2many(
         "imobilier.sn.property",
@@ -89,4 +90,31 @@ class ResPartner(models.Model):
             "view_mode": "list,form",
             "domain": [("broker_id", "=", self.id)],
             "context": {"default_broker_id": self.id},
+        }
+
+
+    def action_imobilier_tenant_partners(self):
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Clients",
+            "res_model": "res.partner",
+            "view_mode": "list,form",
+            "domain": [("is_imobilier_tenant", "=", True)],
+            "context": {
+                "default_is_imobilier_tenant": True,
+                "default_customer_rank": 1,
+            },
+        }
+
+    def action_imobilier_owner_partners(self):
+        return {
+            "type": "ir.actions.act_window",
+            "name": "Fournisseurs",
+            "res_model": "res.partner",
+            "view_mode": "list,form",
+            "domain": [("is_imobilier_owner", "=", True)],
+            "context": {
+                "default_is_imobilier_owner": True,
+                "default_supplier_rank": 1,
+            },
         }

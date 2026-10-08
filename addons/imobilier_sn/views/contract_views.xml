@@ -55,7 +55,7 @@
                         <group>
                             <field name="contract_type"/>
                             <field name="property_id" domain="[('status','in',['available','reserved'])]"/>
-                            <field name="customer_id"/>
+                            <field name="customer_id" context="{'default_is_imobilier_tenant': contract_type == 'rent'}"/>
                             <field name="broker_id"/>
                         </group>
                         <group>
@@ -87,13 +87,25 @@
                             </group>
                         </page>
 
-                        <page string="Informations locataire" invisible="contract_type != 'rent'">
+                        <page string="Informations du client" invisible="contract_type != 'rent'">
                             <group>
-                                <field name="customer_id"/>
+                                <group string="Identité et situation">
+                                    <field name="customer_id"/>
+                                    <field name="marital_situation"/>
+                                    <field name="profession"/>
+                                    <field name="source_income"/>
+                                    <field name="planned_persons"/>
+                                </group>
+                                <group string="Justificatifs">
+                                    <field name="salary_bulletin" filename="salary_bulletin_filename"/>
+                                    <field name="salary_bulletin_filename" invisible="1"/>
+                                    <field name="other_income_document" filename="other_income_document_filename"/>
+                                    <field name="other_income_document_filename" invisible="1"/>
+                                </group>
                             </group>
-                            <div class="alert alert-info" role="alert">
-                                Le dossier locataire se complète depuis la fiche du client.
-                            </div>
+                            <group string="Observations">
+                                <field name="client_notes" nolabel="1" placeholder="Observations sur le client / locataire..."/>
+                            </group>
                         </page>
 
                         <page string="Échéancier">

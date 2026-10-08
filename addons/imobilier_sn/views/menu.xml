@@ -95,11 +95,31 @@
         sequence="50"
     />
     <menuitem
-        id="menu_imobilier_sn_tenants"
-        name="Dossiers locataires"
+        id="menu_imobilier_sn_tenant"
+        name="LOCATAIRE"
         parent="menu_imobilier_sn_root"
-        action="action_imobilier_sn_tenant"
         sequence="60"
+    />
+    <menuitem
+        id="menu_imobilier_sn_tenant_clients"
+        name="Clients"
+        parent="menu_imobilier_sn_tenant"
+        action="action_imobilier_sn_tenant_partners"
+        sequence="61"
+    />
+
+    <menuitem
+        id="menu_imobilier_sn_owner"
+        name="PROPRIÉTAIRE"
+        parent="menu_imobilier_sn_root"
+        sequence="70"
+    />
+    <menuitem
+        id="menu_imobilier_sn_owner_suppliers"
+        name="Fournisseurs"
+        parent="menu_imobilier_sn_owner"
+        action="action_imobilier_sn_owner_partners"
+        sequence="71"
     />
 
     <!-- Configuration -->
