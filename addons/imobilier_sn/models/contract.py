@@ -175,7 +175,7 @@ class ImobilierSNContract(models.Model):
     def _onchange_rental_customer(self):
         for rec in self:
             if rec.contract_type != "rent":
-                continue
+                return {"domain": {"customer_id": []}}
             if rec.customer_id and not rec.customer_id.is_imobilier_tenant:
                 rec.customer_id = False
                 return {
@@ -195,7 +195,7 @@ class ImobilierSNContract(models.Model):
                     "customer_id": [("is_imobilier_tenant", "=", True)],
                 }
             }
-        return True
+        return {}
 
     @api.constrains("contract_type", "customer_id")
     def _check_rental_customer(self):
