@@ -406,6 +406,16 @@ class ImobilierSNProperty(models.Model):
             "target": "new",
         }
 
+    def _mark_owners(self):
+        partners = self.mapped("owner_id").sudo().filtered(lambda partner: partner)
+        if not partners:
+            return
+        partners.write({"is_imobilier_owner": True})
+        if "supplier_rank" in partners._fields:
+            for partner in partners:
+                if partner.supplier_rank < 1:
+                    partner.write({"supplier_rank": 1})
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -413,11 +423,14 @@ class ImobilierSNProperty(models.Model):
                 seq = self.env["ir.sequence"].next_by_code("imobilier.sn.property")
                 vals["sequence_number"] = int(seq or "0")
         records = super().create(vals_list)
+        records._mark_owners()
         records._sync_catalog_product()
         return records
 
     def write(self, vals):
         res = super().write(vals)
+        if "owner_id" in vals:
+            self._mark_owners()
         if "property_type" in vals and vals["property_type"] == "land":
             self.filtered(lambda r: r.property_type == "land").with_context(
                 skip_land_cleanup=True
