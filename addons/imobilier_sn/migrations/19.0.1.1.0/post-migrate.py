@@ -82,6 +82,51 @@ def migrate(cr, version):
         """)
 
 
+    # Nettoyage de l'ancien modèle tenant.profile après migration des données.
+    cr.execute("""
+        DELETE FROM ir_model_access
+         WHERE model_id IN (
+             SELECT id FROM ir_model
+              WHERE model = 'imobilier.sn.tenant.profile'
+         )
+    """)
+    cr.execute("""
+        DELETE FROM ir_ui_view
+         WHERE model = 'imobilier.sn.tenant.profile'
+    """)
+    cr.execute("""
+        DELETE FROM ir_actions
+         WHERE id IN (
+             SELECT res_id
+               FROM ir_model_data
+              WHERE module = 'imobilier_sn'
+                AND model = 'ir.actions.act_window'
+                AND name = 'action_imobilier_sn_tenant'
+         )
+    """)
+    cr.execute("""
+        DELETE FROM ir_model_data
+         WHERE module = 'imobilier_sn'
+           AND name IN (
+               'view_imobilier_sn_tenant_profile_list',
+               'view_imobilier_sn_tenant_profile_form',
+               'action_imobilier_sn_tenant'
+           )
+    """)
+    cr.execute("""
+        DELETE FROM ir_model_fields
+         WHERE model_id IN (
+             SELECT id FROM ir_model
+              WHERE model = 'imobilier.sn.tenant.profile'
+         )
+    """)
+    cr.execute("""
+        DELETE FROM ir_model
+         WHERE model = 'imobilier.sn.tenant.profile'
+    """)
+    cr.execute("DROP TABLE IF EXISTS imobilier_sn_tenant_profile CASCADE")
+
+
 def _column_exists(cr, table_name, column_name):
     cr.execute("""
         SELECT 1
