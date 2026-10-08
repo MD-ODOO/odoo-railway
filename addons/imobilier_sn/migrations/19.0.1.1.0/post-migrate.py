@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 """Migration des informations tenant.profile vers les contrats de location."""
 
-from odoo import api, SUPERUSER_ID
-
-
 def migrate(cr, version):
     if not version:
         return
@@ -65,6 +62,23 @@ def migrate(cr, version):
             UPDATE res_partner AS rp
                SET customer_rank = GREATEST(COALESCE(rp.customer_rank, 0), 1)
              WHERE rp.is_imobilier_tenant = TRUE
+        """)
+
+    cr.execute("""
+        UPDATE res_partner AS rp
+           SET is_imobilier_owner = TRUE
+         WHERE EXISTS (
+             SELECT 1
+               FROM imobilier_sn_property AS p
+              WHERE p.owner_id = rp.id
+         )
+    """)
+
+    if _column_exists(cr, "res_partner", "supplier_rank"):
+        cr.execute("""
+            UPDATE res_partner AS rp
+               SET supplier_rank = GREATEST(COALESCE(rp.supplier_rank, 0), 1)
+             WHERE rp.is_imobilier_owner = TRUE
         """)
 
 
