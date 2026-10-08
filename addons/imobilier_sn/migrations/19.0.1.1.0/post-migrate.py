@@ -114,6 +114,14 @@ def migrate(cr, version):
            )
     """)
     cr.execute("""
+        DELETE FROM ir_model_data
+         WHERE model = 'ir.model'
+           AND res_id IN (
+               SELECT id FROM ir_model
+                WHERE model = 'imobilier.sn.tenant.profile'
+           )
+    """)
+    cr.execute("""
         DELETE FROM ir_model_fields
          WHERE model_id IN (
              SELECT id FROM ir_model
