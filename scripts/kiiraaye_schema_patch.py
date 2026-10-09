@@ -92,12 +92,7 @@ def patch_schema(dbname):
         conn.close()
 
 
-def upgrade(dbname):
-    patch_schema(dbname)
-    modules = ["kiiraaye_governance"]
-    if dbname.upper() == "SMART":
-        modules.append("imobilier_sn")
-
+def upgrade_modules(dbname, modules):
     module_list = ",".join(modules)
     command = (
         "odoo --database %s --update %s --stop-after-init "
@@ -107,8 +102,7 @@ def upgrade(dbname):
             for value in (dbname, module_list, HOST, PORT, USER, PASSWORD)
         )
     )
-    print(f"[kiiraaye] module upgrade ({module_list}): {dbname}", flush=True)
-
+    print(f"[startup] module upgrade ({module_list}): {dbname}", flush=True)
     result = subprocess.run(
         ["su", "-s", "/bin/bash", "odoo", "-c", command],
         text=True,
@@ -117,7 +111,16 @@ def upgrade(dbname):
         raise SystemExit(result.returncode)
 
 
+# Apply SQL repairs to every configured database before running any Odoo upgrade.
 for db in DBS:
-    upgrade(db)
+    patch_schema(db)
 
-print("[kiiraaye] schema patch and module upgrade finished", flush=True)
+# Recover the Immobilier SN module on SMART first. Kiiraaye module upgrades are
+# opt-in because running a full module update must not block the web server boot.
+for db in DBS:
+    if db.upper() == "SMART":
+        upgrade_modules(db, ["imobilier_sn"])
+    elif os.getenv("RUN_KIIRAAYE_MODULE_UPGRADE", "0") == "1":
+        upgrade_modules(db, ["kiiraaye_governance"])
+
+print("[startup] schema patch and requested module upgrades finished", flush=True)
