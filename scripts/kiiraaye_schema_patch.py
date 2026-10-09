@@ -119,7 +119,16 @@ for db in DBS:
 # opt-in because running a full module update must not block the web server boot.
 for db in DBS:
     if db.upper() == "SMART":
-        upgrade_modules(db, ["imobilier_sn"])
+        # Never run a potentially long module upgrade inline with web-server startup.
+        # Run it explicitly as a one-off task with RUN_IMOBILIER_MODULE_UPGRADE=1.
+        if os.getenv("RUN_IMOBILIER_MODULE_UPGRADE", "0") == "1":
+            upgrade_modules(db, ["imobilier_sn"])
+        else:
+            print(
+                "[startup] skipped module upgrade (imobilier_sn): SMART; "
+                "set RUN_IMOBILIER_MODULE_UPGRADE=1 for a one-off upgrade",
+                flush=True,
+            )
     elif os.getenv("RUN_KIIRAAYE_MODULE_UPGRADE", "0") == "1":
         upgrade_modules(db, ["kiiraaye_governance"])
 
