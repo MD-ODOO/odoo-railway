@@ -13,9 +13,10 @@ from . import organisation
 from . import organisation_add_member_wizard
 from . import partisan
 
-# Les modèles électoraux doivent être chargés après kiiraaye.partisan,
-# mais avant partisan_governance qui ajoute les liens centre/bureau au membre.
+# Dépend du modèle de membre et des modèles électoraux ; charger le tableau
+# de bord tôt afin que tout modèle ultérieur puisse le référencer.
 from . import voting_place
+from . import dashboard
 
 from . import profession
 from . import cadre
@@ -26,7 +27,6 @@ from . import position
 from . import attribution_poste
 from . import section_coordinator
 from . import user_scope
-from . import dashboard
 from . import election
 from . import demo_data_wizard
 from . import ralliement
