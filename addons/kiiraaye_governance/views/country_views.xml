@@ -43,6 +43,15 @@
                                 <span class="o_stat_text">tous les villages GalsenAPI</span>
                             </div>
                         </button>
+                        <button name="action_start_voting_place_import"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-map-marker">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Importer</span>
+                                <span class="o_stat_text">centres / bureaux</span>
+                            </div>
+                        </button>
                     </div>
                     <div class="alert alert-info" role="alert" invisible="code != 'SN'">
                         <strong>Référentiel géographique du Sénégal</strong>
@@ -63,6 +72,14 @@
                                     class="btn btn-primary"
                                     icon="fa-map-marker"/>
                         </div>
+                    </div>
+                    <div class="alert alert-warning mt-2" role="alert" invisible="code != 'SN'">
+                        <strong>Centres et bureaux de vote — données électorales 2024</strong>
+                        <field name="kiiraaye_vote_import_running" invisible="1"/>
+                        <field name="kiiraaye_vote_import_count" string="Bureaux enregistrés" readonly="1"/>
+                        <field name="kiiraaye_vote_import_message" string="État de l'import" readonly="1" nolabel="1"/>
+                        <button name="action_start_voting_place_import" type="object"
+                                string="Lancer / relancer l'import électoral" class="btn btn-primary" icon="fa-download"/>
                     </div>
                     <notebook>
                         <page string="Géographie Kiiraaye">

@@ -13,6 +13,8 @@
                 <field name="date_naissance"/>
                 <field name="national_id"/>
                 <field name="country_id"/>
+                <field name="centre_vote_id"/>
+                <field name="bureau_vote_id"/>
                 <field name="phone"/>
                 <field name="email"/>
                 <field name="active"/>
@@ -152,6 +154,16 @@
                         </group>
                     </group>
 
+                    <group string="Rattachement électoral">
+                        <group>
+                            <field name="centre_vote_id" options="{'no_create': True}"
+                                   domain="[('active', '=', True), ('commune_id', '=', commune_id)]"/>
+                        </group>
+                        <group>
+                            <field name="bureau_vote_id" options="{'no_create': True}"
+                                   domain="[('active', '=', True), ('centre_id', '=', centre_vote_id)]"/>
+                        </group>
+                    </group>
                     <notebook>
                         <page string="Sections / Coordinations">
                             <field name="section_ids">
