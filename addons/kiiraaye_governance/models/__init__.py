@@ -1,3 +1,7 @@
+# Charger d'abord les modèles électoraux, car les modèles de membres et le tableau de bord
+# utilisent kiiraaye.centre.vote et kiiraaye.bureau.vote.
+from . import voting_place
+
 from . import effectif_status
 from . import geographie
 from . import country_geography
@@ -22,7 +26,6 @@ from . import attribution_poste
 from . import section_coordinator
 from . import user_scope
 from . import dashboard
-from . import voting_place
 from . import election
 from . import demo_data_wizard
 from . import ralliement
