@@ -13,10 +13,10 @@ from . import organisation
 from . import organisation_add_member_wizard
 from . import partisan
 
-# Dépend du modèle de membre et des modèles électoraux ; charger le tableau
-# de bord tôt afin que tout modèle ultérieur puisse le référencer.
-from . import voting_place
+# Le modèle de base du tableau de bord doit être enregistré avant les extensions
+# électorales qui utilisent _inherit = "kiiraaye.dashboard".
 from . import dashboard
+from . import voting_place
 
 from . import profession
 from . import cadre
