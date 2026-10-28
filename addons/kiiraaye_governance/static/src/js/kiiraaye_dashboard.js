@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, onMounted, onWillStart, useRef, useState } from "@odoo/owl";
+import { Component, onMounted, onPatched, onWillStart, useRef, useState } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 
@@ -29,9 +29,18 @@ export class KiiraayeDashboard extends Component {
             await this.loadDashboard();
         });
         this.administrativeMapRef = useRef("administrativeMap");
+        this.votingMapRef = useRef("votingMap");
+        this.votingMapNeedsRender = false;
         this.mapDragging = false;
         onMounted(() => {
             this.renderAdministrativeMap();
+            this.renderVotingMap();
+        });
+        onPatched(() => {
+            if (this.state.view === "vote" && this.votingMapNeedsRender && this.votingMapRef?.el) {
+                this.votingMapNeedsRender = false;
+                this.renderVotingMap();
+            }
         });
     }
 
@@ -129,6 +138,7 @@ export class KiiraayeDashboard extends Component {
             this.state.error = error?.message || "Erreur de chargement";
         } finally {
             this.state.loading = false;
+            if (this.state.view === "vote") this.votingMapNeedsRender = true;
         }
     }
 
@@ -236,6 +246,69 @@ export class KiiraayeDashboard extends Component {
     mapDepartmentFill(row) {
         if (!row) return "#E9EFF2";
         return Number(row.sections || 0) > 0 ? "#2D86A6" : "#E53935";
+    }
+
+    votingDepartmentFill(row) {
+        if (!row || Number(row.bureau_count || 0) === 0 || Number(row.registered_voters || 0) <= 0) return "#DCE3E7";
+        const ratio = Number(row.proportionnalite_pct || 0);
+        if (ratio < 1) return "#D64545";
+        if (ratio < 5) return "#F2994A";
+        if (ratio < 10) return "#F2C94C";
+        return "#219653";
+    }
+
+    async renderVotingMap() {
+        const host = this.votingMapRef?.el;
+        const voting = this.state.data?.voting_places;
+        if (!host || this.state.view !== "vote" || !voting) return;
+        try {
+            const response = await fetch(
+                "/kiiraaye_governance/static/src/img/senegal_departments.svg?v=19.0.2.22.74",
+                { headers: { "Accept": "image/svg+xml" }, cache: "force-cache" }
+            );
+            if (!response.ok) throw new Error("Carte administrative introuvable (" + response.status + ")");
+            host.innerHTML = await response.text();
+            const svg = host.querySelector("svg");
+            if (!svg) throw new Error("SVG administratif invalide");
+            svg.classList.add("kiiraaye-voting-map-svg");
+            svg.setAttribute("role", "img");
+            svg.setAttribute("aria-label", "Carte départementale des centres et bureaux de vote");
+            const rows = (voting.departments || []).map((row) => ({
+                ...row, _name: this.normalizeMapName(row.name),
+            }));
+            const byName = new Map(rows.map((row) => [row._name, row]));
+            host.querySelectorAll(".kiiraaye-map-department-shape").forEach((shape) => {
+                const row = byName.get(this.normalizeMapName(shape.dataset.name || ""));
+                shape.setAttribute("fill", this.votingDepartmentFill(row));
+                shape.setAttribute("stroke", "#FFFFFF");
+                shape.setAttribute("stroke-width", "1.1");
+                shape.setAttribute("tabindex", "0");
+                shape.setAttribute("aria-label", row
+                    ? row.name + ": " + Number(row.centre_count || 0) + " centres, "
+                        + Number(row.bureau_count || 0) + " bureaux, "
+                        + Number(row.registered_voters || 0) + " électeurs inscrits"
+                    : (shape.dataset.name || "Département sans données électorales"));
+                let title = shape.querySelector("title");
+                if (!title) {
+                    title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+                    shape.appendChild(title);
+                }
+                title.textContent = row
+                    ? row.name + " — " + Number(row.centre_count || 0) + " centres, "
+                        + Number(row.bureau_count || 0) + " bureaux, "
+                        + Number(row.registered_voters || 0).toLocaleString("fr-FR") + " électeurs, "
+                        + Number(row.members || 0).toLocaleString("fr-FR") + " membres, "
+                        + Number(row.proportionnalite_pct || 0).toFixed(2) + "%"
+                    : (shape.dataset.name || "Données non disponibles");
+            });
+            const attribution = document.createElement("div");
+            attribution.className = "kiiraaye-map-attribution";
+            attribution.textContent = "Carte départementale — données électorales 2024, Vie-Publique.sn";
+            host.appendChild(attribution);
+        } catch (error) {
+            console.error("Kiiraaye: impossible de charger la carte des bureaux de vote", error);
+            host.innerHTML = '<div class="kiiraaye-map-error">La carte départementale est indisponible. Actualisez le tableau de bord.</div>';
+        }
     }
 
     mapPathFromGeometry(geometry, project) {
