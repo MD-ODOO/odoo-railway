@@ -96,6 +96,7 @@
                     <button t-att-class="state.view === 'membre' ? 'active' : ''" t-on-click="() => this.setView('membre')">Membre</button>
                     <button t-att-class="state.view === 'ralliement' ? 'active' : ''" t-on-click="() => this.setView('ralliement')">Ralliements</button>
                     <button t-att-class="state.view === 'historique' ? 'active' : ''" t-on-click="() => this.setView('historique')">Historique électoral</button>
+                    <button t-att-class="state.view === 'vote' ? 'active' : ''" t-on-click="() => this.setView('vote')">Centres &amp; bureaux de vote</button>
                 </div>
 
                 <section t-if="state.view === 'section'">
@@ -862,6 +863,76 @@
                         </div>
                     </div>
                 </section>
+
+                <section t-if="state.view === 'vote' &amp;&amp; state.data.voting_places" class="kiiraaye-voting-dashboard">
+                    <div class="panel">
+                        <div class="panel__title"><span>Centres et bureaux de vote du Sénégal</span><small>Données de référence : <t t-esc="state.data.voting_places.source_year"/> · <t t-esc="state.data.voting_places.source"/></small></div>
+                        <p class="dashboard-note">Le taux membres Kiiraaye / électeurs inscrits est descriptif et ne prédit pas un résultat électoral.</p>
+                    </div>
+                    <div class="kiiraaye-dashboard__grid kiiraaye-dashboard__grid--kpi">
+                        <div class="kpi-card coverage-kpi coverage-kpi--blue"><span>Centres de vote</span><strong><t t-esc="formatNumber(state.data.voting_places.totals.centres)"/></strong><small>Centres importés</small></div>
+                        <div class="kpi-card coverage-kpi coverage-kpi--blue"><span>Bureaux de vote</span><strong><t t-esc="formatNumber(state.data.voting_places.totals.bureaux)"/></strong><small>Bureaux importés</small></div>
+                        <div class="kpi-card coverage-kpi coverage-kpi--red"><span>Électeurs inscrits</span><strong><t t-esc="formatNumber(state.data.voting_places.totals.electeurs_inscrits)"/></strong><small>Données <t t-esc="state.data.voting_places.source_year"/></small></div>
+                        <div class="kpi-card coverage-kpi coverage-kpi--blue"><span>Membres Kiiraaye actifs</span><strong><t t-esc="formatNumber(state.data.voting_places.totals.membres)"/></strong><small>Effectif sénégalais</small></div>
+                        <div class="kpi-card coverage-kpi coverage-kpi--red"><span>Membres rattachés à un centre</span><strong><t t-esc="formatNumber(state.data.voting_places.totals.membres_affilies)"/></strong><small>Affectation renseignée</small></div>
+                        <div class="kpi-card coverage-kpi coverage-kpi--blue"><span>Membres / électeurs</span><strong><t t-esc="state.data.voting_places.totals.proportionnalite_pct === null ? '—' : formatPercent(state.data.voting_places.totals.proportionnalite_pct)"/></strong><small>Ratio descriptif</small></div>
+                    </div>
+                    <div class="panel kiiraaye-voting-map-panel">
+                        <div class="panel__title"><span>Cartographie départementale des bureaux de vote</span><small>Survolez un département pour lire les indicateurs</small></div>
+                        <div class="kiiraaye-voting-map-layout">
+                            <div class="kiiraaye-voting-map"><div t-ref="votingMap" class="kiiraaye-voting-map-host"><div class="kiiraaye-map-loading"><i class="fa fa-spinner fa-spin"/> Chargement de la carte électorale...</div></div></div>
+                            <div class="kiiraaye-voting-map-legend">
+                                <strong>Proportion membres / électeurs</strong>
+                                <span><i class="kiiraaye-voting-legend-dot voting--red"/> Moins de 1 %</span>
+                                <span><i class="kiiraaye-voting-legend-dot voting--orange"/> De 1 % à moins de 5 %</span>
+                                <span><i class="kiiraaye-voting-legend-dot voting--yellow"/> De 5 % à moins de 10 %</span>
+                                <span><i class="kiiraaye-voting-legend-dot voting--green"/> 10 % ou plus</span>
+                                <span><i class="kiiraaye-voting-legend-dot voting--grey"/> Aucun bureau / données absentes</span>
+                                <p class="dashboard-note">La source ne donne pas de coordonnées GPS pour chaque centre. La carte colore les limites départementales et ne simule pas de positions ponctuelles.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel__title"><span>Décompte territorial</span><small>Région → département → commune</small></div>
+                        <div class="kiiraaye-voting-table">
+                            <div class="kiiraaye-voting-table__head"><span>Territoire</span><span>Centres</span><span>Bureaux</span><span>Électeurs inscrits</span><span>Membres</span><span>Affiliés</span><span>Ratio</span></div>
+                            <t t-foreach="state.data.voting_places.regions" t-as="region" t-key="'vote-region-' + region.id">
+                                <details>
+                                    <summary class="kiiraaye-voting-row kiiraaye-voting-row--region">
+                                        <span class="kiiraaye-voting-name"><strong><t t-esc="region.name"/></strong><small>Région</small></span>
+                                        <span><t t-esc="formatNumber(region.centre_count)"/></span><span><t t-esc="formatNumber(region.bureau_count)"/></span><span><t t-esc="formatNumber(region.registered_voters)"/></span><span><t t-esc="formatNumber(region.members)"/></span><span><t t-esc="formatNumber(region.members_affilies)"/></span>
+                                        <span><b t-att-class="'kiiraaye-voting-ratio voting--' + (region.map_class || 'grey')"><t t-esc="region.proportionnalite_pct === null ? '—' : formatPercent(region.proportionnalite_pct)"/></b></span>
+                                    </summary>
+                                    <div class="kiiraaye-voting-children">
+                                        <t t-foreach="region.departments" t-as="department" t-key="'vote-department-' + department.id">
+                                            <details>
+                                                <summary class="kiiraaye-voting-row kiiraaye-voting-row--department">
+                                                    <span class="kiiraaye-voting-name"><strong><t t-esc="department.name"/></strong><small>Département</small></span>
+                                                    <span><t t-esc="formatNumber(department.centre_count)"/></span><span><t t-esc="formatNumber(department.bureau_count)"/></span><span><t t-esc="formatNumber(department.registered_voters)"/></span><span><t t-esc="formatNumber(department.members)"/></span><span><t t-esc="formatNumber(department.members_affilies)"/></span>
+                                                    <span><b t-att-class="'kiiraaye-voting-ratio voting--' + (department.map_class || 'grey')"><t t-esc="department.proportionnalite_pct === null ? '—' : formatPercent(department.proportionnalite_pct)"/></b></span>
+                                                </summary>
+                                                <div class="kiiraaye-voting-communes">
+                                                    <t t-foreach="department.communes" t-as="commune" t-key="'vote-commune-' + commune.id">
+                                                        <div class="kiiraaye-voting-row kiiraaye-voting-row--commune">
+                                                            <span class="kiiraaye-voting-name"><strong><t t-esc="commune.name"/></strong><small>Commune</small></span>
+                                                            <span><t t-esc="formatNumber(commune.centre_count)"/></span><span><t t-esc="formatNumber(commune.bureau_count)"/></span><span><t t-esc="formatNumber(commune.registered_voters)"/></span><span><t t-esc="formatNumber(commune.members)"/></span><span><t t-esc="formatNumber(commune.members_affilies)"/></span>
+                                                            <span><b t-att-class="'kiiraaye-voting-ratio voting--' + (commune.map_class || 'grey')"><t t-esc="commune.proportionnalite_pct === null ? '—' : formatPercent(commune.proportionnalite_pct)"/></b></span>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                            </details>
+                                        </t>
+                                    </div>
+                                </details>
+                            </t>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <p class="dashboard-note"><t t-esc="state.data.voting_places.message"/></p>
+                        <p class="dashboard-note">Centres non rattachés à une commune : <strong><t t-esc="formatNumber(state.data.voting_places.non_rattaches.centres)"/></strong> ; bureaux concernés : <strong><t t-esc="formatNumber(state.data.voting_places.non_rattaches.bureaux)"/></strong>.</p>
+                    </div>
+                </section>
+
             </t>
 
             <div t-else="" class="alert alert-warning mt-3">

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- N'exécute l'import que lorsqu'un gestionnaire le demande sur la fiche Sénégal. -->
+    <record id="ir_cron_kiiraaye_voting_place_import" model="ir.cron">
+        <field name="name">KIIRAAY - Import centres et bureaux de vote 2024</field>
+        <field name="model_id" ref="base.model_res_country"/>
+        <field name="state">code</field>
+        <field name="code">model.action_process_voting_place_import()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+        <field name="active">True</field>
+        <field name="priority">15</field>
+    </record>
+</odoo>
