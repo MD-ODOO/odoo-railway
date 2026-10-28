@@ -1,5 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class KiiraayePartisanGovernance(models.Model):
@@ -53,10 +53,67 @@ class KiiraayePartisanGovernance(models.Model):
         index=True,
     )
 
+    centre_vote_id = fields.Many2one(
+        "kiiraaye.centre.vote", string="Centre de vote",
+        index=True, ondelete="set null", copy=False,
+    )
+    bureau_vote_id = fields.Many2one(
+        "kiiraaye.bureau.vote", string="Bureau de vote",
+        index=True, ondelete="set null", copy=False,
+    )
+
     _unique_user_id_governance = models.Constraint(
         "UNIQUE(user_id)",
         "Un utilisateur Odoo ne peut être associé qu'à un seul membre Kiiraaye.",
     )
+
+    @api.onchange("commune_id")
+    def _onchange_voting_commune_id(self):
+        for member in self:
+            if member.centre_vote_id and member.centre_vote_id.commune_id != member.commune_id:
+                member.centre_vote_id = False
+                member.bureau_vote_id = False
+        return {
+            "domain": {
+                "centre_vote_id": (
+                    [("commune_id", "=", self.commune_id.id), ("active", "=", True)]
+                    if self.commune_id else [("id", "=", False)]
+                ),
+                "bureau_vote_id": (
+                    [("centre_id", "=", self.centre_vote_id.id), ("active", "=", True)]
+                    if self.centre_vote_id else [("id", "=", False)]
+                ),
+            }
+        }
+
+    @api.onchange("centre_vote_id")
+    def _onchange_voting_centre_id(self):
+        for member in self:
+            if member.bureau_vote_id and member.bureau_vote_id.centre_id != member.centre_vote_id:
+                member.bureau_vote_id = False
+        return {"domain": {
+            "bureau_vote_id": (
+                [("centre_id", "=", self.centre_vote_id.id), ("active", "=", True)]
+                if self.centre_vote_id else [("id", "=", False)]
+            )
+        }}
+
+    @api.onchange("bureau_vote_id")
+    def _onchange_voting_bureau_id(self):
+        for member in self:
+            if member.bureau_vote_id:
+                member.centre_vote_id = member.bureau_vote_id.centre_id
+
+    @api.constrains("centre_vote_id", "bureau_vote_id", "commune_id")
+    def _check_voting_place_consistency(self):
+        for member in self:
+            if member.bureau_vote_id and member.centre_vote_id != member.bureau_vote_id.centre_id:
+                raise ValidationError(_("Le bureau choisi doit appartenir au centre de vote sélectionné."))
+            if (
+                member.centre_vote_id and member.centre_vote_id.commune_id
+                and member.commune_id and member.centre_vote_id.commune_id != member.commune_id
+            ):
+                raise ValidationError(_("Le centre de vote doit appartenir à la commune du membre."))
 
     @api.model
     def _get_connected_coordinator_sections(self):
