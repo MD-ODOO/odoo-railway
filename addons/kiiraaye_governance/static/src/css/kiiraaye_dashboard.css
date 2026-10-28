@@ -1958,3 +1958,24 @@
 .kiiraaye-senegal-map-sidebar__note{margin-top:auto;padding:10px 12px;border-top:1px solid var(--kiiraaye-border);background:#F5F9FA;color:#7A8F98;font-size:8px;line-height:1.45}
 @media(max-width:1100px){.kiiraaye-coverage-territorial__header{align-items:flex-start;flex-direction:column}.kiiraaye-map-summary{width:100%}.kiiraaye-map-summary>div{text-align:left;flex:1 1 110px}.kiiraaye-senegal-map-layout{grid-template-columns:1fr}.kiiraaye-senegal-map{min-height:560px}.kiiraaye-senegal-region-list{max-height:300px}}
 @media(max-width:620px){.kiiraaye-senegal-map{min-height:430px}.kiiraaye-map-summary>div{min-width:90px}.kiiraaye-senegal-map-legend{left:8px;right:8px;bottom:8px}.kiiraaye-senegal-region-row{grid-template-columns:minmax(0,1fr) 52px 52px}}
+
+/* Centres et bureaux de vote : cartographie et décompte territorial. */
+.kiiraaye-voting-dashboard{display:flex;flex-direction:column;gap:16px}
+.kiiraaye-voting-map-layout{display:grid;grid-template-columns:minmax(0,1fr) 245px;gap:16px;align-items:stretch}
+.kiiraaye-voting-map{min-height:430px;overflow:hidden;border:1px solid var(--kiiraaye-border);border-radius:10px;background:#F7FAFB}
+.kiiraaye-voting-map-host{min-height:430px;width:100%;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.kiiraaye-voting-map-host svg{display:block;width:100%;height:auto;max-height:640px}
+.kiiraaye-voting-map-host .kiiraaye-map-department-shape{cursor:help;transition:fill .2s ease}
+.kiiraaye-voting-map-legend{display:flex;flex-direction:column;gap:10px;padding:16px;border:1px solid var(--kiiraaye-border);border-radius:10px;background:#fff;color:var(--kiiraaye-ink);font-size:12px}
+.kiiraaye-voting-map-legend strong{margin-bottom:4px;font-size:13px}.kiiraaye-voting-map-legend span{display:flex;gap:8px;align-items:center}
+.kiiraaye-voting-legend-dot{display:inline-block;width:12px;height:12px;border-radius:3px;border:1px solid rgba(0,0,0,.08);flex:0 0 12px}
+.voting--red{background:#D64545!important;color:#fff!important}.voting--orange{background:#F2994A!important;color:#442500!important}.voting--yellow{background:#F2C94C!important;color:#3E3511!important}.voting--green{background:#219653!important;color:#fff!important}.voting--grey{background:#DCE3E7!important;color:#36454F!important}
+.kiiraaye-voting-table{overflow-x:auto;width:100%}
+.kiiraaye-voting-table__head,.kiiraaye-voting-row{display:grid;grid-template-columns:minmax(165px,1.5fr) repeat(6,minmax(95px,1fr));gap:8px;align-items:center;min-width:900px;padding:10px 12px}
+.kiiraaye-voting-table__head{background:#EAF2F5;color:#335564;font-size:10px;text-transform:uppercase;font-weight:700}
+.kiiraaye-voting-row{border-bottom:1px solid #E8EEF0;color:var(--kiiraaye-ink);font-size:11px}.kiiraaye-voting-row span:not(:first-child){text-align:right;font-variant-numeric:tabular-nums}
+.kiiraaye-voting-row--region{background:#F7FAFB;font-size:12px;font-weight:600}.kiiraaye-voting-row--department{padding-left:24px;background:#fff}.kiiraaye-voting-row--commune{padding-left:42px;background:#FCFDFD}
+.kiiraaye-voting-name{display:flex;flex-direction:column;gap:2px;min-width:0}.kiiraaye-voting-name strong{overflow-wrap:anywhere}.kiiraaye-voting-name small{color:#8A9CA4;font-size:9px;font-weight:400}
+.kiiraaye-voting-ratio{display:inline-block;min-width:64px;border-radius:20px;padding:4px 7px;text-align:center;font-size:10px;font-weight:700}.kiiraaye-voting-children{border-left:2px solid #E5EDF0;margin-left:14px}
+@media(max-width:1000px){.kiiraaye-voting-map-layout{grid-template-columns:1fr}.kiiraaye-voting-map-legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.kiiraaye-voting-map-legend strong,.kiiraaye-voting-map-legend p{grid-column:1/-1}}
+@media(max-width:600px){.kiiraaye-voting-map,.kiiraaye-voting-map-host{min-height:300px}.kiiraaye-voting-map-legend{grid-template-columns:1fr}}
