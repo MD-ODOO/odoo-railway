@@ -1609,4 +1609,5 @@ class KiiraayeDashboard(models.Model):
                 "à partir de la tendance des créations de membres."
             ),
             "historical_election": self._historical_election_overview(Partisan, Geography),
+            "voting_places": self._voting_places_overview(Partisan),
         }
