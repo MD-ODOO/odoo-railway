@@ -34,6 +34,26 @@ action = country.action_load_senegal_all_villages()
               action="action_kiiraaye_load_senegal_localities"
               sequence="6"
               groups="kiiraaye_governance.group_kiiraaye_manager"/>
+    <record id="action_kiiraaye_load_voting_places" model="ir.actions.server">
+        <field name="name">Importer centres et bureaux de vote (API 2024)</field>
+        <field name="model_id" ref="base.model_res_country"/>
+        <field name="state">code</field>
+        <field name="code"><![CDATA[
+country = env["res.country"].search([("code", "=", "SN")], limit=1)
+if not country:
+    raise UserError(_("Le pays Sénégal (SN) est introuvable."))
+action = country.action_start_voting_place_import()
+        ]]></field>
+    </record>
+    <menuitem id="menu_kiiraaye_load_voting_places" name="Importer centres et bureaux de vote"
+              parent="menu_kiiraaye_configuration" action="action_kiiraaye_load_voting_places"
+              sequence="7" groups="kiiraaye_governance.group_kiiraaye_manager"/>
+    <menuitem id="menu_kiiraaye_centre_vote" name="Centres de vote"
+              parent="menu_kiiraaye_configuration" action="action_kiiraaye_centre_vote"
+              sequence="31" groups="kiiraaye_governance.group_kiiraaye_manager"/>
+    <menuitem id="menu_kiiraaye_bureau_vote" name="Bureaux de vote"
+              parent="menu_kiiraaye_configuration" action="action_kiiraaye_bureau_vote"
+              sequence="32" groups="kiiraaye_governance.group_kiiraaye_manager"/>
     <menuitem id="menu_kiiraaye_countries" name="Pays" parent="menu_kiiraaye_configuration" action="action_kiiraaye_country" sequence="10"/>
     <menuitem id="menu_kiiraaye_geographie" name="Référentiel géographique" parent="menu_kiiraaye_configuration" action="action_kiiraaye_geographie" sequence="20"/>
     <menuitem id="menu_kiiraaye_zones" name="Zones" parent="menu_kiiraaye_configuration" action="action_kiiraaye_zone" sequence="25"/>
