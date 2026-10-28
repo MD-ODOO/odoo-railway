@@ -18,7 +18,7 @@ _API_BASE = "https://www.vie-publique.sn/api/elections/map/department-details/"
 _SOURCE = "Vie-Publique.sn — carte électorale 2024"
 _SOURCE_URL = "https://www.vie-publique.sn/elections-senegal/carte-electorale/nationale"
 _YEAR = 2024
-_BATCH_SIZE = 4
+_BATCH_SIZE = 1
 
 
 def _normalize(value):
@@ -62,6 +62,7 @@ class KiiraayeCentreVote(models.Model):
     longitude = fields.Float(string="Longitude", digits=(10, 7), help="Coordonnée GPS précise facultative; la source consultée n'en fournit pas pour chaque centre.")
     active = fields.Boolean(string="Actif", default=True, index=True)
     bureau_ids = fields.One2many("kiiraaye.bureau.vote", "centre_id", string="Bureaux")
+    member_ids = fields.One2many("kiiraaye.partisan", "centre_vote_id", string="Membres Kiiraaye")
     bureau_count = fields.Integer(string="Nombre de bureaux", compute="_compute_voting_totals")
     registered_voters = fields.Integer(string="Électeurs inscrits", compute="_compute_voting_totals")
     member_count = fields.Integer(string="Membres Kiiraaye", compute="_compute_member_count")
@@ -75,7 +76,7 @@ class KiiraayeCentreVote(models.Model):
             centre.bureau_count = len(centre.bureau_ids)
             centre.registered_voters = sum(centre.bureau_ids.mapped("registered_voters"))
 
-    @api.depends("bureau_ids", "country_id")
+    @api.depends("member_ids", "member_ids.active", "bureau_ids.registered_voters")
     def _compute_member_count(self):
         Partisan = self.env["kiiraaye.partisan"].sudo()
         for centre in self:
@@ -121,11 +122,12 @@ class KiiraayeBureauVote(models.Model):
     latitude = fields.Float(related="centre_id.latitude", digits=(10, 7), store=True)
     longitude = fields.Float(related="centre_id.longitude", digits=(10, 7), store=True)
     active = fields.Boolean(string="Actif", default=True, index=True)
+    member_ids = fields.One2many("kiiraaye.partisan", "bureau_vote_id", string="Membres Kiiraaye")
     member_count = fields.Integer(string="Membres Kiiraaye", compute="_compute_member_count")
 
     _unique_source_uid = models.Constraint("UNIQUE(source_uid)", "L'identifiant source d'un bureau de vote doit être unique.")
 
-    @api.depends("centre_id")
+    @api.depends("member_ids", "member_ids.active")
     def _compute_member_count(self):
         Partisan = self.env["kiiraaye.partisan"].sudo()
         for bureau in self:
