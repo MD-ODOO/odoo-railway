@@ -22,6 +22,7 @@ from . import attribution_poste
 from . import section_coordinator
 from . import user_scope
 from . import dashboard
+from . import voting_place
 from . import election
 from . import demo_data_wizard
 from . import ralliement
