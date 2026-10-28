@@ -1,7 +1,3 @@
-# Charger d'abord les modèles électoraux, car les modèles de membres et le tableau de bord
-# utilisent kiiraaye.centre.vote et kiiraaye.bureau.vote.
-from . import voting_place
-
 from . import effectif_status
 from . import geographie
 from . import country_geography
@@ -16,6 +12,11 @@ from . import organisation_type
 from . import organisation
 from . import organisation_add_member_wizard
 from . import partisan
+
+# Les modèles électoraux doivent être chargés après kiiraaye.partisan,
+# mais avant partisan_governance qui ajoute les liens centre/bureau au membre.
+from . import voting_place
+
 from . import profession
 from . import cadre
 from . import cadre_assign_wizard
