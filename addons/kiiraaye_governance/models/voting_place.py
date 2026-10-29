@@ -124,14 +124,27 @@ class KiiraayeBureauVote(models.Model):
     active = fields.Boolean(string="Actif", default=True, index=True)
     member_ids = fields.One2many("kiiraaye.partisan", "bureau_vote_id", string="Membres Kiiraaye")
     member_count = fields.Integer(string="Membres Kiiraaye", compute="_compute_member_count")
+    members_to_voters_pct = fields.Float(
+        string="Membres / électeurs (%)",
+        compute="_compute_member_count",
+        digits=(6, 2),
+        help="Part des membres Kiiraaye rattachés à ce bureau par rapport aux électeurs inscrits.",
+    )
 
     _unique_source_uid = models.Constraint("UNIQUE(source_uid)", "L'identifiant source d'un bureau de vote doit être unique.")
 
-    @api.depends("member_ids", "member_ids.active")
+    @api.depends("member_ids", "member_ids.active", "registered_voters")
     def _compute_member_count(self):
         Partisan = self.env["kiiraaye.partisan"].sudo()
         for bureau in self:
-            bureau.member_count = Partisan.search_count([("active", "=", True), ("bureau_vote_id", "=", bureau.id)]) if bureau.id else 0
+            count = Partisan.search_count(
+                [("active", "=", True), ("bureau_vote_id", "=", bureau.id)]
+            ) if bureau.id else 0
+            bureau.member_count = count
+            bureau.members_to_voters_pct = (
+                round(count / bureau.registered_voters * 100, 2)
+                if bureau.registered_voters else 0.0
+            )
 
 
 class ResCountryVotingPlaceImport(models.Model):
