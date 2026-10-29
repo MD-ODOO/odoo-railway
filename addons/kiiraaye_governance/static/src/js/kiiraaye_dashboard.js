@@ -491,6 +491,36 @@ export class KiiraayeDashboard extends Component {
         });
     }
 
+    async openVotingCommuneDetail(communeId, communeName) {
+        const id = Number(communeId) || false;
+        if (!id) {
+            return;
+        }
+        await this.action.doAction({
+            type: "ir.actions.act_window",
+            name: "Centres de vote — " + (communeName || "Commune"),
+            res_model: "kiiraaye.centre.vote",
+            views: [
+                [false, "list"],
+                [false, "form"],
+            ],
+            view_mode: "list,form",
+            domain: [
+                ["commune_id", "=", id],
+                ["active", "=", true],
+                ["election_year", "=", 2024],
+            ],
+            target: "current",
+        });
+    }
+
+    onVotingCommuneKeydown(event, communeId, communeName) {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            this.openVotingCommuneDetail(communeId, communeName);
+        }
+    }
+
     memberElectorGapClass(row) {
         const gap = this.memberElectorGap(row);
         if (gap >= 0) {
