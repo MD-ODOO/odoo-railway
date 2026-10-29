@@ -183,13 +183,7 @@
         <field name="name">Centres de vote - périmètre du coordonnateur</field>
         <field name="model_id" ref="model_kiiraaye_centre_vote"/>
         <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_coordinator'))]"/>
-        <field name="domain_force">[
-            '|', '|', '|',
-            '&', ('kiiraaye_role', '=', 'regional'), ('region_id', '=', user.kiiraaye_region_id.id),
-            '&', ('kiiraaye_role', '=', 'departemental'), ('departement_id', '=', user.kiiraaye_departement_id.id),
-            '&', ('kiiraaye_role', '=', 'communal'), ('commune_id', '=', user.kiiraaye_commune_id.id),
-            '&', ('kiiraaye_role', '=', 'national'), ('country_id.code', '=', 'SN')
-        ]</field>
+        <field name="domain_force">user.kiiraaye_role == 'regional' and [('region_id', '=', user.kiiraaye_region_id.id)] or user.kiiraaye_role == 'departemental' and [('departement_id', '=', user.kiiraaye_departement_id.id)] or user.kiiraaye_role == 'communal' and [('commune_id', '=', user.kiiraaye_commune_id.id)] or user.kiiraaye_role == 'national' and [('country_id.code', '=', 'SN')] or [('id', '=', 0)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
@@ -200,13 +194,7 @@
         <field name="name">Bureaux de vote - périmètre du coordonnateur</field>
         <field name="model_id" ref="model_kiiraaye_bureau_vote"/>
         <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_coordinator'))]"/>
-        <field name="domain_force">[
-            '|', '|', '|',
-            '&', ('kiiraaye_role', '=', 'regional'), ('region_id', '=', user.kiiraaye_region_id.id),
-            '&', ('kiiraaye_role', '=', 'departemental'), ('departement_id', '=', user.kiiraaye_departement_id.id),
-            '&', ('kiiraaye_role', '=', 'communal'), ('commune_id', '=', user.kiiraaye_commune_id.id),
-            '&', ('kiiraaye_role', '=', 'national'), ('country_id.code', '=', 'SN')
-        ]</field>
+        <field name="domain_force">user.kiiraaye_role == 'regional' and [('region_id', '=', user.kiiraaye_region_id.id)] or user.kiiraaye_role == 'departemental' and [('departement_id', '=', user.kiiraaye_departement_id.id)] or user.kiiraaye_role == 'communal' and [('commune_id', '=', user.kiiraaye_commune_id.id)] or user.kiiraaye_role == 'national' and [('country_id.code', '=', 'SN')] or [('id', '=', 0)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
         <field name="perm_create" eval="False"/>
