@@ -68,13 +68,7 @@
         <field name="name">Sections - zone du coordonnateur</field>
         <field name="model_id" ref="model_kiiraaye_section"/>
         <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_coordinator'))]"/>
-        <field name="domain_force">[
-            '|', '|', '|',
-            ('region_id', 'in', user.kiiraaye_coordinator_region_ids.ids),
-            ('departement_id', 'in', user.kiiraaye_coordinator_departement_ids.ids),
-            ('commune_id', 'in', user.kiiraaye_coordinator_commune_ids.ids),
-            ('quartier_id', 'in', user.kiiraaye_coordinator_quartier_ids.ids)
-        ]</field>
+        <field name="domain_force">[('id', 'in', user.kiiraaye_coordinator_section_ids.ids)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
@@ -131,13 +125,7 @@
         <field name="name">Bureau - zone du coordonnateur</field>
         <field name="model_id" ref="model_kiiraaye_bureau_ligne"/>
         <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_coordinator'))]"/>
-        <field name="domain_force">[
-            '|', '|', '|',
-            ('section_id.region_id', 'in', user.kiiraaye_coordinator_region_ids.ids),
-            ('section_id.departement_id', 'in', user.kiiraaye_coordinator_departement_ids.ids),
-            ('section_id.commune_id', 'in', user.kiiraaye_coordinator_commune_ids.ids),
-            ('section_id.quartier_id', 'in', user.kiiraaye_coordinator_quartier_ids.ids)
-        ]</field>
+        <field name="domain_force">[('section_id', 'in', user.kiiraaye_coordinator_section_ids.ids)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
@@ -166,13 +154,7 @@
         <field name="name">Attributions - zone du coordonnateur</field>
         <field name="model_id" ref="model_kiiraaye_attribution_poste"/>
         <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_coordinator'))]"/>
-        <field name="domain_force">[
-            '|', '|', '|',
-            ('section_id.region_id', 'in', user.kiiraaye_coordinator_region_ids.ids),
-            ('section_id.departement_id', 'in', user.kiiraaye_coordinator_departement_ids.ids),
-            ('section_id.commune_id', 'in', user.kiiraaye_coordinator_commune_ids.ids),
-            ('section_id.quartier_id', 'in', user.kiiraaye_coordinator_quartier_ids.ids)
-        ]</field>
+        <field name="domain_force">[('section_id', 'in', user.kiiraaye_coordinator_section_ids.ids)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
@@ -202,10 +184,11 @@
         <field name="model_id" ref="model_kiiraaye_centre_vote"/>
         <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_coordinator'))]"/>
         <field name="domain_force">[
-            '|', '|',
-            ('region_id', 'in', user.kiiraaye_coordinator_region_ids.ids),
-            ('departement_id', 'in', user.kiiraaye_coordinator_departement_ids.ids),
-            ('commune_id', 'in', user.kiiraaye_coordinator_commune_ids.ids)
+            '|', '|', '|',
+            '&', ('kiiraaye_role', '=', 'regional'), ('region_id', '=', user.kiiraaye_region_id.id),
+            '&', ('kiiraaye_role', '=', 'departemental'), ('departement_id', '=', user.kiiraaye_departement_id.id),
+            '&', ('kiiraaye_role', '=', 'communal'), ('commune_id', '=', user.kiiraaye_commune_id.id),
+            '&', ('kiiraaye_role', '=', 'national'), ('country_id.code', '=', 'SN')
         ]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
@@ -218,10 +201,11 @@
         <field name="model_id" ref="model_kiiraaye_bureau_vote"/>
         <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_coordinator'))]"/>
         <field name="domain_force">[
-            '|', '|',
-            ('region_id', 'in', user.kiiraaye_coordinator_region_ids.ids),
-            ('departement_id', 'in', user.kiiraaye_coordinator_departement_ids.ids),
-            ('commune_id', 'in', user.kiiraaye_coordinator_commune_ids.ids)
+            '|', '|', '|',
+            '&', ('kiiraaye_role', '=', 'regional'), ('region_id', '=', user.kiiraaye_region_id.id),
+            '&', ('kiiraaye_role', '=', 'departemental'), ('departement_id', '=', user.kiiraaye_departement_id.id),
+            '&', ('kiiraaye_role', '=', 'communal'), ('commune_id', '=', user.kiiraaye_commune_id.id),
+            '&', ('kiiraaye_role', '=', 'national'), ('country_id.code', '=', 'SN')
         ]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
