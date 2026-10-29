@@ -1979,3 +1979,7 @@
 .kiiraaye-voting-ratio{display:inline-block;min-width:64px;border-radius:20px;padding:4px 7px;text-align:center;font-size:10px;font-weight:700}.kiiraaye-voting-children{border-left:2px solid #E5EDF0;margin-left:14px}
 @media(max-width:1000px){.kiiraaye-voting-map-layout{grid-template-columns:1fr}.kiiraaye-voting-map-legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.kiiraaye-voting-map-legend strong,.kiiraaye-voting-map-legend p{grid-column:1/-1}}
 @media(max-width:600px){.kiiraaye-voting-map,.kiiraaye-voting-map-host{min-height:300px}.kiiraaye-voting-map-legend{grid-template-columns:1fr}}
+
+/* Les communes de la vue électorale ouvrent la liste détaillée des centres. */
+.kiiraaye-voting-row--clickable{cursor:pointer;transition:background-color .15s ease}
+.kiiraaye-voting-row--clickable:hover,.kiiraaye-voting-row--clickable:focus{background:#EAF4F7;outline:2px solid #2D86A6;outline-offset:-2px}
