@@ -913,8 +913,12 @@
                                                 </summary>
                                                 <div class="kiiraaye-voting-communes">
                                                     <t t-foreach="department.communes" t-as="commune" t-key="'vote-commune-' + commune.id">
-                                                        <div class="kiiraaye-voting-row kiiraaye-voting-row--commune">
-                                                            <span class="kiiraaye-voting-name"><strong><t t-esc="commune.name"/></strong><small>Commune</small></span>
+                                                        <div class="kiiraaye-voting-row kiiraaye-voting-row--commune kiiraaye-voting-row--clickable"
+                                                             role="button" tabindex="0"
+                                                             t-att-title="'Afficher les centres et bureaux de ' + commune.name"
+                                                             t-on-click="() => this.openVotingCommuneDetail(commune.id, commune.name)"
+                                                             t-on-keydown="(ev) => this.onVotingCommuneKeydown(ev, commune.id, commune.name)">
+                                                            <span class="kiiraaye-voting-name"><strong><t t-esc="commune.name"/></strong><small>Commune — cliquer pour voir les centres</small></span>
                                                             <span><t t-esc="formatNumber(commune.centre_count)"/></span><span><t t-esc="formatNumber(commune.bureau_count)"/></span><span><t t-esc="formatNumber(commune.registered_voters)"/></span><span><t t-esc="formatNumber(commune.members)"/></span><span><t t-esc="formatNumber(commune.members_affilies)"/></span>
                                                             <span><b t-att-class="'kiiraaye-voting-ratio voting--' + (commune.map_class || 'grey')"><t t-esc="commune.proportionnalite_pct === null ? '—' : formatPercent(commune.proportionnalite_pct)"/></b></span>
                                                         </div>
