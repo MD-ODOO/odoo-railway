@@ -5,7 +5,7 @@
         <field name="arch" type="xml"><list string="Centres de vote">
             <field name="name"/><field name="region_id"/><field name="departement_id"/><field name="commune_id"/>
             <field name="locality_name"/><field name="bureau_count"/><field name="registered_voters"/>
-            <field name="member_count"/><field name="election_year"/><field name="active"/>
+            <field name="member_count"/><field name="members_to_voters_pct"/><field name="election_year"/><field name="active"/>
         </list></field>
     </record>
     <record id="view_kiiraaye_centre_vote_form" model="ir.ui.view">
@@ -24,23 +24,27 @@
         </group>
         <group string="Source"><field name="source" readonly="1"/><field name="source_url" readonly="1"/><field name="source_uid" readonly="1"/></group>
         <notebook><page string="Bureaux de vote"><field name="bureau_ids"><list>
-            <field name="office_number"/><field name="name"/><field name="registered_voters"/><field name="implantation"/><field name="member_count"/><field name="active"/>
-        </list></field></page></notebook>
+            <field name="office_number"/><field name="name"/><field name="registered_voters"/><field name="implantation"/><field name="member_count"/><field name="members_to_voters_pct"/><field name="active"/>
+        </list></field></page>
+            <page string="Membres Kiiraaye rattachés"><field name="member_ids" readonly="1"><list><field name="reference"/><field name="nom_complet"/><field name="phone"/><field name="active"/></list></field></page>
+        </notebook>
         </sheet></form></field>
     </record>
     <record id="view_kiiraaye_bureau_vote_list" model="ir.ui.view">
         <field name="name">kiiraaye.bureau.vote.list</field><field name="model">kiiraaye.bureau.vote</field>
         <field name="arch" type="xml"><list string="Bureaux de vote">
             <field name="office_number"/><field name="name"/><field name="centre_id"/><field name="region_id"/>
-            <field name="departement_id"/><field name="commune_id"/><field name="registered_voters"/><field name="member_count"/><field name="election_year"/><field name="active"/>
+            <field name="departement_id"/><field name="commune_id"/><field name="registered_voters"/><field name="member_count"/><field name="members_to_voters_pct"/><field name="election_year"/><field name="active"/>
         </list></field>
     </record>
     <record id="view_kiiraaye_bureau_vote_form" model="ir.ui.view">
         <field name="name">kiiraaye.bureau.vote.form</field><field name="model">kiiraaye.bureau.vote</field>
         <field name="arch" type="xml"><form string="Bureau de vote"><sheet><group>
             <group><field name="centre_id" options="{'no_create': True}"/><field name="office_number"/><field name="name"/><field name="implantation"/></group>
-            <group><field name="country_id" readonly="1"/><field name="region_id" readonly="1"/><field name="departement_id" readonly="1"/><field name="commune_id" readonly="1"/><field name="registered_voters"/><field name="member_count" readonly="1"/><field name="election_year"/><field name="active"/></group>
-        </group><group string="Source"><field name="source" readonly="1"/><field name="source_url" readonly="1"/><field name="source_uid" readonly="1"/></group></sheet></form></field>
+            <group><field name="country_id" readonly="1"/><field name="region_id" readonly="1"/><field name="departement_id" readonly="1"/><field name="commune_id" readonly="1"/><field name="registered_voters"/><field name="member_count" readonly="1"/><field name="members_to_voters_pct" readonly="1"/><field name="election_year"/><field name="active"/></group>
+        </group><group string="Source"><field name="source" readonly="1"/><field name="source_url" readonly="1"/><field name="source_uid" readonly="1"/></group>
+        <notebook><page string="Membres Kiiraaye rattachés"><field name="member_ids" readonly="1"><list><field name="reference"/><field name="nom_complet"/><field name="phone"/><field name="active"/></list></field></page></notebook>
+        </sheet></form></field>
     </record>
     <record id="action_kiiraaye_centre_vote" model="ir.actions.act_window">
         <field name="name">Centres de vote</field><field name="res_model">kiiraaye.centre.vote</field><field name="view_mode">list,form</field>
