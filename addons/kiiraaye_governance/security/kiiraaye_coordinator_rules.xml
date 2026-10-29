@@ -30,18 +30,25 @@
         <field name="perm_unlink" eval="True"/>
     </record>
 
-    <!-- Membres : un coordonnateur voit les membres de sa zone. -->
+    <!-- Membres : filtrage par les sections réellement autorisées.
+         Le modèle partisan ne porte pas directement region_id/departement_id/commune_id/quartier_id. -->
     <record id="rule_kiiraaye_partisan_coordinator_scope" model="ir.rule">
-        <field name="name">Membres - zone du coordonnateur</field>
+        <field name="name">Membres - sections du coordonnateur</field>
         <field name="model_id" ref="model_kiiraaye_partisan"/>
         <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_coordinator'))]"/>
-        <field name="domain_force">[
-            '|', '|', '|',
-            ('region_id', 'in', user.kiiraaye_coordinator_region_ids.ids),
-            ('departement_id', 'in', user.kiiraaye_coordinator_departement_ids.ids),
-            ('commune_id', 'in', user.kiiraaye_coordinator_commune_ids.ids),
-            ('quartier_id', 'in', user.kiiraaye_coordinator_quartier_ids.ids)
-        ]</field>
+        <field name="domain_force">[('section_ids', 'in', user.kiiraaye_coordinator_section_ids.ids)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Responsable de zone : les membres doivent être rattachés à une section de sa zone. -->
+    <record id="rule_kiiraaye_partisan_zone_responsible_scope" model="ir.rule">
+        <field name="name">Membres - sections de la zone du responsable</field>
+        <field name="model_id" ref="model_kiiraaye_partisan"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_zone_responsible'))]"/>
+        <field name="domain_force">[('section_ids.zone_id', '=', user.kiiraaye_zone_id.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
@@ -101,6 +108,18 @@
         <field name="perm_unlink" eval="False"/>
     </record>
 
+    <!-- Géographie visible par le responsable : sa zone, ses quartiers et les ancêtres nécessaires à la lecture hiérarchique. -->
+    <record id="rule_kiiraaye_geographie_zone_responsible_scope" model="ir.rule">
+        <field name="name">Géographie - zone et quartiers affectés</field>
+        <field name="model_id" ref="model_kiiraaye_geographie"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_zone_responsible'))]"/>
+        <field name="domain_force">[('id', 'in', user.kiiraaye_zone_id.quartier_ids.ids + [user.kiiraaye_region_id.id, user.kiiraaye_departement_id.id, user.kiiraaye_commune_id.id])]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
     <record id="rule_kiiraaye_section_manager_all" model="ir.rule">
         <field name="name">Sections - administrateur Kiiraaye</field>
         <field name="model_id" ref="model_kiiraaye_section"/>
@@ -119,6 +138,17 @@
             ('section_id.commune_id', 'in', user.kiiraaye_coordinator_commune_ids.ids),
             ('section_id.quartier_id', 'in', user.kiiraaye_coordinator_quartier_ids.ids)
         ]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_kiiraaye_bureau_zone_responsible_scope" model="ir.rule">
+        <field name="name">Bureaux - sections de la zone du responsable</field>
+        <field name="model_id" ref="model_kiiraaye_bureau_ligne"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_zone_responsible'))]"/>
+        <field name="domain_force">[('section_id.zone_id', '=', user.kiiraaye_zone_id.id)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
@@ -149,9 +179,89 @@
         <field name="perm_unlink" eval="False"/>
     </record>
 
+    <record id="rule_kiiraaye_attribution_zone_responsible_scope" model="ir.rule">
+        <field name="name">Attributions - sections de la zone du responsable</field>
+        <field name="model_id" ref="model_kiiraaye_attribution_poste"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_zone_responsible'))]"/>
+        <field name="domain_force">[('section_id.zone_id', '=', user.kiiraaye_zone_id.id)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
     <record id="rule_kiiraaye_attribution_manager_all" model="ir.rule">
         <field name="name">Attributions - administrateur Kiiraaye</field>
         <field name="model_id" ref="model_kiiraaye_attribution_poste"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_manager'))]"/>
+        <field name="domain_force">[('id', '!=', 0)]</field>
+    </record>
+    <!-- Référentiel électoral : les coordonnateurs sont limités à leur périmètre géographique. -->
+    <record id="rule_kiiraaye_centre_vote_coordinator_scope" model="ir.rule">
+        <field name="name">Centres de vote - périmètre du coordonnateur</field>
+        <field name="model_id" ref="model_kiiraaye_centre_vote"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_coordinator'))]"/>
+        <field name="domain_force">[
+            '|', '|',
+            ('region_id', 'in', user.kiiraaye_coordinator_region_ids.ids),
+            ('departement_id', 'in', user.kiiraaye_coordinator_departement_ids.ids),
+            ('commune_id', 'in', user.kiiraaye_coordinator_commune_ids.ids)
+        ]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_kiiraaye_bureau_vote_coordinator_scope" model="ir.rule">
+        <field name="name">Bureaux de vote - périmètre du coordonnateur</field>
+        <field name="model_id" ref="model_kiiraaye_bureau_vote"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_coordinator'))]"/>
+        <field name="domain_force">[
+            '|', '|',
+            ('region_id', 'in', user.kiiraaye_coordinator_region_ids.ids),
+            ('departement_id', 'in', user.kiiraaye_coordinator_departement_ids.ids),
+            ('commune_id', 'in', user.kiiraaye_coordinator_commune_ids.ids)
+        ]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Le modèle électoral n'a pas de champ zone/quartier : pas d'accès zone/quartier non fiable. -->
+    <record id="rule_kiiraaye_centre_vote_zone_responsible_none" model="ir.rule">
+        <field name="name">Centres de vote - pas de rattachement direct à une zone</field>
+        <field name="model_id" ref="model_kiiraaye_centre_vote"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_zone_responsible'))]"/>
+        <field name="domain_force">[('id', '=', 0)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_kiiraaye_bureau_vote_zone_responsible_none" model="ir.rule">
+        <field name="name">Bureaux de vote - pas de rattachement direct à une zone</field>
+        <field name="model_id" ref="model_kiiraaye_bureau_vote"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_zone_responsible'))]"/>
+        <field name="domain_force">[('id', '=', 0)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Règles explicites pour l'administrateur : accès complet. -->
+    <record id="rule_kiiraaye_centre_vote_manager_all" model="ir.rule">
+        <field name="name">Centres de vote - administrateur Kiiraaye</field>
+        <field name="model_id" ref="model_kiiraaye_centre_vote"/>
+        <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_manager'))]"/>
+        <field name="domain_force">[('id', '!=', 0)]</field>
+    </record>
+    <record id="rule_kiiraaye_bureau_vote_manager_all" model="ir.rule">
+        <field name="name">Bureaux de vote - administrateur Kiiraaye</field>
+        <field name="model_id" ref="model_kiiraaye_bureau_vote"/>
         <field name="groups" eval="[Command.link(ref('kiiraaye_governance.group_kiiraaye_manager'))]"/>
         <field name="domain_force">[('id', '!=', 0)]</field>
     </record>
